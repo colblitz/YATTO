@@ -103,6 +103,30 @@ def stage_hp(stage):
 
 
 # Hero DPS (non-evolved): (((Base Cost*(1.075^(Level-1))*((1.075^(Level))-1))/0.075)*((0.904^(Level-1))*(((1-(0.019*(Minimum of either: Hero ID or 15))^(Hero ID)))*0.1)*(1+Hero Damage Bonus+All Damage Bonus from Heroes)*(1+Artifacts All Damage)*(1+(Number of Weapon Upgrades for Hero*0.5))*(1+All Damage Bonus from Customizations))*(Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
+
+# Hero DPS (non-evolved): 
+
+
+(
+ ((Base Cost*(1.075^(Level-1))*((1.075^(Level))-1)) / 0.075)
+ *
+ (
+  (0.904^(Level-1))
+  *
+  (((1-(0.019*(Minimum of either: Hero ID or 15))^(Hero ID)))*0.1)
+  *
+  (1+Hero Damage Bonus+All Damage Bonus from Heroes)
+  *
+  (1+Artifacts All Damage)
+  *
+  (1+(Number of Weapon Upgrades for Hero*0.5))
+  *
+  (1+All Damage Bonus from Customizations)
+ )
+ *
+ (Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
+)
+
 # Hero DPS (evolved): ((((Base Cost)*10*(1.075^(Level-1))*((1.075^(Level-1000))-1))/0.075)*((0.904^(Level-1001))*((1-(0.019*15))^(Hero ID+30))*0.1)*(1+Hero Damage Bonus+All Damage Bonus from Heroes)*(1+Artifacts All Damage)*(1+(Number of Weapon Upgrades for Hero*0.5))*(1+All Damage Bonus from Customizations))*(Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
 # Tap Damage: (Your Level*(1.05^(Your Level)))*(1+All Damage Bonus from Heroes)+(Tap Damage % to DPS from Heroes*Total Hero DPS)*(1+Tap Damage Bonus from Heroes+Tap Damage Bonus from Customizations)*(1+Artifacts All Damage)*(1+Drunken Hammer Bonus)*(1+All Damage from Customizations)
 
