@@ -56,6 +56,10 @@ def relics(stage, ua):
     # relics = ((floor to nearest 15 of stage - 75) / 15)^1.7 * undead bonus * 2
     return int(pow(stage/15-5, 1.7) * (2+ua*0.1))
 
+def cost_to_buy_next(artifacts):
+    owned = len([x for x in artifacts if x != 0]) + 1
+    return int(owned * pow(1.35, owned))
+
 def gold_multiplier(artifacts, hero_gold, hero_chest_gold):
     level_amulet = artifacts[0]
     level_chest = artifacts[3]
@@ -91,6 +95,7 @@ def gold_multiplier(artifacts, hero_gold, hero_chest_gold):
 
 def stage_gold(stage):
     pass
+    # olaudix - var num2 = GetStageBaseHP($("#stage").val()) * (0.02 + (0.00045 * Math.min(stage, 150.0)));
 
 def stage_accumulated_gold(stage):
     pass
@@ -101,31 +106,123 @@ def stage_hp(stage):
     # 18.5*pow(1.57, 156) = 6.7222940277842625e+31        
     return 6.7222940277842625e+31*pow(1.17, stage-156)
 
+##### figure out:
+## boss hp
+## hero leveling cost - http://dd.reddit.com/r/TapTitans/comments/2u7scp/hero_upgrade_cost_explained/
+## stage gold
+## crit multiplier = (10+hero) * (1 + t) * (1 + c)
+
+
+tap dmg * (1- crit chance) + tap dmg * (crit chance) * 0.65 * crit multiplier
+
+tap damage * ((1-crit chance )+ (crit chance * 0.65 * crit multiplier))
+
+def crit(t, c, hero):
+
+    # return 10 * (1 + t) * (1 + c) * (1 + hero)
+    # return 10 * (1 + t + hero) * (1 + c)
+    # return 10 * (1 + t) * (1 + c + hero)
+    return (10+hero) * (1 + t) * (1 + c)
+
+print "689 ", crit(31, 0.81, 1.90)
+print "603 ", crit(27, 0.81, 1.90)
+print "598 ", crit(27, 0.81, 1.80)
+print "595 ", crit(27, 0.81, 1.75)
+print "592 ", crit(27, 0.81, 1.70)
+print "590 ", crit(27, 0.81, 1.65)
+print "587 ", crit(27, 0.81, 1.60)
+print "585 ", crit(27, 0.81, 1.55)
+print "580 ", crit(27, 0.81, 1.45)
+print "572 ", crit(27, 0.81, 1.30)
+print "567 ", crit(27, 0.81, 1.20)
+print "557 ", crit(27, 0.81, 1.00)
+print "542 ", crit(27, 0.81, 0.70)
+print "532 ", crit(27, 0.81, 0.50)
+print "516 ", crit(27, 0.81, 0.20)
+print "506 ", crit(27, 0.81, 0)
+print "117 ", crit(8.4, 0.25, 0)
+"""
+
+crit = 10 * (1 + hero thrust) * (1 + customizations)
+
+crit = 506.8
+
+603 with 2700 and 190
+598 with 2700 and 180
+595 with 2700 and 175
+592 with 2700 and 170
+590 with 2700 and 165
+587 with 2700 and 160
+585 with 2700 and 155
+580 with 2700 and 145
+572 with 2700 and 130
+567 with 2700 and 120
+557 with 2700 and 100
+542 with 2700 and 70
+532 with 2700 and 50
+516 with 2700 and 20
+506 with 2700 and 0
+
+"""
+
+
+"""
+boss hp
+
+stage 1 - 29 hp, boss = 29hp
+419 -> 633 -> 848 -> 1.06k -> 10.68k
+stage 2 - 45 hp, boss = 91 hp
+10.68k -> 11.02k
+641 -> 985
+158 -> 502 -> 846 -> 1.19k -> 32.06k
+stage 3 = 71 hp, boss = 214 hp
+32.06k -> 32.62 (550)
+1.26k -> 1.81 k (548) -> 7.32k -> 12.84k -> 13.39k -> 87.68k
+stage 4 = 112 hp, boss = 393 hp
+87.68k -> 88.56k (448) -> 97.41k -> 106.25k -> 107.13k -> 108.02k -> 246.96k
+stage 5 = 176 hp, boss = 882 hp
+246.96k -> 248.37k -> 262.54k -> 276.71k -> 290.89k -> 292.30k -> 610.35k
+stage 6 = 277 hp, boss = 
+610.35k, 612.62, 635.32, 
+
+
+
+http://www.reddit.com/r/TapTitans/comments/2uszs5/dps_formula/
+http://www.reddit.com/r/TapTitans/wiki/faq
+http://dd.reddit.com/r/TapTitans/comments/317usc/new_damage_and_gold_formulas/
+https://github.com/oLaudix/oLaudix.github.io/blob/master/common.js
+https://github.com/oLaudix/oLaudix.github.io/blob/master/TTcalc.html
+http://dd.reddit.com/r/TapTitans/comments/2u7scp/hero_upgrade_cost_explained/
+http://dd.reddit.com/r/TapTitans/comments/2slhl1/increase_critical_damage_by_x/
+http://dd.reddit.com/r/TapTitans/comments/2vbwe5/useful_linksdata/
+
+"""
+
 
 # Hero DPS (non-evolved): (((Base Cost*(1.075^(Level-1))*((1.075^(Level))-1))/0.075)*((0.904^(Level-1))*(((1-(0.019*(Minimum of either: Hero ID or 15))^(Hero ID)))*0.1)*(1+Hero Damage Bonus+All Damage Bonus from Heroes)*(1+Artifacts All Damage)*(1+(Number of Weapon Upgrades for Hero*0.5))*(1+All Damage Bonus from Customizations))*(Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
 
 # Hero DPS (non-evolved): 
 
 
-(
- ((Base Cost*(1.075^(Level-1))*((1.075^(Level))-1)) / 0.075)
- *
- (
-  (0.904^(Level-1))
-  *
-  (((1-(0.019*(Minimum of either: Hero ID or 15))^(Hero ID)))*0.1)
-  *
-  (1+Hero Damage Bonus+All Damage Bonus from Heroes)
-  *
-  (1+Artifacts All Damage)
-  *
-  (1+(Number of Weapon Upgrades for Hero*0.5))
-  *
-  (1+All Damage Bonus from Customizations)
- )
- *
- (Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
-)
+# (
+#  ((Base Cost*(1.075^(Level-1))*((1.075^(Level))-1)) / 0.075)
+#  *
+#  (
+#   (0.904^(Level-1))
+#   *
+#   (((1-(0.019*(Minimum of either: Hero ID or 15))^(Hero ID)))*0.1)
+#   *
+#   (1+Hero Damage Bonus+All Damage Bonus from Heroes)
+#   *
+#   (1+Artifacts All Damage)
+#   *
+#   (1+(Number of Weapon Upgrades for Hero*0.5))
+#   *
+#   (1+All Damage Bonus from Customizations)
+#  )
+#  *
+#  (Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
+# )
 
 # Hero DPS (evolved): ((((Base Cost)*10*(1.075^(Level-1))*((1.075^(Level-1000))-1))/0.075)*((0.904^(Level-1001))*((1-(0.019*15))^(Hero ID+30))*0.1)*(1+Hero Damage Bonus+All Damage Bonus from Heroes)*(1+Artifacts All Damage)*(1+(Number of Weapon Upgrades for Hero*0.5))*(1+All Damage Bonus from Customizations))*(Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
 # Tap Damage: (Your Level*(1.05^(Your Level)))*(1+All Damage Bonus from Heroes)+(Tap Damage % to DPS from Heroes*Total Hero DPS)*(1+Tap Damage Bonus from Heroes+Tap Damage Bonus from Customizations)*(1+Artifacts All Damage)*(1+Drunken Hammer Bonus)*(1+All Damage from Customizations)
@@ -153,61 +250,37 @@ mob health grows faster than gold
 one shot everything
 tap
 berserkers
-6.82
-10.7
-16.8
-26.4
-41.4
-65.1
-102.2
-160.5
-
-
-682 = 8
-
-
-682 - 8
-1.07k - 9 3.75k
-10 - 1.68k, 8.41k
-11 - 2.64k, 2.64k
-12 - 4.14k, 8.29k
-13 - 6.51k, 19.54k
-14 - 10.22k, 35.79k
-15 - 16.05k, 80.28k
-1064 - 5.5e93
-1073 - 2.26e94
-1074 - 2.64e94
-1075 - 3.09e94
-1076 - 3.62e94
-1077 - 4.23e94
-1078 - 4.95e94
-1079 - 5.79e94
-1080 - 5.79e94
-1081 - 7.93e94
-1082 - 9.28e94
-1083 - 1.09e95
-1084 - 1.27e95
-1085 - 1.49e95
-1086 - 1.74e95
-
-1163 - 3.1e100
-1164 - 
-1165 - 4.24e100
-1166 - 4.96e100
-1167 - 5.8e100
-1168 - 6.79e100
-1169 - 7.94e100
-1170 - 9.29e100
-1171 - 1.09e101
-1172 - 1.27e101
-1173 - 1.49e101
-1174 - 1.74e101
-1175 - 2.04e101
-1176 - 2.38e101
-1177 - 2.79e101
-1178 - 3.26e101
-1179 - 3.82e101
-1171
-Valrunes1171
 
 """
+
+"""
+With the new update for iOS brings customization bonuses that acutally work! Through math and spreadsheets and actually matching it up with what I see in game, I'm here to provide updated calculations. Warning, may seem really mathy.
+Hero DPS (non-evolved): (((Base Cost*(1.075^(Level-1))*((1.075^(Level))-1))/0.075)*((0.904^(Level-1))*(((1-(0.019*(Minimum of either: Hero ID or 15))^(Hero ID)))*0.1)*(1+Hero Damage Bonus+All Damage Bonus from Heroes)*(1+Artifacts All Damage)*(1+(Number of Weapon Upgrades for Hero*0.5))*(1+All Damage Bonus from Customizations))*(Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
+Hero DPS (evolved): ((((Base Cost)*10*(1.075^(Level-1))*((1.075^(Level-1000))-1))/0.075)*((0.904^(Level-1001))*((1-(0.019*15))^(Hero ID+30))*0.1)*(1+Hero Damage Bonus+All Damage Bonus from Heroes)*(1+Artifacts All Damage)*(1+(Number of Weapon Upgrades for Hero*0.5))*(1+All Damage Bonus from Customizations))*(Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
+Tap Damage: (Your Level*(1.05^(Your Level)))*(1+All Damage Bonus from Heroes)+(Tap Damage % to DPS from Heroes*Total Hero DPS)*(1+Tap Damage Bonus from Heroes+Tap Damage Bonus from Customizations)*(1+Artifacts All Damage)*(1+Drunken Hammer Bonus)*(1+All Damage from Customizations)
+Chesterson Gold Calculation: Stage Base Gold*ROUNDUP(1+All Gold Bonus from Heroes+All Gold Bonus from Customizations+Future's Fortune Bonus)*10*(1+Treasure Gold from Heroes Bonus)*(1+Bonus from Crafter's Elixir)*(1+Bonus from Chest of Contentment)*(1+Chest Gold Bonus from Customizations)
+2 interesting things I've discovered using these formulas:
+The All Damage Bonus from Customizations is way too powerful in regards to Tap Damage and will most likely be nerfed.
+Dark Lord's DPS calculations are off after he evolves. The only way I could get my numbers to match what I see in game are by changing the Base Cost of him from 4.56E+141 to 1.66E+141. This is only after he evolves and only effects his DPS calculation; his leveling up costs are still based on 4.56E+141.
+Feel free to experiment and see if I made any mistakes with this.
+"""
+
+"""
+crit multiplier
+3000 561
+2980 557
+2960 553
+2940 550
+2920 546
+2800 524
+2780 521
+2760 517
+2740 514
+2720 510
+2700 506
+1020 156
+840 117
+"""
+
+
+
