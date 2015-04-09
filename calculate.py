@@ -82,8 +82,10 @@ class Hero:
         self.hid = hid
         self.base_cost = base_cost
         self.skills = skills
+        self.pre_calc = self.base_cost * (1-pow(0.019*min(self.hid, 15), self.hid)) / 0.75
+        self.e_pre_calc = self.base_cost * pow(0.715, hid+30) / 0.075
 
-    def level_to_skills(level):
+    def level_to_skills(self, level):
         if level > 1000:
             level -= 1000
         if level < 10:
@@ -102,281 +104,395 @@ class Hero:
             return 6
         return 7
 
-hero_info = [
-    Hero("Takeda the Blade Assassin", 1, 0, [
-        (50, STYPE_HERO_DPS), 
-        (100, STYPE_HERO_DPS), 
-        (10, STYPE_ALL_DAMAGE), 
-        (10, STYPE_CRIT_DAMAGE), 
-        (1000, STYPE_HERO_DPS), 
-        (25, STYPE_ALL_DAMAGE), 
-        (10000, STYPE_HERO_DPS)]),
-    Hero("Contessa the Torch Wielder", 2, 0, [
-        (5, STYPE_TAP_DAMAGE),
-        (100, STYPE_HERO_DPS),
-        (1000, STYPE_HERO_DPS),
-        (0.4, STYPE_PERCENT_DPS),
-        (10, STYPE_ALL_DAMAGE),
-        (10, STYPE_GOLD_DROPPED),
-        (10000, STYPE_HERO_DPS)]),
-    Hero("Hornetta, Queen of the Valrunes", 3, 0, [
-        (150, STYPE_HERO_DPS),
-        (10, STYPE_GOLD_DROPPED),
-        (10, STYPE_ALL_DAMAGE),
-        (0.4, STYPE_PERCENT_DPS),
-        (20, STYPE_CHEST_GOLD),
-        (1, STYPE_CRIT_CHANCE),
-        (30, STYPE_ALL_DAMAGE)]),
-    Hero("Mila the Hammer Stomper", 4, 0, [
-        (100, STYPE_HERO_DPS),
-        (800, STYPE_HERO_DPS),
-        (6, STYPE_GOLD_DROPPED),
-        (500, STYPE_HERO_DPS),
-        (5, STYPE_CRIT_DAMAGE),
-        (20, STYPE_ALL_DAMAGE),
-        (20, STYPE_CHEST_GOLD)]),
-    Hero("Terra the Land Scorcher", 5, 0, [
-        (300, STYPE_HERO_DPS),
-        (10, STYPE_GOLD_DROPPED),
-        (0.4, STYPE_PERCENT_DPS),
-        (15, STYPE_GOLD_DROPPED),
-        (20, STYPE_CHEST_GOLD),
-        (5, STYPE_TAP_DAMAGE),
-        (10000, STYPE_HERO_DPS)]),
-    Hero("Inquisireaux the Terrible", 6, 0, [
-        (200, STYPE_HERO_DPS),
-        (700, STYPE_HERO_DPS),
-        (10, STYPE_ALL_DAMAGE),
-        (20, STYPE_ALL_DAMAGE),
-        (5, STYPE_CRIT_DAMAGE),
-        (2, STYPE_CRIT_CHANCE),
-        (10000, STYPE_HERO_DPS)]),
-    Hero("Charlotte the Special", 7, 0, [
-        (200, STYPE_HERO_DPS),
-        (5, STYPE_BOSS_DAMAGE),
-        (7, STYPE_BOSS_DAMAGE),
-        (600, STYPE_HERO_DPS),
-        (5, STYPE_TAP_DAMAGE),
-        (20, STYPE_CHEST_GOLD),
-        (30, STYPE_ALL_DAMAGE)]),
-    Hero("Jordaan, Knight of Mini", 8, 0, [
-        (200, STYPE_HERO_DPS),
-        (10, STYPE_ALL_DAMAGE),
-        (0.4, STYPE_PERCENT_DPS),
-        (15, STYPE_GOLD_DROPPED),
-        (20, STYPE_CHEST_GOLD),
-        (1900, STYPE_HERO_DPS),
-        (20, STYPE_ALL_DAMAGE)]),
-    Hero("Jukka, Master of Axes", 9, 0, [
-        (150, STYPE_HERO_DPS),
-        (5, STYPE_BOSS_DAMAGE),
-        (30, STYPE_ALL_DAMAGE),
-        (5, STYPE_CRIT_DAMAGE),
-        (5000, STYPE_HERO_DPS),
-        (25, STYPE_ALL_DAMAGE),
-        (10000, STYPE_HERO_DPS)]),
-    Hero("Milo and Clonk-Clonk", 10, 0, [
-        (150, STYPE_HERO_DPS),
-        (1, STYPE_CRIT_CHANCE),
-        (5, STYPE_BOSS_DAMAGE),
-        (15, STYPE_GOLD_DROPPED),
-        (20, STYPE_CHEST_GOLD),
-        (25, STYPE_CHEST_GOLD),
-        (15, STYPE_ALL_DAMAGE)]),
-    Hero("Macelord the Ruthless", 11, 0, [
-        (200, STYPE_HERO_DPS),
-        (850, STYPE_HERO_DPS),
-        (5, STYPE_TAP_DAMAGE),
-        (0.4, STYPE_PERCENT_DPS),
-        (15, STYPE_GOLD_DROPPED),
-        (5, STYPE_TAP_DAMAGE),
-        (20, STYPE_GOLD_DROPPED)]),
-    Hero("Gertrude the Goat Rider", 12, 0, [
-        (250, STYPE_HERO_DPS),
-        (1300, STYPE_HERO_DPS),
-        (7, STYPE_BOSS_DAMAGE),
-        (5, STYPE_CRIT_DAMAGE),
-        (0.4, STYPE_PERCENT_DPS),
-        (5, STYPE_TAP_DAMAGE),
-        (20, STYPE_GOLD_DROPPED)]),
-    Hero("Twitterella the Tweeter", 13, 0, [
-        (150, STYPE_HERO_DPS),
-        (850, STYPE_HERO_DPS),
-        (5, STYPE_TAP_DAMAGE),
-        (20, STYPE_ALL_DAMAGE),
-        (30, STYPE_ALL_DAMAGE),
-        (5, STYPE_CRIT_DAMAGE),
-        (12000, STYPE_HERO_DPS)]),
-    Hero("Master Hawk, Lord of Luft", 14, 0, [
-        (200, STYPE_HERO_DPS),
-        (1100, STYPE_HERO_DPS),
-        (0.4, STYPE_PERCENT_DPS),
-        (400, STYPE_HERO_DPS),
-        (10, STYPE_GOLD_DROPPED),
-        (10, STYPE_CRIT_DAMAGE),
-        (20, STYPE_GOLD_DROPPED)]),
-    Hero("Elpha, Wielder of Gems", 15, 0, [
-        (300, STYPE_HERO_DPS),
-        (40, STYPE_ALL_DAMAGE),
-        (5, STYPE_BOSS_DAMAGE),
-        (2, STYPE_CRIT_CHANCE),
-        (15, STYPE_CRIT_DAMAGE),
-        (20, STYPE_CHEST_GOLD),
-        (10000, STYPE_HERO_DPS)]),
-    Hero("Poppy, Daughter of Ceremony", 16, 0, [
-        (350, STYPE_HERO_DPS),
-        (25, STYPE_CHEST_GOLD),
-        (20, STYPE_GOLD_DROPPED),
-        (5, STYPE_BOSS_DAMAGE),
-        (7, STYPE_BOSS_DAMAGE),
-        (15, STYPE_ALL_DAMAGE),
-        (20, STYPE_ALL_DAMAGE)]),
-    Hero("Skulptor, Protector of Bridges", 17, 0, [
-        (150, STYPE_HERO_DPS),
-        (900, STYPE_HERO_DPS),
-        (10, STYPE_GOLD_DROPPED),
-        (10, STYPE_GOLD_DROPPED),
-        (5, STYPE_TAP_DAMAGE),
-        (10, STYPE_CRIT_DAMAGE),
-        (25, STYPE_GOLD_DROPPED)]),
-    Hero("Sterling the Enchantor", 18, 0, [
-        (400, STYPE_HERO_DPS),
-        (500, STYPE_HERO_DPS),
-        (5, STYPE_BOSS_DAMAGE),
-        (450, STYPE_HERO_DPS),
-        (5, STYPE_TAP_DAMAGE),
-        (20, STYPE_CHEST_GOLD),
-        (15, STYPE_ALL_DAMAGE)]),
-    Hero("Orba the Foreseer", 19, 0, [
-        (200, STYPE_HERO_DPS),
-        (1000, STYPE_HERO_DPS),
-        (0.5, STYPE_PERCENT_DPS),
-        (5, STYPE_TAP_DAMAGE),
-        (10, STYPE_ALL_DAMAGE),
-        (10, STYPE_GOLD_DROPPED),
-        (10, STYPE_ALL_DAMAGE)]),
-    Hero("Remus the Noble Archer", 20, 0, [
-        (250, STYPE_HERO_DPS),
-        (600, STYPE_HERO_DPS),
-        (20, STYPE_CRIT_DAMAGE),
-        (450, STYPE_HERO_DPS),
-        (0.4, STYPE_PERCENT_DPS),
-        (10, STYPE_TAP_DAMAGE),
-        (10, STYPE_GOLD_DROPPED)]),
-    Hero("Mikey the Magician Apprentice", 21, 0, [
-        (200, STYPE_HERO_DPS),
-        (5, STYPE_TAP_DAMAGE),
-        (30, STYPE_ALL_DAMAGE),
-        (2, STYPE_CRIT_CHANCE),
-        (10, STYPE_ALL_DAMAGE),
-        (20, STYPE_CHEST_GOLD),
-        (10000, STYPE_HERO_DPS)]),
-    Hero("Peter Pricker the Prickly Poker", 22, 0, [
-        (250, STYPE_HERO_DPS),
-        (750, STYPE_HERO_DPS),
-        (10, STYPE_ALL_DAMAGE),
-        (500, STYPE_HERO_DPS),
-        (10, STYPE_ALL_DAMAGE),
-        (30, STYPE_CRIT_DAMAGE),
-        (20, STYPE_ALL_DAMAGE)]),
-    Hero("Teeny Tom, Keeper of the Castle", 23, 0, [
-        (300, STYPE_ALL_DAMAGE),
-        (800, STYPE_ALL_DAMAGE),
-        (0.4, STYPE_PERCENT_DPS),
-        (20, STYPE_CRIT_DAMAGE),
-        (10, STYPE_TAP_DAMAGE),
-        (2, STYPE_CRIT_CHANCE),
-        (10000, STYPE_HERO_DPS)]),
-    Hero("Deznis the Cleanser", 24, 0, [
-        (200, STYPE_HERO_DPS),
-        (500, STYPE_HERO_DPS),
-        (1200, STYPE_HERO_DPS),
-        (15, STYPE_GOLD_DROPPED),
-        (20, STYPE_CHEST_GOLD),
-        (9000, STYPE_HERO_DPS),
-        (15, STYPE_ALL_DAMAGE)]),
-    Hero("Hamlette, Painter of Skulls", 25, 0, [
-        (5, STYPE_TAP_DAMAGE),
-        (5, STYPE_TAP_DAMAGE),
-        (0.4, STYPE_PERCENT_DPS),
-        (10, STYPE_ALL_DAMAGE),
-        (15, STYPE_GOLD_DROPPED),
-        (2, STYPE_CRIT_CHANCE),
-        (15000, STYPE_HERO_DPS)]),
-    Hero("Eistor the Banisher", 26, 0, [
-        (350, STYPE_HERO_DPS),
-        (650, STYPE_HERO_DPS),
-        (0.4, STYPE_PERCENT_DPS),
-        (5, STYPE_BOSS_DAMAGE),
-        (10, STYPE_ALL_DAMAGE),
-        (5, STYPE_BOSS_DAMAGE),
-        (12, STYPE_GOLD_DROPPED)]),
-    Hero("Flavius and Oinksbjorn", 27, 0, [
-        (300, STYPE_HERO_DPS),
-        (700, STYPE_HERO_DPS),
-        (10, STYPE_ALL_DAMAGE),
-        (5, STYPE_BOSS_DAMAGE),
-        (2, STYPE_CRIT_CHANCE),
-        (30, STYPE_CRIT_DAMAGE),
-        (20, STYPE_CHEST_GOLD)]),
-    Hero("Chester the Beast Tamer", 28, 0, [
-        (350, STYPE_HERO_DPS),
-        (1, STYPE_ALL_DAMAGE),
-        (400, STYPE_HERO_DPS),
-        (600, STYPE_HERO_DPS),
-        (20, STYPE_CRIT_DAMAGE),
-        (2, STYPE_CRIT_CHANCE),
-        (15, STYPE_ALL_DAMAGE)]),
-    Hero("Mohacas the Wind Warrior", 29, 0, [
-        (330, STYPE_HERO_DPS),
-        (550, STYPE_HERO_DPS),
-        (10, STYPE_GOLD_DROPPED),
-        (10, STYPE_TAP_DAMAGE),
-        (20, STYPE_GOLD_DROPPED),
-        (10, STYPE_ALL_DAMAGE),
-        (30, STYPE_GOLD_DROPPED)]),
-    Hero("Jaqulin the Unknown", 30, 0, [
-        (1000, STYPE_HERO_DPS),
-        (10, STYPE_TAP_DAMAGE),
-        (4, STYPE_PERCENT_DPS),
-        (20, STYPE_GOLD_DROPPED),
-        (10, STYPE_ALL_DAMAGE),
-        (20, STYPE_ALL_DAMAGE),
-        (30, STYPE_ALL_DAMAGE)]),
-    Hero("Pixie the Rebel Fairy", 31, 0, [
-        (900, STYPE_HERO_DPS),
-        (2000, STYPE_HERO_DPS),
-        (1, STYPE_CRIT_CHANCE),
-        (60, STYPE_TAP_DAMAGE),
-        (25, STYPE_CHEST_GOLD),
-        (10, STYPE_ALL_DAMAGE),
-        (15, STYPE_GOLD_DROPPED)]),
-    Hero("Jackalope the Fireballer", 32, 0, [
-        (40, STYPE_HERO_DPS),
-        (20, STYPE_HERO_DPS),
-        (25, STYPE_GOLD_DROPPED),
-        (60, STYPE_TAP_DAMAGE),
-        (2, STYPE_CRIT_CHANCE),
-        (30, STYPE_ALL_DAMAGE),
-        (10, STYPE_BOSS_DAMAGE)]),
-    Hero("Dark Lord, Punisher of All", 33, 0, [
-        (2000, STYPE_HERO_DPS),
-        (20, STYPE_TAP_DAMAGE),
-        (1, STYPE_PERCENT_DPS),
-        (25, STYPE_GOLD_DROPPED),
-        (20, STYPE_ALL_DAMAGE),
-        (30, STYPE_ALL_DAMAGE),
-        (40, STYPE_ALL_DAMAGE)])]
+    ### unconfirmed
+    def get_upgrade_cost(self, level):
+        return (self.base_cost if level < 1000 else self.base_cost*10) * pow(1.075, level)
 
-def relics(stage, ua):
-    # relics = ((floor to nearest 15 of stage - 75) / 15)^1.7 * undead bonus * 2
-    return int(pow(stage/15-5, 1.7) * (2+ua*0.1))
+    def get_bonuses(self, level, stype):
+        bonus = 0
+        for i in range(self.level_to_skills(level)):
+            if self.skills[i][1] == stype:
+                bonus += self.skills[i][0]
+        return bonus
+
+    ### unconfirmed
+    def get_base_damage(self, level):
+        if level < 1001:
+            l = level - 1
+            return self.pre_calc * (pow(1.075, l) - 1)* pow(0.9718, l)
+        else:
+            return self.e_pre_calc * pow(1.075, level - 1) * (pow(1.075, level - 1000) - 1) * pow(0.904, level - 1001)
+
+    ### unconfirmed
+    ### https://github.com/oLaudix/oLaudix.github.io/blob/master/TTcalc.html
+    ### https://github.com/oLaudix/oLaudix.github.io/blob/master/common.js
+    def get_base_damage_laudis(self, level):
+        levelIneffiency = 0.904
+        heroInefficiency = 0.019
+        heroInefficiencySlowDown = 15.0
+        heroUpgradeBase = 1.075
+        n3 = 0
+        if level >= 1001:
+            n3 = pow(levelIneffiency, level - 1001) * pow(1-(heroInefficiency * heroInefficiencySlowDown), self.hid + 30.0)
+        else:
+            n3 = pow(levelIneffiency, level - 1) * pow(1-(heroInefficiency * min(self.hid, heroInefficiencySlowDown)), self.hid)
+        n4 = 0
+        if level >= 1001:
+            n4 = ((self.get_upgrade_cost(level - 1) * (pow(heroUpgradeBase, level - 1000) - 1) / heroUpgradeBase) - 1) * n3 * 0.1
+        else:
+            n4 = self.get_upgrade_cost(level - 1) * (pow(heroUpgradeBase, level) - 1) / (heroUpgradeBase - 1) * n3 * 0.1
+        return n4
+
+
+hero_info = [
+    Hero("Takeda the Blade Assassin", 1, 50, [
+        (0.50, STYPE_HERO_DPS), 
+        (1.00, STYPE_HERO_DPS), 
+        (0.10, STYPE_ALL_DAMAGE), 
+        (0.10, STYPE_CRIT_DAMAGE), 
+        (10.00, STYPE_HERO_DPS), 
+        (0.25, STYPE_ALL_DAMAGE), 
+        (100.00, STYPE_HERO_DPS)]),
+    Hero("Contessa the Torch Wielder", 2, 175, [
+        (0.05, STYPE_TAP_DAMAGE),
+        (1.00, STYPE_HERO_DPS),
+        (10.00, STYPE_HERO_DPS),
+        (0.004, STYPE_PERCENT_DPS),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.10, STYPE_GOLD_DROPPED),
+        (100.00, STYPE_HERO_DPS)]),
+    Hero("Hornetta, Queen of the Valrunes", 3, 674, [
+        (1.50, STYPE_HERO_DPS),
+        (0.10, STYPE_GOLD_DROPPED),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.004, STYPE_PERCENT_DPS),
+        (0.20, STYPE_CHEST_GOLD),
+        (0.01, STYPE_CRIT_CHANCE),
+        (0.30, STYPE_ALL_DAMAGE)]),
+    Hero("Mila the Hammer Stomper", 4, 2850, [
+        (1.00, STYPE_HERO_DPS),
+        (8.00, STYPE_HERO_DPS),
+        (0.06, STYPE_GOLD_DROPPED),
+        (5.00, STYPE_HERO_DPS),
+        (0.05, STYPE_CRIT_DAMAGE),
+        (0.20, STYPE_ALL_DAMAGE),
+        (0.20, STYPE_CHEST_GOLD)]),
+    Hero("Terra the Land Scorcher", 5, 0, [
+        (3.00, STYPE_HERO_DPS),
+        (0.10, STYPE_GOLD_DROPPED),
+        (0.004, STYPE_PERCENT_DPS),
+        (0.15, STYPE_GOLD_DROPPED),
+        (0.20, STYPE_CHEST_GOLD),
+        (0.05, STYPE_TAP_DAMAGE),
+        (100.00, STYPE_HERO_DPS)]),
+    Hero("Inquisireaux the Terrible", 6, 0, [
+        (2.00, STYPE_HERO_DPS),
+        (7.00, STYPE_HERO_DPS),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.20, STYPE_ALL_DAMAGE),
+        (0.05, STYPE_CRIT_DAMAGE),
+        (0.02, STYPE_CRIT_CHANCE),
+        (100.00, STYPE_HERO_DPS)]),
+    Hero("Charlotte the Special", 7, 0, [
+        (2.00, STYPE_HERO_DPS),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (0.07, STYPE_BOSS_DAMAGE),
+        (6.00, STYPE_HERO_DPS),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.20, STYPE_CHEST_GOLD),
+        (0.30, STYPE_ALL_DAMAGE)]),
+    Hero("Jordaan, Knight of Mini", 8, 0, [
+        (2.00, STYPE_HERO_DPS),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.004, STYPE_PERCENT_DPS),
+        (0.15, STYPE_GOLD_DROPPED),
+        (0.20, STYPE_CHEST_GOLD),
+        (19.00, STYPE_HERO_DPS),
+        (0.20, STYPE_ALL_DAMAGE)]),
+    Hero("Jukka, Master of Axes", 9, 0, [
+        (1.50, STYPE_HERO_DPS),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (0.30, STYPE_ALL_DAMAGE),
+        (0.05, STYPE_CRIT_DAMAGE),
+        (50.00, STYPE_HERO_DPS),
+        (0.25, STYPE_ALL_DAMAGE),
+        (100.00, STYPE_HERO_DPS)]),
+    Hero("Milo and Clonk-Clonk", 10, 0, [
+        (1.50, STYPE_HERO_DPS),
+        (0.01, STYPE_CRIT_CHANCE),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (0.15, STYPE_GOLD_DROPPED),
+        (0.20, STYPE_CHEST_GOLD),
+        (0.25, STYPE_CHEST_GOLD),
+        (0.15, STYPE_ALL_DAMAGE)]),
+    Hero("Macelord the Ruthless", 11, 0, [
+        (2.00, STYPE_HERO_DPS),
+        (8.50, STYPE_HERO_DPS),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.4, STYPE_PERCENT_DPS),
+        (0.15, STYPE_GOLD_DROPPED),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.20, STYPE_GOLD_DROPPED)]),
+    Hero("Gertrude the Goat Rider", 12, 0, [
+        (2.50, STYPE_HERO_DPS),
+        (13.00, STYPE_HERO_DPS),
+        (0.07, STYPE_BOSS_DAMAGE),
+        (0.05, STYPE_CRIT_DAMAGE),
+        (0.4, STYPE_PERCENT_DPS),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.20, STYPE_GOLD_DROPPED)]),
+    Hero("Twitterella the Tweeter", 13, 0, [
+        (1.50, STYPE_HERO_DPS),
+        (8.50, STYPE_HERO_DPS),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.20, STYPE_ALL_DAMAGE),
+        (0.30, STYPE_ALL_DAMAGE),
+        (0.05, STYPE_CRIT_DAMAGE),
+        (120.00, STYPE_HERO_DPS)]),
+    Hero("Master Hawk, Lord of Luft", 14, 0, [
+        (2.00, STYPE_HERO_DPS),
+        (11.00, STYPE_HERO_DPS),
+        (0.004, STYPE_PERCENT_DPS),
+        (4.00, STYPE_HERO_DPS),
+        (0.10, STYPE_GOLD_DROPPED),
+        (0.10, STYPE_CRIT_DAMAGE),
+        (0.20, STYPE_GOLD_DROPPED)]),
+    Hero("Elpha, Wielder of Gems", 15, 0, [
+        (3.00, STYPE_HERO_DPS),
+        (0.40, STYPE_ALL_DAMAGE),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (0.02, STYPE_CRIT_CHANCE),
+        (0.15, STYPE_CRIT_DAMAGE),
+        (0.20, STYPE_CHEST_GOLD),
+        (100.00, STYPE_HERO_DPS)]),
+    Hero("Poppy, Daughter of Ceremony", 16, 0, [
+        (3.50, STYPE_HERO_DPS),
+        (0.25, STYPE_CHEST_GOLD),
+        (0.20, STYPE_GOLD_DROPPED),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (0.07, STYPE_BOSS_DAMAGE),
+        (0.15, STYPE_ALL_DAMAGE),
+        (0.20, STYPE_ALL_DAMAGE)]),
+    Hero("Skulptor, Protector of Bridges", 17, 0, [
+        (1.50, STYPE_HERO_DPS),
+        (9.00, STYPE_HERO_DPS),
+        (0.10, STYPE_GOLD_DROPPED),
+        (0.10, STYPE_GOLD_DROPPED),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.10, STYPE_CRIT_DAMAGE),
+        (0.25, STYPE_GOLD_DROPPED)]),
+    Hero("Sterling the Enchantor", 18, 0, [
+        (4.00, STYPE_HERO_DPS),
+        (5.00, STYPE_HERO_DPS),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (4.50, STYPE_HERO_DPS),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.20, STYPE_CHEST_GOLD),
+        (0.15, STYPE_ALL_DAMAGE)]),
+    Hero("Orba the Foreseer", 19, 0, [
+        (2.00, STYPE_HERO_DPS),
+        (10.00, STYPE_HERO_DPS),
+        (0.005, STYPE_PERCENT_DPS),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.10, STYPE_GOLD_DROPPED),
+        (0.10, STYPE_ALL_DAMAGE)]),
+    Hero("Remus the Noble Archer", 20, 0, [
+        (2.50, STYPE_HERO_DPS),
+        (6.00, STYPE_HERO_DPS),
+        (0.20, STYPE_CRIT_DAMAGE),
+        (4.50, STYPE_HERO_DPS),
+        (0.004, STYPE_PERCENT_DPS),
+        (0.10, STYPE_TAP_DAMAGE),
+        (0.10, STYPE_GOLD_DROPPED)]),
+    Hero("Mikey the Magician Apprentice", 21, 0, [
+        (2.00, STYPE_HERO_DPS),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.30, STYPE_ALL_DAMAGE),
+        (0.02, STYPE_CRIT_CHANCE),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.20, STYPE_CHEST_GOLD),
+        (100.00, STYPE_HERO_DPS)]),
+    Hero("Peter Pricker the Prickly Poker", 22, 0, [
+        (2.50, STYPE_HERO_DPS),
+        (7.50, STYPE_HERO_DPS),
+        (0.10, STYPE_ALL_DAMAGE),
+        (5.00, STYPE_HERO_DPS),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.30, STYPE_CRIT_DAMAGE),
+        (0.20, STYPE_ALL_DAMAGE)]),
+    Hero("Teeny Tom, Keeper of the Castle", 23, 0, [
+        (3.00, STYPE_ALL_DAMAGE),
+        (8.00, STYPE_ALL_DAMAGE),
+        (0.004, STYPE_PERCENT_DPS),
+        (0.20, STYPE_CRIT_DAMAGE),
+        (0.10, STYPE_TAP_DAMAGE),
+        (0.02, STYPE_CRIT_CHANCE),
+        (100.00, STYPE_HERO_DPS)]),
+    Hero("Deznis the Cleanser", 24, 0, [
+        (2.00, STYPE_HERO_DPS),
+        (5.00, STYPE_HERO_DPS),
+        (12.00, STYPE_HERO_DPS),
+        (0.15, STYPE_GOLD_DROPPED),
+        (0.20, STYPE_CHEST_GOLD),
+        (90.00, STYPE_HERO_DPS),
+        (0.15, STYPE_ALL_DAMAGE)]),
+    Hero("Hamlette, Painter of Skulls", 25, 0, [
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.05, STYPE_TAP_DAMAGE),
+        (0.004, STYPE_PERCENT_DPS),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.15, STYPE_GOLD_DROPPED),
+        (0.02, STYPE_CRIT_CHANCE),
+        (150.00, STYPE_HERO_DPS)]),
+    Hero("Eistor the Banisher", 26, 0, [
+        (3.50, STYPE_HERO_DPS),
+        (6.50, STYPE_HERO_DPS),
+        (0.004, STYPE_PERCENT_DPS),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (0.12, STYPE_GOLD_DROPPED)]),
+    Hero("Flavius and Oinksbjorn", 27, 0, [
+        (3.00, STYPE_HERO_DPS),
+        (7.00, STYPE_HERO_DPS),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.05, STYPE_BOSS_DAMAGE),
+        (0.02, STYPE_CRIT_CHANCE),
+        (0.30, STYPE_CRIT_DAMAGE),
+        (0.20, STYPE_CHEST_GOLD)]),
+    Hero("Chester the Beast Tamer", 28, 0, [
+        (3.50, STYPE_HERO_DPS),
+        (0.01, STYPE_ALL_DAMAGE),
+        (4.00, STYPE_HERO_DPS),
+        (6.00, STYPE_HERO_DPS),
+        (0.20, STYPE_CRIT_DAMAGE),
+        (0.02, STYPE_CRIT_CHANCE),
+        (0.15, STYPE_ALL_DAMAGE)]),
+    Hero("Mohacas the Wind Warrior", 29, 0, [
+        (3.30, STYPE_HERO_DPS),
+        (5.50, STYPE_HERO_DPS),
+        (0.10, STYPE_GOLD_DROPPED),
+        (0.10, STYPE_TAP_DAMAGE),
+        (0.20, STYPE_GOLD_DROPPED),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.30, STYPE_GOLD_DROPPED)]),
+    Hero("Jaqulin the Unknown", 30, 0, [
+        (10.00, STYPE_HERO_DPS),
+        (0.10, STYPE_TAP_DAMAGE),
+        (0.04, STYPE_PERCENT_DPS),
+        (0.20, STYPE_GOLD_DROPPED),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.20, STYPE_ALL_DAMAGE),
+        (0.30, STYPE_ALL_DAMAGE)]),
+    Hero("Pixie the Rebel Fairy", 31, 0, [
+        (9.00, STYPE_HERO_DPS),
+        (20.00, STYPE_HERO_DPS),
+        (0.01, STYPE_CRIT_CHANCE),
+        (0.60, STYPE_TAP_DAMAGE),
+        (0.25, STYPE_CHEST_GOLD),
+        (0.10, STYPE_ALL_DAMAGE),
+        (0.15, STYPE_GOLD_DROPPED)]),
+    Hero("Jackalope the Fireballer", 32, 0, [
+        (0.40, STYPE_HERO_DPS),
+        (0.20, STYPE_HERO_DPS),
+        (0.25, STYPE_GOLD_DROPPED),
+        (0.60, STYPE_TAP_DAMAGE),
+        (0.02, STYPE_CRIT_CHANCE),
+        (0.30, STYPE_ALL_DAMAGE),
+        (0.10, STYPE_BOSS_DAMAGE)]),
+    Hero("Dark Lord, Punisher of All", 33, 0, [
+        (20.00, STYPE_HERO_DPS),
+        (0.20, STYPE_TAP_DAMAGE),
+        (0.01, STYPE_PERCENT_DPS),
+        (0.25, STYPE_GOLD_DROPPED),
+        (0.20, STYPE_ALL_DAMAGE),
+        (0.30, STYPE_ALL_DAMAGE),
+        (0.40, STYPE_ALL_DAMAGE)])]
+
+
+"""
+Takeda the Blade Assassin
+Contessa the Torch Wielder
+Hornetta, Queen of the Valrunes
+Mila the Hammer Stomper - 2.85k
+Terra the Land Scorcher - 13.30k
+Inquisireaux the Terrible - 68.10k
+Charlotte the Special - 384.00k
+Jordaan, Knight of Mini - 2.38M
+Jukka, Master of Axes - 23.80M
+Milo and Clonk-Clonk - 143.00M
+Macelord the Ruthless - 943.00M
+Gertrude the Goat Rider - 6.84B
+Twitterella the Tweeter - 54.70B
+Master Hawk, Lord of Luft - 820.00B
+Elpha, Wielder of Gems - 8.20T
+Poppy, Daughter of Ceremony - 164.00T
+Skulptor, Protector of Bridges - 1.64aa
+Sterling the Enchantor - 49.20aa
+Orba the Foreseer - 2.46bb
+Remus the Noble Archer - 73.80bb
+Mikey the Magician Apprentice - 2.44cc
+Peter Pricker the Prickly Poker - 244.00cc
+Teeny Tom, Keeper of the Castle - 48.70dd
+Deznis the Cleanser - 19.50ee
+Hamlette, Painter of Skulls - 21.40ff
+Eistor the Banisher - 2.36hh
+Flavius and Oinksbjorn - 25.90kk
+Chester the Beast Tamer - 28.50pp
+Mohacas the Wind Warrior - 3.14ww
+Jaqulin the Unknown - 3.14e96
+Pixie the Rebel Fairy - 3.76e101
+Jackalope the Fireballer - 4.14e121
+Dark Lord, Punisher of All - 4.56e141
+"""
+
+
+"""
+main hero upgrade cost
+7 17
+8 20
+9 23
+10 27
+11 31
+12 26
+13 41
+14 47
+15 53
+49 827
+50 888
+51 954
+52 1.02k
+53 1.10k
+54 1.18k
+55 1.26k
+100 31.50k
+101 33.83k
+102 36.34k
+103 39.02k
+104 41.91k
+300 50.02B
+301 53.73B
+302 57.70B
+400 63.04T
+500 79.44aa
+600 100.11bb
+"""
+
+
+def total_relics(stage, heroes, level_ua):
+    # relics = ((floor to nearest 15 of stage - 75) / 15)^1.7 * undead bonus
+    stage_relics = pow(stage/15 - 5, 1.7)
+    hero_relics = sum(heroes)/1000
+    multiplier = 2.0+0.1*level_ua
+    return int((stage_relics + hero_relics) * multiplier)
 
 def cost_to_buy_next(artifacts):
     owned = len([x for x in artifacts if x != 0]) + 1
     return int(owned * pow(1.35, owned))
 
 def gold_multiplier(artifacts, hero_gold, hero_chest_gold):
+    # NEED TO ADD CUSTOMIZATIONS
     level_amulet = artifacts[0]
     level_chest = artifacts[3]
     level_elixir = artifacts[4]
@@ -390,6 +506,8 @@ def gold_multiplier(artifacts, hero_gold, hero_chest_gold):
     
     c_chance = 0.02 + 0.004 * level_egg
     c_gold = 10.0 * (1.0 + 0.2 * level_chest + hero_chest_gold)
+    # c_gold = base * 10 * (1 + level_chest) * (1 + customization) * (1 + ff + customization gold dropped)
+
     n_chance = 1.0 - c_chance
     n_gold = (1.0 + 0.1 * level_amulet) 
     d_chance = 0.005 * level_chalice
@@ -399,13 +517,79 @@ def gold_multiplier(artifacts, hero_gold, hero_chest_gold):
     boss_gold = BOSS_CONSTANT * (1 + level_kshield)
     
     gold_multiplier = (mob_gold + boss_gold) / (mobs+1.0)
-    total_multiplier = (1.0 + hero_gold + level_fortune*0.05) * (1.0 + level_elixier * 0.15)
+    # add gold_dropped customizations
+    total_multiplier = (1.0 + hero_gold + 0.05*level_fortune) * (1.0 + 0.15*level_elixir)
 
     final_multiplier = total_multiplier * gold_multiplier
     return final_multiplier
 
+
+"""
+stage 81
+3.94cc -> 4.17 -> 4.39
+4.40 -> 4.62 -> 4.84 cc
+
+220 bb
+1.25
+1.42
+
+7703844707945242.0
+7.7aa base, c gold = 10 * 34.42
+
+2618aa 55.1375
+144 bb 349.975 aa
+
+chesterson gold
+
+stage 100
+14.62dd -> 15.97dd -> 17.33dd
+17.37dd -> 18.73dd
+
+140
+1.36gg -> 1.48gg -> 1.60gg -> 1.72gg -> 1.84gg
+
+145
+13.99gg -> 15.16gg -> 16.32gg
+
+149
+70.20gg -> 77.43gg -> 84.65
+
+150
+130.73gg -> 142.14gg -> 153.54 gg -> 153.65 (normal) -> 165.06 -> 176.46
+
+152
+346.74gg -> 374.85
+377.74gg -> 405.85 -> 433.96
+
+155
+1.53hh -> 1.64hh -> 1.75hh -> 1.85hh -> 1.96hh
+
+156
+2.88hh -> 3.05hh -> 3.22hh -> 3.39hh -> 3.56hh
+
+157
+5.03hh -> 5.23hh -> 5.43hh -> 5.63hh -> 5.83hh
+
+158
+6.96hh -> 7.19hh -> 7.42hh -> (7.43) --> 7.66 -> 7.89 -> 8.13
+
+160
+11.22 -> 11.55hh -> 11.87hh -> 12.19 -> 12.51 -> 12.83
+
+170
+54.81hh -> 56.35
+56.37 -> 57.90 -> 59.44
+
+300
+31.78kk -> 32.91 -> 34.03 -> 35.16 -> 36.28 -> 37.41
+
+
+
+"""
+
+
 def stage_gold(stage):
-    return stage * (0.02 + (0.00045 * min(stage, 150)))
+    return stage_hp(stage) * (0.02 + (0.00045 * min(stage, 150)))
 
 def stage_accumulated_gold(stage):
     pass
@@ -418,12 +602,6 @@ def stage_hp(stage):
 
 def tap_damage(artifacts):
     # MAIN_LEVEL * pow(1.05, MAIN_LEVEL)
-
-    # (Your Level*(1.05^(Your Level)))*(1+All Damage Bonus from Heroes)+
-    # (Tap Damage % to DPS from Heroes*Total Hero DPS)*(1+Tap Damage Bonus from Heroes+
-        # Tap Damage Bonus from Customizations)*(1+Artifacts All Damage)*(1+Drunken Hammer Bonus)*
-#(1+All Damage from Customizations)
-
 
     # Tap Damage: (Your Level*(1.05^(Your Level)))*(1+All Damage Bonus from Heroes)+
     # (Tap Damage % to DPS from Heroes*Total Hero DPS)*(1+Tap Damage Bonus from Heroes+
@@ -447,32 +625,36 @@ def hero_damage(level):
 ############
 ##### Heroes
 
-def get_ad_bonus(heroes):
-    pass
+def get_total_bonus(heroes, stype):
+    bonus = 0
+    for i, level in enumerate(heroes):
+        bonus += hero_info[i].get_bonuses(level, stype)
+    return bonus
 
-def get_crit_bonus(heroes):
-    pass
+def sets(weapons):
+    if 0 in weapons
+        return 0
+    return 1 + sets([n - 1 for n in weapons])
 
-def get_crit_chance(heroes):
-    pass
+def set_bonus(weapons):
+    sets = sets(weapons)
+    if sets == 0:
+        return 1.0
+    else:
+        return 10.0 * sets
 
-def get_tap_bonus(heroes):
-    pass
-
-def get_tap_percent(heroes):
-    pass
-
-def get_chest_bonus(heroes):
-    pass
-
-def get_gold_bonus(heroes):
-    pass
-
-def get_boss_bonus(heroes):
-    pass
-
-
-
+def get_hero_dps(heroes, weapons, artifacts, customization_ad):
+    dps = 0
+    hero_all_damage = get_total_bonus(heroes, STYPE_ALL_DAMAGE)
+    for i, level in enumerate(heroes):
+        hero_dps = hero_info[i].get_base_damage(level)
+        hero_dps *= (1.0 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + hero_all_damage)
+        hero_dps *= 0.01 * all_damage(artifacts)
+        hero_dps *= (1.0 + 0.5*weapons[i])
+        hero_dps *= 1.0 + customization_ad
+        hero_dps *= set_bonus(weapons)
+        dps += hero_dps
+    return dps
 
 
 ##### figure out:
@@ -482,9 +664,17 @@ def get_boss_bonus(heroes):
 ## crit multiplier = (10+hero) * (1 + t) * (1 + c)
 
 
+
+my_heroes = [800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800, 800]
+print "hero test"
+print get_total_bonus(my_heroes, STYPE_CRIT_DAMAGE)
+
+
 my_artifacts = [35, 100, 10, 165, 127, 165, 25, 25, 37, 151, 35, 150, 10, 100, 0, 108, 10, 10, 75, 62, 0, 10, 10, 25, 55, 142, 104, 10, 5]
 print "ad test"
 print all_damage(my_artifacts)
+print "gold test"
+print gold_multiplier(my_artifacts, 0, 0)
 
 """
 Notes
@@ -560,7 +750,8 @@ http://dd.reddit.com/r/TapTitans/comments/2vbwe5/useful_linksdata/
 #  )
 #  *
 #  (Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
-# )
+# 
+
 
 # Hero DPS (evolved): ((((Base Cost)*10*(1.075^(Level-1))*((1.075^(Level-1000))-1))/0.075)*((0.904^(Level-1001))*((1-(0.019*15))^(Hero ID+30))*0.1)*(1+Hero Damage Bonus+All Damage Bonus from Heroes)*(1+Artifacts All Damage)*(1+(Number of Weapon Upgrades for Hero*0.5))*(1+All Damage Bonus from Customizations))*(Full Weapon Set Bonus, Where 0 Sets = 1, 1 Sets = 10, 2 Sets = 20, etc.)
 # Tap Damage: (Your Level*(1.05^(Your Level)))*(1+All Damage Bonus from Heroes)+(Tap Damage % to DPS from Heroes*Total Hero DPS)*(1+Tap Damage Bonus from Heroes+Tap Damage Bonus from Customizations)*(1+Artifacts All Damage)*(1+Drunken Hammer Bonus)*(1+All Damage from Customizations)
