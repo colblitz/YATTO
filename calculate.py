@@ -122,14 +122,25 @@ class Hero:
                 bonus += self.skills[i][0]
         return bonus
 
+    def get_base_damage_contigi(self, level):
+        t1 = ((self.base_cost*(pow(1.075, level-1))*(pow(1.075, level)-1))/0.075)
+        t2 = pow(0.904, level-1)
+        t3 = (1-pow(0.019*min(self.hid, 15), self.hid))*0.1
+        # hb = (1+Hero Damage Bonus+All Damage Bonus from Heroes)
+        # ab = (1+Artifacts All Damage)
+        # wu = (1+(Number of Weapon Upgrades for Hero*0.5))
+        # cb = (1+All Damage Bonus from Customizations)
+        return t1*t2*t3#*hb*ab*wu*cb
+
     ### unconfirmed
     def get_base_damage(self, level):
+        # return self.get_base_damage_contigi(level)
         return self.get_base_damage_laudis(level)
-        if level < 1001:
-            l = level - 1
-            return self.pre_calc * (pow(1.075, l) - 1)* pow(0.9718, l)
-        else:
-            return self.e_pre_calc * pow(1.075, level - 1) * (pow(1.075, level - 1000) - 1) * pow(0.904, level - 1001)
+        # if level < 1001:
+        #     l = level - 1
+        #     return self.pre_calc * (pow(1.075, l) - 1)* pow(0.9718, l)
+        # else:
+        #     return self.e_pre_calc * pow(1.075, level - 1) * (pow(1.075, level - 1000) - 1) * pow(0.904, level - 1001)
 
     ### unconfirmed
     ### https://github.com/oLaudix/oLaudix.github.io/blob/master/TTcalc.html
@@ -236,7 +247,7 @@ hero_info = [
         (2.00, STYPE_HERO_DPS),
         (8.50, STYPE_HERO_DPS),
         (0.05, STYPE_TAP_DAMAGE),
-        (0.4, STYPE_PERCENT_DPS),
+        (0.004, STYPE_PERCENT_DPS),
         (0.15, STYPE_GOLD_DROPPED),
         (0.05, STYPE_TAP_DAMAGE),
         (0.20, STYPE_GOLD_DROPPED)]),
@@ -245,7 +256,7 @@ hero_info = [
         (13.00, STYPE_HERO_DPS),
         (0.07, STYPE_BOSS_DAMAGE),
         (0.05, STYPE_CRIT_DAMAGE),
-        (0.4, STYPE_PERCENT_DPS),
+        (0.004, STYPE_PERCENT_DPS),
         (0.05, STYPE_TAP_DAMAGE),
         (0.20, STYPE_GOLD_DROPPED)]),
     Hero("Twitterella the Tweeter", 13, 54.70e9, [
@@ -329,8 +340,8 @@ hero_info = [
         (0.30, STYPE_CRIT_DAMAGE),
         (0.20, STYPE_ALL_DAMAGE)]),
     Hero("Teeny Tom, Keeper of the Castle", 23, 48.70e24, [
-        (3.00, STYPE_ALL_DAMAGE),
-        (8.00, STYPE_ALL_DAMAGE),
+        (3.00, STYPE_HERO_DPS),
+        (8.00, STYPE_HERO_DPS),
         (0.004, STYPE_PERCENT_DPS),
         (0.20, STYPE_CRIT_DAMAGE),
         (0.10, STYPE_TAP_DAMAGE),
@@ -449,9 +460,8 @@ def cost_to_buy_next(artifacts):
     owned = len([x for x in artifacts if x != 0]) + 1
     return int(owned * pow(1.35, owned))
 
-# check where hero_bonuses are added
+# need to do final verifications
 def gold_multiplier(artifacts, hero_gold_dropped, hero_chest_gold, c_gold_dropped, c_chest_gold):
-    # NEED TO ADD CUSTOMIZATIONS
     level_amulet = artifacts[0]
     level_chest = artifacts[3]
     level_elixir = artifacts[4]
@@ -464,7 +474,7 @@ def gold_multiplier(artifacts, hero_gold_dropped, hero_chest_gold, c_gold_droppe
     mobs = 10 - level_world
     
     c_chance = 0.02 + 0.004 * level_egg
-    c_gold = 10.0 * (1.0 + 0.2 * level_chest + hero_chest_gold) * (1 + c_chest_gold)
+    c_gold = 10.0 * (1.0 + 0.2 * level_chest) * (1 + c_chest_gold) * (1 + hero_chest_gold)
 
     n_chance = 1.0 - c_chance
     n_gold = (1.0 + 0.1 * level_amulet) 
@@ -472,13 +482,20 @@ def gold_multiplier(artifacts, hero_gold_dropped, hero_chest_gold, c_gold_droppe
     d_multiplier = 1.0-d_chance + 10.0*d_chance
 
     mob_gold = mobs * (c_chance * c_gold + n_chance * n_gold * d_multiplier)
+    # 6.520253320788821
     boss_gold = BOSS_CONSTANT * (1 + level_kshield)
     
     gold_multiplier = (mob_gold + boss_gold) / (mobs+1.0)
-    total_multiplier = (1.0 + 0.05*level_fortune + hero_gold_dropped + c_gold_dropped) * (1.0 + 0.15*level_elixir)
+    total_multiplier = (1.0 + 0.05*level_fortune + hero_gold_dropped) * (1.0 + c_gold_dropped) * (1.0 + 0.15*level_elixir)
 
     final_multiplier = total_multiplier * gold_multiplier
     return final_multiplier
+
+def stage_hp(stage):
+    if stage <= 156:
+        return 18.5*pow(1.57, stage)
+    # 18.5*pow(1.57, 156) = 6.7222940277842625e+31        
+    return 6.7222940277842625e+31*pow(1.17, stage-156)
 
 def base_stage_mob_gold(stage):
     return stage_hp(stage) * (0.02 + (0.00045 * min(stage, 150)))
@@ -496,12 +513,6 @@ def gold_for_stage(stage, artifacts, heroes, customizations):
 
     return mobs * base * multiplier
 
-def gold_between_stages(start_stage, end_stage):
-    total = 0.0
-    for s in xrange(start_stage, end_stage):
-        total += gold_for_stage(s, artifacts, heroes, customizations)
-    return total
-
     # if end_stage <= 156:
     #     pass
     # elif start_stage > 156:
@@ -509,11 +520,6 @@ def gold_between_stages(start_stage, end_stage):
     # else:
     #     pass
 
-def stage_hp(stage):
-    if stage <= 156:
-        return 18.5*pow(1.57, stage)
-    # 18.5*pow(1.57, 156) = 6.7222940277842625e+31        
-    return 6.7222940277842625e+31*pow(1.17, stage-156)
 
 def all_damage(artifacts):
     total_ad = 0
@@ -536,8 +542,11 @@ def get_total_bonus(heroes, stype):
     for i, level in enumerate(heroes):
         bonus += hero_info[i].get_bonuses(level, stype)
         if (stype == STYPE_ALL_DAMAGE):
-            pass
-            #print hero_info[i].name + ", " + str(hero_info[i].get_bonuses(level, stype))
+            print hero_info[i].name + ", " + str(hero_info[i].get_bonuses(level, stype))
+        # if (stype == STYPE_GOLD_DROPPED):
+        #     print hero_info[i].name + ", " + str(hero_info[i].get_bonuses(level, stype))
+        # if (stype == STYPE_CHEST_GOLD):
+        #     print hero_info[i].name + ", " + str(hero_info[i].get_bonuses(level, stype))
     return bonus
 
 def number_of_sets(weapons):
@@ -552,25 +561,55 @@ def set_bonus(weapons):
     else:
         return 10.0 * nsets
 
-def get_hero_dps(heroes, weapons, artifacts, customization_ad):
+def get_hero_dps(heroes, weapons, artifacts, customization_ad, hero_expected):
     dps = 0
     hero_all_damage = get_total_bonus(heroes, STYPE_ALL_DAMAGE)
     print "hero_all_damage: ", hero_all_damage
     for i, level in enumerate(heroes):
+        if level == 0:
+            continue
         print hero_info[i].name + " " + str(level) + " -------------------------------------"
         hero_dps = hero_info[i].get_base_damage(level)
-        print "base: ", hero_dps
-        hero_dps *= (1.0 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS))
-        hero_dps *= (1.0 + 0.01 * all_damage(artifacts))
-        hero_dps *= (1.0 + 0.5*weapons[i] + hero_all_damage)
-        hero_dps *= 1.0 + customization_ad
-        hero_dps *= set_bonus(weapons)
-        print "total: " + str(hero_dps)
+        print "         base: ", hero_dps
+
+        bonus_hero = (1.0 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + hero_all_damage)
+        bonus_artifact = (1.0 + 0.01 * all_damage(artifacts))
+        bonus_weapon = (1.0 + 0.5*weapons[i])
+        bonus_customization = 1.0 + customization_ad
+        bonus_set = set_bonus(weapons)
+        hero_dps = hero_dps * bonus_hero * bonus_artifact * bonus_weapon * bonus_customization * bonus_set
+
+        print "   hero bonus: ", bonus_hero
+        print "         from all: ", hero_all_damage
+        print "        from hero: ", hero_info[i].get_bonuses(level, STYPE_HERO_DPS)
+        print "  artifact ad: ", bonus_artifact
+        print " weapon bonus: ", bonus_weapon
+        print "   cust bonus: ", bonus_customization
+        print "    set bonus: ", bonus_set
+        print "####### total: " + str(hero_dps)
+        print "#### expected: " + hero_expected[i]
+
+        # got simple case right
+        # hero_dps = hero_info[i].get_base_damage(level)
+        # hero_dps *= (1.0 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + hero_all_damage)
+        # hero_dps *= (1.0 + 0.01 * all_damage(artifacts))
+        # hero_dps *= (1.0 + 0.5*weapons[i])
+        # hero_dps *= 1.0 + customization_ad
+        # hero_dps *= set_bonus(weapons)
+
+        # wrong
+        # hero_dps = hero_info[i].get_base_damage(level)
+        # hero_dps *= (1.0 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS))
+        # hero_dps *= (1.0 + 0.01 * all_damage(artifacts))
+        # hero_dps *= (1.0 + 0.5*weapons[i] + hero_all_damage)
+        # hero_dps *= 1.0 + customization_ad
+        # hero_dps *= set_bonus(weapons)
+
         dps += hero_dps
     return dps
 
 ### this seems iffy
-def tap_damage(artifacts, heroes, customizations, weapons):
+def tap_damage(artifacts, heroes, customizations, weapons, hero_expected):
     customization_ad = customizations[0]
     customization_crit_dmg = customizations[1]
     customization_crit_chance = customizations[4]
@@ -581,7 +620,7 @@ def tap_damage(artifacts, heroes, customizations, weapons):
     hero_percent_bonus = get_total_bonus(heroes, STYPE_PERCENT_DPS)
     hero_crit_damage = get_total_bonus(heroes, STYPE_CRIT_DAMAGE)
     hero_crit_chance = get_total_bonus(heroes, STYPE_CRIT_CHANCE)
-    hero_total_dps = get_hero_dps(heroes, weapons, artifacts, customization_ad)
+    hero_total_dps = get_hero_dps(heroes, weapons, artifacts, customization_ad, hero_expected)
     print "-------------------------------------------------"
     print "hero total dps: ", hero_total_dps
 
@@ -605,18 +644,51 @@ def tap_damage(artifacts, heroes, customizations, weapons):
     total_tapping = total_tap * overall_crit_multiplier
     print "total_tapping: ", total_tapping
 
-tap_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
-tap_test_heroes = [402, 401, 801, 801, 401, 401, 802, 801, 401, 801, 401, 801, 401, 801, 401, 801, 801, 801, 801, 801, 401, 801, 401, 801, 401, 800, 800, 800, 800, 800, 800, 800, 389]
-tap_test_weapons = [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
-tap_test_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.36]
+def gold_between_stages(start_stage, end_stage, artifacts, heroes, customizations):
+    total = 0.0
+    for s in xrange(start_stage, end_stage):
+        total += gold_for_stage(s, artifacts, heroes, customizations)
+    return total
 
-tap_damage(tap_test_artifacts, tap_test_heroes, tap_test_customizations, tap_test_weapons)
-print "------------------------------------------"
-print "2.05e153 tap damage"
-print "4.76e149 hero dps"
-print "180994 all dmg"
-print "0.73 crit chance"
-print "667 crit multiplier"
+# tap_test2_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 39, 158, 37, 157, 10, 101, 0, 109, 10, 10, 78, 64, 0, 10, 10, 25, 58, 154, 108, 10, 5]
+# tap_test2_heroes = [401, 401, 801, 801, 401, 401, 801, 801, 401, 801, 401, 801, 401, 801, 401, 801, 801, 801, 801, 801, 401, 801, 402, 801, 401, 800, 800, 800, 400, 8, 2, 0, 0]
+# tap_test2_weapons =  [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
+# tap_test2_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
+# print "1200: ", gold_between_stages(1127, 1200, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+# print "1250: ", gold_between_stages(1127, 1250, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+# print "1300: ", gold_between_stages(1127, 1300, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+# print "1350: ", gold_between_stages(1127, 1350, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+# print "1400: ", gold_between_stages(1127, 1400, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+# print "1450: ", gold_between_stages(1127, 1450, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+# print "1500: ", gold_between_stages(1127, 1500, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+# print "1550: ", gold_between_stages(1127, 1550, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+# print "1600: ", gold_between_stages(1127, 1600, tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations)
+
+# # from 1127 to x:
+#       predicted
+# 1200:  6.62272478583e+108    5.21e108
+# 1250:  1.69955164643e+112    1.62e112
+# 1300:  4.36141542957e+115    4.31e115
+# 1350:  1.11923309369e+119    1.26e119
+# 1400:  2.87219307184e+122    2.81e122
+# 1450:  7.37066576066e+125
+# 1500:  1.89147151311e+129
+# 1550:  4.85392310694e+132
+# 1600:  1.24562116663e+136
+
+
+# tap_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
+# tap_test_heroes = [402, 401, 801, 801, 401, 401, 802, 801, 401, 801, 401, 801, 401, 801, 401, 801, 801, 801, 801, 801, 401, 801, 401, 801, 401, 800, 800, 800, 800, 800, 800, 800, 389]
+# tap_test_weapons = [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
+# tap_test_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
+
+# tap_damage(tap_test_artifacts, tap_test_heroes, tap_test_customizations, tap_test_weapons)
+# print "------------------------------------------"
+# print "2.05e153 tap damage"
+# print "4.76e149 hero dps"
+# print "180994 all dmg"
+# print "0.73 crit chance"
+# print "667 crit multiplier"
 # 2.05e153 tap damage
 # 4.76e149 hero dps
 # 180994 all dmg
@@ -625,13 +697,96 @@ print "667 crit multiplier"
 
 
 
+# tap_test2_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
+# tap_test2_heroes = [101, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# tap_test2_weapons =  [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
+# tap_test2_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
+# tap_damage(tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations, tap_test2_weapons, ["145.73M", "153.88K", "268.42K", "1.31M", "5.11M", "15.65M"])
+# print "------------------------------------------"
+# print "takeda: 145.73M"
+# print "contessa: 153.88K"
+# print "hornetta: 268.42K"
+# print "mila: 1.31M"
+# print "terra: 5.11M"
+# print "inq: 15.65M"
+# print "total: 168.24M"
+
+
+# tap_test2_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 39, 158, 37, 157, 10, 101, 0, 109, 10, 10, 78, 64, 0, 10, 10, 25, 58, 154, 108, 10, 5]
+# tap_test2_heroes = [401, 401, 801, 801, 401, 401, 801, 801, 401, 801, 401, 801, 401, 801, 401, 801, 801, 801, 801, 801, 401, 801, 402, 801, 401, 800, 800, 800, 400, 8, 2, 0, 0]
+# tap_test2_weapons =  [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
+# tap_test2_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
+# hero_expected = ["537.29T", "1.47aa", "47.12cc", "580.70cc", "27.01aa", "133.47aa", "35.12dd", "356.81dd", "175.79bb", "2.90ee", "423.18bb", "137.80ee", "7.86cc", "3.45ff", "134.26cc", "105.70ff", "1.27gg", "16.00gg", "1.32hh", "29.92hh", "7.98ff", "33.42ii", "138.04gg", "4.84kk", "8.47ii", "103.81mm", "651.69pp", "774.76uu", "477.35yy", "7.06e96", "3.53e100", "0", "0"]
+# tap_damage(tap_test2_artifacts, tap_test2_heroes, tap_test2_customizations, tap_test2_weapons, hero_expected)
+# print "-------------------------------------------------"
 
 
 
-
-
-
-
+# hero_all_damage:  0.1
+# Takeda the Blade Assassin 101 -------------------------------------
+# base:  5561.98628465
+# hero bonus:  2.5
+# artifact ad:  1810.94
+# weapon bonus:  3.6
+# cust bonus:  1.59
+# set bonus:  1.0
+# total: 145737894.787
+# Contessa the Torch Wielder 1 -------------------------------------
+# base:  16.19527
+# hero bonus:  1.0
+# artifact ad:  1810.94
+# weapon bonus:  3.1
+# cust bonus:  1.59
+# set bonus:  1.0
+# total: 153887.490846
+# Hornetta, Queen of the Valrunes 1 -------------------------------------
+# base:  56.5190657918
+# hero bonus:  1.0
+# artifact ad:  1810.94
+# weapon bonus:  1.6
+# cust bonus:  1.59
+# set bonus:  1.0
+# total: 268522.143183
+# Mila the Hammer Stomper 1 -------------------------------------
+# base:  207.74603558
+# hero bonus:  1.0
+# artifact ad:  1810.94
+# weapon bonus:  2.1
+# cust bonus:  1.59
+# set bonus:  1.0
+# total: 1316002.18865
+# Terra the Land Scorcher 1 -------------------------------------
+# base:  807.41076787
+# hero bonus:  1.0
+# artifact ad:  1810.94
+# weapon bonus:  2.1
+# cust bonus:  1.59
+# set bonus:  1.0
+# total: 5114679.25097
+# Inquisireaux the Terrible 1 -------------------------------------
+# base:  3294.1960586
+# hero bonus:  1.0
+# artifact ad:  1810.94
+# weapon bonus:  1.6
+# cust bonus:  1.59
+# set bonus:  1.0
+# total: 15650729.0651
+# -------------------------------------------------
+# hero total dps:  168241714.926
+# artifact ad:  180994
+# total_tap:  3.41289853931e+15
+# crit multiplier:  566.711
+# crit chance:  0.535
+# overall_crit_multiplier:  197.53875025
+# total_tapping:  6.74179712186e+17
+# ------------------------------------------
+# takeda: 145.73M
+# contessa: 153.88K
+# hornetta: 268.42K
+# mila: 1.31M
+# terra: 5.11M
+# inq: 15.65M
+# total: 168.24M
 ##### figure out:
 ## boss hp
 ## hero leveling cost - http://dd.reddit.com/r/TapTitans/comments/2u7scp/hero_upgrade_cost_explained/
