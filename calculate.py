@@ -12,13 +12,14 @@ TODO:
 # (2 + 4*1.14 + 6*1.14**2 + 8*1.14**3 + 10*1.14**4)/(1 + 1.14 + 1.14**2 + 1.14**3 + 1.14**4)
 BOSS_CONSTANT = 6.520253320788821
 MAIN_LEVEL = 600
+INFINITY = float("inf")
 
 class Artifact:
     def __init__(self, name, ad0, adpl, levelcap, cost):
         self.name = name
         self.ad0 = ad0
         self.adpl = adpl
-        self.levelcap = levelcap if levelcap != 0 else sys.maxint
+        self.levelcap = levelcap if levelcap != 0 else INFINITY
         self.cost = cost
 
     def getAD(self, cl):
@@ -28,7 +29,7 @@ class Artifact:
 
     def costToLevel(self, cl):
         if cl >= self.levelcap or cl == 0:
-            return sys.maxint
+            return INFINITY
         return int(round(self.cost(cl+1.0)))
 
     def info(self, cl):
@@ -76,6 +77,8 @@ artifact_info = [
  STYPE_BOSS_DAMAGE, 
  STYPE_CRIT_CHANCE) = range(9)
 
+SKILL_LEVELS = [10, 25, 50, 100, 200, 400, 800, 1010, 1025, 1050, 1100, 1200, 1400, 1800]
+
 class Hero:
     def __init__(self, name, hid, base_cost, skills):
         self.name = name
@@ -108,6 +111,28 @@ class Hero:
     def get_upgrade_cost(self, level):
         return (self.base_cost if level < 1000 else self.base_cost*10) * pow(1.075, level)
 
+    def cost_to_level(self, level, next_level):
+        if next_level <= 1000:
+            return self.base_cost * (pow(1.075, next_level) - pow(1.075, level)) / 0.075
+        elif level >= 1000:
+            return 10* self.base_cost * (pow(1.075, next_level) - pow(1.075, level)) / 0.075
+        else:
+            return self.cost_to_level(level, 1000) + self.cost_to_level(1000, next_level)
+
+    def next_skill(self, level):
+        for l in SKILL_LEVELS:
+            if level < l:
+                return l
+        return INFINITY
+
+    def cost_to_next_skill(self, level):
+        # print "level: ", level
+        for l in SKILL_LEVELS:
+            if level < l:
+                # print "next skill: ", l
+                return self.cost_to_level(level, l)
+        return INFINITY
+
     def get_bonuses(self, level, stype):
         bonus = 0
         for i in range(self.level_to_skills(level)):
@@ -134,6 +159,12 @@ class Hero:
         else:
             n4 = self.get_upgrade_cost(level - 1) * (pow(heroUpgradeBase, level) - 1) / (heroUpgradeBase - 1) * n3 * 0.1
         return n4
+
+    def get_damage_increase(self, level):
+        return self.get_base_damage(level + 1) - self.get_base_damage(level)
+
+    def get_efficiency(self, level):
+        return self.get_damage_increase(level) / self.get_upgrade_cost(level)
 
 hero_info = [
     Hero("Takeda the Blade Assassin", 1, 50, [
@@ -236,12 +267,15 @@ hero_info = [
         (20.00, STYPE_HERO_DPS), (0.20, STYPE_TAP_DAMAGE), (0.01, STYPE_PERCENT_DPS), (0.25, STYPE_GOLD_DROPPED), 
         (0.20, STYPE_ALL_DAMAGE), (0.30, STYPE_ALL_DAMAGE), (0.40, STYPE_ALL_DAMAGE)])]
 
-class Stats:
+class GameState:
     def __init__(self, artifacts, heroes, customizations, weapons):
         self.artifacts = artifacts
+        self.artifact_ad = all_damage(artifacts)
         self.heroes = heroes
         self.customizations = customizations
         self.weapons = weapons
+        self.hero_weapon_bonuses = get_hero_weapon_bonuses(self.weaspons)
+        self.gold = 0
         self.update()
 
     def update(self):
@@ -312,6 +346,12 @@ def stage_hp(stage):
     # 18.5*pow(1.57, 156) = 6.7222940277842625e+31        
     return 6.7222940277842625e+31*pow(1.17, stage-156)
 
+def health_to_stage(health):
+    if health > stage_hp(156):
+        return int(round(math.log(health / 6.7222940277842625e+31, 1.17) + 156))
+    else:
+        return int(round(math.log(health / 18.5, 1.57)))
+
 def base_stage_mob_gold(stage):
     return stage_hp(stage) * (0.02 + (0.00045 * min(stage, 150)))
 
@@ -355,6 +395,7 @@ def set_bonus(weapons):
     else:
         return 10.0 * nsets
 
+
 def get_hero_dps(heroes, weapons, artifacts, customization_ad, hero_expected = None):
     dps = 0
     hero_all_damage = get_total_bonus(heroes, STYPE_ALL_DAMAGE)
@@ -363,19 +404,18 @@ def get_hero_dps(heroes, weapons, artifacts, customization_ad, hero_expected = N
             continue
         
         hero_dps = hero_info[i].get_base_damage(level)
+        if hero_expected != None:
+            print hero_info[i].name + " " + str(level) + " -------------------------------------"
+            print "         base: ", hero_dps
 
         bonus_hero = (1.0 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + hero_all_damage)
         bonus_artifact = (1.0 + 0.01 * all_damage(artifacts))
         bonus_weapon = (1.0 + 0.5*weapons[i])
         bonus_customization = 1.0 + customization_ad
         bonus_set = set_bonus(weapons)
-
         hero_dps = hero_dps * bonus_hero * bonus_artifact * bonus_weapon * bonus_customization * bonus_set
-        dps += hero_dps
 
-        if (hero_expected is not None):
-            print hero_info[i].name + " " + str(level) + " -------------------------------------"
-            print "         base: ", hero_dps
+        if hero_expected != None:
             print "   hero bonus: ", bonus_hero
             print "         from all: ", hero_all_damage
             print "        from hero: ", hero_info[i].get_bonuses(level, STYPE_HERO_DPS)
@@ -385,8 +425,42 @@ def get_hero_dps(heroes, weapons, artifacts, customization_ad, hero_expected = N
             print "    set bonus: ", bonus_set
             print "####### total: " + str(hero_dps)
             print "#### expected: " + hero_expected[i]
+        dps += hero_dps
 
     return dps
+
+# def get_hero_dps(heroes, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad, hero_expected = None):
+#     dps = 0
+#     hero_all_damage = get_total_bonus(heroes, STYPE_ALL_DAMAGE)
+#     for i, level in enumerate(heroes):
+#         if level == 0:
+#             continue
+        
+#         hero_dps = hero_info[i].get_base_damage(level)
+
+#         bonus_hero = (1.0 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + hero_all_damage)
+#         bonus_artifact = (1.0 + 0.01 * artifact_ad)
+#         bonus_weapon = hero_weapon_bonuses[i]
+#         bonus_customization = 1.0 + customization_ad
+#         bonus_set = weapon_set_bonus
+
+#         hero_dps = hero_dps * bonus_hero * bonus_artifact * bonus_weapon * bonus_customization * bonus_set
+#         dps += hero_dps
+
+#         if (hero_expected is not None):
+#             print hero_info[i].name + " " + str(level) + " -------------------------------------"
+#             print "         base: ", hero_dps
+#             print "   hero bonus: ", bonus_hero
+#             print "         from all: ", hero_all_damage
+#             print "        from hero: ", hero_info[i].get_bonuses(level, STYPE_HERO_DPS)
+#             print "  artifact ad: ", bonus_artifact
+#             print " weapon bonus: ", bonus_weapon
+#             print "   cust bonus: ", bonus_customization
+#             print "    set bonus: ", bonus_set
+#             print "####### total: " + str(hero_dps)
+#             print "#### expected: " + hero_expected[i]
+
+#     return dps
 
 def get_crit_multiplier(hero_thrust_level, customization_bonus, hero_bonus):
     return (10 + hero_bonus) * (1 + 0.2*hero_thrust_level) * (1 + customization_bonus)
@@ -406,11 +480,15 @@ def tap_damage(artifacts, heroes, customizations, weapons, hero_expected = None)
     hero_percent_bonus = get_total_bonus(heroes, STYPE_PERCENT_DPS)
     hero_crit_damage = get_total_bonus(heroes, STYPE_CRIT_DAMAGE)
     hero_crit_chance = get_total_bonus(heroes, STYPE_CRIT_CHANCE)
+
+    hero_weapon_bonuses = get_hero_weapon_bonuses(weapons)
+    weapon_set_bonus = set_bonus(weapons)
+
+    artifact_ad = all_damage(artifacts)
     hero_total_dps = get_hero_dps(heroes, weapons, artifacts, customization_ad, hero_expected)
     
     from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + hero_ad_bonus)
 
-    artifact_ad = all_damage(artifacts)
     from_hero = (hero_percent_bonus * hero_total_dps) * (1 + hero_tap_bonus + customization_tap) * (1 + 0.01* artifact_ad) * (1 + 0.02 * artifacts[9]) * (1 + customization_ad)
     total_tap = from_main + from_hero
     
@@ -422,4 +500,196 @@ def tap_damage(artifacts, heroes, customizations, weapons, hero_expected = None)
     overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier))
     total_tapping = total_tap * overall_crit_multiplier
     return total_tap, total_tapping
+
+def get_hero_weapon_bonuses(weapons):
+    return [1.0 + 0.5*weapons[x] for x in weapons]
+
+
+# ## redo this as dp?
+# def level_heroes(heroes, gold, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad):
+#     # print "leveling with gold: ", gold
+#     gold_left = gold
+#     starting_dps = get_hero_dps(heroes, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad)
+#     options = []
+#     for i, level in enumerate(heroes):
+#         upgrade_cost = hero_info[i].get_upgrade_cost(level)
+#         if gold_left >= upgrade_cost:
+#             # print "cost to level ", i, level, upgrade_cost
+#             options.append((i, upgrade_cost))
+#     # print "gold_left: ", gold_left
+#     # print "options: ", options
+#     if not options:
+#         # print "nothing good, returning"
+#         return heroes
+
+#     best_option = None
+#     best_option_dps = starting_dps
+#     for i, upgrade_cost in options:
+#         new_heroes = [x for x in heroes]
+#         new_heroes[i] += 1
+#         result = level_heroes(new_heroes, gold - upgrade_cost, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad)
+#         dps_after_leveling = get_hero_dps(result, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad)
+#         if dps_after_leveling > best_option_dps:
+#             best_option = i
+#     # print "current: ", heroes
+#     # print "best option: ", best_option
+#     new_heroes = [x for x in heroes]
+#     new_heroes[best_option] += 1
+#     # print "returning: ", new_heroes
+#     return new_heroes
+
+## redo this as dp?
+def level_heroes(heroes, gold, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad):
+    ## buy heroes
+    ## get skills
+    heroes_after = [l for l in heroes]
+    gold_left = gold
+    # print "level 1 with gold_left: ", gold_left
+    for i, level in enumerate(heroes_after):
+        if level == 0 and hero_info[i].base_cost < gold_left:
+            heroes_after[i] += 1
+            gold_left -= hero_info[i].base_cost
+    # print heroes_after
+
+    for i in xrange(len(heroes_after)):
+        if heroes_after[i] == 0:
+            continue
+        level = heroes_after[i]
+        c = hero_info[i].cost_to_next_skill(level)
+        while c < gold_left:
+            next_skill_level = hero_info[i].next_skill(level)
+            heroes_after[i] = next_skill_level
+            level = next_skill_level
+            gold_left -= c
+            c = hero_info[i].cost_to_next_skill(level)
+
+    # last two heroes first
+    done = False
+    owned_heroes = [x for x in heroes_after if x != 0]
+    if len(owned_heroes) < 2:
+        done = True
+    h1 = len(owned_heroes) - 1
+    h2 = len(owned_heroes) - 2
+    while not done:
+        best_option = None
+        best_option_efficiency = 0
+        best_option_cost = 0
+
+        # h1l = heroes_after[h1]
+        # h2l = heroes_after[h2]
+        # c1 = hero_info[h1].get_upgrade_cost(level)
+
+        # h1e = hero_info[h1].get_efficiency(level)
+        # h2e = hero_info[h2].get_efficiency(level)
+
+        # for i, level in enumerate(heroes_after):
+        for i, level in [(h1, heroes_after[h1]), (h2, heroes_after[h2])]:
+            if level != 0:
+                c = hero_info[i].get_upgrade_cost(level)
+                if c < gold_left:
+                    dd = hero_info[i].get_damage_increase(level)
+                    if dd/c > best_option_efficiency:
+                        best_option = i
+                        best_option_efficiency = dd/c
+                        best_option_cost = c
+
+        if best_option is None:
+            done = True
+        else:
+            heroes_after[best_option] += 1
+            gold_left -= best_option_cost
+
+    return heroes_after
+
+
+
+def level_heroes2(heroes, gold, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad):
+    ## buy heroes
+    ## get skills
+    heroes_after = [l for l in heroes]
+    gold_left = gold
+    # print "level 1 with gold_left: ", gold_left
+    for i, level in enumerate(heroes_after):
+        if level == 0 and hero_info[i].base_cost < gold_left:
+            heroes_after[i] += 1
+            gold_left -= hero_info[i].base_cost
+    # print heroes_after
+
+    # last two heroes first
+    done = False
+    owned_heroes = [x for x in heroes_after if x != 0]
+    if len(owned_heroes) < 2:
+        done = True
+    h1 = len(owned_heroes) - 1
+    h2 = len(owned_heroes) - 2
+    while not done:
+        best_option = None
+        best_option_efficiency = 0
+        best_option_cost = 0
+
+        # h1l = heroes_after[h1]
+        # h2l = heroes_after[h2]
+        # c1 = hero_info[h1].get_upgrade_cost(level)
+
+        # h1e = hero_info[h1].get_efficiency(level)
+        # h2e = hero_info[h2].get_efficiency(level)
+
+        # for i, level in enumerate(heroes_after):
+        for i, level in [(h1, heroes_after[h1]), (h2, heroes_after[h2])]:
+            if level != 0:
+                c = hero_info[i].get_upgrade_cost(level)
+                if c < gold_left:
+                    dd = hero_info[i].get_damage_increase(level)
+                    if dd/c > best_option_efficiency:
+                        best_option = i
+                        best_option_efficiency = dd/c
+                        best_option_cost = c
+
+        if best_option is None:
+            done = True
+        else:
+            heroes_after[best_option] += 1
+            gold_left -= best_option_cost
+
+    for i in xrange(len(heroes_after)):
+        if heroes_after[i] == 0:
+            continue
+        level = heroes_after[i]
+        c = hero_info[i].cost_to_next_skill(level)
+        while c < gold_left and level < 800:
+            next_skill_level = hero_info[i].next_skill(level)
+            heroes_after[i] = next_skill_level
+            level = next_skill_level
+            gold_left -= c
+            c = hero_info[i].cost_to_next_skill(level)
+
+    return gold_left, heroes_after
+
+#############
+TAPS_PER_SECOND = 10
+def relics_per_second(artifacts, customizations, weapons):
+    current_stage = 1
+    current_gold = 0
+    current_heroes = [0 for h in hero_info]
+    hero_weapon_bonuses = get_hero_weapon_bonuses(weapons)
+    weapon_set_bonus = set_bonus(weapons)
+    artifact_ad = all_damage(artifacts)
+    customization_ad = customizations[0]
+
+    done = False
+    while not done:
+        tap, tapping = tap_damage(artifacts, current_heroes, customizations, weapons)
+        stage = health_to_stage(tapping * TAPS_PER_SECOND * 5 / 10)
+        if stage > current_stage:
+            current_gold += gold_between_stages(current_stage, stage, artifacts, current_heroes, customizations)
+            current_gold, current_heroes = level_heroes2(current_heroes, current_gold, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad)
+            current_stage = stage
+        else:
+            done = True
+        print "end on: "
+        print "stage: ", current_stage
+        print "heroes: ", current_heroes
+        print "-------------------------------------------"
+    
+
 

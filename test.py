@@ -27,21 +27,58 @@ from calculate import *
 # 1550:  4.85392310694e+132
 # 1600:  1.24562116663e+136
 
+c0 = 0
+for i in range(1, 20):
+	c0 += hero_info[0].get_upgrade_cost(i)
+	print i, hero_info[0].get_upgrade_cost(i), c0
 
-tap_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
-tap_test_heroes = [402, 401, 801, 801, 401, 401, 802, 801, 401, 801, 401, 801, 401, 801, 401, 801, 801, 801, 801, 801, 401, 801, 401, 801, 401, 800, 800, 800, 800, 800, 800, 800, 389]
-tap_test_weapons = [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
-tap_test_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
+c1 = 0
+for i in range(1, 20):
+	c1 += hero_info[1].get_upgrade_cost(i)
+	print i, hero_info[1].get_upgrade_cost(i), c1
 
-(tap_damage, tapping) = tap_damage(tap_test_artifacts, tap_test_heroes, tap_test_customizations, tap_test_weapons)
-print "tap: ", tap_damage
-print "tapping: ", tapping
-print "------------------------------------------"
-print "2.05e153 tap damage"
-print "4.76e149 hero dps"
-print "180994 all dmg"
-print "0.73 crit chance"
-print "667 crit multiplier"
+print "------------------------"
+
+
+hero_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
+hero_test_heroes =  [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+hero_test_weapons = [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
+hero_test_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
+
+relics_per_second(hero_test_artifacts, hero_test_customizations, hero_test_weapons)
+
+# gold = 100
+# for k in range(200):
+# 	print "i: ", k, " gold: ", gold
+# 	skills_first = level_heroes(hero_test_heroes, gold, get_hero_weapon_bonuses(hero_test_weapons), set_bonus(hero_test_weapons), all_damage(hero_test_artifacts), hero_test_customizations[0])
+# 	levels_first = level_heroes2(hero_test_heroes, gold, get_hero_weapon_bonuses(hero_test_weapons), set_bonus(hero_test_weapons), all_damage(hero_test_artifacts), hero_test_customizations[0])
+# 	sf_dps = get_hero_dps(skills_first, get_hero_weapon_bonuses(hero_test_weapons), set_bonus(hero_test_weapons), all_damage(hero_test_artifacts), hero_test_customizations[0])
+# 	lf_dps = get_hero_dps(levels_first, get_hero_weapon_bonuses(hero_test_weapons), set_bonus(hero_test_weapons), all_damage(hero_test_artifacts), hero_test_customizations[0])
+# 	print skills_first
+# 	print levels_first
+# 	print sf_dps
+# 	print lf_dps
+# 	print "------------------------------------------------------------------------"
+# 	gold *= 10
+
+
+#print level_heroes(hero_test_heroes, 50000, get_hero_weapon_bonuses(hero_test_weapons), set_bonus(hero_test_weapons), all_damage(hero_test_artifacts), hero_test_customizations[0])
+
+
+# tap_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
+# tap_test_heroes = [402, 401, 801, 801, 401, 401, 802, 801, 401, 801, 401, 801, 401, 801, 401, 801, 801, 801, 801, 801, 401, 801, 401, 801, 401, 800, 800, 800, 800, 800, 800, 800, 389]
+# tap_test_weapons = [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
+# tap_test_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
+
+# (tap_damage, tapping) = tap_damage(tap_test_artifacts, tap_test_heroes, tap_test_customizations, tap_test_weapons)
+# print "tap: ", tap_damage
+# print "tapping: ", tapping
+# print "------------------------------------------"
+# print "2.05e153 tap damage"
+# print "4.76e149 hero dps"
+# print "180994 all dmg"
+# print "0.73 crit chance"
+# print "667 crit multiplier"
 
 
 
