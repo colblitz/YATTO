@@ -1,4 +1,7 @@
 from calculate import *
+import time
+import cProfile
+
 
 
 # tap_test2_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 39, 158, 37, 157, 10, 101, 0, 109, 10, 10, 78, 64, 0, 10, 10, 25, 58, 154, 108, 10, 5]
@@ -27,25 +30,78 @@ from calculate import *
 # 1550:  4.85392310694e+132
 # 1600:  1.24562116663e+136
 
-c0 = 0
-for i in range(1, 20):
-	c0 += hero_info[0].get_upgrade_cost(i)
-	print i, hero_info[0].get_upgrade_cost(i), c0
+# c0 = 0
+# for i in range(1, 20):
+# 	c0 += hero_info[0].get_upgrade_cost(i)
+# 	print i, hero_info[0].get_upgrade_cost(i), c0
 
-c1 = 0
-for i in range(1, 20):
-	c1 += hero_info[1].get_upgrade_cost(i)
-	print i, hero_info[1].get_upgrade_cost(i), c1
+# c1 = 0
+# for i in range(1, 20):
+# 	c1 += hero_info[1].get_upgrade_cost(i)
+# 	print i, hero_info[1].get_upgrade_cost(i), c1
 
-print "------------------------"
+# print "------------------------"
 
 
 hero_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
-hero_test_heroes =  [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# hero_test_heroes =  [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 hero_test_weapons = [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
 hero_test_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
 
-relics_per_second(hero_test_artifacts, hero_test_customizations, hero_test_weapons)
+# relics_per_second(hero_test_artifacts, hero_test_customizations, hero_test_weapons)
+
+stage_relics = pow(2505/15 - 5, 1.7)
+hero_relics = 171000/1000
+multiplier = 2.0+0.1*170
+print int((stage_relics + hero_relics) * multiplier)
+
+
+for i in xrange(5):
+  print hero_test_artifacts
+  g = GameState(hero_test_artifacts, hero_test_customizations, hero_test_weapons)
+  base_rps = g.relics_per_second2()
+  print base_rps
+  relic_costs = [0 for h in hero_test_artifacts]
+  difference = [0 for h in hero_test_artifacts]
+  efficiency = [0 for h in hero_test_artifacts]
+  for ai, a in enumerate(hero_test_artifacts):
+    relic_cost = artifact_info[ai].costToLevel(a)
+    if a == 0 or relic_cost > sys.maxint:
+      continue
+    new_a = [h for h in hero_test_artifacts]
+    new_a[ai] += 1
+    relic_costs[ai] = relic_cost
+    new_g = GameState(new_a, hero_test_customizations, hero_test_weapons)
+    new_rps = new_g.relics_per_second2()
+    difference[ai] = new_rps - base_rps
+    efficiency[ai] = (new_rps - base_rps) / relic_cost * 100000
+
+  best_o = 0
+  best_e = 0
+  print "----------------------------------------------------------------------------------------"
+  for i in range(len(efficiency)):
+    print "%2d - %5d - %1.7f - %2.6f - %s" % (i, relic_costs[i], difference[i], efficiency[i], artifact_info[i].name)
+    if efficiency[i] > best_e:
+      best_o = i
+      best_e = efficiency[i]
+  print "upgrading: ", best_o
+  hero_test_artifacts[best_o] += 1  
+
+
+
+# for i in xrange(100):
+#   print i, next_boss_stage(i)
+
+# g = GameState(hero_test_artifacts, hero_test_customizations, hero_test_weapons)
+# # g.relics_per_second2()  
+# print "alkjsdlfkjsf"
+# start = time.time()
+# for i in xrange(10000):
+#   if i % 1000 == 0:
+#     print "."
+#   g.relics_per_second2()  
+# end = time.time()
+# print (end - start) / 100.0
 
 # gold = 100
 # for k in range(200):
