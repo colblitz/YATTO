@@ -42,50 +42,140 @@ import cProfile
 
 # print "------------------------"
 
+# TRB4 - ohko until 2380, ohko tap until 2560, ohko br 2605, 105 seconds capped 2665
+test1_a = [40, 114, 10, 260, 203, 245, 25, 25, 57, 229, 60, 230, 10, 272, 10, 114, 10, 10, 114, 94, 25, 10, 10, 25, 76, 217, 157, 10, 5]
+test1_w = [2, 3, 4, 3, 4, 6, 7, 5, 3, 5, 5, 3, 6, 5, 5, 5, 2, 6, 3, 1, 1, 6, 6, 1, 4, 5, 3, 4, 2, 7, 2, 7, 1]
+test1_c = [0.80, 0.81, 0.66, 1.67, 0.105, 0.44]
+# g = GameState(test1_a, test1_w, test1_c)
+# base_rps = g.relics_per_second3()
+# print "TRB4 - ohko until 2380, ohko tap until 2560, ohko br 2605, 105 seconds capped 2665"
+# print "------------------------"
 
-hero_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
-# hero_test_heroes =  [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-hero_test_weapons = [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
-hero_test_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
+# LeonProfessional - ohko until 2075, br to evolve dl, ohko to 2400, 150 second cap at around 2600-2610
+test2_a = [35, 110, 10, 165, 125, 165, 25, 25, 60, 180, 35, 180, 10, 120, 10, 90, 10, 10, 90, 75, 25, 0, 10, 25, 61, 150, 125, 10, 5]
+test2_w = [3, 2, 1, 2, 3, 5, 4, 2, 5, 8, 6, 2, 5, 5, 5, 3, 3, 4, 6, 3, 1, 3, 8, 3, 6, 3, 2, 3, 1, 3, 2, 6, 2]
+test2_c = [0.72, 0.81, 0.66, 1.67, 0.095, 0.38]
+# g = GameState(test2_a, test2_w, test2_c)
+# base_rps = g.relics_per_second3()
+# print "LeonProfessional - ohko until 2075, br to evolve dl, ohko to 2400, 150 second cap at around 2600-2610"
+# print "------------------------"
+
+# Iottie - walled at jackalope, prestiges around 1400
+test3_a = [14, 0, 0, 25, 30, 0, 0, 14, 17, 0, 15, 0, 10, 0, 10, 31, 0, 10, 23, 24, 25, 10, 10, 15, 20, 50, 32, 0, 5]
+test3_w = [3, 0, 1, 1, 1, 2, 1, 1, 0, 1, 2, 0, 0, 0, 1, 0, 1, 2, 2, 4, 0, 2, 1, 2, 0, 1, 0, 2, 0, 2, 0, 5, 1]
+test3_c = [0.23, 0.25, 0.25, 0.32, 0.010, 0.08]
+# g = GameState(test3_a, test3_w, test3_c)
+# base_rps = g.relics_per_second3()
+# print "Iottie - walled at jackalope, prestiges around 1400"
+# print "------------------------"
+
+# Badeky - walled with sc/br at around 2505
+test4_a = [40, 94, 10, 102, 71, 150, 25, 25, 44, 220, 21, 108, 10, 0, 10, 90, 10, 10, 58, 60, 25, 10, 0, 0, 53, 144, 77, 10, 5]
+test4_w = [3, 6, 4, 2, 3, 4, 5, 2, 1, 5, 5, 3, 2, 4, 3, 1, 3, 4, 2, 6, 5, 3, 2, 1, 2, 4, 3, 4, 10, 4, 0, 2, 5]
+test4_c = [0.60, 0.25, 0.25, 0.42, 0.020, 0.32]
+# g = GameState(test4_a, test4_w, test4_c)
+# base_rps = g.relics_per_second3()
+# print "Badeky - walled with sc/br at around 2505"
+# print "------------------------"
+
+# rajnod - walled at 2025, dl lvl 650-700
+test5_a = [0, 0, 0, 46, 49, 46, 25, 17, 11, 41, 15, 51, 10, 74, 10, 90, 10, 10, 0, 14, 25, 0, 0, 0, 19, 40, 0, 0, 5]
+test5_w = [1, 2, 4, 0, 0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 2]
+test5_c = [0.14, 0.25, 0.25, 0.42, 0.010, 0.04]
+# g = GameState(test5_a, test5_w, test5_c)
+# base_rps = g.relics_per_second3()
+# print "rajnod - walled at 2025, dl lvl 650-700"
+# print "------------------------"
+
+# superliro - one hit to 1990, after dl again to 2290, wall around 2475-2500 
+test6_a = [0, 67, 10, 115, 87, 115, 25, 25, 29, 113, 18, 114, 0, 0, 10, 110, 10, 10, 59, 48, 25, 10, 10, 25, 44, 108, 81, 10, 5]
+test6_w = [1, 4, 1, 2, 3, 5, 2, 5, 2, 2, 2, 1, 1, 0, 3, 2, 2, 1, 0, 3, 4, 0, 0, 1, 2, 4, 4, 3, 2, 0, 1, 0, 1]
+test6_c = [0.35, 0.40, 0.30, 0.42, 0.025, 0.22]
+# g = GameState(test6_a, test6_w, test6_c)
+# base_rps = g.relics_per_second3()
+# print "superliro - one hit to 1990, after dl again to 2290, wall around 2475-2500 "
+# print "------------------------"
+
+# snakeMGL - 2583, dl to 1927
+test7_a = [100, 150, 10, 250, 200, 250, 25, 25, 150, 220, 100, 210, 10, 300, 10, 238, 10, 10, 150, 130, 25, 10, 10, 25, 80, 200, 150, 10, 5]
+test7_w = [4, 2, 4, 3, 2, 6, 6, 8, 8, 7, 2, 6, 6, 3, 8, 2, 7, 5, 0, 5, 5, 3, 5, 3, 2, 5, 6, 3, 6, 2, 1, 5, 5]
+test7_c = [0.80, 0.81, 0.66, 1.67, 0.045, 0.44]
+# g = GameState(test7_a, test7_w, test7_c)
+# base_rps = g.relics_per_second3()
+# print "snakeMGL - 2583, dl to 1927"
+# print "------------------------"
+
+test1_c = [0, 0, 0, 0, 0, 0]
+
+# print "------------------------------------------------------------------------------"
+# g = GameState([40, 115, 10, 260, 203, 245, 25, 25, 57, 235, 60, 233, 10, 272, 10, 115, 10, 10, 115, 94, 25, 10, 10, 25, 77, 217, 158, 10, 5], test1_w, test1_c)
+# g.relics_per_second3()
+# print "------------------------------------------------------------------------------"
+# g = GameState([40, 115, 10, 260, 203, 245, 25, 25, 57, 235, 60, 234, 10, 272, 10, 115, 10, 10, 115, 94, 25, 10, 10, 25, 77, 217, 158, 10, 5], test1_w, test1_c)
+# g.relics_per_second3()
+
+
+get_best(test1_a, test1_w, test1_c, 500000, SPS, True)
+
+
+# hero_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
+# # hero_test_heroes =  [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# hero_test_weapons = [5, 4, 1, 2, 2, 1, 3, 4, 6, 4, 2, 4, 2, 2, 1, 2, 2, 0, 3, 3, 3, 1, 2, 0, 1, 3, 2, 3, 0, 4, 1, 2, 3]
+# hero_test_customizations = [0.59, 0.81, 0.25, 0.42, 0.015, 0.38]
 
 # relics_per_second(hero_test_artifacts, hero_test_customizations, hero_test_weapons)
 
-stage_relics = pow(2505/15 - 5, 1.7)
-hero_relics = 171000/1000
-multiplier = 2.0+0.1*170
-print int((stage_relics + hero_relics) * multiplier)
+# stage_relics = pow(1500/15 - 5, 1.7)
+# hero_relics = 71000/1000
+# multiplier = 2.0+0.1*100
+# print int((stage_relics + hero_relics) * multiplier)
+
+# stage_relics = pow(1515/15 - 5, 1.7)
+# hero_relics = 71000/1000
+# multiplier = 2.0+0.1*100
+# print int((stage_relics + hero_relics) * multiplier)
+
+# stage_relics = pow(1530/15 - 5, 1.7)
+# hero_relics = 71000/1000
+# multiplier = 2.0+0.1*100
+# print int((stage_relics + hero_relics) * multiplier)
+
+# stage_relics = pow(1545/15 - 5, 1.7)
+# hero_relics = 71000/1000
+# multiplier = 2.0+0.1*100
+# print int((stage_relics + hero_relics) * multiplier)
 
 
-for i in xrange(5):
-  print hero_test_artifacts
-  g = GameState(hero_test_artifacts, hero_test_customizations, hero_test_weapons)
-  base_rps = g.relics_per_second2()
-  print base_rps
-  relic_costs = [0 for h in hero_test_artifacts]
-  difference = [0 for h in hero_test_artifacts]
-  efficiency = [0 for h in hero_test_artifacts]
-  for ai, a in enumerate(hero_test_artifacts):
-    relic_cost = artifact_info[ai].costToLevel(a)
-    if a == 0 or relic_cost > sys.maxint:
-      continue
-    new_a = [h for h in hero_test_artifacts]
-    new_a[ai] += 1
-    relic_costs[ai] = relic_cost
-    new_g = GameState(new_a, hero_test_customizations, hero_test_weapons)
-    new_rps = new_g.relics_per_second2()
-    difference[ai] = new_rps - base_rps
-    efficiency[ai] = (new_rps - base_rps) / relic_cost * 100000
+# for i in xrange(5):
+#   print hero_test_artifacts
+#   g = GameState(hero_test_artifacts, hero_test_customizations, hero_test_weapons)
+#   base_rps = g.relics_per_second2()
+#   print base_rps
+#   relic_costs = [0 for h in hero_test_artifacts]
+#   difference = [0 for h in hero_test_artifacts]
+#   efficiency = [0 for h in hero_test_artifacts]
+#   for ai, a in enumerate(hero_test_artifacts):
+#     relic_cost = artifact_info[ai].costToLevel(a)
+#     if a == 0 or relic_cost > sys.maxint:
+#       continue
+#     new_a = [h for h in hero_test_artifacts]
+#     new_a[ai] += 1
+#     relic_costs[ai] = relic_cost
+#     new_g = GameState(new_a, hero_test_customizations, hero_test_weapons)
+#     new_rps = new_g.relics_per_second2()
+#     difference[ai] = new_rps - base_rps
+#     efficiency[ai] = (new_rps - base_rps) / relic_cost * 100000
 
-  best_o = 0
-  best_e = 0
-  print "----------------------------------------------------------------------------------------"
-  for i in range(len(efficiency)):
-    print "%2d - %5d - %1.7f - %2.6f - %s" % (i, relic_costs[i], difference[i], efficiency[i], artifact_info[i].name)
-    if efficiency[i] > best_e:
-      best_o = i
-      best_e = efficiency[i]
-  print "upgrading: ", best_o
-  hero_test_artifacts[best_o] += 1  
+#   best_o = 0
+#   best_e = 0
+#   print "----------------------------------------------------------------------------------------"
+#   for i in range(len(efficiency)):
+#     print "%2d - %5d - %1.7f - %2.6f - %s" % (i, relic_costs[i], difference[i], efficiency[i], artifact_info[i].name)
+#     if efficiency[i] > best_e:
+#       best_o = i
+#       best_e = efficiency[i]
+#   print "upgrading: ", best_o
+#   hero_test_artifacts[best_o] += 1  
 
 
 
