@@ -8,6 +8,11 @@ TODO:
  - check boss gold formula
  - factor in hero boss damage -> less boss life
  - is future's fortune still roundup
+
+NOTES:
+ - FateRiddle's uses different formulas for different things, which is weird...?
+ - gxgx55/bsedmonds doesn't take into account weapons/customizations
+
 """
 
 # (2 + 4*1.14 + 6*1.14**2 + 8*1.14**3 + 10*1.14**4)/(1 + 1.14 + 1.14**2 + 1.14**3 + 1.14**4)
@@ -133,6 +138,8 @@ class Hero:
         return (self.base_cost if level < 1000 else self.base_cost*10) * pow(1.075, level)
 
     def cost_to_level(self, level, next_level):
+        if next_level == level + 1:
+            return self.get_upgrade_cost(level)
         if next_level <= 1000:
             return self.base_cost * (pow(1.075, next_level) - pow(1.075, level)) / 0.075
         elif level >= 1000:
@@ -558,59 +565,7 @@ class GameState:
         total_tapping = total_tap * overall_crit_multiplier
         return total_tap, total_tapping
 
-    # def level_heroes(self):
-    #     ## buy heroes
-    #     heroes_after = [l for l in self.heroes]
-    #     # print "level 1 with self.current_gold: ", self.current_gold
-    #     for i, level in enumerate(heroes_after):
-    #         if level == 0 and hero_info[i].base_cost < self.current_gold:
-    #             heroes_after[i] += 1
-    #             self.current_gold -= hero_info[i].base_cost
-    #     # print heroes_after
-
-    #     # last two heroes first
-    #     done = False
-    #     owned_heroes = [x for x in heroes_after if x != 0]
-    #     if len(owned_heroes) < 2:
-    #         done = True
-    #     h1 = len(owned_heroes) - 1
-    #     h2 = len(owned_heroes) - 2
-    #     while not done:
-    #         best_option = None
-    #         best_option_efficiency = 0
-    #         best_option_cost = 0
-
-    #         for i, level in [(h1, heroes_after[h1]), (h2, heroes_after[h2])]:
-    #             if level != 0:
-    #                 c = hero_info[i].get_upgrade_cost(level)
-    #                 if c < self.current_gold:
-    #                     dd = hero_info[i].get_damage_increase(level)
-    #                     if dd/c > best_option_efficiency:
-    #                         best_option = i
-    #                         best_option_efficiency = dd/c
-    #                         best_option_cost = c
-
-    #         if best_option is None:
-    #             done = True
-    #         else:
-    #             heroes_after[best_option] += 1
-    #             self.current_gold -= best_option_cost
-
-    #     for i in xrange(len(heroes_after)):
-    #         if heroes_after[i] == 0:
-    #             continue
-    #         level = heroes_after[i]
-    #         c = hero_info[i].cost_to_next_skill(level)
-    #         while c < self.current_gold and level < 800:
-    #             next_skill_level = hero_info[i].next_skill(level)
-    #             heroes_after[i] = next_skill_level
-    #             level = next_skill_level
-    #             self.current_gold -= c
-    #             c = hero_info[i].cost_to_next_skill(level)
-    #     self.heroes = heroes_after
-
-
-    def level_heroes2(self):
+    def level_heroes(self):
         ## buy all the heroes that you can buy
         heroes_after = [l for l in self.heroes]
         for i, level in enumerate(heroes_after):
@@ -623,25 +578,33 @@ class GameState:
         last_owned = len(owned_heroes) - 1
         l_last = heroes_after[last_owned]
 
-        c100 = hero_info[last_owned].cost_to_level(l_last, l_last + 100)
-        while c100 < self.current_gold:
-            heroes_after[last_owned] += 100
-            l_last = heroes_after[last_owned]            
-            self.current_gold -= c100
-            c100 = hero_info[last_owned].cost_to_level(l_last, l_last + 100)
+        for i in [100, 10, 1]:
+            c = hero_info[last_owned].cost_to_level(l_last, l_last + i)
+            while c < self.current_gold:
+                heroes_after[last_owned] += i
+                l_last = heroes_after[last_owned]            
+                self.current_gold -= c
+                c = hero_info[last_owned].cost_to_level(l_last, l_last + i)
 
-        c10 = hero_info[last_owned].cost_to_level(l_last, l_last + 10)
-        while c10 < self.current_gold:
-            heroes_after[last_owned] += 10
-            l_last = heroes_after[last_owned]            
-            self.current_gold -= c10
-            c10 = hero_info[last_owned].cost_to_level(l_last, l_last + 10)
+        # c100 = hero_info[last_owned].cost_to_level(l_last, l_last + 100)
+        # while c100 < self.current_gold:
+        #     heroes_after[last_owned] += 100
+        #     l_last = heroes_after[last_owned]            
+        #     self.current_gold -= c100
+        #     c100 = hero_info[last_owned].cost_to_level(l_last, l_last + 100)
 
-        c = hero_info[last_owned].get_upgrade_cost(heroes_after[last_owned])
-        while c < self.current_gold:
-            heroes_after[last_owned] += 1
-            self.current_gold -= c
-            c = hero_info[last_owned].get_upgrade_cost(heroes_after[last_owned])
+        # c10 = hero_info[last_owned].cost_to_level(l_last, l_last + 10)
+        # while c10 < self.current_gold:
+        #     heroes_after[last_owned] += 10
+        #     l_last = heroes_after[last_owned]            
+        #     self.current_gold -= c10
+        #     c10 = hero_info[last_owned].cost_to_level(l_last, l_last + 10)
+
+        # c = hero_info[last_owned].get_upgrade_cost(heroes_after[last_owned])
+        # while c < self.current_gold:
+        #     heroes_after[last_owned] += 1
+        #     self.current_gold -= c
+        #     c = hero_info[last_owned].get_upgrade_cost(heroes_after[last_owned])
 
         # print "self.current gold: ", self.current_gold
         # buy all the skills that you can
@@ -673,151 +636,8 @@ class GameState:
         self.heroes = heroes_after
 
     #############
-    TAPS_PER_SECOND = 10
-    def relics_per_second(self):
-        self.new_run()
-
-        done = False
-        while not done:
-            tap, tapping = self.tap_damage()
-            stage = health_to_stage(tapping * TAPS_PER_SECOND * 5 / 10)
-            if stage > self.current_stage:
-                self.current_gold += self.gold_between_stages(self.current_stage, stage)
-                self.level_heroes()
-                self.current_stage = stage
-            else:
-                done = True
-
-            print self.current_stage, " - ", self.heroes
-
-        print "----------------------------------------------------------------------------"
-        self.new_run()
-
-        done = False
-        while not done:
-            tap, tapping = self.tap_damage()
-            stage = health_to_stage(tapping * TAPS_PER_SECOND * 5 / 10)
-            if stage > self.current_stage:
-                self.current_gold += self.gold_between_stages(self.current_stage, stage)
-                self.level_heroes2()
-                self.current_stage = stage
-            else:
-                done = True
-
-            print self.current_stage, " - ", self.heroes
-
-        print "----------------------------------------------------------------------------"
-        self.new_run()
-
-        done = False
-        while not done:
-            tap, tapping = self.tap_damage()
-            stage = health_to_stage(tap)
-            if stage > self.current_stage:
-                self.current_gold += self.gold_between_stages(self.current_stage, stage)
-                self.level_heroes2()
-                self.time += 4.5 * (stage - self.current_stage)
-                self.current_stage = stage
-            else:
-                # can't oneshot mobs, so tap until 5 sec of tapping can't kill boss
-                dmg = tapping * TAPS_PER_SECOND * 5
-                next_boss = next_boss_stage(self.current_stage)
-                if dmg > stage_hp(next_boss) * 10:
-                    self.current_gold += self.gold_between_stages(self.current_stage, next_boss + 1)
-                    self.level_heroes2()
-                    self.time += 4.5 * (next_boss - self.current_stage + 1) + 5*(stage_hp(next_boss) * 10)/(tapping * TAPS_PER_SECOND)
-                    self.current_stage = next_boss + 1
-                else:
-                    # do we want to grind for the next hero
-                    owned_heroes = [x for x in self.heroes if x != 0]
-                    next_hero = len(owned_heroes)
-                    if next_hero == 33 and self.heroes[32] < 1001:
-                        grind_target = hero_info[32].cost_to_evolve()
-                    elif next_hero == 33:
-                        print "nothing left, done"
-                        done = True
-                        continue
-                    else:
-                        grind_target = hero_info[next_hero].base_cost
-                    print "grind target: ", grind_target
-                    print "current_gold: ", self.current_gold
-                    gold_needed = grind_target - self.current_gold
-                    mob_gold = self.mob_multiplier() * base_stage_mob_gold(self.current_stage)
-                    print "mob gold: ", mob_gold
-                    print "mobs needed: ", gold_needed / mob_gold
-                    if gold_needed < 0:
-                        # check if we can get whatever we were grinding for
-                        self.level_heroes2()
-                        self.evolve_heroes()
-                    if gold_needed < 200 * mob_gold:
-                        print "ok, let's grind"
-                        num_mobs = grind_target / mob_gold
-                        mob_hp = stage_hp(self.current_stage)
-                        self.current_gold += num_mobs * mob_gold
-                        self.level_heroes2()
-                        self.time += (mob_hp / (tapping * TAPS_PER_SECOND) + 4.5/6.0) * num_mobs
-                    else:
-                        print "not grinding, too far"
-                        done = True
-
-            print self.current_stage, " - ", self.time, " - ", self.heroes
-
-    def relics_per_second2(self):
-        self.new_run()
-
-        done = False
-        while not done:
-            tap, tapping = self.tap_damage()
-            stage = health_to_stage(tap)
-            mode = ""
-            if stage > self.current_stage:
-                mode = "ohko"
-                self.current_gold += self.gold_between_stages(self.current_stage, stage)
-                self.level_heroes2()
-                self.time += 4.5 * (stage - self.current_stage)
-                self.current_stage = stage
-            else:
-                # can't oneshot mobs, so tap until 5 sec of tapping can't kill boss
-                dmg = tapping * TAPS_PER_SECOND * 5
-                next_boss = next_boss_stage(self.current_stage)
-                if dmg > stage_hp(next_boss) * 10:
-                    self.current_gold += self.gold_between_stages(self.current_stage, next_boss + 1)
-                    self.level_heroes2()
-                    self.time += 4.5 * (next_boss - self.current_stage + 1) + 5*(stage_hp(next_boss) * 10)/(tapping * TAPS_PER_SECOND)
-                    self.current_stage = next_boss + 1
-                else:
-                    # do we want to grind for the next hero
-                    # print "aljsldfkajlskdjflaksldjalksjlkfj"
-                    owned_heroes = [x for x in self.heroes if x != 0]
-                    next_hero = len(owned_heroes)
-                    if next_hero == 33 and self.heroes[32] < 1001:
-                        grind_target = hero_info[32].cost_to_evolve()
-                    elif next_hero == 33:
-                        done = True
-                        continue
-                    else:
-                        grind_target = hero_info[next_hero].base_cost
-                    gold_needed = grind_target - self.current_gold
-                    mob_gold = self.mob_multiplier() * base_stage_mob_gold(self.current_stage)
-                    if gold_needed < 0:
-                        # check if we can get whatever we were grinding for
-                        self.level_heroes2()
-                        self.evolve_heroes()
-                    if gold_needed < 200 * mob_gold:
-                        num_mobs = grind_target / mob_gold
-                        mob_hp = stage_hp(self.current_stage)
-                        self.current_gold += num_mobs * mob_gold
-                        self.level_heroes2()
-                        self.time += (mob_hp / (tapping * TAPS_PER_SECOND) + 4.5/6.0) * num_mobs
-                    else:
-                        done = True
-            print self.current_stage, " - ", self.time, " - ", self.heroes
-        # print "current: ", self.current_stage
-        print "relics: ", self.total_relics()
-        # print "time: ", self.time
-        return float(self.total_relics()) / self.time
-
-    def relics_per_second3(self):
+    def relics_per_second(self, verbose = False):
+        TAPS_PER_SECOND = 10
         self.new_run()
 
         done = False
@@ -829,10 +649,10 @@ class GameState:
             if ohko_stage > self.current_stage:
                 mode = "ohko"
                 self.current_gold += self.gold_between_stages(self.current_stage, ohko_stage + 1)
-                self.level_heroes2()
+                self.level_heroes()
                 self.time += 4.5 * (ohko_stage - self.current_stage)
                 self.current_stage = ohko_stage + 1
-                # print "%4d - %15s - " % (self.current_stage, mode), self.heroes
+                if verbose: print "%4d - %15s - " % (self.current_stage, mode), self.heroes
                 continue
 
             # cannot ohko anymore, start tapping
@@ -840,10 +660,10 @@ class GameState:
             if ohko_tapping_stage > self.current_stage:
                 mode = "ohko tap"
                 self.current_gold += self.gold_between_stages(self.current_stage, ohko_tapping_stage + 1)
-                self.level_heroes2()
+                self.level_heroes()
                 self.time += 5.0 * (ohko_tapping_stage - self.current_stage)
                 self.current_stage = ohko_tapping_stage + 1
-                # print "%4d - %15s - " % (self.current_stage, mode), self.heroes
+                if verbose: print "%4d - %15s - " % (self.current_stage, mode), self.heroes
                 continue
 
             # cannot ohko anymore, 5 seconds of tapping per boss
@@ -852,11 +672,11 @@ class GameState:
             if five_seconds > stage_hp(next_boss) * 10:
                 mode = "tapping for 5"
                 self.current_gold += self.gold_between_stages(self.current_stage, next_boss + 1)
-                self.level_heroes2()
+                self.level_heroes()
                 dps = tapping * TAPS_PER_SECOND
                 self.time += (next_boss - self.current_stage) * (4.5 + stage_hp(next_boss) * 12 / dps)
                 self.current_stage = next_boss + 1
-                # print "%4d - %15s - " % (self.current_stage, mode), self.heroes
+                if verbose: print "%4d - %15s - " % (self.current_stage, mode), self.heroes
                 continue
 
             if end_game:
@@ -865,14 +685,14 @@ class GameState:
                 if oneohfive_seconds > stage_hp(next_boss) * 10:
                     mode = "105 tapping"
                     self.current_gold += self.gold_between_stages(self.current_stage, next_boss + 1)
-                    self.level_heroes2()
+                    self.level_heroes()
                     dps = tapping * TAPS_PER_SECOND
                     self.time += (next_boss - self.current_stage) * (4.5 + stage_hp(next_boss) * 12 / dps)
                     self.current_stage = next_boss + 1
-                    # print "%4d - %15s - " % (self.current_stage, mode), self.heroes
+                    if verbose: print "%4d - %15s - " % (self.current_stage, mode), self.heroes
                     continue
                 else:
-                    # print "done"
+                    if verbose: print "done"
                     done = True
                     continue
 
@@ -894,7 +714,7 @@ class GameState:
                 if grind == "evolve":
                     self.evolve_heroes()
                 if grind == "next hero":
-                    self.level_heroes2()
+                    self.level_heroes()
                 continue
 
             # otherwise, how long do we want to grind for
@@ -905,29 +725,25 @@ class GameState:
                 mob_hp = stage_hp(self.current_stage)
                 self.current_gold += num_mobs * mob_gold
                 self.time += (mob_hp / (tapping * TAPS_PER_SECOND) + 4.5/6.0) * num_mobs
-                # print "%4d - %15s - " % (self.current_stage, mode), self.heroes
+                if verbose: print "%4d - %15s - " % (self.current_stage, mode), self.heroes
                 continue
             else:
                 end_game = True
-        # print "current: ", self.current_stage
-        # print "relics: ", self.total_relics()
-        # print "time: ", self.time
         return self.current_stage, self.time, float(self.total_relics()) / self.time
 
 RPS, GOLD, DMG, K, SPS = range(5)
 
 def get_value(game_state, method):
     if method == RPS:
-        stage, time, value = game_state.relics_per_second3()
+        stage, time, value = game_state.relics_per_second()
     elif method == GOLD:
         value = game_state.gold_multiplier()
     elif method == DMG:
         tap, value = game_state.tap_damage()
     elif method == K:
-        pass
-        #base = something
+        value = (game_state.gold_multiplier(), game_state.a_ad * 100)
     elif method == SPS:
-        stage, time, rps = game_state.relics_per_second3()
+        stage, time, rps = game_state.relics_per_second()
         value = (stage, time)
     else:
         pass
@@ -945,13 +761,13 @@ def is_greater(s1, s2):
     else:
         return s1[1] > s2[1]
 
-def get_best(artifacts, weapons, customizations, relics, method, greedy = True):
+def get_best(artifacts, weapons, customizations, relics, nsteps, method, greedy = True):
     if greedy:
         relics_left = relics
         current_artifacts = artifacts[:]
         steps = []
         cumulative = 0
-        while relics_left > 0:
+        while relics_left > 0 or len(steps) < nsteps:
             g = GameState(current_artifacts, weapons, customizations)
             if method not in (RPS, SPS):
                 g.get_all_skills()
@@ -978,6 +794,10 @@ def get_best(artifacts, weapons, customizations, relics, method, greedy = True):
                 if method == SPS:
                     increase[index] = (artifact_info[index].name, (new_value[0] - base[0], base[1] - new_value[1]))
                     e = ((new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost)
+                    efficiency[index] = e
+                    efficiencies[index] = (artifact_info[index].name, e)
+                elif method == K:
+                    e = (new_value[0] * new_value[1] / (base[0] * base[1]) - 1.0) / relic_cost
                     efficiency[index] = e
                     efficiencies[index] = (artifact_info[index].name, e)
                 else:
@@ -1011,229 +831,9 @@ def get_best(artifacts, weapons, customizations, relics, method, greedy = True):
             steps.append((artifact_info[best_index].name, current_artifacts[best_index], cumulative, costs[best_index]))
         for s in steps:
             pass#print s
-
-# need to do final verifications
-def gold_multiplier(artifacts, hero_gold_dropped, hero_chest_gold, c_gold_dropped, c_chest_gold):
-    level_amulet = artifacts[0]
-    level_chest = artifacts[3]
-    level_elixir = artifacts[4]
-    level_egg = artifacts[5]
-    level_chalice = artifacts[8]
-    level_fortune = artifacts[10]
-    level_kshield = artifacts[13]
-    level_world = artifacts[28]
-
-    mobs = 10 - level_world
-    
-    c_chance = 0.02 + 0.004 * level_egg
-    c_gold = 10.0 * (1.0 + 0.2 * level_chest) * (1 + c_chest_gold) * (1 + hero_chest_gold)
-
-    n_chance = 1.0 - c_chance
-    n_gold = (1.0 + 0.1 * level_amulet) 
-    d_chance = 0.005 * level_chalice
-    d_multiplier = 1.0-d_chance + 10.0*d_chance
-
-    mob_gold = mobs * (c_chance * c_gold + n_chance * n_gold * d_multiplier)
-    # 6.520253320788821
-    boss_gold = BOSS_CONSTANT * (1 + level_kshield)
-    
-    gold_multiplier = (mob_gold + boss_gold) / (mobs+1.0)
-    total_multiplier = (1.0 + 0.05*level_fortune + hero_gold_dropped) * (1.0 + c_gold_dropped) * (1.0 + 0.15*level_elixir)
-
-    final_multiplier = total_multiplier * gold_multiplier
-    return final_multiplier
-
-def total_relics(stage, heroes, level_ua):
-    # relics = ((floor to nearest 15 of stage - 75) / 15)^1.7 * undead bonus
-    stage_relics = pow(stage/15 - 5, 1.7)
-    hero_relics = sum(heroes)/1000
-    multiplier = 2.0+0.1*level_ua
-    return int((stage_relics + hero_relics) * multiplier)
-
-def gold_for_stage(stage, artifacts, heroes, customizations):
-    base = base_stage_mob_gold(stage)
-    
-    hero_gold_dropped = get_total_bonus(heroes, STYPE_GOLD_DROPPED)
-    hero_chest_gold = get_total_bonus(heroes, STYPE_CHEST_GOLD)
-    c_gold_dropped = customizations[2]
-    c_chest_gold = customizations[3]
-
-    multiplier = gold_multiplier(artifacts, hero_gold_dropped, hero_chest_gold, c_gold_dropped, c_chest_gold)
-    mobs = 10 - artifacts[28] + 1
-
-    return mobs * base * multiplier
-
-def gold_between_stages(start_stage, end_stage, artifacts, heroes, customizations):
-    total = 0.0
-    for s in xrange(start_stage, end_stage):
-        total += gold_for_stage(s, artifacts, heroes, customizations)
-    return total
-
-def get_total_bonus(heroes, stype):
-    bonus = 0
-    for i, level in enumerate(heroes):
-        bonus += hero_info[i].get_bonuses(level, stype)
-    return bonus
-
-def get_hero_dps(heroes, weapons, artifacts, customization_ad, hero_expected = None):
-    dps = 0
-    hero_all_damage = get_total_bonus(heroes, STYPE_ALL_DAMAGE)
-    for i, level in enumerate(heroes):
-        if level == 0:
-            continue
-        
-        hero_dps = hero_info[i].get_base_damage(level)
-        if hero_expected != None:
-            print hero_info[i].name + " " + str(level) + " -------------------------------------"
-            print "         base: ", hero_dps
-
-        bonus_hero = (1.0 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + hero_all_damage)
-        bonus_artifact = (1.0 + 0.01 * all_damage(artifacts))
-        bonus_weapon = (1.0 + 0.5*weapons[i])
-        bonus_customization = 1.0 + customization_ad
-        bonus_set = set_bonus(weapons)
-        hero_dps = hero_dps * bonus_hero * bonus_artifact * bonus_weapon * bonus_customization * bonus_set
-
-        if hero_expected != None:
-            print "   hero bonus: ", bonus_hero
-            print "         from all: ", hero_all_damage
-            print "        from hero: ", hero_info[i].get_bonuses(level, STYPE_HERO_DPS)
-            print "  artifact ad: ", bonus_artifact
-            print " weapon bonus: ", bonus_weapon
-            print "   cust bonus: ", bonus_customization
-            print "    set bonus: ", bonus_set
-            print "####### total: " + str(hero_dps)
-            print "#### expected: " + hero_expected[i]
-        dps += hero_dps
-
-    return dps
-
-def get_crit_multiplier(hero_thrust_level, customization_bonus, hero_bonus):
-    return (10 + hero_bonus) * (1 + 0.2*hero_thrust_level) * (1 + customization_bonus)
-
-def get_crit_chance(death_seeker_level, customization_bonus, hero_bonus):
-    return 0.02 + 0.02 * death_seeker_level + customization_bonus + hero_bonus
-
-### this seems iffy
-def tap_damage(artifacts, heroes, customizations, weapons, hero_expected = None):
-    customization_ad = customizations[0]
-    customization_crit_dmg = customizations[1]
-    customization_crit_chance = customizations[4]
-    customization_tap = customizations[5]
-
-    hero_ad_bonus = get_total_bonus(heroes, STYPE_ALL_DAMAGE)
-    hero_tap_bonus = get_total_bonus(heroes, STYPE_TAP_DAMAGE)
-    hero_percent_bonus = get_total_bonus(heroes, STYPE_PERCENT_DPS)
-    hero_crit_damage = get_total_bonus(heroes, STYPE_CRIT_DAMAGE)
-    hero_crit_chance = get_total_bonus(heroes, STYPE_CRIT_CHANCE)
-
-    hero_weapon_bonuses = get_hero_weapon_bonuses(weapons)
-    weapon_set_bonus = set_bonus(weapons)
-
-    artifact_ad = all_damage(artifacts)
-    hero_total_dps = get_hero_dps(heroes, weapons, artifacts, customization_ad, hero_expected)
-    
-    from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + hero_ad_bonus)
-
-    from_hero = (hero_percent_bonus * hero_total_dps) * (1 + hero_tap_bonus + customization_tap) * (1 + 0.01* artifact_ad) * (1 + 0.02 * artifacts[9]) * (1 + customization_ad)
-    total_tap = from_main + from_hero
-    
-    death_seeker_level = artifacts[7]
-    hero_thrust_level = artifacts[11]
-    crit_multiplier = get_crit_multiplier(hero_thrust_level, customization_crit_dmg, hero_crit_damage)
-    crit_chance = get_crit_chance(death_seeker_level, customization_crit_chance, hero_crit_chance)
-    
-    overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier))
-    total_tapping = total_tap * overall_crit_multiplier
-    return total_tap, total_tapping
-
-
-def level_heroes(heroes, gold, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad):
-    ## buy heroes
-    ## get skills
-    heroes_after = [l for l in heroes]
-    gold_left = gold
-    # print "level 1 with gold_left: ", gold_left
-    for i, level in enumerate(heroes_after):
-        if level == 0 and hero_info[i].base_cost < gold_left:
-            heroes_after[i] += 1
-            gold_left -= hero_info[i].base_cost
-    # print heroes_after
-
-    # last two heroes first
-    done = False
-    owned_heroes = [x for x in heroes_after if x != 0]
-    if len(owned_heroes) < 2:
-        done = True
-    h1 = len(owned_heroes) - 1
-    h2 = len(owned_heroes) - 2
-    while not done:
-        best_option = None
-        best_option_efficiency = 0
-        best_option_cost = 0
-
-        for i, level in [(h1, heroes_after[h1]), (h2, heroes_after[h2])]:
-            if level != 0:
-                c = hero_info[i].get_upgrade_cost(level)
-                if c < gold_left:
-                    dd = hero_info[i].get_damage_increase(level)
-                    if dd/c > best_option_efficiency:
-                        best_option = i
-                        best_option_efficiency = dd/c
-                        best_option_cost = c
-
-        if best_option is None:
-            done = True
-        else:
-            heroes_after[best_option] += 1
-            gold_left -= best_option_cost
-
-    for i in xrange(len(heroes_after)):
-        if heroes_after[i] == 0:
-            continue
-        level = heroes_after[i]
-        c = hero_info[i].cost_to_next_skill(level)
-        while c < gold_left and level < 800:
-            next_skill_level = hero_info[i].next_skill(level)
-            heroes_after[i] = next_skill_level
-            level = next_skill_level
-            gold_left -= c
-            c = hero_info[i].cost_to_next_skill(level)
-
-    return gold_left, heroes_after
-
-#############
-TAPS_PER_SECOND = 10
-def relics_per_second(artifacts, customizations, weapons):
-    current_stage = 1
-    current_gold = 0
-    current_heroes = [0 for h in hero_info]
-    hero_weapon_bonuses = get_hero_weapon_bonuses(weapons)
-    weapon_set_bonus = set_bonus(weapons)
-    artifact_ad = all_damage(artifacts)
-    customization_ad = customizations[0]
-
-    done = False
-    while not done:
-        tap, tapping = tap_damage(artifacts, current_heroes, customizations, weapons)
-        stage = health_to_stage(tapping * TAPS_PER_SECOND * 5 / 10)
-        if stage > current_stage:
-            current_gold += gold_between_stages(current_stage, stage, artifacts, current_heroes, customizations)
-            current_gold, current_heroes = level_heroes2(current_heroes, current_gold, hero_weapon_bonuses, weapon_set_bonus, artifact_ad, customization_ad)
-            current_stage = stage
-        else:
-            done = True
-        print "end on: "
-        print "stage: ", current_stage
-        print "heroes: ", current_heroes
-        print "-------------------------------------------"
-    
-
-
-
-
-
-
+    else:
+        pass
+        # dp this
 
 
 
