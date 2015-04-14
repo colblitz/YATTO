@@ -8,6 +8,9 @@ TODO:
  - check boss gold formula
  - factor in hero boss damage -> less boss life
  - is future's fortune still roundup
+ - check skill/evolve costs
+ - dp for search
+ - walls? evolve heroes?
 
 NOTES:
  - FateRiddle's uses different formulas for different things, which is weird...?
@@ -170,7 +173,6 @@ class Hero:
         # print "level: ", level
         for l in SKILL_LEVELS:
             if level < l:
-                # print "next skill: ", l
                 # return l, self.cost_to_level(level, l)
                 return l, self.cost_to_next_s[level]
         return 0, INFINITY
@@ -186,29 +188,6 @@ class Hero:
                 bonus += self.skills[i][0]
         return bonus
 
-    ### clean this up
-    ### https://github.com/oLaudix/oLaudix.github.io/blob/master/TTcalc.html
-    ### https://github.com/oLaudix/oLaudix.github.io/blob/master/common.js
-    # def get_base_damage(self, level):
-    #     levelIneffiency = 0.904
-    #     heroInefficiency = 0.019
-    #     heroInefficiencySlowDown = 15.0
-    #     heroUpgradeBase = 1.075
-    #     n3 = 0
-    #     if level >= 1001:
-    #         n3 = pow(levelIneffiency, level - 1001) * pow(1-(heroInefficiency * heroInefficiencySlowDown), self.hid + 30.0)
-    #     else:
-    #         n3 = pow(levelIneffiency, level - 1) * pow(1-(heroInefficiency * min(self.hid, heroInefficiencySlowDown)), self.hid)
-    #     n4 = 0
-    #     if level >= 1001:
-    #         n4 = ((self.get_upgrade_cost(level - 1) * (pow(heroUpgradeBase, level - 1000) - 1) / heroUpgradeBase) - 1) * n3 * 0.1
-    #     else:
-    #         n4 = self.get_upgrade_cost(level - 1) * (pow(heroUpgradeBase, level) - 1) / (heroUpgradeBase - 1) * n3 * 0.1
-    #     return n4
-
-    ### clean this up
-    ### https://github.com/oLaudix/oLaudix.github.io/blob/master/TTcalc.html
-    ### https://github.com/oLaudix/oLaudix.github.io/blob/master/common.js
     def get_base_damage(self, level):
         n3 = 0
         if level >= 1001:
@@ -438,11 +417,8 @@ class GameState:
         self.time = 0
 
     def add_skill(self, hero, skill):
-        # print "buying skill: ", hero_info[hero].name, skill
-        # print self.skill_bonuses
         s = hero_info[hero].skills[skill]
         self.skill_bonuses[s[1]] += s[0]
-        # print self.skill_bonuses
 
     def get_all_skills(self):
         heroes_after = self.heroes[:]
@@ -459,7 +435,6 @@ class GameState:
 
     def total_relics(self):
         # relics = ((floor to nearest 15 of stage - 75) / 15)^1.7 * undead bonus
-        # print "total current: ", self.current_stage
         stage_relics = pow(self.current_stage/15 - 5, 1.7)
         hero_relics = sum(self.heroes)/1000
         multiplier = 2.0+0.1*self.l_ua
@@ -467,16 +442,8 @@ class GameState:
 
     def get_total_bonus(self, stype):
         return self.skill_bonuses[stype]
-        # bonus = 0
-        # for i, level in enumerate(self.heroes):
-        #     bonus += hero_info[i].get_bonuses(level, stype)
-        # return bonus
 
     def gold_multiplier(self):
-
-# =(world)*((1+egg*0.2)*0.02)*ROUNDUP(1+hero+ff*0.05,0)*10*(1+hero_chest)*(1+0.2*chest)*(1+0.15*elixir))+
-# (world)*(1-(1+egg*0.2)*0.02)*(1+0.005*9*chalice)*ROUNDUP(1+hero+ff*0.05,0)*(1+0.1*valrune)*(1+0.15*elixir))+
-# (world)*ROUNDUP(1+hero+ff*0.05,0)*6*(1+shield)*(1+0.15*elixir)))/(1-AB9*0.02)
         mobs = 10 - self.l_world
         
         h_cg = self.get_total_bonus(STYPE_CHEST_GOLD)
@@ -484,13 +451,8 @@ class GameState:
 
         c_gold = 10.0 * (1.0 + 0.2 * self.l_chest) * (1 + self.c_cg) * (1 + h_cg)
 
-        # mob_gold = mobs * (c_chance * c_gold + n_chance * n_gold * d_multiplier)
         mob_gold = mobs * (self.c_chance * c_gold + self.mob_multipliers)
-        # 6.520253320788821
-        # boss_gold = BOSS_CONSTANT * (1 + self.l_kshield)
-        
         gold_multiplier = (mob_gold + self.boss_gold) / (mobs+1.0)
-        # total_multiplier = (1.0 + 0.05*self.l_fortune + h_gd) * (1.0 + self.c_gd) * (1.0 + 0.15*self.l_elixir)
         total_multiplier = math.ceil(1.0 + 0.05*self.l_fortune + h_gd) * self.other_total
 
         final_multiplier = total_multiplier * gold_multiplier
@@ -585,26 +547,6 @@ class GameState:
                 l_last = heroes_after[last_owned]            
                 self.current_gold -= c
                 c = hero_info[last_owned].cost_to_level(l_last, l_last + i)
-
-        # c100 = hero_info[last_owned].cost_to_level(l_last, l_last + 100)
-        # while c100 < self.current_gold:
-        #     heroes_after[last_owned] += 100
-        #     l_last = heroes_after[last_owned]            
-        #     self.current_gold -= c100
-        #     c100 = hero_info[last_owned].cost_to_level(l_last, l_last + 100)
-
-        # c10 = hero_info[last_owned].cost_to_level(l_last, l_last + 10)
-        # while c10 < self.current_gold:
-        #     heroes_after[last_owned] += 10
-        #     l_last = heroes_after[last_owned]            
-        #     self.current_gold -= c10
-        #     c10 = hero_info[last_owned].cost_to_level(l_last, l_last + 10)
-
-        # c = hero_info[last_owned].get_upgrade_cost(heroes_after[last_owned])
-        # while c < self.current_gold:
-        #     heroes_after[last_owned] += 1
-        #     self.current_gold -= c
-        #     c = hero_info[last_owned].get_upgrade_cost(heroes_after[last_owned])
 
         # print "self.current gold: ", self.current_gold
         # buy all the skills that you can
