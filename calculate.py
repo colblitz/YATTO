@@ -15,7 +15,7 @@ TODO:
 NOTES:
  - FateRiddle's uses different formulas for different things, which is weird...?
  - gxgx55/bsedmonds doesn't take into account weapons/customizations
-
+ - http://ianhinsdale.com/code/2013/12/08/communicating-between-nodejs-and-python/
 """
 
 # (2 + 4*1.14 + 6*1.14**2 + 8*1.14**3 + 10*1.14**4)/(1 + 1.14 + 1.14**2 + 1.14**3 + 1.14**4)
