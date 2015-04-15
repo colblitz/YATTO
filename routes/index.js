@@ -13,12 +13,17 @@ var sendSuccess = function(res, content) {
 }
 
 router.get('/test', function(req, res) {
+	var info = req.query.info;
+	var pythonres;
+	console.log(info);
 	console.log("test in server!");
-	pythonClient.invoke("test", "fromexpress", function(error, res, more) {
-		console.log("response: " + res);
+	pythonClient.invoke("test", info, function(error, pyres, more) {
+		pythonres = pyres;
+		console.log("response: " + pyres);
+		sendSuccess(res, pyres);
 	});
 	console.log("lakjsdlfkjalksdf");
-  sendSuccess(res, "from server to client");
+  //sendSuccess(res, pythonres);
 });
 
  // client.invoke("test", "World!", function(error, res, more) {

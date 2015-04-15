@@ -1,7 +1,11 @@
 <div ng-controller="CalculatorController" id="calculator-container">
 	here's some stuff
 
+	steps: {{steps}}
+
 	<form class="form" id="form">
+		<input type="submit" ng-click="calculate(artifacts, weapons, customizations)" value="Calculate" />
+		
     Amulet of the Valrunes:  <input type="text" class="form-control" ng-model="artifacts.a0" /></br>
 		Axe of Resolution:       <input type="text" class="form-control" ng-model="artifacts.a1" /></br>
 		Barbarian's Mettle:      <input type="text" class="form-control" ng-model="artifacts.a2" /></br>
@@ -73,7 +77,7 @@
 		Customization: <input type="text" class="form-control" ng-model="customizations.c4" /></br>
 		Customization: <input type="text" class="form-control" ng-model="customizations.c5" /></br>
 
-    <input type="submit" ng-click="calculate(artifacts, weapons, customizations)" value="Calculate" />
+    
   </form>
   <!-- <pre>form = {{artifacts | json}}</pre>
   <pre>form = {{weapons | json}}</pre>
