@@ -14,7 +14,7 @@ TODO:
 
 NOTES:
  - FateRiddle's uses different formulas for different things, which is weird...?
- - gxgx55/bsedmonds doesn't take into account weapons/customizations
+ - gxgx55/bsedmonds doesn't take into account weapons/customizations - only does alldmg, not tapping (crits?)
  - http://ianhinsdale.com/code/2013/12/08/communicating-between-nodejs-and-python/
 """
 
@@ -374,15 +374,16 @@ class GameState:
         self.l_chest = artifacts[3]
         self.l_elixir = artifacts[4]
         self.l_egg = artifacts[5]
-        self.l_chalice = artifacts[8]
-        self.l_fortune = artifacts[10]
-        self.l_kshield = artifacts[13]
-        self.l_world = artifacts[28]
-        self.l_ua = artifacts[25]
-        self.l_hammer = artifacts[9]
         self.l_dseeker = artifacts[7]
+        self.l_chalice = artifacts[8]
+        self.l_hammer = artifacts[9]
+        self.l_fortune = artifacts[10]
         self.l_hthrust = artifacts[11]
-
+        self.l_kshield = artifacts[13]
+        self.l_charm = artifacts[20]
+        self.l_ua = artifacts[25]
+        self.l_world = artifacts[28]
+        
         self.weapons = weapons
         self.w_bh = get_hero_weapon_bonuses(weapons)
         self.w_sb = set_bonus(weapons)
@@ -404,7 +405,7 @@ class GameState:
         self.mob_multipliers = self.n_chance * self.n_gold * self.d_multiplier
         self.boss_gold = BOSS_CONSTANT * (1 + self.l_kshield)
 
-        self.other_total = (1.0 + self.c_gd) * (1.0 + 0.15*self.l_elixir)
+        self.other_total = (1.0 + self.c_gd) * (1.0 + 0.15*self.l_elixir) * (1.0 / (1.0 - self.l_charm * 0.02))
 
         self.new_run()
 
