@@ -7,35 +7,35 @@ yattoApp.controller('CalculatorController',
 
 
 		$scope.artifacts = [
-			{name: "Amulet of the Valrunes",  index: 0, value: 0},
-			{name: "Axe of Resolution",       index: 1, value: 0},
-			{name: "Barbarian's Mettle",      index: 2, value: 0},
-			{name: "Chest of Contentment",    index: 3, value: 0},
-			{name: "Crafter's Elixir",        index: 4, value: 0},
-			{name: "Crown Egg",               index: 5, value: 0},
-			{name: "Dark Cloak of Life",      index: 6, value: 0},
-			{name: "Death Seeker",            index: 7, value: 0},
-			{name: "Divine Chalice",          index: 8, value: 0},
-			{name: "Drunken Hammer",          index: 9, value: 0},
-			{name: "Future's Fortune",        index: 10, value: 0},
-			{name: "Hero's Thrust",           index: 11, value: 0},
-			{name: "Hunter's Ointment",       index: 12, value: 0},
-			{name: "Knight's Shield",         index: 13, value: 0},
-			{name: "Laborer's Pendant",       index: 14, value: 0},
-			{name: "Ogre's Gauntlet",         index: 15, value: 0},
-			{name: "Otherworldly Armor",      index: 16, value: 0},
-			{name: "Overseer's Lotion",       index: 17, value: 0},
-			{name: "Parchment of Importance", index: 18, value: 0},
-			{name: "Ring of Opulence",        index: 19, value: 0},
-			{name: "Ring of Wondrous Charm",  index: 20, value: 0},
-			{name: "Sacred Scroll",           index: 21, value: 0},
-			{name: "Saintly Shield",          index: 22, value: 0},
-			{name: "Savior Shield",           index: 23, value: 0},
-			{name: "Tincture of the Maker",   index: 24, value: 0},
-			{name: "Undead Aura",             index: 25, value: 0},
-			{name: "Universal Fissure",       index: 26, value: 0},
-			{name: "Warrior's Revival",       index: 27, value: 0},
-			{name: "Worldly Illuminator",     index: 28, value: 0}];
+			{name: "Amulet of the Valrunes",  index: 0, value: 1},
+			{name: "Axe of Resolution",       index: 1, value: 1},
+			{name: "Barbarian's Mettle",      index: 2, value: 1},
+			{name: "Chest of Contentment",    index: 3, value: 1},
+			{name: "Crafter's Elixir",        index: 4, value: 1},
+			{name: "Crown Egg",               index: 5, value: 1},
+			{name: "Dark Cloak of Life",      index: 6, value: 1},
+			{name: "Death Seeker",            index: 7, value: 1},
+			{name: "Divine Chalice",          index: 8, value: 1},
+			{name: "Drunken Hammer",          index: 9, value: 1},
+			{name: "Future's Fortune",        index: 10, value: 1},
+			{name: "Hero's Thrust",           index: 11, value: 1},
+			{name: "Hunter's Ointment",       index: 12, value: 1},
+			{name: "Knight's Shield",         index: 13, value: 1},
+			{name: "Laborer's Pendant",       index: 14, value: 1},
+			{name: "Ogre's Gauntlet",         index: 15, value: 1},
+			{name: "Otherworldly Armor",      index: 16, value: 1},
+			{name: "Overseer's Lotion",       index: 17, value: 1},
+			{name: "Parchment of Importance", index: 18, value: 1},
+			{name: "Ring of Opulence",        index: 19, value: 1},
+			{name: "Ring of Wondrous Charm",  index: 20, value: 1},
+			{name: "Sacred Scroll",           index: 21, value: 1},
+			{name: "Saintly Shield",          index: 22, value: 1},
+			{name: "Savior Shield",           index: 23, value: 1},
+			{name: "Tincture of the Maker",   index: 24, value: 1},
+			{name: "Undead Aura",             index: 25, value: 1},
+			{name: "Universal Fissure",       index: 26, value: 1},
+			{name: "Warrior's Revival",       index: 27, value: 1},
+			{name: "Worldly Illuminator",     index: 28, value: 1}];
 
 		$scope.weapons = [
 			{name: "Takeda the Blade Assassin",       index: 0, value: 0},
@@ -71,6 +71,7 @@ yattoApp.controller('CalculatorController',
 			{name: "Pixie the Rebel Fairy",           index: 30, value: 0},
 			{name: "Jackalope the Fireballer",        index: 31, value: 0},
 			{name: "Dark Lord, Punisher of All",      index: 32, value: 0}];
+		$scope.wprobability = 0;
 
 		$scope.customizations = [
 			{name: "All Damage",      index: 0, value: 0},
@@ -100,6 +101,7 @@ yattoApp.controller('CalculatorController',
 			var info = {"artifacts"      : $scope.artifacts, 
 						"weapons" 	     : $scope.weapons, 
 						"customizations" : $scope.customizations,
+						"methods"        : $scope.methods,
 						"relics"         : $scope.relics,
 						"nsteps"         : $scope.nsteps,
 						"greedy"         : $scope.greedy}
@@ -108,7 +110,7 @@ yattoApp.controller('CalculatorController',
 
 			$http({
 				method: "POST",
-				url: "test",
+				url: "calculate",
 				data: {"info": info}
 			}).success(function(data, status, headers, config) {
       			// console.log($scope.roadmaps);
@@ -118,5 +120,19 @@ yattoApp.controller('CalculatorController',
       			console.log("boo error");
       		});
   		};
+
+  		$scope.weaponProbability = function() {
+  			console.log("controller - weapon probability");
+  			$http({
+  				method: "GET",
+  				url: "wprobability",
+  				params: {"weapons": $scope.weapons}
+  			}).success(function(data, status, headers, config) {
+  				console.log("response: " + data.content);
+  				$scope.wprobability = data.content;
+  			}).error(function(data, status, headers, config) {
+  				console.log("w probability error");
+  			});
+  		}
 	}
 );
