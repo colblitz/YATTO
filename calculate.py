@@ -1,5 +1,7 @@
 import math
 import sys
+import numpy as np
+import scipy
 
 """
 TODO:
@@ -674,19 +676,22 @@ class GameState:
                 end_game = True
         return self.current_stage, self.time, float(self.total_relics()) / self.time
 
-RPS, GOLD, DMG, K, SPS = range(5)
+GOLD, ALL_DAMAGE, TAP_DAMAGE, K, RELICS_PER_SECOND, STAGES_PER_SECOND = range(6)
 
 def get_value(game_state, method):
-    if method == RPS:
+    global GOLD, ALL_DAMAGE, TAP_DAMAGE, K, RELICS_PER_SECOND, STAGES_PER_SECOND
+    if method == RELICS_PER_SECOND:
         stage, time, value = game_state.relics_per_second()
     elif method == GOLD:
         value = game_state.gold_multiplier()
-    elif method == DMG:
+    elif method == ALL_DAMAGE:
+        value = game_state.a_ad
+    elif method == TAP_DAMAGE:
         tap, value = game_state.tap_damage()
     elif method == K:
         value = (game_state.gold_multiplier(), game_state.a_ad * 100)
-    elif method == SPS:
-        stage, time, rps = game_state.relics_per_second()
+    elif method == STAGES_PER_SECOND:
+        stage, time, RELICS_PER_SECOND = game_state.relics_per_second()
         value = (stage, time)
     else:
         pass
@@ -705,6 +710,7 @@ def is_greater(s1, s2):
         return s1[1] > s2[1]
 
 def get_best(artifacts, weapons, customizations, relics, nsteps, method, greedy = True):
+    global GOLD, ALL_DAMAGE, TAP_DAMAGE, K, RELICS_PER_SECOND, STAGES_PER_SECOND
     if greedy:
         relics_left = relics
         current_artifacts = artifacts[:]
@@ -712,7 +718,7 @@ def get_best(artifacts, weapons, customizations, relics, nsteps, method, greedy 
         cumulative = 0
         while relics_left > 0 or len(steps) < nsteps:
             g = GameState(current_artifacts, weapons, customizations)
-            if method not in (RPS, SPS):
+            if method not in (RELICS_PER_SECOND, STAGES_PER_SECOND):
                 g.get_all_skills()
             base = get_value(g, method)
             efficiency = [0 for a in artifact_info]
@@ -730,11 +736,11 @@ def get_best(artifacts, weapons, customizations, relics, nsteps, method, greedy 
                 artifacts_copy = current_artifacts[:]
                 artifacts_copy[index] += 1
                 new_g = GameState(artifacts_copy, weapons, customizations)
-                if method not in (RPS, SPS):
+                if method not in (RELICS_PER_SECOND, STAGES_PER_SECOND):
                     new_g.get_all_skills()
                 new_value = get_value(new_g, method)
                 new_values[index] = (artifact_info[index].name, new_value)
-                if method == SPS:
+                if method == STAGES_PER_SECOND:
                     increase[index] = (artifact_info[index].name, (new_value[0] - base[0], base[1] - new_value[1]))
                     e = ((new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost)
                     efficiency[index] = e
@@ -752,7 +758,7 @@ def get_best(artifacts, weapons, customizations, relics, nsteps, method, greedy 
             # filtered = [x for x in efficiencies if x[1] != 0.0 and x[1] != "MAX"]
             # print filtered
             # print efficiency
-            if method != SPS:
+            if method != STAGES_PER_SECOND:
                 best_index = index_max(efficiency)
             else:
                 best_index = None
@@ -768,12 +774,13 @@ def get_best(artifacts, weapons, customizations, relics, nsteps, method, greedy 
             # print current_artifacts
             current_artifacts[best_index] += 1
             cumulative += costs[best_index]
-            print (artifact_info[best_index].name, current_artifacts[best_index], cumulative, costs[best_index])
+            #print (artifact_info[best_index].name, current_artifacts[best_index], cumulative, costs[best_index])
 
             # print "############################################################################################################################"
             steps.append((artifact_info[best_index].name, current_artifacts[best_index], cumulative, costs[best_index]))
         for s in steps:
             pass#print s
+        return steps
     else:
         pass
         # dp this

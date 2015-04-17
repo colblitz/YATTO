@@ -1,6 +1,8 @@
 from calculate import *
+from server import *
 import time
 import cProfile
+
 
 
 
@@ -121,17 +123,22 @@ test1_a = [35, 100, 10, 165, 127, 165, 25, 25, 37, 151, 35, 150, 10, 100, 0, 108
 
 mine_a = [35, 118, 10, 195, 146, 195, 25, 25, 42, 173, 37, 170, 10, 112, 0, 125, 10, 10, 85, 70, 0, 10, 10, 25, 62, 180, 117, 10, 5]
 mine_w = [5, 4, 1, 3, 3, 1, 3, 5, 7, 4, 3, 4, 2, 2, 1, 2, 2, 1, 3, 3, 3, 1, 3, 0, 1, 5, 2, 5, 1, 5, 2, 4, 3]
+
+a = HelloRPC()
+print a.calculate_weapons_probability(mine_w)
+
+
 mine_c = [0.65, 0.81, 0.59, 1.02, 0.02, 0.44]
-print "SPS --------------------------------------------------"
-get_best(mine_a, mine_w, mine_c, 121840, None, SPS, True)
-print "Gold --------------------------------------------------"
-get_best(mine_a, mine_w, mine_c, 121840, None, GOLD, True)
-print "DMG --------------------------------------------------"
-get_best(mine_a, mine_w, mine_c, 121840, None, DMG, True)
-print "K --------------------------------------------------"
-get_best(mine_a, mine_w, mine_c, 121840, None, K, True)
-print "RPS --------------------------------------------------"
-get_best(mine_a, mine_w, mine_c, 121840, None, RPS, True)
+# print "SPS --------------------------------------------------"
+# get_best(mine_a, mine_w, mine_c, 121840, None, SPS, True)
+# print "Gold --------------------------------------------------"
+# get_best(mine_a, mine_w, mine_c, 121840, None, GOLD, True)
+# print "DMG --------------------------------------------------"
+# get_best(mine_a, mine_w, mine_c, 121840, None, DMG, True)
+# print "K --------------------------------------------------"
+# get_best(mine_a, mine_w, mine_c, 121840, None, K, True)
+# print "RPS --------------------------------------------------"
+# get_best(mine_a, mine_w, mine_c, 121840, None, RPS, True)
 
 # hero_test_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 37, 151, 37, 150, 10, 100, 0, 109, 10, 10, 75, 62, 0, 10, 10, 25, 55, 154, 104, 10, 5]
 # # hero_test_heroes =  [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
