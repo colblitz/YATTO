@@ -84,7 +84,10 @@ class HelloRPC(object):
 		print "done getting steps"
 		return response
 
-	def calculate_weapons_probability(self, weapons):
+	def calculate_weapons_probability(self, weapon_list):
+		weapons = [int(w) for w in weapon_list]
+		print "weapons"
+		print weapons
 		return chisquare(weapons)[1]
 
 

@@ -36,6 +36,19 @@ router.post('/calculate', function(req, res) {
 	console.log("done");
 });
 
+router.post('/wprobability', function(req, res) {
+	var weapons = req.body.weapons;
+	if (weapons.reduce(function(a, b) {return a + b;}) == 0) {
+		sendSuccess(res, 0);
+	} else {
+		pythonClient.invoke("calculate_weapons_probability", weapons, function(error, pyres, more) {
+			console.log("w passing on python response: ");
+			console.log(pyres);
+			sendSuccess(res, pyres);
+		});
+	}
+	console.log("done");
+});
  // client.invoke("test", "World!", function(error, res, more) {
  //    		console.log(res);
 	// 		});

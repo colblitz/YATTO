@@ -123,16 +123,24 @@ yattoApp.controller('CalculatorController',
 
   		$scope.weaponProbability = function() {
   			console.log("controller - weapon probability");
+  			var weapon_list = Array.apply(null, new Array($scope.weapons.length)).map(Number.prototype.valueOf,0);
+  			console.log("scope weapons is: ");
+  			console.log($scope.weapons);
+  			for (var weapon in $scope.weapons) {
+  				var w = $scope.weapons[weapon];
+  				weapon_list[w["index"]] = w["value"];
+  			}
+  			console.log("sending: " + weapon_list);
   			$http({
-  				method: "GET",
+  				method: "POST",
   				url: "wprobability",
-  				params: {"weapons": $scope.weapons}
+  				data: {"weapons": weapon_list}
   			}).success(function(data, status, headers, config) {
   				console.log("response: " + data.content);
   				$scope.wprobability = data.content;
   			}).error(function(data, status, headers, config) {
   				console.log("w probability error");
   			});
-  		}
+  		};
 	}
 );
