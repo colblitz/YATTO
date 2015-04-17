@@ -63,7 +63,24 @@ class HelloRPC(object):
 		for m in methods:
 			print "getting steps for ", m
 			steps = get_best(artifacts, weapons, customizations, relics, nsteps, m, greedy)
-			response[m] = steps
+			summary = {}
+			costs = {}
+			for s in steps:
+				i = int(s["index"])
+				summary[i] = max(s["level"], summary.get(i))
+				costs[i] = int(costs.get(i) or 0) + s["cost"]
+			summary_steps = []
+			for s in summary:
+				step = {}
+				step["index"] = s
+				step["name"] = artifact_info[s].name
+				step["level"] = summary[s]
+				step["cost"] = costs[s]
+				summary_steps.append(step)
+			m_response = {}
+			m_response["steps"] = steps
+			m_response["summary"] = summary_steps
+			response[m] = m_response
 		print "done getting steps"
 		return response
 

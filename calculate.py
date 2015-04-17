@@ -775,9 +775,15 @@ def get_best(artifacts, weapons, customizations, relics, nsteps, method, greedy 
             current_artifacts[best_index] += 1
             cumulative += costs[best_index]
             #print (artifact_info[best_index].name, current_artifacts[best_index], cumulative, costs[best_index])
-
+            step = {}
+            step["index"] = best_index
+            step["name"] = artifact_info[best_index].name
+            step["level"] = current_artifacts[best_index]
+            step["cost"] = costs[best_index]
+            step["cumulative"] = cumulative
             # print "############################################################################################################################"
-            steps.append((artifact_info[best_index].name, current_artifacts[best_index], cumulative, costs[best_index]))
+            # steps.append((artifact_info[best_index].name, current_artifacts[best_index], cumulative, costs[best_index]))
+            steps.append(step)
         for s in steps:
             pass#print s
         return steps
