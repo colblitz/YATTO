@@ -109,8 +109,8 @@ yattoApp.controller('CalculatorController',
 			{name: "Relics/second", index: 4, value: false},
 			{name: "Stages/second", index: 5, value: false}];
 
-		$scope.relics = 0;
-		$scope.nsteps = 0;
+		$scope.relics = 50;
+		$scope.nsteps = 10;
 		$scope.greedy = 1;
 
 		$scope.calculate = function() {
