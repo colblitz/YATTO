@@ -1,10 +1,49 @@
 from calculate import *
-from server import *
+# from server import *
 import time
 import cProfile
 
+h = [0] * 33
+
+# get_hero_levels4(h, 1e204)
+
+# start = time.time()
+# for i in xrange(1000):
+#     get_hero_levels(h, 1e204)
+# print time.time() - start
+
+# start = time.time()
+# for i in xrange(1000):
+#     get_hero_levels3(h, 1e204)
+# print time.time() - start
+
+get_hero_levels4(h, 1e204)
+
+# start = time.time()
+# for i in xrange(1000):
+#     get_hero_levels4(h, 1e204)
+# print time.time() - start
+
+# start = time.time()
+# for i in xrange(1000):
+#     get_hero_levels(h, 1e200)
+# print time.time() - start
 
 
+# start = time.time()
+# for i in xrange(1000):
+#     get_hero_levels2(h, 1e200)
+# print time.time() - start
+
+# start = time.time()
+# for i in xrange(10000):
+#   if i % 1000 == 0:
+#     print "."
+#   g.relics_per_second2()  
+# end = time.time()
+# print (end - start) / 100.0
+
+print "----------------------------------------------"
 
 # tap_test2_artifacts = [35, 105, 10, 180, 137, 180, 25, 25, 39, 158, 37, 157, 10, 101, 0, 109, 10, 10, 78, 64, 0, 10, 10, 25, 58, 154, 108, 10, 5]
 # tap_test2_heroes = [401, 401, 801, 801, 401, 401, 801, 801, 401, 801, 401, 801, 401, 801, 401, 801, 801, 801, 801, 801, 401, 801, 402, 801, 401, 800, 800, 800, 400, 8, 2, 0, 0]
@@ -118,14 +157,35 @@ test7_c = [0.80, 0.81, 0.66, 1.67, 0.045, 0.44]
 test1_a = [35, 115, 10, 195, 146, 195, 25, 25, 42, 173, 37, 170, 10, 112, 0, 121, 10, 10, 85, 70, 0, 10, 10, 25, 62, 170, 117, 10, 5]
 test1_a = [35, 100, 10, 165, 127, 165, 25, 25, 37, 151, 35, 150, 10, 100, 0, 108, 10, 10, 75, 62, 0, 10, 10, 25, 55, 142, 104, 10, 5]
 
+mine_a = [35, 118, 10, 200, 150, 200, 25, 25, 47, 196, 37, 189, 10, 124, 0, 127, 10, 10, 94, 77, 25, 10, 10, 25, 66, 190, 129, 10, 5]
+mine_w = [5, 4, 1, 3, 3, 1, 4, 6, 7, 5, 4, 5, 3, 2, 1, 2, 2, 1, 3, 3, 5, 2, 3, 1, 1, 5, 3, 5, 1, 5, 2, 4, 3]
+mine_c = [0.65, 0.81, 0.59, 1.02, 0.02, 0.44]
+
+steps = get_best(mine_a, mine_w, mine_c, 131164, 0, TAP_DAMAGE, True)
+summary = {}
+costs = {}
+for s in steps:
+    i = int(s["index"])
+    summary[i] = max(s["level"], summary.get(i))
+    costs[i] = int(costs.get(i) or 0) + s["cost"]
+summary_steps = []
+for s in summary:
+    step = {}
+    step["index"] = s
+    step["name"] = artifact_info[s].name
+    step["level"] = summary[s]
+    step["cost"] = costs[s]
+    summary_steps.append(step)
+for s in summary_steps:
+    print s
 
 # get_best(test1_a, test1_w, test1_c, 500000, None, RPS, True)
 
 mine_a = [35, 118, 10, 195, 146, 195, 25, 25, 42, 173, 37, 170, 10, 112, 0, 125, 10, 10, 85, 70, 0, 10, 10, 25, 62, 180, 117, 10, 5]
 mine_w = [5, 4, 1, 3, 3, 1, 3, 5, 7, 4, 3, 4, 2, 2, 1, 2, 2, 1, 3, 3, 3, 1, 3, 0, 1, 5, 2, 5, 1, 5, 2, 4, 3]
 
-a = HelloRPC()
-print a.calculate_weapons_probability(mine_w)
+# a = HelloRPC()
+# print a.calculate_weapons_probability(mine_w)
 
 
 mine_c = [0.65, 0.81, 0.59, 1.02, 0.02, 0.44]
