@@ -1,9 +1,18 @@
 yattoApp.controller('CalculatorController',
-	function($scope, $http) {
+	function($scope, $http, $cookies) {
 		var something = "something";
 		$scope.steps = "steps";
 		
 		// re-ordering http://codepen.io/SimeonC/pen/AJIyC
+
+		// cookie stuff
+		//   $scope.lastVal = $cookieStore.get('tab');
+
+  //     $scope.changeTab = function(tabName){
+  //         $scope.lastVal = tabName;
+  //         $cookieStore.put('tab', tabName);
+  //     };
+
 
 
 		$scope.artifacts = [

@@ -2,6 +2,7 @@ import math
 import sys
 import numpy as np
 import scipy
+from heapq import *
 
 """
 TODO:
@@ -792,8 +793,146 @@ def get_best(artifacts, weapons, customizations, relics, nsteps, method, greedy 
         # dp this
 
 
+def get_hero_levels(heroes, gold):
+    gold_left = gold
+    cost100 = gold / 100.0
+    heroes_new = heroes[:]
+    for i in xrange(len(hero_info)):
+        level = heroes_new[i]
+        cost = hero_info[i].cost_to_level(level, level + 100) 
+        while cost < cost100:
+            level += 100
+            gold_left -= cost
+            cost = hero_info[i].cost_to_level(level, level + 100)
+        heroes_new[i] = level
+
+    cost10 = gold / 100.0
+    for i in xrange(len(hero_info)):
+        level = heroes_new[i]
+        cost = hero_info[i].cost_to_level(level, level + 10) 
+        while cost < cost10:
+            level += 10
+            gold_left -= cost
+            cost = hero_info[i].cost_to_level(level, level + 10)
+        heroes_new[i] = level
+
+    # print heroes_new, sum(heroes_new)
+    costs = []
+    for i, level in enumerate(heroes_new):
+        heappush(costs, (hero_info[i].get_upgrade_cost(level), i))
 
 
+    while gold_left > 0:
+        (cheapest, index) = heappop(costs)
+        if gold_left > cheapest:
+            gold_left -= cheapest
+            heroes_new[index] += 1
+            heappush(costs, (hero_info[index].get_upgrade_cost(heroes_new[index]), index))
+        else:
+            break
+    # print heroes_new, sum(heroes_new)
+    return heroes_new
+
+def get_hero_levels3(heroes, gold):
+    gold_left = gold
+    cost100 = gold / 200.0
+    heroes_new = heroes[:]
+    for i in xrange(len(hero_info)):
+        level = heroes_new[i]
+        cost = hero_info[i].cost_to_level(level, level + 100) 
+        while cost < cost100:
+            level += 100
+            gold_left -= cost
+            cost = hero_info[i].cost_to_level(level, level + 100)
+        heroes_new[i] = level
+
+    cost10 = gold / 200.0
+    for i in xrange(len(hero_info)):
+        level = heroes_new[i]
+        cost = hero_info[i].cost_to_level(level, level + 10) 
+        while cost < cost10:
+            level += 10
+            gold_left -= cost
+            cost = hero_info[i].cost_to_level(level, level + 10)
+        heroes_new[i] = level
+
+    # print heroes_new, sum(heroes_new)
+    costs = []
+    for i, level in enumerate(heroes_new):
+        heappush(costs, (hero_info[i].get_upgrade_cost(level), i))
 
 
+    while gold_left > 0:
+        (cheapest, index) = heappop(costs)
+        if gold_left > cheapest:
+            gold_left -= cheapest
+            heroes_new[index] += 1
+            heappush(costs, (hero_info[index].get_upgrade_cost(heroes_new[index]), index))
+        else:
+            break
+    # print heroes_new, sum(heroes_new)
+    return heroes_new
+
+def get_hero_levels4(heroes, gold):
+    gold_left = gold
+    cost100 = gold / 1000.0
+    heroes_new = heroes[:]
+    for i in xrange(len(hero_info)):
+        level = heroes_new[i]
+        cost = hero_info[i].cost_to_level(level, level + 100) 
+        while cost < cost100:
+            level += 100
+            gold_left -= cost
+            cost = hero_info[i].cost_to_level(level, level + 100)
+        heroes_new[i] = level
+
+    cost10 = gold_left / 1000.0
+    for i in xrange(len(hero_info)):
+        level = heroes_new[i]
+        cost = hero_info[i].cost_to_level(level, level + 10) 
+        while cost < cost10:
+            level += 10
+            gold_left -= cost
+            cost = hero_info[i].cost_to_level(level, level + 10)
+        heroes_new[i] = level
+
+    last1000 = sum(heroes_new) / 1000
+    last_heroes = heroes_new[:]
+    print heroes_new, sum(heroes_new)
+    costs = []
+    for i, level in enumerate(heroes_new):
+        heappush(costs, (hero_info[i].get_upgrade_cost(level), i))
+
+    while gold_left > 0:
+        (cheapest, index) = heappop(costs)
+        if gold_left > cheapest:
+            gold_left -= cheapest
+            heroes_new[index] += 1
+            if (sum(heroes_new) / 1000) > last1000:
+                last1000 = sum(heroes_new) / 1000
+                last_heroes = heroes_new[:]
+            heappush(costs, (hero_info[index].get_upgrade_cost(heroes_new[index]), index))
+        else:
+            break
+    print last_heroes, sum(last_heroes)
+    print heroes_new, sum(heroes_new)
+    return last_heroes
+
+def get_hero_levels2(heroes, gold):
+    gold_left = gold
+    heroes_new = heroes[:]
+
+    costs = []
+    for i, level in enumerate(heroes_new):
+        heappush(costs, (hero_info[i].get_upgrade_cost(level), i))
+
+    while gold_left > 0:
+        (cheapest, index) = heappop(costs)
+        if gold_left > cheapest:
+            gold_left -= cheapest
+            heroes_new[index] += 1
+            heappush(costs, (hero_info[index].get_upgrade_cost(heroes_new[index]), index))
+        else:
+            break
+    return heroes_new
 
