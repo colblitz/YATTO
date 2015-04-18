@@ -18,6 +18,7 @@
 			 <li>help/faq page</li>
 			</ul>
 		</div>
+		
 
 		<div id="content">
 
@@ -68,9 +69,16 @@
 			</div>
 
 			<div id="steps-box" class="box">
-				steps: {{steps}}
+				Steps:
+				<div ng-repeat="s in steps track by $index">
+					{{s.name}} - {{s.level}} - {{s.cost}} - {{s.cumulative}}				
+				</div>
+				</br>
+				Summary:
+				<div ng-repeat="ss in summary_steps track by $index">
+					{{ss.name}} - {{ss.level}} - {{ss.cost}}	
+				</div>
 			</div>
-
 		</div>
 	</div>
 

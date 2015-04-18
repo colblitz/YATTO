@@ -161,10 +161,11 @@ mine_a = [35, 118, 10, 200, 150, 200, 25, 25, 47, 196, 37, 189, 10, 124, 0, 127,
 mine_w = [5, 4, 1, 3, 3, 1, 4, 6, 7, 5, 4, 5, 3, 2, 1, 2, 2, 1, 3, 3, 5, 2, 3, 1, 1, 5, 3, 5, 1, 5, 2, 4, 3]
 mine_c = [0.65, 0.81, 0.59, 1.02, 0.02, 0.44]
 
-steps = get_best(mine_a, mine_w, mine_c, 131164, 0, TAP_DAMAGE, True)
+steps = get_best(mine_a, mine_w, mine_c, 13116, 0, TAP_DAMAGE, True)
 summary = {}
 costs = {}
 for s in steps:
+    print s
     i = int(s["index"])
     summary[i] = max(s["level"], summary.get(i))
     costs[i] = int(costs.get(i) or 0) + s["cost"]

@@ -1,7 +1,18 @@
 yattoApp.controller('CalculatorController',
 	function($scope, $http, $cookies) {
 		var something = "something";
-		$scope.steps = "steps";
+		$scope.steps = [];
+		// {'index': 11, 'cost': 5236, 'name': "Hero's Thrust", 'cumulative': 5236, 'level': 190}
+		// {'index': 13, 'cost': 978, 'name': "Knight's Shield", 'cumulative': 6214, 'level': 125}
+		// {'index': 26, 'cost': 1962, 'name': 'Universal Fissure', 'cumulative': 8176, 'level': 130}
+		// {'index': 9, 'cost': 4772, 'name': 'Drunken Hammer', 'cumulative': 12948, 'level': 197}
+		// {'index': 11, 'cost': 5283, 'name': "Hero's Thrust", 'cumulative': 18231, 'level': 191}
+
+		$scope.summary_steps = [];
+		// {'index': 9, 'cost': 4772, 'name': 'Drunken Hammer', 'level': 197}
+		// {'index': 26, 'cost': 1962, 'name': 'Universal Fissure', 'level': 130}
+		// {'index': 11, 'cost': 10519, 'name': "Hero's Thrust", 'level': 191}
+		// {'index': 13, 'cost': 978, 'name': "Knight's Shield", 'level': 125}
 		
 		// re-ordering http://codepen.io/SimeonC/pen/AJIyC
 
@@ -95,7 +106,7 @@ yattoApp.controller('CalculatorController',
 			{name: "All Damage",    index: 1, value: false},
 			{name: "Tap Damage",    index: 2, value: true},
 			{name: "K",             index: 3, value: false},
-			{name: "Relics/second", index: 4, value: true},
+			{name: "Relics/second", index: 4, value: false},
 			{name: "Stages/second", index: 5, value: false}];
 
 		$scope.relics = 0;
@@ -124,7 +135,16 @@ yattoApp.controller('CalculatorController',
 			}).success(function(data, status, headers, config) {
       			// console.log($scope.roadmaps);
       			console.log("yay stuff: " + data.content);
-      			$scope.steps = data.content;
+      			var pyres = JSON.parse(data.content);
+      			console.log("pyres is: " + pyres);
+      			console.log(typeof pyres);
+      			console.log("------------------");
+      			console.log(pyres["2"]);
+      			console.log(pyres["2"]["steps"]);
+      			$scope.steps = pyres["2"]["steps"];
+      			$scope.summary_steps = pyres["2"]["summary"];
+      			console.log("now is");
+      			console.log($scope.summary_steps);
       		}).error(function(data, status, headers, config) {
       			console.log("boo error");
       		});

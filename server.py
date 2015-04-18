@@ -38,6 +38,7 @@ class HelloRPC(object):
 		return thing + " " + thing
 
 	def get_best(self, info):
+		print "start getting steps"
 		artifacts = [0] * len(artifact_info)
 		for a in info["artifacts"]:
 			artifacts[a["index"]] = a["value"]
@@ -82,7 +83,7 @@ class HelloRPC(object):
 			m_response["summary"] = summary_steps
 			response[m] = m_response
 		print "done getting steps"
-		return response
+		return json.dumps(response)
 
 	def calculate_weapons_probability(self, weapon_list):
 		weapons = [int(w) for w in weapon_list]
