@@ -1,73 +1,77 @@
 <div ng-controller="CalculatorController" id="calculator-container">
 
-
-	<div id="header">
-	</div>
-
-	<div id="notes">
-		<p>here's some stuff</p>
-
-		<ul>todo:
-		 <li>form validation</li>
-		 <li>css</li>
-		 <li>cookies</li>
-		 <li>re-orderable artifacts</li>
-		 <li>actually get steps</li>
-		 <li>x on steps - click -> auto levels the artifact</li>
-		 <li>show/hide weapons/customizations</li>
-		 <li>help/faq page</li>
-		</ul>
-	</div>
-
-	<div id="content">
-
-
-		<div id="inputs-box" class="box">
-
-			<button ng-click="weaponProbability(weapons)">
-			  Get weapon probability
-			</button>
-
-			<form class="form" name="form" id="form">
-				<input type="submit" ng-click="calculate(artifacts, weapons, customizations)" value="Calculate" />
-			
-				Relics to spend: <input type="number" class="form-control" ng-model="relics" min="0" /></br> 
-				Steps to calculate: <input type="number" class="form-control" ng-model="nsteps" min="0" /></br> 
-
-				Calculation method:
-				<div ng-init="greedy=1">
-					<input type="radio" name="cmethod" ng-model="greedy" value="1">Greedy</br>
-					<input type="radio" name="cmethod" ng-model="greedy" value="0">Dynamic Programming</br>
-				</div>
-
-				Methods:
-				<div ng-repeat="m in methods">
-					{{m.name}}: <input type="checkbox" class="form-control" ng-model="methods[$index].value" /></br>
-				</div>
-
-				Artifacts:
-				<div ng-repeat="a in artifacts">
-					{{a.name}}: <input type="number" class="form-control" ng-model="artifacts[$index].value" min="0" /></br>
-				</div>
-			
-				Weapons:
-				<div ng-repeat="w in weapons">
-					{{w.name}}: <input type="text" class="form-control" ng-model="weapons[$index].value" /></br>
-				</div>
-
-				Customizations:
-				<div ng-repeat="c in customizations">
-					{{c.name}}: <input type="text" class="form-control" ng-model="customizations[$index].value" /></br>
-				</div>
-
-		  </form>
+	<div id="everything-container">
+		<div id="header">
 		</div>
 
-		<div id="steps-box" class="box">
-			steps: {{steps}}
+		<div id="notes">
+			<p>here's some stuff</p>
+
+			<ul>todo:
+			 <li>form validation</li>
+			 <li>css</li>
+			 <li>cookies</li>
+			 <li>re-orderable artifacts</li>
+			 <li>actually get steps</li>
+			 <li>x on steps - click -> auto levels the artifact</li>
+			 <li>show/hide weapons/customizations</li>
+			 <li>help/faq page</li>
+			</ul>
 		</div>
 
-	</div>
+		<div id="content">
 
+
+			<div id="inputs-box" class="box">
+
+				<button ng-click="weaponProbability(weapons)" class="btn btn-primary">
+				  Get weapon probability
+				</button>
+
+				<form class="form" name="form" id="form">
+					<p><button class="btn btn-success" ng-click="calculate(artifacts, weapons, customizations)">Calculate</button></p>
+				
+					Relics to spend: <input type="number" class="form-control" ng-model="relics" min="0" /></br> 
+					Steps to calculate: <input type="number" class="form-control" ng-model="nsteps" min="0" /></br> 
+
+					<div class="form-group">
+						<label>Calculation method:</label>
+						<div ng-init="greedy=1">
+							<input type="radio" name="cmethod" ng-model="greedy" value="1">Greedy</br>
+							<input type="radio" name="cmethod" ng-model="greedy" value="0">Dynamic Programming</br>
+						</div>
+					</div>
+
+					<h3>Methods:</h3>
+					<div ng-repeat="m in methods" id="methods-form">
+						<div class="checkbox">
+							<label><input type="checkbox" ng-model="methods[$index].value" /> {{m.name}}</label>
+						</div>
+					</div>
+
+					<h3>Artifacts:</h3>
+					<div ng-repeat="a in artifacts" id="artifact-form">
+						{{a.name}}: <input type="number" class="form-control" ng-model="artifacts[$index].value" min="0" /></br>
+					</div>
+				
+					<h3>Weapons:</h3>
+					<div ng-repeat="w in weapons" id="weapons-form">
+						{{w.name}}: <input type="text" class="form-control" ng-model="weapons[$index].value" /></br>
+					</div>
+
+					<h3>Customizations:</h3>
+					<div ng-repeat="c in customizations" id="customizations-form">
+						{{c.name}}: <input type="text" class="form-control" ng-model="customizations[$index].value" /></br>
+					</div>
+
+			  </form>
+			</div>
+
+			<div id="steps-box" class="box">
+				steps: {{steps}}
+			</div>
+
+		</div>
+	</div>
 
 </div>

@@ -1,7 +1,15 @@
+@content-width: 1200px;
+
 body {
   font: 14px "Oxygen", sans-serif;
   color: #3F3F3F;
   background-color: #373737;
+}
+
+#everything-container {
+  width: @content-width;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #notes {
@@ -12,13 +20,14 @@ body {
   position: absolute;
   top: 20px;
   right: 80px;
+  z-index: 10;
 }
 
 #header {
-  background: url(../img/header.png);
+  background: url(../img/header_small.png);
   background-size: 100% auto;
-  width: 1400px;
-  height: 380px;
+  width: @content-width;
+  height: 240px;
   padding: 20px;
   padding-top: 120px;
   padding-left: 80px;
@@ -28,17 +37,18 @@ body {
 }
 
 #content {
-  width: 1400px;
+  width: @content-width;
   background-color: #EDEDED;
   padding: 50px;
   position: relative;
+  z-index: 9;
 }
 
 .box {
   border-radius: 5px;
   padding: 50px;
   margin: 20px;
-  box-shadow: -3px 3px 3px #888888;
+  // box-shadow: -3px 3px 3px #888888;
   display: inline-block;
   vertical-align: top;
 }
@@ -46,10 +56,31 @@ body {
 #inputs-box {
   width: 600px;
   margin-left: 20px;
-  background-color: #58b1cc;
+  // background-color: #58b1cc;
 }
 
 #steps-box {
   width: 400px;
-  background-color: #FED611;
+  // background-color: #FED611;
+}
+
+.artifact-input {
+  width: 100px;
+  display: inline-block;
+}
+
+#methods-form {
+
+}
+
+#artifacts-form {
+
+}
+
+#weapons-form {
+
+}
+
+#customizations-form {
+  
 }
