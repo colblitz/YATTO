@@ -26,7 +26,7 @@
 			<div id="inputs-box" class="box">
 
 				<button ng-click="weaponProbability(weapons)" class="btn btn-primary">
-				  Get weapon probability
+					Get weapon probability
 				</button>
 
 				<form class="form" name="form" id="form">
@@ -42,16 +42,17 @@
 							<input type="radio" name="cmethod" ng-model="greedy" value="0">Dynamic Programming</br>
 						</div>
 					</div>
-
+					<div id="methods-form">
 					<h3>Methods:</h3>
-					<div ng-repeat="m in methods" id="methods-form">
-						<div class="checkbox">
-							<label><input type="checkbox" ng-model="methods[$index].value" /> {{m.name}}</label>
+						<div ng-repeat="m in methods">
+							<div class="checkbox">
+								<label><input type="checkbox" ng-model="methods[$index].value" /> {{m.name}}</label>
+							</div>
 						</div>
 					</div>
 
 					<h3>Artifacts:</h3>
-					<div ng-repeat="a in artifacts" id="artifact-form">
+					<div ng-repeat="a in artifacts" id="artifacts-form">
 						{{a.name}}: <input type="number" class="form-control" ng-model="artifacts[$index].value" min="0" /></br>
 					</div>
 				
@@ -65,7 +66,7 @@
 						{{c.name}}: <input type="text" class="form-control" ng-model="customizations[$index].value" /></br>
 					</div>
 
-			  </form>
+				</form>
 			</div>
 
 			<div id="steps-box" class="box">
