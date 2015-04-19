@@ -3,6 +3,16 @@ from calculate import *
 import time
 import cProfile
 
+print artifact_info[0].name
+print artifact_info[0].getAD(2)
+print artifact_info[0].costToLevel(2)
+
+print hero_info[0].name
+print hero_info[0].get_base_damage(73)
+print hero_info[0].get_upgrade_cost(736)
+
+
+
 h = [0] * 33
 
 # get_hero_levels4(h, 1e204)
@@ -17,7 +27,7 @@ h = [0] * 33
 #     get_hero_levels3(h, 1e204)
 # print time.time() - start
 
-get_hero_levels4(h, 1e204)
+# get_hero_levels4(h, 1e204)
 
 # start = time.time()
 # for i in xrange(1000):
@@ -160,8 +170,8 @@ test1_a = [35, 100, 10, 165, 127, 165, 25, 25, 37, 151, 35, 150, 10, 100, 0, 108
 mine_a = [35, 118, 10, 200, 150, 200, 25, 25, 47, 196, 37, 189, 10, 124, 0, 127, 10, 10, 94, 77, 25, 10, 10, 25, 66, 190, 129, 10, 5]
 mine_w = [5, 4, 1, 3, 3, 1, 4, 6, 7, 5, 4, 5, 3, 2, 1, 2, 2, 1, 3, 3, 5, 2, 3, 1, 1, 5, 3, 5, 1, 5, 2, 4, 3]
 mine_c = [0.65, 0.81, 0.59, 1.02, 0.02, 0.44]
-
-steps = get_best(mine_a, mine_w, mine_c, 13116, 0, TAP_DAMAGE, True)
+mine_a = [35, 118, 10, 200, 150, 200, 25, 25, 48, 202, 38, 196, 10, 129, 0, 127, 10, 10, 94, 80, 25, 10, 10, 25, 68, 190, 134, 10, 5]
+steps = get_best(mine_a, mine_w, mine_c, 129000, 0, TAP_DAMAGE, True)
 summary = {}
 costs = {}
 for s in steps:
@@ -169,6 +179,7 @@ for s in steps:
     i = int(s["index"])
     summary[i] = max(s["level"], summary.get(i))
     costs[i] = int(costs.get(i) or 0) + s["cost"]
+print "----------------------------------------------"
 summary_steps = []
 for s in summary:
     step = {}

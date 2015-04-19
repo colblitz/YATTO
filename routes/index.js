@@ -1,5 +1,6 @@
 var express = require('express');
 var zerorpc = require("zerorpc");
+var Heap = require("heap");
 
 var router = express.Router();
 var pythonClient = new zerorpc.Client();
