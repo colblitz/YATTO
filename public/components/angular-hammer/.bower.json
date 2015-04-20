@@ -1,0 +1,24 @@
+{
+  "name": "angular-hammer",
+  "version": "1.2.4",
+  "main": "angular-hammer.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "angular": ">=1.0.6",
+    "hammerjs": ">=1.0.5 <=1.0.11"
+  },
+  "homepage": "https://github.com/monospaced/angular-hammer",
+  "_release": "1.2.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.2.4",
+    "commit": "04288129f54c1cb9094d7d89e363a9566379a936"
+  },
+  "_source": "git://github.com/monospaced/angular-hammer.git",
+  "_target": "~1.x",
+  "_originalSource": "angular-hammer"
+}

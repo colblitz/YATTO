@@ -1,6 +1,6 @@
 /* App Module */
 var yattoApp = angular.module('yattoApp', [
-	'ngRoute', 'ngCookies'
+	'ngRoute', 'ngCookies', 'ngRepeatReorder'
 ]);
 
 yattoApp.config(['$routeProvider', '$locationProvider',

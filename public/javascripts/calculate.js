@@ -136,7 +136,7 @@ var Hero = function(name, id, base_cost, skills) {
 	this.get_cost_to_next_skill = function(level) {
 		for (var l in SKILL_LEVELS) {
 			if (level < SKILL_LEVELS[l]) {
-				return [l, self.cost_to_next_skill[level]];
+				return [SKILL_LEVELS[l], this.cost_to_next_skill[level]];
 			}
 		}
 		return [0, Infinity];
@@ -280,7 +280,7 @@ var cost_to_buy_next = function(artifacts) {
 };
 
 var get_hero_weapon_bonuses = function(weapons) {
-	return weapons.map(function(n) { return 1 + 0.5 * x; });
+	return weapons.map(function(n) { return 1 + 0.5 * n; });
 };
 
 var number_of_sets = function(weapons) {
@@ -420,8 +420,8 @@ var GameState = function(artifacts, weapons, customizations) {
 	};
 
 	this.total_relics = function() {
-		var stage_relics = Math.pow(Math.floor(self.current_stage/15) - 5, 1.7);
-		var hero_relics = Math.floor(sumArray(self.heroes) / 1000);
+		var stage_relics = Math.pow(Math.floor(this.current_stage/15) - 5, 1.7);
+		var hero_relics = Math.floor(sumArray(this.heroes) / 1000);
 		var multiplier = 2 + 0.1 * this.l_ua;
 		return Math.floor((stage_relics + hero_relics) * multiplier);
 	};
@@ -563,17 +563,17 @@ var GameState = function(artifacts, weapons, customizations) {
 				continue;
 			}
 			var level = heroes_after[i];
-			var temp = hero_info[i].cost_to_next_skill(level);
+			var temp = hero_info[i].get_cost_to_next_skill(level);
 			var next_skill_level = temp[0];
 			var cost = temp[1];
-			cost += hero_info[i].cost_to_buy_skill(l);
+			cost += hero_info[i].cost_to_buy_skill(next_skill_level);
 			while (cost < this.current_gold && level < 800) {
 				heroes_after[i] = next_skill_level;
 				this.add_skill(i, this.hero_skills[i]);
 				this.hero_skills[i] += 1;
 				level = next_skill_level;
 				this.current_gold -= cost;
-				temp = hero_info[i].cost_to_next_skill(level);
+				temp = hero_info[i].get_cost_to_next_skill(level);
 				next_skill_level = temp[0];
 				cost = temp[1];
 				cost += hero_info[i].cost_to_buy_skill(next_skill_level);
@@ -720,9 +720,9 @@ var get_value = function(game_state, method) {
 		case METHOD_K:
 			return [game_state.gold_multiplier(), game_state.a_ad * 100];
 		case METHOD_RELICS_PS:
-			return game_state.relics_per_second[2];
+			return game_state.relics_per_second()[2];
 		case METHOD_STAGE_PS:
-			return game_state.relics_per_second.slice(0, 2);
+			return game_state.relics_per_second().slice(0, 2);
 	}
 };
 
@@ -730,10 +730,10 @@ var index_max = function(array, custom) {
 	var max = array[0];
 	var maxIndex = 0;
 	for (var i = 1; i < array.length; i++) {
-		if ((!custom && custom(array[i], max)) || 
-			(custom && array[i] > max)) {
+		if ((typeof custom !== "undefined" && custom(array[i], max)) || 
+			(typeof custom === "undefined" && array[i] > max)) {
 			maxIndex = i;
-			max = arr[i];
+			max = array[i];
 		}
 	}
 	return maxIndex;
@@ -757,14 +757,14 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 			var costs = newZeroes(artifact_info.length);
 			for (var i in current_artifacts) {
 				var level = current_artifacts[i];
-				var relic_cost = artifact_info[index].costToLevel(level);
-				costs[index] = relic_cost;
-				if (level == 0 || level == artifact_info[index].levelcap || !isFinite(relic_cost) ) {
+				var relic_cost = artifact_info[i].costToLevel(level);
+				costs[i] = relic_cost;
+				if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) ) {
 					continue;
 				}
 				var artifacts_copy = current_artifacts.slice();
-				artifacts_copy[index] += 1;
-				var new_g = GameState(artifacts_copy, weapons, customizations);
+				artifacts_copy[i] += 1;
+				var new_g = new GameState(artifacts_copy, weapons, customizations);
 				if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
 					// TODO: make this user variable
 					new_g.get_all_skills();
@@ -869,6 +869,16 @@ var get_hero_levels = function(heroes, gold) {
 };
 
 var get_steps = function(artifacts, weapons, customizations, methods, relics, nsteps, greedy) {
+	console.log("omg i'm here");
+	console.log("----------------------------------------------------------------");
+	console.log(artifacts);
+	console.log(weapons);
+	console.log(customizations);
+	console.log(methods);
+	console.log(relics);
+	console.log(nsteps);
+	console.log(greedy);
+	console.log("----------------------------------------------------------------");
 	var response = {};
 	for (var mi in methods) {
 		var m = methods[mi];

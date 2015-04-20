@@ -108,6 +108,39 @@ body {
   // }
 }
 
+.handle {
+  display: inline-block;
+  width: 20px;
+  height: 10px;
+  background-color: blue;
+}
+
+.ng-repeat-reorder-parent, [ng-repeat-reorder]{
+  z-index: 10;
+  position: relative;
+}
+[ng-repeat-reorder].dragging{
+  z-index: 11;
+  position: absolute;
+}
+.form-item.dragging input {
+  border: 1px solid #cccccc;
+}
+.form-item.dragging-after input {
+  background-color: green;
+  border-top: 1px solid #cccccc;
+}
+.form-item.dragging-before input {
+  background-color: red;
+}
+
+.active-drag-below {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 #weapons-form {
   width: 320px;
   display: inline-block;

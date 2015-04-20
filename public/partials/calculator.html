@@ -60,10 +60,11 @@
 						<div id="artifact-weapons-container">
 							<div id="artifacts-form">
 								<h3>Artifact Levels:</h3>
-								<div ng-repeat="a in artifacts" class="form-item">
-									<input type="number" class="form-control number-input" ng-model="artifacts[$index].value" min="0" /><div class="input-label">{{a.name}}</div></br>
+								<div class="form-item has-feedback transition" ng-repeat-reorder='a in artifacts' ng-repeat-reorder-handle='div.handle'>
+									<input type="number" class="form-control number-input" ng-model="artifacts[$index].value" min="0" /><div class="input-label">{{a.name}}</div><div class="handle"></div></br>
 								</div>
 							</div>
+							{{artifacts}}
 							<div id="weapons-form">
 								<h3>Weapons:</h3>
 								<div ng-repeat="w in weapons" class="form-item">

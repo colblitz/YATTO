@@ -113,6 +113,15 @@ yattoApp.controller('CalculatorController',
 		$scope.nsteps = 10;
 		$scope.greedy = 1;
 
+		var transformScopeArray = function(scopeArray) {
+			var newArray = newZeroes(scopeArray.length);
+			for (var x in scopeArray) { 
+				var thing = scopeArray[x];
+				newArray[thing.index] = thing.value;
+			}
+			return newArray;
+		}
+
 		$scope.calculate = function() {
 			console.log($scope.artifacts);
 			console.log($scope.weapons);
@@ -128,26 +137,49 @@ yattoApp.controller('CalculatorController',
 			console.log("controller");
 			console.log(info);
 
-			$http({
-				method: "POST",
-				url: "calculate",
-				data: {"info": info}
-			}).success(function(data, status, headers, config) {
-      			// console.log($scope.roadmaps);
-      			console.log("yay stuff: " + data.content);
-      			var pyres = JSON.parse(data.content);
-      			console.log("pyres is: " + pyres);
-      			console.log(typeof pyres);
-      			console.log("------------------");
-      			console.log(pyres["2"]);
-      			console.log(pyres["2"]["steps"]);
-      			$scope.steps = pyres["2"]["steps"];
-      			$scope.summary_steps = pyres["2"]["summary"];
-      			console.log("now is");
-      			console.log($scope.summary_steps);
-      		}).error(function(data, status, headers, config) {
-      			console.log("boo error");
-      		});
+			var artifacts = transformScopeArray($scope.artifacts);
+			var weapons = transformScopeArray($scope.weapons);
+			var customizations = transformScopeArray($scope.customizations);
+			var methods = [];
+			for (var m in $scope.methods) {
+				if ($scope.methods[m].value) {
+					methods.push($scope.methods[m].index);
+				}
+			}
+
+			artifacts = [35, 118, 10, 200, 150, 200, 25, 25, 50, 209, 38, 201, 10, 135, 0, 130, 10, 10, 101, 82, 25, 10, 10, 25, 69, 190, 139, 10, 5];
+			weapons = [5, 4, 2, 4, 3, 3, 4, 6, 7, 5, 5, 6, 4, 2, 1, 2, 2, 1, 3, 3, 5, 2, 3, 2, 2, 6, 3, 5, 1, 6, 2, 4, 4];
+			customizations = [0.65, 0.81, 0.59, 1.02, 0.02, 0.44];
+			$scope.relics = 134640;
+			$scope.nsteps = 0;
+
+			var response = get_steps(artifacts, weapons, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
+			console.log("holy crap a response");
+			console.log(response);
+
+			$scope.steps = response["2"]["steps"];
+			$scope.summary_steps = response["2"]["summary"];
+
+			// $http({
+			// 	method: "POST",
+			// 	url: "calculate",
+			// 	data: {"info": info}
+			// }).success(function(data, status, headers, config) {
+   //    			// console.log($scope.roadmaps);
+   //    			console.log("yay stuff: " + data.content);
+   //    			var pyres = JSON.parse(data.content);
+   //    			console.log("pyres is: " + pyres);
+   //    			console.log(typeof pyres);
+   //    			console.log("------------------");
+   //    			console.log(pyres["2"]);
+   //    			console.log(pyres["2"]["steps"]);
+   //    			$scope.steps = pyres["2"]["steps"];
+   //    			$scope.summary_steps = pyres["2"]["summary"];
+   //    			console.log("now is");
+   //    			console.log($scope.summary_steps);
+   //    		}).error(function(data, status, headers, config) {
+   //    			console.log("boo error");
+   //    		});
   		};
 
   		$scope.weaponProbability = function() {

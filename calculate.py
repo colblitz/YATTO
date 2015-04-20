@@ -1,7 +1,7 @@
 import math
 import sys
 import numpy as np
-import scipy
+# import scipy
 from heapq import *
 
 """
@@ -559,7 +559,7 @@ class GameState:
                 continue
             level = heroes_after[i]
             next_skill_level, c = hero_info[i].cost_to_next_skill(level)
-            c += hero_info[i].cost_to_buy_skill(l)
+            c += hero_info[i].cost_to_buy_skill(next_skill_level)
             # print "cost to buy: ", hero_info[i].cost_to_buy_skill(l)
             # print "hero ", i, " next_skill_level: ", next_skill_level, " cost: ", c
             while c < self.current_gold and level < 800:
