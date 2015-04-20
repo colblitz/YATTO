@@ -1,2 +1,6 @@
 *.pyc
+build/
 node_modules/zerorpc
+node_modules/.bin/
+node_modules/msgpack/
+node_modules/node-gyp/

@@ -1,10 +1,13 @@
 <div ng-controller="CalculatorController" id="calculator-container">
 
-	<div id="everything-container">
-		<div id="header">
+	<div id="everything-container" class="container-fluid">
+
+		<div class="row">
+			<div id="header" class="col-xs-12">
+			</div>
 		</div>
 
-		<div id="notes">
+<!-- 		<div id="notes">
 			<p>here's some stuff</p>
 
 			<ul>todo:
@@ -17,70 +20,85 @@
 			 <li>show/hide weapons/customizations</li>
 			 <li>help/faq page</li>
 			</ul>
-		</div>
+		</div> -->
 		
+		<div class="row">
+			<div id="content" class="col-xs-12">
+				<div class="row">
+					<div id="inputs-box" class="box panel">
+					<form class="form" name="form" id="form">
 
-		<div id="content">
-
-
-			<div id="inputs-box" class="box">
-
-				<button ng-click="weaponProbability(weapons)" class="btn btn-primary">
-					Get weapon probability
-				</button>
-
-				<form class="form" name="form" id="form">
-					<p><button class="btn btn-success" ng-click="calculate(artifacts, weapons, customizations)">Calculate</button></p>
-				
-					Relics to spend: <input type="number" class="form-control" ng-model="relics" min="0" /></br> 
-					Steps to calculate: <input type="number" class="form-control" ng-model="nsteps" min="0" /></br> 
-
-					<div class="form-group">
-						<label>Calculation method:</label>
-						<div ng-init="greedy=1">
-							<input type="radio" name="cmethod" ng-model="greedy" value="1">Greedy</br>
-							<input type="radio" name="cmethod" ng-model="greedy" value="0">Dynamic Programming</br>
-						</div>
-					</div>
-					<div id="methods-form">
-					<h3>Methods:</h3>
-						<div ng-repeat="m in methods">
-							<div class="checkbox">
-								<label><input type="checkbox" ng-model="methods[$index].value" /> {{m.name}}</label>
+						<div class="row">
+							<div class="col-">
+								<button ng-click="weaponProbability(weapons)" class="btn btn-primary">
+									Get weapon probability
+								</button>
+							</div>
+							<div class="col-"
+							<button class="btn btn-success" ng-click="calculate(artifacts, weapons, customizations)">Calculate</button>
 							</div>
 						</div>
-					</div>
 
-					<h3>Artifacts:</h3>
-					<div ng-repeat="a in artifacts" id="artifacts-form">
-						{{a.name}}: <input type="number" class="form-control" ng-model="artifacts[$index].value" min="0" /></br>
-					</div>
-				
-					<h3>Weapons:</h3>
-					<div ng-repeat="w in weapons" id="weapons-form">
-						{{w.name}}: <input type="text" class="form-control" ng-model="weapons[$index].value" /></br>
-					</div>
+						<div class="small-form-item">Relics to spend: <input type="number" class="form-control number-input" ng-model="relics" min="0" /></div> 
+						<div class="small-form-item">Steps to calculate: <input type="number" class="form-control number-input" ng-model="nsteps" min="0" /></div> 
 
-					<h3>Customizations:</h3>
-					<div ng-repeat="c in customizations" id="customizations-form">
-						{{c.name}}: <input type="text" class="form-control" ng-model="customizations[$index].value" /></br>
-					</div>
+						<div class="form-group">
+							<div ng-init="greedy=1" id="calc-method-form">
+								<h3>Calculation method:</h3>
+								<div class="small-form-item"><input type="radio" name="cmethod" ng-model="greedy" value="1">Greedy</div>
+								<div class="small-form-item"><input type="radio" name="cmethod" ng-model="greedy" value="0">Dynamic Programming</div>
+							</div>
+						</div>
+						<div id="methods-form">
+						<h3>Methods:</h3>
+							<div ng-repeat="m in methods" class="small-form-item">
+								<div class="checkbox">
+									<label><input type="checkbox" ng-model="methods[$index].value" /> {{m.name}}</label>
+								</div>
+							</div>
+						</div>
+						<div id="artifact-weapons-container">
+							<div id="artifacts-form">
+								<h3>Artifact Levels:</h3>
+								<div ng-repeat="a in artifacts" class="form-item">
+									<input type="number" class="form-control number-input" ng-model="artifacts[$index].value" min="0" /><div class="input-label">{{a.name}}</div></br>
+								</div>
+							</div>
+							<div id="weapons-form">
+								<h3>Weapons:</h3>
+								<div ng-repeat="w in weapons" class="form-item">
+									<input type="number" class="form-control number-input" ng-model="weapons[$index].value" min="0" /><div class="input-label">{{w.name}}</div>
+								</div>
+							</div>
+						</div>
+						
 
-				</form>
-			</div>
+						
+						<div id="customizations-form">
+							<h3>Bonuses from Customizations:</h3>
+							<div ng-repeat="c in customizations" class="form-item">
+								<input type="text" class="form-control number-input" ng-model="customizations[$index].value" /><div class="input-label">{{c.name}}</div> 
+							</div>						
+						</div>
 
-			<div id="steps-box" class="box">
-				Steps:
-				<div ng-repeat="s in steps track by $index">
-					{{s.name}} - {{s.level}} - {{s.cost}} - {{s.cumulative}}				
+
+					</form>
 				</div>
-				</br>
-				Summary:
-				<div ng-repeat="ss in summary_steps track by $index">
-					{{ss.name}} - {{ss.level}} - {{ss.cost}}	
+
+				<div id="steps-box" class="box">
+					Steps:
+					<div ng-repeat="s in steps track by $index">
+						{{s.name}} - {{s.level}} - {{s.cost}} - {{s.cumulative}}				
+					</div>
+					</br>
+					Summary:
+					<div ng-repeat="ss in summary_steps track by $index">
+						{{ss.name}} - {{ss.level}} - {{ss.cost}}	
+					</div>
 				</div>
-			</div>
+			</div> <!-- content -->
 		</div>
-	</div>
+
+	</div> <!--everything container-->
 
 </div>
