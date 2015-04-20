@@ -108,38 +108,61 @@ body {
   // }
 }
 
-.handle {
+.myHandle {
   display: inline-block;
-  width: 20px;
   height: 10px;
-  background-color: blue;
+  width: 10px;
+  // position: relative;
+  // top: 50%;
+  transform: translateY(60%);
+  margin-right: 330px;
+  float: right;
+  background-color: #000;
+  cursor: move;
 }
 
-.ng-repeat-reorder-parent, [ng-repeat-reorder]{
-  z-index: 10;
-  position: relative;
-}
-[ng-repeat-reorder].dragging{
-  z-index: 11;
-  position: absolute;
-}
-.form-item.dragging input {
-  border: 1px solid #cccccc;
-}
-.form-item.dragging-after input {
-  background-color: green;
-  border-top: 1px solid #cccccc;
-}
-.form-item.dragging-before input {
-  background-color: red;
-}
+// .beingDragged {
+//   // height: 24px;
+//   // margin-bottom: .5em !important;
+//   border: 2px dotted #ccc !important;
+//   background: grey !important;
+// }
+// form-item.dragging input {
+//   border: 1px solid #cccccc;
+// }
+// .handle {
+//   display: inline-block;
+//   width: 20px;
+//   height: 10px;
+//   background-color: blue;
+// }
 
-.active-drag-below {
-  -moz-user-select: none;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
+// input.form-control {
+//   margin-bottom: 0;
+//   border-radius: 0;
+//   border: 1px solid #cccccc;
+//   border-top: none;
+//   padding-right: 20px;
+// }
+
+// .ng-repeat-reorder-parent, [ng-repeat-reorder]{
+//   z-index: 20;
+//   position: relative;
+// }
+// [ng-repeat-reorder].dragging{
+//   z-index: 21;
+//   position: absolute;
+// }
+// .form-item.dragging input {
+//   border: 1px solid #cccccc;
+// }
+// .form-item.dragging-after input {
+//   background-color: green;
+//   border-top: 1px solid #cccccc;
+// }
+// .form-item.dragging-before input {
+//   background-color: red;
+// }
 
 #weapons-form {
   width: 320px;

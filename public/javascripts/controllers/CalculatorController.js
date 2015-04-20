@@ -1,6 +1,14 @@
 yattoApp.controller('CalculatorController',
 	function($scope, $http, $cookies) {
 		var something = "something";
+
+		$scope.sortableOptions = {
+  		'ui-floating': false,
+  		'axis': 'y',
+  		'containment': "parent",
+  		'handle': '> .myHandle',
+		};
+
 		$scope.steps = [];
 		// {'index': 11, 'cost': 5236, 'name': "Hero's Thrust", 'cumulative': 5236, 'level': 190}
 		// {'index': 13, 'cost': 978, 'name': "Knight's Shield", 'cumulative': 6214, 'level': 125}

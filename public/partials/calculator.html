@@ -60,11 +60,19 @@
 						<div id="artifact-weapons-container">
 							<div id="artifacts-form">
 								<h3>Artifact Levels:</h3>
-								<div class="form-item has-feedback transition" ng-repeat-reorder='a in artifacts' ng-repeat-reorder-handle='div.handle'>
-									<input type="number" class="form-control number-input" ng-model="artifacts[$index].value" min="0" /><div class="input-label">{{a.name}}</div><div class="handle"></div></br>
+								<!-- <div class="form-item has-feedback transition" ng-repeat='a in artifacts'>
+									<input type="number" class="form-control number-input" ng-model="a.value" min="0" /><div class="input-label">{{a.name}}</div>
+								</div> -->
+								<div ui-sortable="sortableOptions" ng-model="artifacts">
+									<div class="form-item has-feedback transition" ng-repeat='a in artifacts'>
+										<input type="number" class="form-control number-input" ng-model="a.value" min="0" /><div class="input-label">{{a.name}}</div><div class="myHandle"></div>
+									</div>
 								</div>
+								<!-- <div class="form-item has-feedback transition" ng-repeat-reorder='a in artifacts' ng-repeat-reorder-handle='div.handle'>
+									<input type="number" class="form-control form-inline number-input" ng-model="a.value" min="0" /><div class="input-label">{{a.name}}</div><div class="handle"></div>
+								</div> -->
 							</div>
-							{{artifacts}}
+							<!-- </br>{{artifacts}} -->
 							<div id="weapons-form">
 								<h3>Weapons:</h3>
 								<div ng-repeat="w in weapons" class="form-item">
