@@ -57,7 +57,7 @@
 									<label><input type="radio" ng-model="greedy" value="1">Greedy</label>
 								</div>
 								<div class="small-form-item">
-									<label><input type="radio" ng-model="greedy" value="0">Dynamic Programming</label>
+									<label><input type="radio" ng-model="greedy" value="0" disabled="true">Dynamic Programming</label>
 								</div>
 							</div>
 						</div>
@@ -99,38 +99,43 @@
 
 					<div id="steps-box" class="box panel">
 						<div id="steps-summary-container">
-							<div id ="steps-list" class="list">
-								<h3>Steps:</h3>
-								<table ng-if="steps.length > 0" class="animate-if">
-									<tr>
-										<th class="steps-colh1 colh">Artifact</th>
-										<th class="steps-colh2 colh">Level</th>
-										<th class="steps-colh3 colh">Cost</th>
-										<th class="steps-colh4 colh">Total</th>
-									</tr>
-									<tr ng-repeat="s in steps track by $index" class="step-row">
-										<td class="steps-col1">{{s.name}}</td>
-										<td class="steps-col2">{{s.level}}</td>
-										<td class="steps-col3">{{s.cost}}</td>
-										<td class="steps-col4">{{s.cumulative}}</td>
-									</tr>
-								</table>
-							</div>
-							<div id ="summary-list" class="list">
-								<h3>Summary:</h3>
-								<table ng-if="summary_steps.length > 0" class="animate-if">
-									<tr>
-										<th class="ssteps-colh1 colh">Artifact</th>
-										<th class="ssteps-colh2 colh">Level To</th>
-										<th class="ssteps-colh3 colh">Cost</th>
-									</tr>
-									<tr ng-repeat="ss in summary_steps track by $index" class="step-row">
-										<td class="ssteps-col1">{{ss.name}}</td>
-										<td class="ssteps-col2">{{ss.level}}</td>
-										<td class="ssteps-col3">{{ss.cost}}</td>
-									</tr>
-								</table>
-							</div>
+							<tabset>
+								<tab ng-repeat="method in methods" heading="{{method.tabname}}" disabled="!method.value">
+									<div id ="summary-list" class="list">
+										<h3 ng-if="summary_steps[method.index].length > 0" class="animate-if">Summary:</h3>
+										<table ng-if="summary_steps[method.index].length > 0" class="animate-if">
+											<tr>
+												<th class="ssteps-colh1 colh">Artifact</th>
+												<th class="ssteps-colh2 colh">Level To</th>
+												<th class="ssteps-colh3 colh">Cost</th>
+											</tr>
+											<tr ng-repeat="ss in summary_steps[method.index] track by $index" class="step-row">
+												<td class="ssteps-col1">{{ss.name}}</td>
+												<td class="ssteps-col2">{{ss.level}}</td>
+												<td class="ssteps-col3">{{ss.cost}}</td>
+											</tr>
+										</table>
+									</div>
+      						<div id ="steps-list" class="list">
+      							<h3 ng-if="steps[method.index] == null">Click calculate to get steps!</h3>
+										<h3 ng-if="steps[method.index].length > 0" class="animate-if">Steps:</h3>
+										<table ng-if="steps[method.index].length > 0" class="animate-if">
+											<tr>
+												<th class="steps-colh1 colh">Artifact</th>
+												<th class="steps-colh2 colh">Level</th>
+												<th class="steps-colh3 colh">Cost</th>
+												<th class="steps-colh4 colh">Total</th>
+											</tr>
+											<tr ng-repeat="s in steps[method.index] track by $index" class="step-row">
+												<td class="steps-col1">{{s.name}}</td>
+												<td class="steps-col2">{{s.level}}</td>
+												<td class="steps-col3">{{s.cost}}</td>
+												<td class="steps-col4">{{s.cumulative}}</td>
+											</tr>
+										</table>
+									</div>
+    						</tab>
+    					</tabset>
 						</div>
 					</div>
 				</div>

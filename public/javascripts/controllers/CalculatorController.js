@@ -1,5 +1,5 @@
 yattoApp.controller('CalculatorController',
-	function($scope, $http, $cookies) {
+	function($scope, $http, $cookies, $cookieStore) {
 		var something = "something";
 
 		$scope.sortableOptions = {
@@ -17,6 +17,8 @@ yattoApp.controller('CalculatorController',
 		// {'index': 11, 'cost': 5283, 'name': "Hero's Thrust", 'cumulative': 18231, 'level': 191}
 
 		$scope.summary_steps = [];
+
+		$("#step-tabs").tabs();
 		// {'index': 9, 'cost': 4772, 'name': 'Drunken Hammer', 'level': 197}
 		// {'index': 26, 'cost': 1962, 'name': 'Universal Fissure', 'level': 130}
 		// {'index': 11, 'cost': 10519, 'name': "Hero's Thrust", 'level': 191}
@@ -108,16 +110,44 @@ yattoApp.controller('CalculatorController',
 			{name: "Tap Damage",      index: 5, value: 0}];
 
 		$scope.methods = [
-			{name: "Gold",          index: 0, value: false},
-			{name: "All Damage",    index: 1, value: false},
-			{name: "Tap Damage",    index: 2, value: true},
-			{name: "K",             index: 3, value: false},
-			{name: "Relics/second", index: 4, value: false},
-			{name: "Stages/second", index: 5, value: false}];
+			{name: "Gold",          index: 0, value: true, tabname: "Gold"},
+			{name: "All Damage",    index: 1, value: false, tabname: "ADmg"},
+			{name: "Tap Damage",    index: 2, value: true,  tabname: "TDmg"},
+			{name: "K",             index: 3, value: true, tabname: "  K  "},
+			{name: "Relics/second", index: 4, value: false, tabname: " R/s "},
+			{name: "Stages/second", index: 5, value: false, tabname: " S/s "}];
 
 		$scope.relics = 50;
 		$scope.nsteps = 10;
 		$scope.greedy = 1;
+
+		var readFromCookies = function() {
+			var cookie_a = $cookieStore.get('artifacts');
+			var cookie_w = $cookieStore.get('weapons');
+			var cookie_c = $cookieStore.get('customizations');
+			var cookie_m = $cookieStore.get('methods');
+			if (typeof cookie_a !== "undefined") {
+				$scope.artifacts = cookie_a;
+			}
+			if (typeof cookie_w !== "undefined") {
+				$scope.weapons = cookie_w;
+			}
+			if (typeof cookie_c !== "undefined") {
+				$scope.customizations = cookie_c;
+			}
+			if (typeof cookie_m !== "undefined") {
+				$scope.methods = cookie_m;
+			}
+		};
+
+		readFromCookies();
+
+		var storeToCookies = function() {
+			$cookieStore.put('artifacts', $scope.artifacts);
+			$cookieStore.put('weapons', $scope.weapons);
+			$cookieStore.put('customizations', $scope.customizations);
+			$cookieStore.put('methods', $scope.methods);
+		};
 
 		var transformScopeArray = function(scopeArray) {
 			var newArray = newZeroes(scopeArray.length);
@@ -163,8 +193,16 @@ yattoApp.controller('CalculatorController',
 			console.log("holy crap a response");
 			console.log(response);
 
-			$scope.steps = response["2"]["steps"];
-			$scope.summary_steps = response["2"]["summary"];
+			// for (var m in $scope.methods) {
+			// 	$scope.methods[m].index
+			// }
+
+			for (var m in response) {
+				$scope.steps[m] = response[m]["steps"];
+				$scope.summary_steps[m] = response[m]["summary"];
+			}
+
+			storeToCookies();
 
 			// $http({
 			// 	method: "POST",
