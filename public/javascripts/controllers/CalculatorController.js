@@ -32,8 +32,6 @@ yattoApp.controller('CalculatorController',
   //         $cookieStore.put('tab', tabName);
   //     };
 
-
-
 		$scope.artifacts = [
 			{name: "Amulet of the Valrunes",  index: 0, value: 1},
 			{name: "Axe of Resolution",       index: 1, value: 1},

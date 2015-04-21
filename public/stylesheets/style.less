@@ -31,7 +31,7 @@ body {
   padding: 20px;
   padding-top: 120px;
   padding-left: 80px;
-  background-color: #206280; 
+  background-color: #206280;
   overflow: visible;
   position: relative;
 }
@@ -44,32 +44,46 @@ body {
   z-index: 9;
 }
 
+.panel {
+  background-color: #F0F8FF;
+}
+
 .box {
   border-radius: 5px;
-  padding: 50px;
-  margin: 20px;
+  //padding: 50px;
+  margin: 10px;
+  // border: 1px solid green;
   // box-shadow: -3px 3px 3px #888888;
   display: inline-block;
   vertical-align: top;
 }
 
 #inputs-box {
-  width: 700px;
-  padding: 30px;
+  width: 650px;
+  padding: 20px;
   // background-color: #58b1cc;
 }
 
 #steps-box {
-  width: 700px;
+  width: 400px;
+  padding: 20px;
   // background-color: #FED611;
 }
 
 .number-input {
   width: 80px;
   display: inline-block;
-  margin-right: 10px;
+  //margin-right: 10px;
   height: auto;
   padding: 1px 8px;
+}
+
+.right-input {
+  float: right;
+}
+
+.left-input {
+  margin-right: 10px;
 }
 
 .form-item {
@@ -78,7 +92,16 @@ body {
 }
 
 .small-form-item {
-  width: 150px;
+  width: 250px;
+  height: 25px;
+}
+
+#options-methods {
+  width: 250px;
+}
+
+.method-options {
+  margin-right: -125px;
   display: inline-block;
 }
 
@@ -89,8 +112,20 @@ body {
 #calc-method-form {
 }
 
+.options-block {
+  margin: 0px 10px;
+  // border: 1px solid black;
+
+  display: inline-block;
+  vertical-align: top;
+}
+
+.btn {
+  width: 250px;
+  margin-top: 5px;
+}
+
 #methods-form {
-  
   .checkbox {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -99,14 +134,11 @@ body {
 
 }
 
-#artifacts-form {
-  display: inline-block;
-  width: 280px;
-  // .form-item {
-  //   width: 250px;
-  //   display: inline-block;
-  // }
+#artifact-weapons-container {
+  width: 610px;
+  // border: 1px solid black;
 }
+
 
 .myHandle {
   display: inline-block;
@@ -119,6 +151,62 @@ body {
   float: right;
   background-color: #000;
   cursor: move;
+}
+
+#artifacts-list {
+  vertical-align: top;
+  display: inline-block;
+  width: 280px;
+  // .form-item {
+  //   width: 250px;
+  //   display: inline-block;
+  // }
+}
+
+#weapons-list {
+  width: 320px;
+  display: inline-block;
+  // .form-item {
+  //   width: 300px;
+  //   display: inline-block;
+  // }
+}
+
+#customizations-list {
+  margin-top: 0px;
+  width: 700px;
+  .form-item {
+    width: 200px;
+    display: inline-block;
+  }
+}
+
+#steps-list {
+
+}
+
+.list {
+  margin-top: -20px;
+}
+
+.steps-col2, .steps-col3, .steps-col4, .ssteps-col2, .ssteps-col3 {
+  padding-left: 15px;
+  text-align: right;
+}
+
+.steps-colh2, .steps-colh3, .steps-colh4, .ssteps-colh2, .ssteps-colh3 {
+  text-align: right;
+}
+
+tr.step-row > td {
+  padding-bottom: 3px;
+}
+
+tr:hover {
+    background-color: #CCE1F3;
+}
+tr:first-child:hover {
+    background-color: #F0F8FF;
 }
 
 // .beingDragged {
@@ -163,20 +251,3 @@ body {
 // .form-item.dragging-before input {
 //   background-color: red;
 // }
-
-#weapons-form {
-  width: 320px;
-  display: inline-block;
-  // .form-item {
-  //   width: 300px;
-  //   display: inline-block;
-  // }
-}
-
-#customizations-form {
-  width: 700px;
-  .form-item {
-    width: 200px;
-    display: inline-block;
-  }  
-}
