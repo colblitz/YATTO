@@ -105,11 +105,13 @@
 										<h3 ng-if="summary_steps[method.index].length > 0" class="animate-if">Summary:</h3>
 										<table ng-if="summary_steps[method.index].length > 0" class="animate-if">
 											<tr>
+												<th class="ssteps-colh0 colh"></th>
 												<th class="ssteps-colh1 colh">Artifact</th>
 												<th class="ssteps-colh2 colh">Level To</th>
 												<th class="ssteps-colh3 colh">Cost</th>
 											</tr>
 											<tr ng-repeat="ss in summary_steps[method.index] track by $index" class="step-row">
+												<td class="ssteps-col0"><span id="checkmark" ng-click="step(true, method.index, $index)"></span></td>
 												<td class="ssteps-col1">{{ss.name}}</td>
 												<td class="ssteps-col2">{{ss.level}}</td>
 												<td class="ssteps-col3">{{ss.cost}}</td>
@@ -121,12 +123,14 @@
 										<h3 ng-if="steps[method.index].length > 0" class="animate-if">Steps:</h3>
 										<table ng-if="steps[method.index].length > 0" class="animate-if">
 											<tr>
+												<th class="steps-colh0 colh"></th>
 												<th class="steps-colh1 colh">Artifact</th>
 												<th class="steps-colh2 colh">Level</th>
 												<th class="steps-colh3 colh">Cost</th>
 												<th class="steps-colh4 colh">Total</th>
 											</tr>
 											<tr ng-repeat="s in steps[method.index] track by $index" class="step-row">
+												<td class="steps-col0"><span id="checkmark" ng-click="step(false, method.index, $index)"></span></td>
 												<td class="steps-col1">{{s.name}}</td>
 												<td class="steps-col2">{{s.level}}</td>
 												<td class="steps-col3">{{s.cost}}</td>

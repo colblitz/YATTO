@@ -10,29 +10,8 @@ yattoApp.controller('CalculatorController',
 		};
 
 		$scope.steps = [];
-		// {'index': 11, 'cost': 5236, 'name': "Hero's Thrust", 'cumulative': 5236, 'level': 190}
-		// {'index': 13, 'cost': 978, 'name': "Knight's Shield", 'cumulative': 6214, 'level': 125}
-		// {'index': 26, 'cost': 1962, 'name': 'Universal Fissure', 'cumulative': 8176, 'level': 130}
-		// {'index': 9, 'cost': 4772, 'name': 'Drunken Hammer', 'cumulative': 12948, 'level': 197}
-		// {'index': 11, 'cost': 5283, 'name': "Hero's Thrust", 'cumulative': 18231, 'level': 191}
-
 		$scope.summary_steps = [];
-
 		$("#step-tabs").tabs();
-		// {'index': 9, 'cost': 4772, 'name': 'Drunken Hammer', 'level': 197}
-		// {'index': 26, 'cost': 1962, 'name': 'Universal Fissure', 'level': 130}
-		// {'index': 11, 'cost': 10519, 'name': "Hero's Thrust", 'level': 191}
-		// {'index': 13, 'cost': 978, 'name': "Knight's Shield", 'level': 125}
-		
-		// re-ordering http://codepen.io/SimeonC/pen/AJIyC
-
-		// cookie stuff
-		//   $scope.lastVal = $cookieStore.get('tab');
-
-  //     $scope.changeTab = function(tabName){
-  //         $scope.lastVal = tabName;
-  //         $cookieStore.put('tab', tabName);
-  //     };
 
 		$scope.artifacts = [
 			{name: "Amulet of the Valrunes",  index: 0, value: 1},
@@ -159,20 +138,6 @@ yattoApp.controller('CalculatorController',
 		}
 
 		$scope.calculate = function() {
-			console.log($scope.artifacts);
-			console.log($scope.weapons);
-			console.log($scope.customizations);
-
-			var info = {"artifacts"      : $scope.artifacts, 
-						"weapons" 	     : $scope.weapons, 
-						"customizations" : $scope.customizations,
-						"methods"        : $scope.methods,
-						"relics"         : $scope.relics,
-						"nsteps"         : $scope.nsteps,
-						"greedy"         : $scope.greedy}
-			console.log("controller");
-			console.log(info);
-
 			var artifacts = transformScopeArray($scope.artifacts);
 			var weapons = transformScopeArray($scope.weapons);
 			var customizations = transformScopeArray($scope.customizations);
@@ -183,19 +148,7 @@ yattoApp.controller('CalculatorController',
 				}
 			}
 
-			artifacts = [35, 118, 10, 200, 150, 200, 25, 25, 50, 209, 38, 201, 10, 135, 0, 130, 10, 10, 101, 82, 25, 10, 10, 25, 69, 190, 139, 10, 5];
-			weapons = [5, 4, 2, 4, 3, 3, 4, 6, 7, 5, 5, 6, 4, 2, 1, 2, 2, 1, 3, 3, 5, 2, 3, 2, 2, 6, 3, 5, 1, 6, 2, 4, 4];
-			customizations = [0.65, 0.81, 0.59, 1.02, 0.02, 0.44];
-			$scope.relics = 134640;
-			$scope.nsteps = 0;
-
 			var response = get_steps(artifacts, weapons, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
-			console.log("holy crap a response");
-			console.log(response);
-
-			// for (var m in $scope.methods) {
-			// 	$scope.methods[m].index
-			// }
 
 			for (var m in response) {
 				$scope.steps[m] = response[m]["steps"];
@@ -203,49 +156,90 @@ yattoApp.controller('CalculatorController',
 			}
 
 			storeToCookies();
+  	};
 
-			// $http({
-			// 	method: "POST",
-			// 	url: "calculate",
-			// 	data: {"info": info}
-			// }).success(function(data, status, headers, config) {
-   //    			// console.log($scope.roadmaps);
-   //    			console.log("yay stuff: " + data.content);
-   //    			var pyres = JSON.parse(data.content);
-   //    			console.log("pyres is: " + pyres);
-   //    			console.log(typeof pyres);
-   //    			console.log("------------------");
-   //    			console.log(pyres["2"]);
-   //    			console.log(pyres["2"]["steps"]);
-   //    			$scope.steps = pyres["2"]["steps"];
-   //    			$scope.summary_steps = pyres["2"]["summary"];
-   //    			console.log("now is");
-   //    			console.log($scope.summary_steps);
-   //    		}).error(function(data, status, headers, config) {
-   //    			console.log("boo error");
-   //    		});
-  		};
+		$scope.weaponProbability = function() {
+			console.log("controller - weapon probability");
+			var weapon_list = Array.apply(null, new Array($scope.weapons.length)).map(Number.prototype.valueOf,0);
+			console.log("scope weapons is: ");
+			console.log($scope.weapons);
+			for (var weapon in $scope.weapons) {
+				var w = $scope.weapons[weapon];
+				weapon_list[w["index"]] = w["value"];
+			}
+			console.log("sending: " + weapon_list);
+			$http({
+				method: "POST",
+				url: "wprobability",
+				data: {"weapons": weapon_list}
+			}).success(function(data, status, headers, config) {
+				console.log("response: " + data.content);
+				$scope.wprobability = data.content;
+			}).error(function(data, status, headers, config) {
+				console.log("w probability error");
+			});
+		};
 
-  		$scope.weaponProbability = function() {
-  			console.log("controller - weapon probability");
-  			var weapon_list = Array.apply(null, new Array($scope.weapons.length)).map(Number.prototype.valueOf,0);
-  			console.log("scope weapons is: ");
-  			console.log($scope.weapons);
-  			for (var weapon in $scope.weapons) {
-  				var w = $scope.weapons[weapon];
-  				weapon_list[w["index"]] = w["value"];
-  			}
-  			console.log("sending: " + weapon_list);
-  			$http({
-  				method: "POST",
-  				url: "wprobability",
-  				data: {"weapons": weapon_list}
-  			}).success(function(data, status, headers, config) {
-  				console.log("response: " + data.content);
-  				$scope.wprobability = data.content;
-  			}).error(function(data, status, headers, config) {
-  				console.log("w probability error");
-  			});
-  		};
+		$scope.step = function(summary, method, stepindex) {
+			console.log(method);
+			console.log(stepindex);
+			var step = summary ? $scope.summary_steps[method][stepindex] : $scope.steps[method][stepindex];
+			console.log(step);
+			for (var a in $scope.artifacts) {
+				var artifact = $scope.artifacts[a];
+				if (artifact.index == step.index) {
+					artifact.value = step.level;
+					$scope.relics -= step.cost;
+					break;
+				}
+			}
+			if (summary) {
+				$scope.summary_steps[method].splice(stepindex, 1);	
+				var toDelete = [];
+				for (var s in $scope.steps[method]) {
+					if ($scope.steps[method][s].index == step.index) {
+						toDelete.push(s);
+					}
+				}
+				toDelete.reverse();
+				for (var i in toDelete) {
+					$scope.steps[method].splice(toDelete[i], 1);
+				}
+			} else {
+				$scope.steps[method].splice(stepindex, 1);	
+
+				// delete from ss
+				for (var ss in $scope.summary_steps[method]) {
+					var sstep = $scope.summary_steps[method][ss];
+					if (sstep.index == step.index && sstep.level == step.level) {
+						$scope.summary_steps[method].splice(ss, 1);
+						break;
+					}
+				}
+
+				// delete from s
+				var toDelete = [];
+				for (var s in $scope.steps[method]) {
+					if (s >= stepindex) {
+						break;
+					}
+					if ($scope.steps[method][s].index == step.index) {
+						toDelete.push(s);
+					}
+				}
+				toDelete.reverse();
+				for (var i in toDelete) {
+					$scope.steps[method].splice(toDelete[i], 1);
+				}
+			}
+
+			var total = 0;
+			for (var s in $scope.steps[method]) {
+				total += $scope.steps[method][s].cost;
+				$scope.steps[method][s].cumulative = total;
+			}
+
+			// TODO: impact on other methods (grey out?)
+		};
 	}
 );
