@@ -1,12 +1,10 @@
 yattoApp.controller('CalculatorController',
 	function($scope, $http, $cookies, $cookieStore) {
-		var something = "something";
-
 		$scope.sortableOptions = {
-  		'ui-floating': false,
-  		'axis': 'y',
-  		'containment': "parent",
-  		'handle': '> .myHandle',
+			'ui-floating': false,
+			'axis': 'y',
+			'containment': "parent",
+			'handle': '> .myHandle',
 		};
 
 		$scope.steps = [];
@@ -93,18 +91,21 @@ yattoApp.controller('CalculatorController',
 			{name: "All Damage",    index: 1, value: false, tabname: "ADmg"},
 			{name: "Tap Damage",    index: 2, value: true,  tabname: "TDmg"},
 			{name: "K",             index: 3, value: true, tabname: "  K  "},
-			{name: "Relics/second", index: 4, value: false, tabname: " R/s "},
-			{name: "Stages/second", index: 5, value: false, tabname: " S/s "}];
+			{name: "Relics/second (experimental!)", index: 4, value: false, tabname: " R/s "},
+			{name: "Stages/second (experimental!)", index: 5, value: false, tabname: " S/s "}];
 
 		$scope.relics = 50;
 		$scope.nsteps = 10;
 		$scope.greedy = 1;
 
 		var readFromCookies = function() {
+			console.log("reading from cookies");
 			var cookie_a = $cookieStore.get('artifacts');
 			var cookie_w = $cookieStore.get('weapons');
 			var cookie_c = $cookieStore.get('customizations');
 			var cookie_m = $cookieStore.get('methods');
+			var cookie_s = $cookieStore.get('steps');
+			var cookie_ss = $cookieStore.get('summary');
 			if (typeof cookie_a !== "undefined") {
 				$scope.artifacts = cookie_a;
 			}
@@ -117,20 +118,39 @@ yattoApp.controller('CalculatorController',
 			if (typeof cookie_m !== "undefined") {
 				$scope.methods = cookie_m;
 			}
+			if (typeof cookie_s !== "undefined") {
+				$scope.steps = cookie_s;
+			}
+			if (typeof cookie_ss !== "undefined") {
+				$scope.summary_steps = cookie_ss;
+			}
 		};
 
 		readFromCookies();
 
 		var storeToCookies = function() {
+			console.log("storing to cookies");
 			$cookieStore.put('artifacts', $scope.artifacts);
 			$cookieStore.put('weapons', $scope.weapons);
 			$cookieStore.put('customizations', $scope.customizations);
 			$cookieStore.put('methods', $scope.methods);
+			$cookieStore.put('steps', $scope.steps);
+			$cookieStore.put('summary', $scope.summary_steps);
+		};
+
+		$scope.clearAllCookies = function() {
+			console.log("clearing cookies");
+			$cookieStore.remove("artifacts");
+			$cookieStore.remove("weapons");
+			$cookieStore.remove("customizations");
+			$cookieStore.remove("methods");
+			$cookieStore.remove("steps");
+			$cookieStore.remove("summary");
 		};
 
 		var transformScopeArray = function(scopeArray) {
 			var newArray = newZeroes(scopeArray.length);
-			for (var x in scopeArray) { 
+			for (var x in scopeArray) {
 				var thing = scopeArray[x];
 				newArray[thing.index] = thing.value;
 			}
@@ -156,28 +176,32 @@ yattoApp.controller('CalculatorController',
 			}
 
 			storeToCookies();
-  	};
+		};
 
 		$scope.weaponProbability = function() {
-			console.log("controller - weapon probability");
-			var weapon_list = Array.apply(null, new Array($scope.weapons.length)).map(Number.prototype.valueOf,0);
-			console.log("scope weapons is: ");
-			console.log($scope.weapons);
-			for (var weapon in $scope.weapons) {
-				var w = $scope.weapons[weapon];
-				weapon_list[w["index"]] = w["value"];
-			}
-			console.log("sending: " + weapon_list);
-			$http({
-				method: "POST",
-				url: "wprobability",
-				data: {"weapons": weapon_list}
-			}).success(function(data, status, headers, config) {
-				console.log("response: " + data.content);
-				$scope.wprobability = data.content;
-			}).error(function(data, status, headers, config) {
-				console.log("w probability error");
-			});
+			var weapons = transformScopeArray($scope.weapons);
+			console.log("p: " + weapons);
+			// do chi square
+
+			// console.log("controller - weapon probability");
+			// var weapon_list = Array.apply(null, new Array($scope.weapons.length)).map(Number.prototype.valueOf,0);
+			// console.log("scope weapons is: ");
+			// console.log($scope.weapons);
+			// for (var weapon in $scope.weapons) {
+			// 	var w = $scope.weapons[weapon];
+			// 	weapon_list[w["index"]] = w["value"];
+			// }
+			// console.log("sending: " + weapon_list);
+			// $http({
+			// 	method: "POST",
+			// 	url: "wprobability",
+			// 	data: {"weapons": weapon_list}
+			// }).success(function(data, status, headers, config) {
+			// 	console.log("response: " + data.content);
+			// 	$scope.wprobability = data.content;
+			// }).error(function(data, status, headers, config) {
+			// 	console.log("w probability error");
+			// });
 		};
 
 		$scope.step = function(summary, method, stepindex) {
@@ -194,7 +218,7 @@ yattoApp.controller('CalculatorController',
 				}
 			}
 			if (summary) {
-				$scope.summary_steps[method].splice(stepindex, 1);	
+				$scope.summary_steps[method].splice(stepindex, 1);
 				var toDelete = [];
 				for (var s in $scope.steps[method]) {
 					if ($scope.steps[method][s].index == step.index) {
@@ -206,7 +230,7 @@ yattoApp.controller('CalculatorController',
 					$scope.steps[method].splice(toDelete[i], 1);
 				}
 			} else {
-				$scope.steps[method].splice(stepindex, 1);	
+				$scope.steps[method].splice(stepindex, 1);
 
 				// delete from ss
 				for (var ss in $scope.summary_steps[method]) {
@@ -240,6 +264,8 @@ yattoApp.controller('CalculatorController',
 			}
 
 			// TODO: impact on other methods (grey out?)
+
+			storeToCookies();
 		};
 	}
 );

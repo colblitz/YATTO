@@ -2,13 +2,11 @@
 	<head>
 		<title>YATTO</title>
 
-
 		<!-- Load CSS -->
-    <link href='http://fonts.googleapis.com/css?family=Noto+Sans:400,300,700' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Noto+Sans:400,300,700' rel='stylesheet' type='text/css'>
+		<link href='http://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
 		<link href="components/bootstrap.min.css" rel="stylesheet" type="text/css">
 		<link href="stylesheets/style.less" rel="stylesheet/less" type="text/css">
-
 
 		<!-- Load libraries -->
 		<script src="components/jquery/dist/jquery.js"></script>
@@ -24,7 +22,7 @@
 		<script src="components/jquery-ui.js"></script>
 		<script src="components/sortable.js"></script>
 		<script src="components/ui-bootstrap-custom-tpls-0.12.1.js"></script>
-		<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+		<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&delayStartupUntil=configured'></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
 
 		<script src="javascripts/main.js"></script>
@@ -35,6 +33,17 @@
 
 	</head>
 	<body ng-app="yattoApp">
-		<div ng-view></div>
+		<div id="everything-container" class="container-fluid">
+			<div class="row">
+				<div id="header" class="col-xs-12">
+				</div>
+			</div>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="#calculator"><i class="fa"></i>Calculator</a></li>
+				<li><a href="#faq"><i class="fa"></i>FAQ/Information</a></li>
+			</ul>
+
+			<div ng-view></div>
+		</div>
 	</body>
 </html>
