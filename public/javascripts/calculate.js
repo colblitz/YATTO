@@ -99,7 +99,7 @@ var Hero = function(name, id, base_cost, skills) {
 		if (level < precompute_upgrade_cost) {
 			return this.upgrade_costs[level];
 		}
-		return (i < 1000 ? this.base_cost : this.base_cost10) * Math.pow(1.075, i);
+		return (level < 1000 ? this.base_cost : this.base_cost10) * Math.pow(1.075, level);
 	};
 
 	this.cost_to_level = function(start_level, end_level) {
@@ -166,103 +166,103 @@ var Hero = function(name, id, base_cost, skills) {
 
 var hero_info = [
 	new Hero("Takeda the Blade Assassin", 1, 50, [
-		[0.50, STYPE_HERO_DPS], [1.00, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [0.10, STYPE_CRIT_DAMAGE], 
+		[0.50, STYPE_HERO_DPS], [1.00, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [0.10, STYPE_CRIT_DAMAGE],
 		[10.00, STYPE_HERO_DPS], [0.25, STYPE_ALL_DAMAGE], [100.00, STYPE_HERO_DPS]]),
 	new Hero("Contessa the Torch Wielder", 2, 175, [
 		[0.05, STYPE_TAP_DAMAGE], [1.00, STYPE_HERO_DPS], [10.00, STYPE_HERO_DPS], [0.004, STYPE_PERCENT_DPS],
 		[0.10, STYPE_ALL_DAMAGE], [0.10, STYPE_GOLD_DROPPED], [100.00, STYPE_HERO_DPS]]),
 	new Hero("Hornetta, Queen of the Valrunes", 3, 674, [
-		[1.50, STYPE_HERO_DPS], [0.10, STYPE_GOLD_DROPPED], [0.10, STYPE_ALL_DAMAGE], [0.004, STYPE_PERCENT_DPS], 
+		[1.50, STYPE_HERO_DPS], [0.10, STYPE_GOLD_DROPPED], [0.10, STYPE_ALL_DAMAGE], [0.004, STYPE_PERCENT_DPS],
 		[0.20, STYPE_CHEST_GOLD], [0.01, STYPE_CRIT_CHANCE], [0.30, STYPE_ALL_DAMAGE]]),
 	new Hero("Mila the Hammer Stomper", 4, 2.85e3, [
-		[1.00, STYPE_HERO_DPS], [8.00, STYPE_HERO_DPS], [0.06, STYPE_GOLD_DROPPED], [5.00, STYPE_HERO_DPS], 
+		[1.00, STYPE_HERO_DPS], [8.00, STYPE_HERO_DPS], [0.06, STYPE_GOLD_DROPPED], [5.00, STYPE_HERO_DPS],
 		[0.05, STYPE_CRIT_DAMAGE], [0.20, STYPE_ALL_DAMAGE], [0.20, STYPE_CHEST_GOLD]]),
 	new Hero("Terra the Land Scorcher", 5, 13.30e3, [
-		[3.00, STYPE_HERO_DPS], [0.10, STYPE_GOLD_DROPPED], [0.004, STYPE_PERCENT_DPS], [0.15, STYPE_GOLD_DROPPED], 
+		[3.00, STYPE_HERO_DPS], [0.10, STYPE_GOLD_DROPPED], [0.004, STYPE_PERCENT_DPS], [0.15, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_CHEST_GOLD], [0.05, STYPE_TAP_DAMAGE], [100.00, STYPE_HERO_DPS]]),
 	new Hero("Inquisireaux the Terrible", 6, 68.10e3, [
-		[2.00, STYPE_HERO_DPS], [7.00, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [0.20, STYPE_ALL_DAMAGE], 
+		[2.00, STYPE_HERO_DPS], [7.00, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [0.20, STYPE_ALL_DAMAGE],
 		[0.05, STYPE_CRIT_DAMAGE], [0.02, STYPE_CRIT_CHANCE], [100.00, STYPE_HERO_DPS]]),
 	new Hero("Charlotte the Special", 7, 384.00e3, [
-		[2.00, STYPE_HERO_DPS], [0.05, STYPE_BOSS_DAMAGE], [0.07, STYPE_BOSS_DAMAGE], [6.00, STYPE_HERO_DPS], 
+		[2.00, STYPE_HERO_DPS], [0.05, STYPE_BOSS_DAMAGE], [0.07, STYPE_BOSS_DAMAGE], [6.00, STYPE_HERO_DPS],
 		[0.05, STYPE_TAP_DAMAGE], [0.20, STYPE_CHEST_GOLD], [0.30, STYPE_ALL_DAMAGE]]),
 	new Hero("Jordaan, Knight of Mini", 8, 2.38e6, [
-		[2.00, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [0.004, STYPE_PERCENT_DPS], [0.15, STYPE_GOLD_DROPPED], 
+		[2.00, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [0.004, STYPE_PERCENT_DPS], [0.15, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_CHEST_GOLD], [19.00, STYPE_HERO_DPS], [0.20, STYPE_ALL_DAMAGE]]),
 	new Hero("Jukka, Master of Axes", 9, 23.80e6, [
-		[1.50, STYPE_HERO_DPS], [0.05, STYPE_BOSS_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.05, STYPE_CRIT_DAMAGE], 
+		[1.50, STYPE_HERO_DPS], [0.05, STYPE_BOSS_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.05, STYPE_CRIT_DAMAGE],
 		[50.00, STYPE_HERO_DPS], [0.25, STYPE_ALL_DAMAGE], [100.00, STYPE_HERO_DPS]]),
 	new Hero("Milo and Clonk-Clonk", 10, 143.00e6, [
-		[1.50, STYPE_HERO_DPS], [0.01, STYPE_CRIT_CHANCE], [0.05, STYPE_BOSS_DAMAGE], [0.15, STYPE_GOLD_DROPPED], 
+		[1.50, STYPE_HERO_DPS], [0.01, STYPE_CRIT_CHANCE], [0.05, STYPE_BOSS_DAMAGE], [0.15, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_CHEST_GOLD], [0.25, STYPE_CHEST_GOLD], [0.15, STYPE_ALL_DAMAGE]]),
 	new Hero("Macelord the Ruthless", 11, 943.00e6, [
-		[2.00, STYPE_HERO_DPS], [8.50, STYPE_HERO_DPS], [0.05, STYPE_TAP_DAMAGE], [0.004, STYPE_PERCENT_DPS], 
+		[2.00, STYPE_HERO_DPS], [8.50, STYPE_HERO_DPS], [0.05, STYPE_TAP_DAMAGE], [0.004, STYPE_PERCENT_DPS],
 		[0.15, STYPE_GOLD_DROPPED], [0.05, STYPE_TAP_DAMAGE], [0.20, STYPE_GOLD_DROPPED]]),
 	new Hero("Gertrude the Goat Rider", 12, 6.84e9, [
-		[2.50, STYPE_HERO_DPS], [13.00, STYPE_HERO_DPS], [0.07, STYPE_BOSS_DAMAGE], [0.05, STYPE_CRIT_DAMAGE], 
+		[2.50, STYPE_HERO_DPS], [13.00, STYPE_HERO_DPS], [0.07, STYPE_BOSS_DAMAGE], [0.05, STYPE_CRIT_DAMAGE],
 		[0.004, STYPE_PERCENT_DPS], [0.05, STYPE_TAP_DAMAGE], [0.20, STYPE_GOLD_DROPPED]]),
 	new Hero("Twitterella the Tweeter", 13, 54.70e9, [
-		[1.50, STYPE_HERO_DPS], [8.50, STYPE_HERO_DPS], [0.05, STYPE_TAP_DAMAGE], [0.20, STYPE_ALL_DAMAGE], 
+		[1.50, STYPE_HERO_DPS], [8.50, STYPE_HERO_DPS], [0.05, STYPE_TAP_DAMAGE], [0.20, STYPE_ALL_DAMAGE],
 		[0.30, STYPE_ALL_DAMAGE], [0.05, STYPE_CRIT_DAMAGE], [120.00, STYPE_HERO_DPS]]),
 	new Hero("Master Hawk, Lord of Luft", 14, 820.00e9, [
-		[2.00, STYPE_HERO_DPS], [11.00, STYPE_HERO_DPS], [0.004, STYPE_PERCENT_DPS], [4.00, STYPE_HERO_DPS], 
+		[2.00, STYPE_HERO_DPS], [11.00, STYPE_HERO_DPS], [0.004, STYPE_PERCENT_DPS], [4.00, STYPE_HERO_DPS],
 		[0.10, STYPE_GOLD_DROPPED], [0.10, STYPE_CRIT_DAMAGE], [0.20, STYPE_GOLD_DROPPED]]),
 	new Hero("Elpha, Wielder of Gems", 15, 8.20e12, [
-		[3.00, STYPE_HERO_DPS], [0.40, STYPE_ALL_DAMAGE], [0.05, STYPE_BOSS_DAMAGE], [0.02, STYPE_CRIT_CHANCE], 
+		[3.00, STYPE_HERO_DPS], [0.40, STYPE_ALL_DAMAGE], [0.05, STYPE_BOSS_DAMAGE], [0.02, STYPE_CRIT_CHANCE],
 		[0.15, STYPE_CRIT_DAMAGE], [0.20, STYPE_CHEST_GOLD], [100.00, STYPE_HERO_DPS]]),
 	new Hero("Poppy, Daughter of Ceremony", 16, 164.00e12, [
-		[3.50, STYPE_HERO_DPS], [0.25, STYPE_CHEST_GOLD], [0.20, STYPE_GOLD_DROPPED], [0.05, STYPE_BOSS_DAMAGE], 
+		[3.50, STYPE_HERO_DPS], [0.25, STYPE_CHEST_GOLD], [0.20, STYPE_GOLD_DROPPED], [0.05, STYPE_BOSS_DAMAGE],
 		[0.07, STYPE_BOSS_DAMAGE], [0.15, STYPE_ALL_DAMAGE], [0.20, STYPE_ALL_DAMAGE]]),
 	new Hero("Skulptor, Protector of Bridges", 17, 1.64e15, [
-		[1.50, STYPE_HERO_DPS], [9.00, STYPE_HERO_DPS], [0.10, STYPE_GOLD_DROPPED], [0.10, STYPE_GOLD_DROPPED], 
+		[1.50, STYPE_HERO_DPS], [9.00, STYPE_HERO_DPS], [0.10, STYPE_GOLD_DROPPED], [0.10, STYPE_GOLD_DROPPED],
 		[0.05, STYPE_TAP_DAMAGE], [0.10, STYPE_CRIT_DAMAGE], [0.25, STYPE_GOLD_DROPPED]]),
 	new Hero("Sterling the Enchantor", 18, 49.20e15, [
-		[4.00, STYPE_HERO_DPS], [5.00, STYPE_HERO_DPS], [0.05, STYPE_BOSS_DAMAGE], [4.50, STYPE_HERO_DPS], 
+		[4.00, STYPE_HERO_DPS], [5.00, STYPE_HERO_DPS], [0.05, STYPE_BOSS_DAMAGE], [4.50, STYPE_HERO_DPS],
 		[0.05, STYPE_TAP_DAMAGE], [0.20, STYPE_CHEST_GOLD], [0.15, STYPE_ALL_DAMAGE]]),
 	new Hero("Orba the Foreseer", 19, 2.46e18, [
-		[2.00, STYPE_HERO_DPS], [10.00, STYPE_HERO_DPS], [0.005, STYPE_PERCENT_DPS], [0.05, STYPE_TAP_DAMAGE], 
+		[2.00, STYPE_HERO_DPS], [10.00, STYPE_HERO_DPS], [0.005, STYPE_PERCENT_DPS], [0.05, STYPE_TAP_DAMAGE],
 		[0.10, STYPE_ALL_DAMAGE], [0.10, STYPE_GOLD_DROPPED], [0.10, STYPE_ALL_DAMAGE]]),
 	new Hero("Remus the Noble Archer", 20, 73.80e18, [
-		[2.50, STYPE_HERO_DPS], [6.00, STYPE_HERO_DPS], [0.20, STYPE_CRIT_DAMAGE], [4.50, STYPE_HERO_DPS], 
+		[2.50, STYPE_HERO_DPS], [6.00, STYPE_HERO_DPS], [0.20, STYPE_CRIT_DAMAGE], [4.50, STYPE_HERO_DPS],
 		[0.004, STYPE_PERCENT_DPS], [0.10, STYPE_TAP_DAMAGE], [0.10, STYPE_GOLD_DROPPED]]),
 	new Hero("Mikey the Magician Apprentice", 21, 2.44e21, [
-		[2.00, STYPE_HERO_DPS], [0.05, STYPE_TAP_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.02, STYPE_CRIT_CHANCE], 
+		[2.00, STYPE_HERO_DPS], [0.05, STYPE_TAP_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.02, STYPE_CRIT_CHANCE],
 		[0.10, STYPE_ALL_DAMAGE], [0.20, STYPE_CHEST_GOLD], [100.00, STYPE_HERO_DPS]]),
 	new Hero("Peter Pricker the Prickly Poker", 22, 244.00e21, [
-		[2.50, STYPE_HERO_DPS], [7.50, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [5.00, STYPE_HERO_DPS], 
+		[2.50, STYPE_HERO_DPS], [7.50, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [5.00, STYPE_HERO_DPS],
 		[0.10, STYPE_ALL_DAMAGE], [0.30, STYPE_CRIT_DAMAGE], [0.20, STYPE_ALL_DAMAGE]]),
 	new Hero("Teeny Tom, Keeper of the Castle", 23, 48.70e24, [
-		[3.00, STYPE_HERO_DPS], [8.00, STYPE_HERO_DPS], [0.004, STYPE_PERCENT_DPS], [0.20, STYPE_CRIT_DAMAGE], 
+		[3.00, STYPE_HERO_DPS], [8.00, STYPE_HERO_DPS], [0.004, STYPE_PERCENT_DPS], [0.20, STYPE_CRIT_DAMAGE],
 		[0.10, STYPE_TAP_DAMAGE], [0.02, STYPE_CRIT_CHANCE], [100.00, STYPE_HERO_DPS]]),
 	new Hero("Deznis the Cleanser", 24, 19.50e27, [
-		[2.00, STYPE_HERO_DPS], [5.00, STYPE_HERO_DPS], [12.00, STYPE_HERO_DPS], [0.15, STYPE_GOLD_DROPPED], 
+		[2.00, STYPE_HERO_DPS], [5.00, STYPE_HERO_DPS], [12.00, STYPE_HERO_DPS], [0.15, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_CHEST_GOLD], [90.00, STYPE_HERO_DPS], [0.15, STYPE_ALL_DAMAGE]]),
 	new Hero("Hamlette, Painter of Skulls", 25, 21.40e30, [
-		[0.05, STYPE_TAP_DAMAGE], [0.05, STYPE_TAP_DAMAGE], [0.004, STYPE_PERCENT_DPS], [0.10, STYPE_ALL_DAMAGE], 
+		[0.05, STYPE_TAP_DAMAGE], [0.05, STYPE_TAP_DAMAGE], [0.004, STYPE_PERCENT_DPS], [0.10, STYPE_ALL_DAMAGE],
 		[0.15, STYPE_GOLD_DROPPED], [0.02, STYPE_CRIT_CHANCE], [150.00, STYPE_HERO_DPS]]),
 	new Hero("Eistor the Banisher", 26, 2.36e36, [
-		[3.50, STYPE_HERO_DPS], [6.50, STYPE_HERO_DPS], [0.004, STYPE_PERCENT_DPS], [0.05, STYPE_BOSS_DAMAGE], 
+		[3.50, STYPE_HERO_DPS], [6.50, STYPE_HERO_DPS], [0.004, STYPE_PERCENT_DPS], [0.05, STYPE_BOSS_DAMAGE],
 		[0.10, STYPE_ALL_DAMAGE], [0.05, STYPE_BOSS_DAMAGE], [0.12, STYPE_GOLD_DROPPED]]),
 	new Hero("Flavius and Oinksbjorn", 27, 25.90e45, [
-		[3.00, STYPE_HERO_DPS], [7.00, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [0.05, STYPE_BOSS_DAMAGE], 
+		[3.00, STYPE_HERO_DPS], [7.00, STYPE_HERO_DPS], [0.10, STYPE_ALL_DAMAGE], [0.05, STYPE_BOSS_DAMAGE],
 		[0.02, STYPE_CRIT_CHANCE], [0.30, STYPE_CRIT_DAMAGE], [0.20, STYPE_CHEST_GOLD]]),
 	new Hero("Chester the Beast Tamer", 28, 28.50e60, [
-		[3.50, STYPE_HERO_DPS], [0.01, STYPE_ALL_DAMAGE], [4.00, STYPE_HERO_DPS], [6.00, STYPE_HERO_DPS], 
+		[3.50, STYPE_HERO_DPS], [0.01, STYPE_ALL_DAMAGE], [4.00, STYPE_HERO_DPS], [6.00, STYPE_HERO_DPS],
 		[0.20, STYPE_CRIT_DAMAGE], [0.02, STYPE_CRIT_CHANCE], [0.15, STYPE_ALL_DAMAGE]]),
 	new Hero("Mohacas the Wind Warrior", 29, 3.14e81, [
-		[3.30, STYPE_HERO_DPS], [5.50, STYPE_HERO_DPS], [0.10, STYPE_GOLD_DROPPED], [0.10, STYPE_TAP_DAMAGE], 
+		[3.30, STYPE_HERO_DPS], [5.50, STYPE_HERO_DPS], [0.10, STYPE_GOLD_DROPPED], [0.10, STYPE_TAP_DAMAGE],
 		[0.20, STYPE_GOLD_DROPPED], [0.10, STYPE_ALL_DAMAGE], [0.30, STYPE_GOLD_DROPPED]]),
 	new Hero("Jaqulin the Unknown", 30, 3.14e96, [
-		[10.00, STYPE_HERO_DPS], [0.10, STYPE_TAP_DAMAGE], [0.04, STYPE_PERCENT_DPS], [0.20, STYPE_GOLD_DROPPED], 
+		[10.00, STYPE_HERO_DPS], [0.10, STYPE_TAP_DAMAGE], [0.04, STYPE_PERCENT_DPS], [0.20, STYPE_GOLD_DROPPED],
 		[0.10, STYPE_ALL_DAMAGE], [0.20, STYPE_ALL_DAMAGE], [0.30, STYPE_ALL_DAMAGE]]),
 	new Hero("Pixie the Rebel Fairy", 31, 3.76e101, [
-		[9.00, STYPE_HERO_DPS], [20.00, STYPE_HERO_DPS], [0.01, STYPE_CRIT_CHANCE], [0.60, STYPE_TAP_DAMAGE], 
+		[9.00, STYPE_HERO_DPS], [20.00, STYPE_HERO_DPS], [0.01, STYPE_CRIT_CHANCE], [0.60, STYPE_TAP_DAMAGE],
 		[0.25, STYPE_CHEST_GOLD], [0.10, STYPE_ALL_DAMAGE], [0.15, STYPE_GOLD_DROPPED]]),
 	new Hero("Jackalope the Fireballer", 32, 4.14e121, [
-		[0.40, STYPE_HERO_DPS], [0.20, STYPE_HERO_DPS], [0.25, STYPE_GOLD_DROPPED], [0.60, STYPE_TAP_DAMAGE], 
+		[0.40, STYPE_HERO_DPS], [0.20, STYPE_HERO_DPS], [0.25, STYPE_GOLD_DROPPED], [0.60, STYPE_TAP_DAMAGE],
 		[0.02, STYPE_CRIT_CHANCE], [0.30, STYPE_ALL_DAMAGE], [0.10, STYPE_BOSS_DAMAGE]]),
 	new Hero("Dark Lord, Punisher of All", 33, 4.56e141, [
-		[20.00, STYPE_HERO_DPS], [0.20, STYPE_TAP_DAMAGE], [0.01, STYPE_PERCENT_DPS], [0.25, STYPE_GOLD_DROPPED], 
+		[20.00, STYPE_HERO_DPS], [0.20, STYPE_TAP_DAMAGE], [0.01, STYPE_PERCENT_DPS], [0.25, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_ALL_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.40, STYPE_ALL_DAMAGE]])];
 
 var all_damage = function(artifacts) {
@@ -414,7 +414,7 @@ var GameState = function(artifacts, weapons, customizations) {
 				temp = hero_info[i].get_cost_to_next_skill(level);
 				next_skill_level = temp[0];
 				c = temp[1];
-			}	
+			}
 		}
 		this.heroes = heroes_after;
 	};
@@ -515,7 +515,7 @@ var GameState = function(artifacts, weapons, customizations) {
 		var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
 
 		var hero_total_dps = this.get_hero_dps();
-		
+
 		// from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + h_ad)
 		var from_main = this.main_dmg * (1 + h_ad);
 		var from_hero = (h_pd * hero_total_dps) * (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer) * (1 + this.c_ad);
@@ -730,7 +730,7 @@ var index_max = function(array, custom) {
 	var max = array[0];
 	var maxIndex = 0;
 	for (var i = 1; i < array.length; i++) {
-		if ((typeof custom !== "undefined" && custom(array[i], max)) || 
+		if ((typeof custom !== "undefined" && custom(array[i], max)) ||
 			(typeof custom === "undefined" && array[i] > max)) {
 			maxIndex = i;
 			max = array[i];
@@ -910,5 +910,131 @@ var get_steps = function(artifacts, weapons, customizations, methods, relics, ns
 
 var calculate_weapons_probability = function(weapons) {
 	// TODO: how does javascript not have a good statistics package
-	return 0;
+	console.log(weapons);
+	var total = sumArray(weapons);
+	if (total == 0) {
+		console.log("returning 1");
+		return 1;
+	}
+	var expected = total / hero_info.length;
+	console.log(expected);
+	var chi2 = 0;
+	for (var i in weapons) {
+		console.log(weapons[i]);
+		chi2 += Math.pow(weapons[i] - expected, 2) / expected;
+	}
+	console.log(chi2);
+	var p = pochisq(chi2, hero_info.length - 1)
+	console.log("p is: " + p);
+	return p;
 };
+
+ /*  The following JavaScript functions for calculating normal and
+		chi-square probabilities and critical values were adapted by
+		John Walker from C implementations
+		written by Gary Perlman of Wang Institute, Tyngsboro, MA
+		01879.  Both the original C code and this JavaScript edition
+		are in the public domain.  */
+
+/*  POZ  --  probability of normal z value
+
+	Adapted from a polynomial approximation in:
+			Ibbetson D, Algorithm 209
+			Collected Algorithms of the CACM 1963 p. 616
+	Note:
+			This routine has six digit accuracy, so it is only useful for absolute
+			z values < 6.  For z values >= to 6.0, poz() returns 0.0.
+*/
+
+var poz = function poz() {
+	var y, x, w;
+	var Z_MAX = 6.0;              /* Maximum meaningful z value */
+
+	if (z == 0.0) {
+		x = 0.0;
+	} else {
+		y = 0.5 * Math.abs(z);
+		if (y >= (Z_MAX * 0.5)) {
+			x = 1.0;
+		} else if (y < 1.0) {
+			w = y * y;
+			x = ((((((((0.000124818987 * w
+				- 0.001075204047) * w + 0.005198775019) * w
+				- 0.019198292004) * w + 0.059054035642) * w
+				- 0.151968751364) * w + 0.319152932694) * w
+				- 0.531923007300) * w + 0.797884560593) * y * 2.0;
+		} else {
+			y -= 2.0;
+			x = (((((((((((((-0.000045255659 * y
+				+ 0.000152529290) * y - 0.000019538132) * y
+				- 0.000676904986) * y + 0.001390604284) * y
+				- 0.000794620820) * y - 0.002034254874) * y
+				+ 0.006549791214) * y - 0.010557625006) * y
+				+ 0.011630447319) * y - 0.009279453341) * y
+				+ 0.005353579108) * y - 0.002141268741) * y
+				+ 0.000535310849) * y + 0.999936657524;
+		}
+	}
+	return z > 0.0 ? ((x + 1.0) * 0.5) : ((1.0 - x) * 0.5);
+}
+
+var BIGX = 20.0;                  /* max value to represent exp(x) */
+
+var ex = function (x) {
+	return (x < -BIGX) ? 0.0 : Math.exp(x);
+}
+
+/*  POCHISQ  --  probability of chi-square value
+
+Adapted from:
+	Hill, I. D. and Pike, M. C.  Algorithm 299
+	Collected Algorithms for the CACM 1967 p. 243
+Updated for rounding errors based on remark in
+	ACM TOMS June 1985, page 185
+*/
+
+var pochisq = function(x, df) {
+	console.log("pochisq: ", x, df);
+	var a, y, s;
+	var e, c, z;
+	var even;                     /* True if df is an even number */
+
+	var LOG_SQRT_PI = 0.5723649429247000870717135; /* log(sqrt(pi)) */
+	var I_SQRT_PI = 0.5641895835477562869480795;   /* 1 / sqrt(pi) */
+
+	if (x <= 0.0 || df < 1) {
+		return 1.0;
+	}
+
+	a = 0.5 * x;
+	even = !(df & 1);
+	if (df > 1) {
+		y = ex(-a);
+	}
+	s = (even ? y : (2.0 * poz(-Math.sqrt(x))));
+	if (df > 2) {
+		x = 0.5 * (df - 1.0);
+		z = (even ? 1.0 : 0.5);
+		if (a > BIGX) {
+			e = (even ? 0.0 : LOG_SQRT_PI);
+			c = Math.log(a);
+			while (z <= x) {
+				e = Math.log(z) + e;
+				s += ex(c * z - a - e);
+				z += 1.0;
+			}
+			return s;
+		} else {
+			e = (even ? 1.0 : (I_SQRT_PI / Math.sqrt(a)));
+			c = 0.0;
+			while (z <= x) {
+				e = e * (a / z);
+				c = c + e;
+				z += 1.0;
+			}
+			return c * y + s;
+		}
+	} else {
+		return s;
+	}
+}

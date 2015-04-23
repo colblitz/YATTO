@@ -181,6 +181,7 @@ yattoApp.controller('CalculatorController',
 		$scope.weaponProbability = function() {
 			var weapons = transformScopeArray($scope.weapons);
 			console.log("p: " + weapons);
+			calculate_weapons_probability(weapons);
 			// do chi square
 
 			// console.log("controller - weapon probability");

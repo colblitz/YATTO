@@ -3,22 +3,27 @@
 		<div id="content" class="col-xs-12">
 			<h3>What's to come?</h3>
 			<ul>Todo:
-				<li>Form validation</li>
-				<li>CSS</li>
 				<li>Cookies vs local storage? (https://github.com/grevory/angular-local-storage#setstoragecookie)</li>
+				<li>CSS</li>
 				<li>Show/hide weapons/customizations</li>
+
+				<li>Recheck against bsedmonds 2.0.0</li>
 				<li>Flesh out faq/information page</li>
 				<li>Actually get server/set up hosting</li>
 				<li>Disclaimer footer thing?</li>
+
 				<li>Dynamic programming</li>
-				<li>Weapon probability</li>
+
+				<li>Form validation</li>
+
+				<li>Weapon probability - chisquare, is that correct?/li>
 				<li>Better simulation for relics/stages per second (logic, time calculations)</li>
 				<li>Check boss health and gold formula</li>
 				<li>User variables for simulation (taps/second, amount to grind, hero skills, etc)</li>
 			</ul>
 
 			<h3>Why make YATTO?</h3>
-			<p>This is a web app version, with a few extra features - the biggest being the options for efficiency metrics. https://docs.google.com/spreadsheets/d/1nYbcKcb6q3bS59k66LOMUP-6ctrf-6NLz-Q6Ek-hc1U/edit#gid=21860140</p>
+			<p>This is a web app version, with a few extra features - the biggest being the options for efficiency metrics. https://docs.google.com/spreadsheets/d/1nYbcKcb6q3bS59k66LOMUP-6ctrf-6NLz-Q6Ek-hc1U/edit#gid=21860140. when to buy new artifact (in dynamic programming - greedy = never worth)</p>
 
 			<h3>How do you use this?</h3>
 			<p>Enter in your information and click calculate</p>
@@ -41,24 +46,44 @@
 			<h3>Formulas</h3>
 
 			<ul>Formulas/Reference:
-				<li>artifact AD</li>
-				<li>artifact cost to level</li>
-				<li>artifact level cap</li>
+				<li>artifact AD
+					$$ ad0 + adpl * (level - 1) $$
+				</li>
+				<li>artifact cost to level
+					$$ a *x^y $$
+				</li>
+				<li>artifact level cap
+				</li>
 				<li>cost to buy next artifact
 					$$ \left \lfloor (\text{# of artifacts owned} + 1) \cdot 1.35^{(\text{# of artifacts} + 1)} \right \rceil $$
 				</li>
-				<li>hero upgrade cost</li>
-				<li>hero skill cost</li>
-				<li>hero evolve cost</li>
-				<li>hero damage</li>
-				<li>all damage</li>
-				<li>base stage hp (hp -> stage)</li>
-				<li>base stage gold</li>
-				<li>relics earned</li>
-				<li>gold multiplier</li>
-				<li>hero dps</li>
-				<li>total dps</li>
-				<li>tapping dps</li>
+				<li>hero upgrade cost
+					$$ base_cost * 1.075^level, x10 for evolve $$
+				</li>
+				<li>hero skill cost
+					$$ 5 * upgrade cost of next level $$
+				</li>
+				<li>hero evolve cost
+					$$ 10.75 * cost to upgrade 999 $$
+				</li>
+				<li>hero damage
+				</li>
+				<li>all damage
+				</li>
+				<li>base stage hp (hp -> stage)
+				</li>
+				<li>base stage gold
+				</li>
+				<li>relics earned
+				</li>
+				<li>gold multiplier
+				</li>
+				<li>hero dps
+				</li>
+				<li>total dps
+				</li>
+				<li>tapping dps
+				</li>
 			</ul>
 
 			<ul> Symbols and reference
