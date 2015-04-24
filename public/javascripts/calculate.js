@@ -869,16 +869,6 @@ var get_hero_levels = function(heroes, gold) {
 };
 
 var get_steps = function(artifacts, weapons, customizations, methods, relics, nsteps, greedy) {
-	console.log("omg i'm here");
-	console.log("----------------------------------------------------------------");
-	console.log(artifacts);
-	console.log(weapons);
-	console.log(customizations);
-	console.log(methods);
-	console.log(relics);
-	console.log(nsteps);
-	console.log(greedy);
-	console.log("----------------------------------------------------------------");
 	var response = {};
 	for (var mi in methods) {
 		var m = methods[mi];

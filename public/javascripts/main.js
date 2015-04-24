@@ -1,6 +1,6 @@
 /* App Module */
 var yattoApp = angular.module('yattoApp', [
-	'ngRoute', 'ngCookies', 'ngRepeatReorder', 'ui.sortable', 'ui.bootstrap'
+	'ngRoute', 'ngCookies', 'ngRepeatReorder', 'ui.sortable', 'ui.bootstrap', 'LocalStorageModule'
 ]);
 
 yattoApp.config(['$routeProvider', '$locationProvider',
@@ -30,7 +30,9 @@ yattoApp.config(['$routeProvider', '$locationProvider',
 				templateUrl: 'partials/calculator.html',
 				controller: 'CalculatorController'
 			});
-	}]);
+	}
+]);
+
 
 yattoApp.controller('FaqController', function($scope) {
 	MathJax.Hub.Configured();
