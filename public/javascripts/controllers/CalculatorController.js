@@ -195,7 +195,7 @@ yattoApp.controller('CalculatorController',
 
 		$scope.weaponProbability = function() {
 			var weapons = transformScopeArray($scope.weapons);
-			calculate_weapons_probability(weapons);
+			alert(calculate_weapons_probability(weapons));
 		};
 
 		$scope.step = function(summary, method, stepindex) {

@@ -1,49 +1,33 @@
 <div id="faq-container">
 	<div class="row">
 		<div id="content" class="col-xs-12">
-			<h3>What's to come?</h3>
-			<ul>Todo:
-				<li>Cookies vs local storage? (https://github.com/grevory/angular-local-storage#setstoragecookie)</li>
-				<li>CSS</li>
-				<li>Show/hide weapons/customizations</li>
+			Hi! This is a page with information on it. It requires some reading.
 
-				<li>Recheck against bsedmonds 2.0.0</li>
-				<li>Flesh out faq/information page</li>
-				<li>Actually get server/set up hosting</li>
-				<li>Disclaimer footer thing?</li>
+			<h3>What is YATTO?</h3>
+			<p>YATTO stands for "Yet Another Tap Titans Optimizer." There are already a number of optimizers out there, with <a href="https://www.reddit.com/r/TapTitans/comments/303ngz/updated_artifact_efficiency_calculator_all_credit/">/u/bsedmonds's</a> being the current gold standard, and this is yet another one.
 
-				<li>Dynamic programming</li>
-
-				<li>Form validation</li>
-
-				<li>Weapon probability - chisquare, is that correct?/li>
-				<li>Better simulation for relics/stages per second (logic, time calculations)</li>
-				<li>Check boss health and gold formula</li>
-				<li>User variables for simulation (taps/second, amount to grind, hero skills, etc)</li>
-			</ul>
-
-			<h3>Why make YATTO?</h3>
-			<p>This is a web app version, with a few extra features - the biggest being the options for efficiency metrics. https://docs.google.com/spreadsheets/d/1nYbcKcb6q3bS59k66LOMUP-6ctrf-6NLz-Q6Ek-hc1U/edit#gid=21860140. when to buy new artifact (in dynamic programming - greedy = never worth)</p>
+			<h3>Why YATTO?</h3>
+			<p>Most up-to-date optimizers are currently spreadsheets, where you make a copy and access it through Google Drive. This is a web app version that makes an attempt to be a superset of the current optimizers (in giving you various metrics to optimize against), with a few quality-of-life features (reorganizing artifact order, automatic artifact level updating) and some experimental stuff (dynamic programming for the search, simulating runs for various metrics). Another big thing is an attempt to incorporate when to buy a new artifact, but I'm still working on that. All that aside, I also just wanted some practice with Angular/Javascript :P
 
 			<h3>How do you use this?</h3>
-			<p>Enter in your information and click calculate</p>
+			<p>Enter in your information on the left, choose a couple of options, and click calculate. The next most efficient artifacts to level will show up on the right, and the specific steps for each metric will be in separate tabs.</p>
 
 			<h3>What does greedy vs. dynamic programming mean?</h3>
-			<p>blah blah blah blah blah</p>
+			<p>A greedy algorithm is one where it will always pick the best option at each step, with no regard for long-term optimization. For example, if you're in a maze and your goal is to get to a certain point, then a greedy algorithm would try to always walk straight towards that point. Dynamic programming is one way of taking into account future options when making a current decision by breaking apart a problem into subproblems.</p>
 
-			<h3>Is relics per second right?</h3>
-			<p>If you use relics per second the results will most likely be a bunch of Undead Aura.</p>
+			<h3>Is your relics per second metric right?</h3>
+			<p>Mostly - the metric is still experimental (I'm still tinkering with things), so no guarantees. However, it is likely that you'll be told to level Undead Aura a lot, which to me makes sense. There's no other artifact that would be able to get you a 5% increase in relics from just one level.</p>
 
 			<h3>What is stages per second?</h3>
-			<p>Emphasizes stages, then if stages are equal it does time</p>
+			<p>This is a metric that compares how far you can get (using my rough simulation), and then if the stages are equal decides based on time.</p>
 
 			<h3>What is K?</h3>
-			<p>Refer to this thread - in this it's calculated as blah blah blah</p>
+			<p>Refer to <a href="http://www.reddit.com/r/TapTitans/comments/31md50/the_ultimate_artifact_calculator_based_on_theory/">this thread</a></p>
 
-			<h3>How do you get weapon probability?</h3>
-			<p>Chi square</p>
+			<h3>What is the weapon probability?</h3>
+			<p>The weapon probablity is supposed to give you a measure of how likely your distribution of weapons was just from chance - the higher the number, the more "normal" it is. This is calculated by running a chi-square test on your weapon counts.</p>
 
-			<h3>Formulas</h3>
+			<!-- <h3>Formulas</h3>
 
 			<ul>Formulas/Reference:
 				<li>artifact AD
@@ -88,19 +72,51 @@
 
 			<ul> Symbols and reference
 				<li> \( \left \lfloor x \right \rceil \) means round </li>
-			</ul>
+			</ul> -->
+<!-- 
+			<a href="http://www.reddit.com/user/olaudix">/u/olaudix</a>
+			<a href="http://www.reddit.com/user/gxgx55">/u/gxgx55</a>
+			<a href="http://www.reddit.com/user/bsedmonds">/u/bsedmonds</a>
+			<a href="http://www.reddit.com/user/FateRiddle">/u/FateRiddle</a>
+			<a href="http://www.reddit.com/user/asynchronism">/u/asynchronism</a>
+			<a href="http://www.reddit.com/user/einzen91">/u/einzen91</a>
+			<a href="http://www.reddit.com/user/TheDutchman88">/u/TheDutchman88</a>
+			<a href="http://www.reddit.com/user/contigi">/u/contigi</a> -->
+
 
 			<h3>Special thanks</h3>
 			<ul>
-				<li>code from olaudix</li>
-				<li>k from FateRiddle</li>
-				<li>normal from gxgx5, bsedmonds</li>
-				<li>everything spreadsheet asynchronism</li>
-				<li>progression time einzen91</li>
-				<li>hero upgrade TheDutchman88</li>
-				<li>damage and gold formula contigi</li>
-				<li>data from SnakeMGL, raffishtenant, mowmoth, TRB4, LeonProfessional, Iottie, Badeky, rajnod, superliro, rcbjmbadb</li>
-				<li>Grimspork</li>
+				<li>I got a bunch of formulas from <a href="http://www.reddit.com/user/olaudix">/u/olaudix's</a> <a href="https://github.com/oLaudix/oLaudix.github.io">optimizer</a></li>
+				<li><a href="http://www.reddit.com/user/gxgx55">/u/gxgx55</a> and <a href="http://www.reddit.com/user/bsedmonds">/u/bsedmonds</a> for the current spreadsheets (<a href="http://www.reddit.com/r/TapTitans/comments/2xypot/my_gold_and_damage_artifact_efficiency_calculator/">here</a> and <a href="https://www.reddit.com/r/TapTitans/comments/303ngz/updated_artifact_efficiency_calculator_all_credit/">here</a>)</li>
+				<li><a href="http://www.reddit.com/user/FateRiddle">/u/FateRiddle</a> for the <a href="http://www.reddit.com/r/TapTitans/comments/31md50/the_ultimate_artifact_calculator_based_on_theory/">concept of K</a></li>
+				<li><a href="http://www.reddit.com/user/asynchronism">/u/asynchronism</a> for <a href="http://www.reddit.com/r/TapTitans/comments/32m0r4/repost_the_everything_spreadsheet_is_back_and/">the everything spreadsheet</a></li>
+				<li><a href="http://www.reddit.com/user/einzen91">/u/einzen91</a> for <a href="http://www.reddit.com/r/TapTitans/comments/3162h7/exact_stage_progression_speed/">stage progression times</a></li>
+				<li><a href="http://www.reddit.com/user/TheDutchman88">/u/TheDutchman88</a> for <a href="http://www.reddit.com/r/TapTitans/comments/2u7scp/hero_upgrade_cost_explained/">hero upgrade costs</a></li>
+				<li><a href="http://www.reddit.com/user/contigi">/u/contigi</a> for <a href="http://www.reddit.com/r/TapTitans/comments/317usc/new_damage_and_gold_formulas/">damage and gold formulas</a></li>
+				<li><a href="http://www.reddit.com/r/TapTitans/comments/32hxes/i_need_data_need_some_more_help/">Data</a> from <a href="http://www.reddit.com/user/SnakeMGL">/u/SnakeMGL</a>, <a href="http://www.reddit.com/user/raffishtenant">/u/raffishtenant</a>, <a href="http://www.reddit.com/user/mowmoth">/u/mowmoth</a>, <a href="http://www.reddit.com/user/TRB4">/u/TRB4</a>, <a href="http://www.reddit.com/user/LeonProfessional">/u/LeonProfessional</a>, <a href="http://www.reddit.com/user/Iottie">/u/Iottie</a>, <a href="http://www.reddit.com/user/Badeky">/u/Badeky</a>, <a href="http://www.reddit.com/user/rajnod">/u/rajnod</a>, <a href="http://www.reddit.com/user/superliro">/u/superliro</a>, <a href="http://www.reddit.com/user/rcbjmbadb">/u/rcbjmbadb</a>, and <a href="http://www.reddit.com/user/Grimspork">/u/Grimspork</a>
+			</ul>
+
+			<h3>Current TODO list</h3>
+			<ul>
+				<li>CSS so it's not ugly</li>
+				<li>Check if no artifacts</li>
+				<li>Check if 0 relics and 0 steps</li>
+				<li>Buttons wiggle when hovered</li>
+				<li>Form validation</li>
+				<li>Option to save to cookies instead of automatic?</li>
+				<li>Put weapon probablity somewhere</li>
+				<li>Make a formulas/reference page (for people who are interested, just look at the code for now)</li>
+				<li>Take care of TODOs in calculate.js</li>
+				<li>More CSS</li>
+				<li>Show/hide weapons/customizations</li>
+				<li>Recheck against bsedmonds 2.0.0</li>
+				<li>Actually get server/set up hosting</li>
+				<li>Disclaimer footer thing?</li>
+				<li>Dynamic programming</li>
+				<li>Think about weapon probability - is chisquare correct?</li>
+				<li>Better simulation for relics/stages per second (logic, time calculations)</li>
+				<li>Check boss health and gold formula</li>
+				<li>User variables for simulation (taps/second, amount to grind, hero skills, etc)</li>
 			</ul>
 
 		</div>
