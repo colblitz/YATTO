@@ -152,7 +152,7 @@ yattoApp.controller('CalculatorController',
 			var newArray = newZeroes(scopeArray.length);
 			for (var x in scopeArray) {
 				var thing = scopeArray[x];
-				newArray[thing.index] = thing.value;
+				newArray[thing.index] = parseFloat(thing.value);
 			}
 			return newArray;
 		}
