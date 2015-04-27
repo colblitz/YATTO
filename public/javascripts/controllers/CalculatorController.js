@@ -11,6 +11,8 @@ yattoApp.controller('CalculatorController',
 		$scope.summary_steps = [];
 		$("#step-tabs").tabs();
 
+		$scope.stepmessage = "Click calculate to get steps!";
+
 		$scope.artifact_caps = [null, null, 10, null, null, null, 25, 25, null, null, null, null, 10, null, 10, null, 10, 10, null, null, 25, 10, 10, 25, null, null, null, 10, 5];
 		$scope.artifacts = [
 			{name: "Amulet of the Valrunes",  index:  0, value: 0},
@@ -130,7 +132,6 @@ yattoApp.controller('CalculatorController',
 		readFromCookies();
 
 		var storeToCookies = function() {
-			// console.log("storing to cookies");
 			localStorageService.set('artifacts', $scope.artifacts);
 			localStorageService.set('weapons', $scope.weapons);
 			localStorageService.set('customizations', $scope.customizations);
@@ -140,28 +141,8 @@ yattoApp.controller('CalculatorController',
 		};
 
 		$scope.clearAllCookies = function() {
-			// console.log("clearing cookies");
 			localStorageService.clearAll();
-			// $cookieStore.remove("artifacts");
-			// $cookieStore.remove("weapons");
-			// $cookieStore.remove("customizations");
-			// $cookieStore.remove("methods");
-			// $cookieStore.remove("steps");
-			// $cookieStore.remove("summary");
 		};
-
-		// var transformSteps = function(stepArray) {
-		// 	var newArray = newZeroes(stepArray.length);
-		// 	for (var x in stepArray) {
-		// 		var thing = stepArray[x];
-		// 		newArray[x] = {
-		// 			"index": thing.index,
-		// 			"level": thing.level,
-		// 			"cost": thing.cost
-		// 		};
-		// 	}
-		// 	return newArray;
-		// }
 
 		var transformScopeArray = function(scopeArray) {
 			var newArray = newZeroes(scopeArray.length);
@@ -173,7 +154,21 @@ yattoApp.controller('CalculatorController',
 		}
 
 		$scope.calculate = function() {
+			if ($scope.relics == 0 && $scope.nsteps == 0) {
+				$scope.stepmessage = "Get some relics or enter a number of steps!";
+				$scope.steps = [];
+				$scope.summary_steps = [];
+				return;
+			}
+
 			var artifacts = transformScopeArray($scope.artifacts);
+			if (sumArray(artifacts) == 0) {
+				$scope.stepmessage = "Buy a new artifact!";
+				$scope.steps = [];
+				$scope.summary_steps = [];
+				return;
+			}
+
 			var weapons = transformScopeArray($scope.weapons);
 			var customizations = transformScopeArray($scope.customizations);
 			var methods = [];
@@ -193,9 +188,15 @@ yattoApp.controller('CalculatorController',
 			storeToCookies();
 		};
 
+		$scope.resetSteps = function() {
+			$scope.stepmessage = "Click calculate to get steps!";
+			$scope.steps = [];
+			$scope.summary_steps = [];
+		};
+
 		$scope.weaponProbability = function() {
 			var weapons = transformScopeArray($scope.weapons);
-			alert(calculate_weapons_probability(weapons));
+			$scope.wprobability = calculate_weapons_probability(weapons);
 		};
 
 		$scope.step = function(summary, method, stepindex) {

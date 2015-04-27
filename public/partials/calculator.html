@@ -4,6 +4,7 @@
 			<div class="row">
 				<div id="options-box" class="box panel">
 					<div id="options-subbox-1" class="options-block">
+						<h3>Efficiency Calculator:</h3>
 						<div id="options-relics" class="small-form-item">
 							Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" />
 						</div>
@@ -13,12 +14,11 @@
 						<div class="col-">
 							<button class="btn btn-primary" ng-click="calculate(artifacts, weapons, customizations)">Calculate</button>
 						</div>
+						<div style="margin-top: 5px"></div>
 						<div class="col-">
 							<button class="btn btn-info" ng-click="weaponProbability(weapons)">Get weapon probability</button>
 						</div>
-						<div class="col-">
-							<button class="btn btn-danger" ng-click="clearAllCookies()">Clear cookies</button>
-						</div>
+						Probability: <input type="number" class="form-control number-input right-input weapon-p" ng-model="wprobability"/>
 					</div>
 
 					<div id="options-subbox-2" class="options-block">
@@ -38,6 +38,24 @@
 							</div>
 							<div class="small-form-item">
 								<label><input type="radio" ng-model="greedy" value="0" disabled="true">Dynamic Programming (in progress!)</label>
+							</div>
+						</div>
+					</div>
+
+					<div id="options-subbox-4" class="options-block">
+						<div id="buttons">
+							<h3>Other Stuff:</h3>
+							<!-- <div class="col-">
+								<button class="btn btn-danger" ng-click="storeToCookies()">Automatically save (off)</button>
+							</div>
+							<div class="col-">
+								<button class="btn btn-danger" ng-click="storeToCookies()">Load from cookies</button>
+							</div>
+							<div class="col-">
+								<button class="btn btn-danger" ng-click="storeToCookies()">Save cookies</button>
+							</div> -->
+							<div class="col-">
+								<button class="btn btn-danger" ng-click="clearAllCookies()">Clear all cookies</button>
 							</div>
 						</div>
 					</div>
@@ -79,9 +97,13 @@
 
 				<div id="steps-box" class="box panel">
 					<div id="steps-summary-container">
+						<div class="col-">
+							<button id="reset-steps" class="btn btn-primary" ng-click="resetSteps()">Reset steps</button>
+						</div>
 						<tabset>
 							<tab ng-repeat="method in methods" heading="{{method.tabname}}" disabled="!method.value">
-								<div id ="summary-list" class="list">
+								<h3 ng-if="steps[method.index] == null">{{stepmessage}}</h3>
+								<div id="summary-list" class="list">
 									<h3 ng-if="summary_steps[method.index].length > 0" class="animate-if">Summary:</h3>
 									<table ng-if="summary_steps[method.index].length > 0" class="animate-if">
 										<tr>
@@ -98,8 +120,7 @@
 										</tr>
 									</table>
 								</div>
-						<div id ="steps-list" class="list">
-							<h3 ng-if="steps[method.index] == null">Click calculate to get steps!</h3>
+								<div id ="steps-list" class="list">
 									<h3 ng-if="steps[method.index].length > 0" class="animate-if">Steps:</h3>
 									<table ng-if="steps[method.index].length > 0" class="animate-if">
 										<tr>
@@ -118,8 +139,8 @@
 										</tr>
 									</table>
 								</div>
-						</tab>
-					</tabset>
+							</tab>
+						</tabset>
 					</div>
 				</div>
 			</div>
