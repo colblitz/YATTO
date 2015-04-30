@@ -739,75 +739,197 @@ var index_max = function(array, custom) {
 	return maxIndex;
 };
 
-
-var get_best = function(artifacts, weapons, customizations, relics, nsteps, method, greedy) {
-	if (greedy) {
-		var relics_left = relics;
-		var current_artifacts = artifacts.slice();
-		var steps = [];
-		var cumulative = 0;
-		while (relics_left > 0 || steps.length < nsteps) {
-			var g = new GameState(current_artifacts, weapons, customizations);
+var get_best = function(artifacts, weapons, customizations, relics, nsteps, method) {
+	var relics_left = relics;
+	var current_artifacts = artifacts.slice();
+	var steps = [];
+	var cumulative = 0;
+	while (relics_left > 0 || steps.length < nsteps) {
+		var g = new GameState(current_artifacts, weapons, customizations);
+		if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
+			// TODO: make this user variable
+			g.get_all_skills();
+		}
+		var base = get_value(g, method);
+		var efficiency = newZeroes(artifact_info.length);
+		var costs = newZeroes(artifact_info.length);
+		for (var i in current_artifacts) {
+			var level = current_artifacts[i];
+			var relic_cost = artifact_info[i].costToLevel(level);
+			costs[i] = relic_cost;
+			if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) ) {
+				continue;
+			}
+			var artifacts_copy = current_artifacts.slice();
+			artifacts_copy[i] += 1;
+			var new_g = new GameState(artifacts_copy, weapons, customizations);
 			if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
 				// TODO: make this user variable
-				g.get_all_skills();
+				new_g.get_all_skills();
 			}
-			var base = get_value(g, method);
-			var efficiency = newZeroes(artifact_info.length);
-			var costs = newZeroes(artifact_info.length);
-			for (var i in current_artifacts) {
-				var level = current_artifacts[i];
-				var relic_cost = artifact_info[i].costToLevel(level);
-				costs[i] = relic_cost;
-				if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) ) {
-					continue;
+			var new_value = get_value(new_g, method);
+			var e;
+			if (method == METHOD_STAGE_PS) {
+				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
+			} else if (method == METHOD_K) {
+				e = (new_value[0] * new_value[1] / (base[0] * base[1]) - 1) / relic_cost;
+			} else {
+				e = (new_value - base) / relic_cost;
+			}
+			efficiency[i] = e;
+		}
+		var best_index;
+		if (method != METHOD_STAGE_PS) {
+			best_index = index_max(efficiency);
+		} else {
+			best_index = index_max(efficiency, function(st1, st2) {
+				if (st1[0] > st2[0]) {
+					return true;
+				} else if (st1[0] < st2[0]) {
+					return false;
 				}
+				return st1[1] > st2[1];
+			});
+		}
+		relics_left -= costs[best_index];
+		current_artifacts[best_index] += 1;
+		cumulative += costs[best_index];
+		var step = {};
+		step["index"] = best_index;
+		step["name"] = artifact_info[best_index].name;
+		step["level"] = current_artifacts[best_index];
+		step["cost"] = costs[best_index];
+		step["cumulative"] = cumulative;
+		steps.push(step);
+	}
+	return steps;
+};
+
+var hashArray = function(array) {
+	// TODO: find better hash?
+	return array.toString();
+}
+
+var memoize = {};
+
+var get_value_memoize = function(a, w, c, m) {
+	var aHash = hashArray(a);
+	if (aHash in memoize) {
+		return memoize[aHash];
+	} else {
+		var g = new GameState(a, w, c);
+		if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(m) == -1) {
+			// TODO: make this user variable
+			g.get_all_skills();
+		}
+		var base = get_value(g, method);
+		memoize[aHash] = base;
+		return base;
+	}
+}
+
+// return [state, steps]
+var get_best_dp = function(artifacts, weapons, customizations, relics, nsteps, method, steps) {
+	if (relics <= 0 && nsteps <= 0) {
+		return [artifacts, steps];
+	}
+	var current_artifacts = artifacts.slice();
+	var base = get_value_memoize(current_artifacts, weapons, customizations, method);
+	var options = [];
+
+	// Level an artifact
+	for (var i in current_artifacts) {
+		var level = current_artifacts[i];
+		var relic_cost = artifact_info[i].costToLevel(level);
+		if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) ) {
+			continue;
+		}
+		if (relic_cost > relics) {
+			continue;
+		}
+		var artifacts_copy = current_artifacts.slice();
+		artifacts_copy[i] += 1;
+
+		var new_value = get_value_memoize(artifacts_copy, weapons, customizations, method);
+		options.push([i, artifacts_copy, relic_cost, new_value]);
+	}
+
+	var buy_value = 0;
+	var cost_to_buy = cost_to_buy_next(current_artifacts);
+	if (relics >= cost_to_buy) {
+		for (var i in current_artifacts) {
+			var level = current_artifacts[i];
+			if (level == 0) {
 				var artifacts_copy = current_artifacts.slice();
 				artifacts_copy[i] += 1;
-				var new_g = new GameState(artifacts_copy, weapons, customizations);
-				if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
-					// TODO: make this user variable
-					new_g.get_all_skills();
-				}
-				var new_value = get_value(new_g, method);
-				var e;
-				if (method == METHOD_STAGE_PS) {
-					e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
-				} else if (method == METHOD_K) {
-					e = (new_value[0] * new_value[1] / (base[0] * base[1]) - 1) / relic_cost;
-				} else {
-					e = (new_value - base) / relic_cost;
-				}
-				efficiency[i] = e;
+
+				var new_value = get_value_memoize(artifacts_copy, weapons, customizations, method);
+				buy_value += new_value;
 			}
-			var best_index;
-			if (method != METHOD_STAGE_PS) {
-				best_index = index_max(efficiency);
-			} else {
-				best_index = index_max(efficiency, function(st1, st2) {
-					if (st1[0] > st2[0]) {
-						return true;
-					} else if (st1[0] < st2[0]) {
-						return false;
-					}
-					return st1[1] > st2[1];
-				});
-			}
-			relics_left -= costs[best_index];
-			current_artifacts[best_index] += 1;
-			cumulative += costs[best_index];
-			var step = {};
-			step["index"] = best_index;
-			step["name"] = artifact_info[best_index].name;
-			step["level"] = current_artifacts[best_index];
-			step["cost"] = costs[best_index];
-			step["cumulative"] = cumulative;
-			steps.push(step);
 		}
-		return steps;
-	} else {
-		// do some dynamic programming
 	}
+
+	options.push([artifact_info.length, current_artifacts, cost_to_buy, buy_value])
+
+	var aggregate = [];
+	for (var o in options) {
+		var option = options[o]; // 0 is step, 1 is artifacts, 2 is cost, 3 is value
+		var best = get_best_dp(option[1], weapons, customizations, relics - option[2], nsteps - 1, method, steps);
+		var best_artifacts = best[0];
+		var best_steps = best[1];
+		var best_value = get_value_memoize(best_artifacts, weapons, customizations, method);
+		aggregate.push([option[0], best_value]);
+	}
+
+	var buy_value = 0;
+	for (var o in buy_options) {
+		var option = buy_options[o];  // 0 is step, 1 is artifacts, 2 is cost, 3 is value
+		var best = get_best_dp(option[1], weapons, customizations, relics - option[2], nsteps - 1, method, steps);
+		var best_artifacts = best[0];
+		var best_steps = best[1];
+		var best_value = get_value_memoize(best_artifacts, weapons, customizations, method);
+
+		// TODO: alksjdfahwleiufhakiushefkauhsekgiuahwge
+		if (method == METHOD_STAGE_PS) {
+			buy_value += best_value[0];
+		} else {
+			buy_value += best_value;
+		}
+	}
+	if (buy_value != 0) {
+		aggregate.push(["buy", buy_value / buy_options.length]);
+	}
+
+	var best_index = -1;
+	var best_value = base;
+	for (var o in aggregate) {
+		if (aggregate[o][1] > best_value) {
+			best_index = o;
+			best_value = aggregate[o][1];
+		}
+	}
+
+	var best_step = aggregate[best_index];
+	var step = {};
+	if (best_step[0] == "buy") {
+		step["index"] = -1;
+		step["name"] = "Buy new artifact";
+		step["level"] = 0;
+		step["cost"] = cost_to_buy;
+		step["cumulative"] = 0;
+	} else {
+		step["index"] = best_step[0];
+		step["name"] = artifact_info[best_step[0]].name;
+		step["level"] = current_artifacts[best_step[0]] + 1;
+		step["cost"] = 1234;
+		step["cumulative"] = 1234;
+	}
+
+	var new_steps = steps.slice();
+	new_steps.push(step);
+
+	return []
+	// return [state, steps]
 };
 
 var get_hero_levels = function(heroes, gold) {
@@ -872,7 +994,13 @@ var get_steps = function(artifacts, weapons, customizations, methods, relics, ns
 	var response = {};
 	for (var mi in methods) {
 		var m = methods[mi];
-		var steps = get_best(artifacts, weapons, customizations, relics, nsteps, m, greedy);
+		var steps = [];
+		if (greedy) {
+			steps = get_best(artifacts, weapons, customizations, relics, nsteps, m);
+		} else {
+			memoize = {};
+			steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, []);
+		}
 		var summary = {};
 		var costs = {};
 		for (var s in steps) {
