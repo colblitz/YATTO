@@ -83,10 +83,12 @@
 							</div>
 						 <!-- artifacts and weapons -->
 						</div>
-						<div id="customizations-list" class="list col-md-12">
-							<h3>Bonuses from Customizations:</h3>
-							<div ng-repeat="c in customizations" class="form-item">
-								<input type="text" class="form-control number-input left-input" ng-model="customizations[$index].value" /><div class="input-label">{{c.name}}</div>
+						<div class="row">
+							<div id="customizations-list" class="list col-md-12">
+								<h3>Bonuses from Customizations:</h3>
+								<div ng-repeat="c in customizations" class="form-item">
+									<input type="text" class="form-control number-input left-input" ng-model="customizations[$index].value" /><div class="input-label">{{c.name}}</div>
+								</div>
 							</div>
 						</div>
 					</div> <!-- inputs box -->
@@ -94,7 +96,7 @@
 				<div class="col-md-5" id="steps-col">
 					<div id="steps-box" class="panel">
 						<div id="steps-summary-container">
-							<div class="col-">
+							<div>
 								<button id="reset-steps" class="btn btn-primary" ng-click="resetSteps()">Reset steps</button>
 							</div>
 							<tabset>
