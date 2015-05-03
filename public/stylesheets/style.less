@@ -7,7 +7,6 @@ body {
 }
 
 #everything-container {
-  width: @content-width;
   margin-left: auto;
   margin-right: auto;
 }
@@ -24,29 +23,29 @@ body {
 }
 
 #header {
-  background: url(../img/header_small.png);
-  background-size: 100% auto;
-  width: @content-width;
+  background: url(../img/header_small.png) no-repeat;
+  background-size: auto 240px;
   height: 240px;
-  padding: 20px;
-  padding-top: 120px;
-  padding-left: 80px;
-  background-color: #206280;
-  overflow: visible;
-  position: relative;
 }
 
 #content {
-  width: @content-width;
   background-color: #EDEDED;
   padding: 50px;
+  padding-top: 20px;
+  margin-top: 10px;
   position: relative;
   z-index: 9;
 }
 
-#navrow {
-  position: relative;
-  top: -40px;
+.navlink {
+  padding: 8px;
+  padding-top: 10px;
+  color: #158CBA;
+}
+
+.navlink>a:hover {
+  color: #EDEDED;
+  text-decoration: none;
 }
 
 .navbar-nav>li>a {
@@ -60,47 +59,22 @@ body {
   color: #EDEDED;
 }
 
-.navbar-nav>li>a:hover {
-  background: #EDEDED;
-  color: #373737;
-}
-
-
-
 .nav {
   margin-right: 0px;
 }
 
-
 .panel {
-  background-color: #F0F8FF;
-}
-
-.box {
   border-radius: 5px;
-  //padding: 50px;
-  margin: 10px;
-  // border: 1px solid green;
-  // box-shadow: -3px 3px 3px #888888;
-  display: inline-block;
-  vertical-align: top;
-}
-
-#options-box {
-  width: 1095px;
-}
-
-#inputs-box {
-  width: 650px;
+  background-color: #F0F8FF;
   padding: 20px;
-  // background-color: #58b1cc;
 }
 
-#steps-box {
-  width: 420px;
-  padding: 20px;
-  // background-color: #FED611;
+#inputs-box, #steps-box {
+  height: 1100px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
+
 
 .number-input {
   width: 80px;
@@ -110,8 +84,9 @@ body {
   padding: 1px 8px;
 }
 
-.weapon-p {
+#weapon-p {
   width: 160px;
+  margin-left: 10px;
 }
 
 .right-input {
@@ -135,6 +110,11 @@ body {
   width: 250px;
 }
 
+#options-box {
+  padding: 0px;
+  padding-left: 20px;
+}
+
 .method-options {
   //margin-right: -125px;
   display: inline-block;
@@ -148,11 +128,18 @@ body {
 }
 
 .options-block {
-  margin: 0px 10px 10px 10px;
-  // border: 1px solid black;
+  padding: 30px;
+  padding-top: 15px;
 
-  display: inline-block;
-  vertical-align: top;
+  h3 {
+    margin-top: 10px;
+  }
+
+  button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: block;
+  }
 }
 
 .btn {
@@ -176,11 +163,6 @@ body {
 
 }
 
-#artifact-weapons-container {
-  width: 610px;
-  // border: 1px solid black;
-}
-
 .myHandle {
   display: inline-block;
   // height: 10px;
@@ -195,24 +177,6 @@ body {
   cursor: move;
 }
 
-#artifacts-list {
-  vertical-align: top;
-  display: inline-block;
-  width: 280px;
-  // .form-item {
-  //   width: 250px;
-  //   display: inline-block;
-  // }
-}
-
-#weapons-list {
-  width: 320px;
-  display: inline-block;
-  // .form-item {
-  //   width: 300px;
-  //   display: inline-block;
-  // }
-}
 
 #customizations-list {
   margin-top: 0px;
@@ -225,15 +189,26 @@ body {
 
 #reset-steps {
   margin-bottom: 5px;
-  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 #summary-list {
   margin-top: 10px;
 }
 
-#steps-list {
-  //height: 800px;
+#weapons-list {
+  padding-right: 0;
+}
+
+#artifact-weapon-col {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#steps-col {
+  padding-right: 0;
 }
 
 .list {
@@ -306,3 +281,4 @@ tr:first-child:hover {
   left:6px;
   top:10px;
 }
+

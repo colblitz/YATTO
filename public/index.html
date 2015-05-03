@@ -37,14 +37,11 @@
 	<body ng-app="yattoApp">
 		<div id="everything-container" class="container-fluid">
 			<div class="row">
-				<div id="header" class="col-xs-12">
-				</div>
+				<div id="header" class="col-lg-8 col-lg-offset-2 col-md-12 col-xs-12"></div>
 			</div>
 			<div class="row" id="navrow">
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#calculator"><i class="fa"></i>Calculator</a></li>
-					<li><a href="#faq"><i class="fa"></i>FAQ/Information</a></li>
-				</ul>
+				<span class="col-md-1 col-md-offset-1 navlink"><a href="#calculator"><i class="fa"></i>Calculator</a></span>
+				<span class="col-md-1 navlink" ><a href="#faq"><i class="fa"></i>FAQ/Information</a></span>
 			</div>
 			<div ng-view></div>
 		</div>
