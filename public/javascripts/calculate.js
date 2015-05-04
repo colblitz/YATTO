@@ -777,8 +777,13 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 			var level = current_artifacts[i];
 			var relic_cost = artifact_info[i].costToLevel(level);
 			costs[i] = relic_cost;
-			if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) || relic_cost > relics ) {
-				efficiency[i] = -Infinity;
+			// TODO: check if isFinite works, temp solution
+			if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) || relic_cost > 18972389172635 ) {
+				if (method == METHOD_STAGE_PS) {
+					efficiency[i] = [-Infinity, -Infinity];
+				} else {
+					efficiency[i] = -Infinity;
+				}
 				continue;
 			}
 			var artifacts_copy = current_artifacts.slice();
@@ -799,6 +804,7 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 			}
 			efficiency[i] = e;
 		}
+
 		var best_index;
 		if (method != METHOD_STAGE_PS) {
 			best_index = index_max(efficiency);
@@ -860,7 +866,7 @@ var get_best_dp = function(artifacts, weapons, customizations, relics, nsteps, m
 	if (relics <= 0 && nsteps <= 0) {
 		return [base, steps];
 	}
-	
+
 	var options = [];
 
 	// Level an artifact
@@ -889,7 +895,7 @@ var get_best_dp = function(artifacts, weapons, customizations, relics, nsteps, m
 		options.push([new_value, step]);
 	}
 
-	
+
 	var cost_to_buy = cost_to_buy_next(current_artifacts);
 	if (relics >= cost_to_buy) {
 		var buy_value = 0;
