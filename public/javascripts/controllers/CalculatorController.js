@@ -14,36 +14,77 @@ yattoApp.controller('CalculatorController',
 		$scope.stepmessage = "Click calculate to get steps!";
 
 		$scope.artifact_caps = [null, null, 10, null, null, null, 25, 25, null, null, null, null, 10, null, 10, null, 10, 10, null, null, 25, 10, 10, 25, null, null, null, 10, 5];
-		$scope.artifacts = [
-			{name: "Amulet of the Valrunes",  index:  0, value: 0},
-			{name: "Axe of Resolution",       index:  1, value: 0},
-			{name: "Barbarian's Mettle",      index:  2, value: 0},
-			{name: "Chest of Contentment",    index:  3, value: 0},
-			{name: "Crafter's Elixir",        index:  4, value: 0},
-			{name: "Crown Egg",               index:  5, value: 0},
-			{name: "Dark Cloak of Life",      index:  6, value: 0},
-			{name: "Death Seeker",            index:  7, value: 0},
-			{name: "Divine Chalice",          index:  8, value: 0},
-			{name: "Drunken Hammer",          index:  9, value: 0},
-			{name: "Future's Fortune",        index: 10, value: 0},
-			{name: "Hero's Thrust",           index: 11, value: 0},
-			{name: "Hunter's Ointment",       index: 12, value: 0},
-			{name: "Knight's Shield",         index: 13, value: 0},
-			{name: "Laborer's Pendant",       index: 14, value: 0},
-			{name: "Ogre's Gauntlet",         index: 15, value: 0},
-			{name: "Otherworldly Armor",      index: 16, value: 0},
-			{name: "Overseer's Lotion",       index: 17, value: 0},
-			{name: "Parchment of Importance", index: 18, value: 0},
-			{name: "Ring of Opulence",        index: 19, value: 0},
-			{name: "Ring of Wondrous Charm",  index: 20, value: 0},
-			{name: "Sacred Scroll",           index: 21, value: 0},
-			{name: "Saintly Shield",          index: 22, value: 0},
-			{name: "Savior Shield",           index: 23, value: 0},
-			{name: "Tincture of the Maker",   index: 24, value: 0},
-			{name: "Undead Aura",             index: 25, value: 0},
-			{name: "Universal Fissure",       index: 26, value: 0},
-			{name: "Warrior's Revival",       index: 27, value: 0},
-			{name: "Worldly Illuminator",     index: 28, value: 0}];
+
+		var artifact_names = {
+			 0 : "Amulet of the Valrunes",
+			 1 : "Axe of Resolution",
+			 2 : "Barbarian's Mettle",
+			 3 : "Chest of Contentment",
+			 4 : "Crafter's Elixir",
+			 5 : "Crown Egg",
+			 6 : "Dark Cloak of Life",
+			 7 : "Death Seeker",
+			 8 : "Divine Chalice",
+			 9 : "Drunken Hammer",
+			10 : "Future's Fortune",
+			11 : "Hero's Thrust",
+			12 : "Hunter's Ointment",
+			13 : "Knight's Shield",
+			14 : "Laborer's Pendant",
+			15 : "Ogre's Gauntlet",
+			16 : "Otherworldly Armor",
+			17 : "Overseer's Lotion",
+			18 : "Parchment of Importance",
+			19 : "Ring of Opulence",
+			20 : "Ring of Wondrous Charm",
+			21 : "Sacred Scroll",
+			22 : "Saintly Shield",
+			23 : "Savior Shield",
+			24 : "Tincture of the Maker",
+			25 : "Undead Aura",
+			26 : "Universal Fissure",
+			27 : "Warrior's Revival",
+			28 : "Worldly Illuminator"};
+
+		$scope.artifacts = [];
+		for (var a in artifact_names) {
+			$scope.artifacts.push({
+				name: artifact_names[a],
+				index: a,
+				value: 0
+			});
+		}
+
+		// $scope.artifacts = [
+		// 	{name: "Amulet of the Valrunes",  index:  0, value: 0},
+		// 	{name: "Axe of Resolution",       index:  1, value: 0},
+		// 	{name: "Barbarian's Mettle",      index:  2, value: 0},
+		// 	{name: "Chest of Contentment",    index:  3, value: 0},
+		// 	{name: "Crafter's Elixir",        index:  4, value: 0},
+		// 	{name: "Crown Egg",               index:  5, value: 0},
+		// 	{name: "Dark Cloak of Life",      index:  6, value: 0},
+		// 	{name: "Death Seeker",            index:  7, value: 0},
+		// 	{name: "Divine Chalice",          index:  8, value: 0},
+		// 	{name: "Drunken Hammer",          index:  9, value: 0},
+		// 	{name: "Future's Fortune",        index: 10, value: 0},
+		// 	{name: "Hero's Thrust",           index: 11, value: 0},
+		// 	{name: "Hunter's Ointment",       index: 12, value: 0},
+		// 	{name: "Knight's Shield",         index: 13, value: 0},
+		// 	{name: "Laborer's Pendant",       index: 14, value: 0},
+		// 	{name: "Ogre's Gauntlet",         index: 15, value: 0},
+		// 	{name: "Otherworldly Armor",      index: 16, value: 0},
+		// 	{name: "Overseer's Lotion",       index: 17, value: 0},
+		// 	{name: "Parchment of Importance", index: 18, value: 0},
+		// 	{name: "Ring of Opulence",        index: 19, value: 0},
+		// 	{name: "Ring of Wondrous Charm",  index: 20, value: 0},
+		// 	{name: "Sacred Scroll",           index: 21, value: 0},
+		// 	{name: "Saintly Shield",          index: 22, value: 0},
+		// 	{name: "Savior Shield",           index: 23, value: 0},
+		// 	{name: "Tincture of the Maker",   index: 24, value: 0},
+		// 	{name: "Undead Aura",             index: 25, value: 0},
+		// 	{name: "Universal Fissure",       index: 26, value: 0},
+		// 	{name: "Warrior's Revival",       index: 27, value: 0},
+		// 	{name: "Worldly Illuminator",     index: 28, value: 0}];
 
 		$scope.weapons = [
 			{name: "Takeda the Blade Assassin",       index:  0, value: 0},
@@ -144,6 +185,49 @@ yattoApp.controller('CalculatorController',
 			localStorageService.clearAll();
 		};
 
+		$scope.generateStateString = function() {
+			var state = [
+				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(","),
+				$scope.weapons.map(function(w) { return w.value; }).join(),
+				$scope.customizations.map(function(c) { return c.value; }).join(),
+				$scope.methods.map(function(m) { return m.value ? 1 : 0; }).join(),
+				$scope.relics,
+				$scope.nsteps,
+				$scope.greedy].join("|");
+			console.log(state);
+			$scope.state = state;
+		};
+		$scope.generateStateString();
+
+		$scope.importFromString = function(state) {
+			var t = state.split("|");
+			var artifacts = [];
+			t[0].split(",").forEach(function(a, i, array) {
+				var v = a.split(".");
+				var aindex = parseInt(v[0]);
+				var avalue = parseInt(v[1]);
+				artifacts.push({
+					name: artifact_names[aindex],
+					index: aindex,
+					value: avalue
+				});
+			});
+			$scope.artifacts = artifacts;
+			console.log(artifacts);
+			t[1].split(",").forEach(function(w, i, array) {
+				$scope.weapons[i].value = parseInt(w);
+			});
+			t[2].split(",").forEach(function(c, i, array) {
+				$scope.customizations[i].value = parseFloat(c);
+			})
+			t[3].split(",").forEach(function(m, i, array) {
+				$scope.methods[i].value = m == 1 ? true : false;
+			})
+			$scope.relics = parseInt(t[4]);
+			$scope.nsteps = parseInt(t[5]);
+			$scope.greedy = parseInt(t[6]);
+		};
+
 		var transformScopeArray = function(scopeArray) {
 			var newArray = newZeroes(scopeArray.length);
 			for (var x in scopeArray) {
@@ -192,6 +276,8 @@ yattoApp.controller('CalculatorController',
 			$scope.stepmessage = "Click calculate to get steps!";
 			$scope.steps = [];
 			$scope.summary_steps = [];
+			localStorageService.remove('steps');
+			localStorageService.remove('summary');
 		};
 
 		$scope.weaponProbability = function() {
