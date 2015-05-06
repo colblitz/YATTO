@@ -315,6 +315,26 @@ var stage_hp = function(stage) {
 	return stage_constant * Math.pow(1.17, stage - 156);
 };
 
+var boss_hp = function(stage) {
+	switch (stage % 10) {
+		case 1:
+		case 6:
+			return stage_hp(stage) * 2;
+		case 2:
+		case 7:
+			return stage_hp(stage) * 4;
+		case 3:
+		case 8:
+			return stage_hp(stage) * 6;
+		case 4:
+		case 9:
+			return stage_hp(stage) * 7;
+		case 5:
+		case 0:
+			return stage_hp(stage) * 10;
+	}
+}
+
 var log117 = Math.log(1.17);
 var log157 = Math.log(1.57);
 var health_to_stage = function(health) {
@@ -423,6 +443,9 @@ var GameState = function(artifacts, weapons, customizations) {
 	};
 
 	this.total_relics = function() {
+		if (this.current_stage < 90) {
+			return 0;
+		}
 		var stage_relics = Math.pow(Math.floor(this.current_stage/15) - 5, 1.7);
 		var hero_relics = Math.floor(sumArray(this.heroes) / 1000);
 		var multiplier = 2 + 0.1 * this.l_ua;
@@ -549,14 +572,16 @@ var GameState = function(artifacts, weapons, customizations) {
 		var level_last = heroes_after[last_owned];
 
 		// TODO: javascript is stupid
-		for (var i in [100, 10, 1]) {
-			var k = Math.pow(10, (2 - i));
-			var cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
-			while (cost < this.current_gold) {
-				heroes_after[last_owned] += k;
-				level_last = heroes_after[last_owned];
-				this.current_gold -= cost;
-				cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+		if (last_owned != -1) {
+			for (var i in [100, 10, 1]) {
+				var k = Math.pow(10, (2 - i));
+				var cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+				while (cost < this.current_gold) {
+					heroes_after[last_owned] += k;
+					level_last = heroes_after[last_owned];
+					this.current_gold -= cost;
+					cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+				}
 			}
 		}
 
@@ -597,6 +622,81 @@ var GameState = function(artifacts, weapons, customizations) {
 		}
 		this.heroes = heroes_after;
 	};
+
+	this.calculate_rps_per_stage = function() {
+		var TAPS_PER_SECOND = 10;
+		this.new_run();
+		
+		var done = false;
+		var rps = {};
+		var mobs = 10 - this.l_world;
+		while (!done) {
+			var temp = this.tap_damage();
+			var tapping = temp[1];
+			var dps = TAPS_PER_SECOND * tapping;
+
+			var mobs_health = stage_hp(this.current_stage);
+			var boss_health = boss_hp(this.current_stage);
+
+			var base_time = 0.75; // 4.5/6
+			var mobs_time = base_time + Math.ceil(mobs_health / tapping) / TAPS_PER_SECOND;
+			var boss_time = base_time + Math.ceil(boss_health / tapping) / TAPS_PER_SECOND;
+			var total_time = mobs * mobs_time + boss_time;
+
+			if (boss_time > 5) {
+				
+	// cannot kill boss in 5 seconds, see if we want to grind
+				var owned_heroes = this.heroes.filter(function(h) { return h != 0; });
+				var next_hero = owned_heroes.length;
+				var grind_target = 0;
+				if (next_hero == 33 && this.heroes[32] < 1001) {
+					
+					grind_target = hero_info[32].cost_to_evolve();
+					grind = "evolve";
+				} else if (next_hero == 33) {
+					end_game = true;
+					continue;
+				} else {
+					grind_target = hero_info[next_hero].base_cost;
+					grind = "hero";
+				}
+
+				var gold_needed = grind_target - this.current_gold;
+				// check if we can already get whatever we were grinding for
+				if (gold_needed < 0) {
+					if (grind == "evolve") {
+						this.evolve_heroes();
+					}
+					if (grind == "hero") {
+						this.level_heroes();
+					}
+					continue;
+				}
+
+				var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
+				console.log(gold_needed / mob_gold);
+				if (gold_needed < 10000 * mob_gold) {
+					this.current_gold += mob_gold;
+					this.time += mobs_time;
+				} else {
+					done = true;
+					continue;
+				}
+			} else {
+				// Pass stage
+				this.current_gold += this.gold_for_stage(this.current_stage);
+				if (this.current_stage % 5 == 0) {
+					this.level_heroes();
+				}
+				this.time += total_time;
+				this.current_stage += 1;
+				rps[this.current_stage] = [this.total_relics() / this.time, boss_time];
+			}
+		}
+		for (var s in rps) {
+			console.log("Stage " + s + ": " + rps[s]);
+		}
+	}
 
 	// TODO: make list of log so people can see what's going on
 	this.relics_per_second = function() {

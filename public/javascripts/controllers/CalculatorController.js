@@ -262,6 +262,10 @@ yattoApp.controller('CalculatorController',
 				}
 			}
 
+			// console.log("starting");
+			// var g = new GameState(artifacts, weapons, customizations);
+			// g.calculate_rps_per_stage();
+			// console.log("finished");
 			var response = get_steps(artifacts, weapons, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
 
 			for (var m in response) {
