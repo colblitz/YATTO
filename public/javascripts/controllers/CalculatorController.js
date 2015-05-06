@@ -194,7 +194,6 @@ yattoApp.controller('CalculatorController',
 				$scope.relics,
 				$scope.nsteps,
 				$scope.greedy].join("|");
-			console.log(state);
 			$scope.state = state;
 		};
 		$scope.generateStateString();
@@ -213,7 +212,6 @@ yattoApp.controller('CalculatorController',
 				});
 			});
 			$scope.artifacts = artifacts;
-			console.log(artifacts);
 			t[1].split(",").forEach(function(w, i, array) {
 				$scope.weapons[i].value = parseInt(w);
 			});
@@ -290,10 +288,7 @@ yattoApp.controller('CalculatorController',
 		};
 
 		$scope.step = function(summary, method, stepindex) {
-			console.log(method);
-			console.log(stepindex);
 			var step = summary ? $scope.summary_steps[method][stepindex] : $scope.steps[method][stepindex];
-			console.log(step);
 
 			var cost = step.cost;
 			if (summary) {
