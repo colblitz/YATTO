@@ -918,7 +918,7 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 				return st1[1] > st2[1];
 			});
 		}
-		if (costs[best_index] > relics_left) {
+		if (costs[best_index] > relics_left && nsteps == 0) {
 			break;
 		}
 		relics_left -= costs[best_index];
