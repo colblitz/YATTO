@@ -58,7 +58,7 @@
 						</div> <!-- options subbox 4 -->
 					</div> <!-- row -->
 					<div class="row">
-						<div><textarea type="text" class="form-control text-input" id="state-input" ng-model="state"/></div>
+						<div class="col-xs-10 col-xs-offset-1"><p id="state-label">State:</p><textarea type="text" class="form-control text-input" id="state-input" ng-model="state"/></div>
 					</div>
 				</div> <!--options-box-->
 			</div> <!-- row -->
@@ -118,7 +118,7 @@
 												<th class="ssteps-colh3 colh">Cost</th>
 											</tr>
 											<tr ng-repeat="ss in summary_steps[method.index] track by $index" class="step-row">
-												<td class="ssteps-col0"><span id="checkmark" ng-click="step(true, method.index, $index)"></span></td>
+												<td class="ssteps-col0"><span class="checkmark" ng-click="step(true, method.index, $index)"><i class="fa fa-check"></i></span></td>
 												<td class="ssteps-col1">{{ss.name}}</td>
 												<td class="ssteps-col2">{{ss.level}}</td>
 												<td class="ssteps-col3">{{ss.cost}}</td>
@@ -136,7 +136,7 @@
 												<th class="steps-colh4 colh">Total</th>
 											</tr>
 											<tr ng-repeat="s in steps[method.index] track by $index" class="step-row">
-												<td class="steps-col0"><span id="checkmark" ng-click="step(false, method.index, $index)"></span></td>
+												<td class="steps-col0"><span class="checkmark" ng-click="step(false, method.index, $index)"><i class="fa fa-check"></i></span></td>
 												<td class="steps-col1">{{s.name}}</td>
 												<td class="steps-col2">{{s.level}}</td>
 												<td class="steps-col3">{{s.cost}}</td>
