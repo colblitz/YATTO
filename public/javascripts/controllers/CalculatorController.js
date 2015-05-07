@@ -224,6 +224,7 @@ yattoApp.controller('CalculatorController',
 			$scope.relics = parseInt(t[4]);
 			$scope.nsteps = parseInt(t[5]);
 			$scope.greedy = parseInt(t[6]);
+			storeToCookies();
 		};
 
 		var transformScopeArray = function(scopeArray) {
@@ -235,11 +236,7 @@ yattoApp.controller('CalculatorController',
 			return newArray;
 		}
 
-		usSpinnerService.spin('spinner');
 		$scope.calculate = function() {
-			console.log("starting spinner");
-			usSpinnerService.spin('spinner');
-			console.log("started");
 			if ($scope.relics == 0 && $scope.nsteps == 0) {
 				$scope.stepmessage = "Get some relics or enter a number of steps!";
 				$scope.steps = [];
@@ -255,6 +252,11 @@ yattoApp.controller('CalculatorController',
 				return;
 			}
 
+			if ($scope.methods[4].value || $scope.methods[5].value) {
+				console.log("starting spinner");
+				usSpinnerService.spin('spinner');
+			}
+
 			var weapons = transformScopeArray($scope.weapons);
 			var customizations = transformScopeArray($scope.customizations);
 			var methods = [];
@@ -263,11 +265,6 @@ yattoApp.controller('CalculatorController',
 					methods.push($scope.methods[m].index);
 				}
 			}
-
-			// console.log("starting");
-			// var g = new GameState(artifacts, weapons, customizations);
-			// g.calculate_rps_per_stage();
-			// console.log("finished");
 
 			var response;
 			$timeout(function() {
@@ -279,20 +276,10 @@ yattoApp.controller('CalculatorController',
 						$scope.summary_steps[m] = response[m]["summary"];
 					}
 				});
-				//$scope.$apply();
 				storeToCookies();
+				console.log("stopping spinner");
 				usSpinnerService.stop('spinner');
 			}, 0);
-
-			// var response = get_steps(artifacts, weapons, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
-			// usSpinnerService.stop('spinner');
-
-			// for (var m in response) {
-			// 	$scope.steps[m] = response[m]["steps"];
-			// 	$scope.summary_steps[m] = response[m]["summary"];
-			// }
-
-			// storeToCookies();
 		};
 
 		$scope.resetSteps = function() {
