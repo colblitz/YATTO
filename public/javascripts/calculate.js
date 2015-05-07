@@ -626,7 +626,7 @@ var GameState = function(artifacts, weapons, customizations) {
 	this.calculate_rps_per_stage = function() {
 		var TAPS_PER_SECOND = 10;
 		this.new_run();
-		
+
 		var done = false;
 		var rps = {};
 		var mobs = 10 - this.l_world;
@@ -644,14 +644,14 @@ var GameState = function(artifacts, weapons, customizations) {
 			var total_time = mobs * mobs_time + boss_time;
 
 			if (boss_time > 5) {
-				
+
 	// cannot kill boss in 5 seconds, see if we want to grind
 				var owned_heroes = this.heroes.filter(function(h) { return h != 0; });
 				var next_hero = owned_heroes.length;
 				var grind_target = 0;
 				if (next_hero == 33 && this.heroes[32] < 1001) {
-					
-					grind_target = hero_info[32].cost_to_evolve();
+
+					grind_target = hero_info[32].evolve_cost;
 					grind = "evolve";
 				} else if (next_hero == 33) {
 					end_game = true;
@@ -767,7 +767,7 @@ var GameState = function(artifacts, weapons, customizations) {
 			var next_hero = owned_heroes.length;
 			var grind_target = 0;
 			if (next_hero == 33 && this.heroes[32] < 1001) {
-				grind_target = hero_info[32].cost_to_evolve();
+				grind_target = hero_info[32].evolve_cost;
 				grind = "evolve";
 			} else if (next_hero == 33) {
 				end_game = true;

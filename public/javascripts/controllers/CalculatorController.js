@@ -1,5 +1,5 @@
 yattoApp.controller('CalculatorController',
-	function($scope, $http, $cookies, $cookieStore, localStorageService) {
+	function($scope, $http, $cookies, $cookieStore, $timeout, localStorageService, usSpinnerService) {
 		$scope.sortableOptions = {
 			'ui-floating': false,
 			'axis': 'y',
@@ -235,7 +235,11 @@ yattoApp.controller('CalculatorController',
 			return newArray;
 		}
 
+		usSpinnerService.spin('spinner');
 		$scope.calculate = function() {
+			console.log("starting spinner");
+			usSpinnerService.spin('spinner');
+			console.log("started");
 			if ($scope.relics == 0 && $scope.nsteps == 0) {
 				$scope.stepmessage = "Get some relics or enter a number of steps!";
 				$scope.steps = [];
@@ -264,14 +268,31 @@ yattoApp.controller('CalculatorController',
 			// var g = new GameState(artifacts, weapons, customizations);
 			// g.calculate_rps_per_stage();
 			// console.log("finished");
-			var response = get_steps(artifacts, weapons, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
 
-			for (var m in response) {
-				$scope.steps[m] = response[m]["steps"];
-				$scope.summary_steps[m] = response[m]["summary"];
-			}
+			var response;
+			$timeout(function() {
+				response = get_steps(artifacts, weapons, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
 
-			storeToCookies();
+				$scope.$apply(function() {
+					for (var m in response) {
+						$scope.steps[m] = response[m]["steps"];
+						$scope.summary_steps[m] = response[m]["summary"];
+					}
+				});
+				//$scope.$apply();
+				storeToCookies();
+				usSpinnerService.stop('spinner');
+			}, 0);
+
+			// var response = get_steps(artifacts, weapons, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
+			// usSpinnerService.stop('spinner');
+
+			// for (var m in response) {
+			// 	$scope.steps[m] = response[m]["steps"];
+			// 	$scope.summary_steps[m] = response[m]["summary"];
+			// }
+
+			// storeToCookies();
 		};
 
 		$scope.resetSteps = function() {
