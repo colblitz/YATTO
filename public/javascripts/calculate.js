@@ -255,15 +255,29 @@ var hero_info = [
 	new Hero("Jaqulin the Unknown", 30, 3.14e96, [
 		[10.00, STYPE_HERO_DPS], [0.10, STYPE_TAP_DAMAGE], [0.04, STYPE_PERCENT_DPS], [0.20, STYPE_GOLD_DROPPED],
 		[0.10, STYPE_ALL_DAMAGE], [0.20, STYPE_ALL_DAMAGE], [0.30, STYPE_ALL_DAMAGE]]),
-	new Hero("Pixie the Rebel Fairy", 31, 3.76e101, [
+	new Hero("Pixie the Rebel Fairy", 31, 3.76e116, [
 		[9.00, STYPE_HERO_DPS], [20.00, STYPE_HERO_DPS], [0.01, STYPE_CRIT_CHANCE], [0.60, STYPE_TAP_DAMAGE],
 		[0.25, STYPE_CHEST_GOLD], [0.10, STYPE_ALL_DAMAGE], [0.15, STYPE_GOLD_DROPPED]]),
-	new Hero("Jackalope the Fireballer", 32, 4.14e121, [
+	new Hero("Jackalope the Fireballer", 32, 4.14e136, [
 		[0.40, STYPE_HERO_DPS], [0.20, STYPE_HERO_DPS], [0.25, STYPE_GOLD_DROPPED], [0.60, STYPE_TAP_DAMAGE],
 		[0.02, STYPE_CRIT_CHANCE], [0.30, STYPE_ALL_DAMAGE], [0.10, STYPE_BOSS_DAMAGE]]),
-	new Hero("Dark Lord, Punisher of All", 33, 4.56e141, [
+	new Hero("Dark Lord, Punisher of All", 33, 4.56e156, [
 		[20.00, STYPE_HERO_DPS], [0.20, STYPE_TAP_DAMAGE], [0.01, STYPE_PERCENT_DPS], [0.25, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_ALL_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.40, STYPE_ALL_DAMAGE]])];
+
+
+// Hero	Old cost/DPS	New cost/DPS
+// Pixie the Rebel Fairy	3.76E+101 / 4.57E+115	3.76E+116 / 1.14E+111
+// Jackalope the Fireballer	5.94E+95 / 4.56E+141	4.14E+136 / 9.01E+130
+// Dark Lord, Punisher of All	4.14E+121 / 3.52E+135	4.56E+156 / 7.1E+150
+
+console.log("Pixie: " + hero_info[30].get_base_damage(1));
+console.log("Jack: " + hero_info[31].get_base_damage(1));
+console.log("DL: " + hero_info[32].get_base_damage(1));
+
+// calculate.js:275 Pixie: 1.1446563997839293e+113
+// calculate.js:276 Jack: 9.011429279256408e+132
+// calculate.js:277 DL: 7.096827058475263e+152
 
 var all_damage = function(artifacts) {
 	var total_ad = 0;
