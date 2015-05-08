@@ -1,11 +1,20 @@
 yattoApp.controller('CalculatorController',
-	function($scope, $http, $cookies, $cookieStore, $timeout, localStorageService, usSpinnerService) {
+	function($scope, $http, $cookies, $cookieStore, $timeout, $rootScope, localStorageService, usSpinnerService) {
 		$scope.sortableOptions = {
 			'ui-floating': false,
 			'axis': 'y',
 			'containment': "parent",
 			'handle': '> .myHandle',
 		};
+
+		$scope.spinneractive = false;
+		$rootScope.$on('us-spinner:spin', function(event, key) {
+	      $scope.spinneractive = true;
+	    });
+
+	    $rootScope.$on('us-spinner:stop', function(event, key) {
+	      $scope.spinneractive = false;
+	    });
 
 		$scope.steps = [];
 		$scope.summary_steps = [];
@@ -252,7 +261,8 @@ yattoApp.controller('CalculatorController',
 				return;
 			}
 
-			if ($scope.methods[4].value || $scope.methods[5].value) {
+			console.log($scope.spinneractive);
+			if (!$scope.spinneractive) {
 				console.log("starting spinner");
 				usSpinnerService.spin('spinner');
 			}
@@ -275,10 +285,14 @@ yattoApp.controller('CalculatorController',
 						$scope.steps[m] = response[m]["steps"];
 						$scope.summary_steps[m] = response[m]["summary"];
 					}
+
+					storeToCookies();
+					console.log($scope.spinneractive);
+					if ($scope.spinneractive) {
+						console.log("stopping spinner");
+						usSpinnerService.stop('spinner');
+					}
 				});
-				storeToCookies();
-				console.log("stopping spinner");
-				usSpinnerService.stop('spinner');
 			}, 0);
 		};
 
