@@ -265,7 +265,15 @@ var hero_info = [
 		[20.00, STYPE_HERO_DPS], [0.20, STYPE_TAP_DAMAGE], [0.01, STYPE_PERCENT_DPS], [0.25, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_ALL_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.40, STYPE_ALL_DAMAGE]])];
 
-
+var TOTAL_STYPE_GOLD_DROPPED = 0;
+for (var h in hero_info) {
+	for (var s in hero_info[h].skills) {
+		if (hero_info[h].skills[s][1] == STYPE_GOLD_DROPPED) {
+			TOTAL_STYPE_GOLD_DROPPED += hero_info[h].skills[s][0];
+		}
+	}
+}
+console.log("total gold dropped: " + TOTAL_STYPE_GOLD_DROPPED);
 // Hero	Old cost/DPS	New cost/DPS
 // Pixie the Rebel Fairy	3.76E+101 / 4.57E+115	3.76E+116 / 1.14E+111
 // Jackalope the Fireballer	5.94E+95 / 4.56E+141	4.14E+136 / 9.01E+130
@@ -469,6 +477,20 @@ var GameState = function(artifacts, weapons, customizations) {
 	this.get_total_bonus = function(stype) {
 		return this.skill_bonuses[stype];
 	};
+
+	this.next_ff_level = function() {
+		var new_level = this.l_fortune;
+		var multiplier = function(l) {
+			return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED);
+		}
+		console.log(1 + 0.05 * this.l_fortune + TOTAL_STYPE_GOLD_DROPPED);
+		while (multiplier(new_level) == multiplier(this.l_fortune)) {
+			new_level += 1;
+		}
+		console.log(1 + 0.05 * new_level + TOTAL_STYPE_GOLD_DROPPED);
+		console.log(new_level);
+		return new_level;
+	}
 
 	this.gold_multiplier = function() {
 		var mobs = 10 - this.l_world;
@@ -822,7 +844,7 @@ var GameState = function(artifacts, weapons, customizations) {
 var METHOD_GOLD = 0;
 var METHOD_ALL_DAMAGE = 1;
 var METHOD_TAP_DAMAGE = 2;
-var METHOD_K = 3;
+var METHOD_DMG_EQUIVALENT = 3;
 var METHOD_RELICS_PS = 4;
 var METHOD_STAGE_PS = 5;
 
@@ -834,8 +856,8 @@ var get_value = function(game_state, method) {
 			return game_state.a_ad;
 		case METHOD_TAP_DAMAGE:
 			return game_state.tap_damage()[1];
-		case METHOD_K:
-			return [game_state.gold_multiplier(), game_state.a_ad * 100];
+		case METHOD_DMG_EQUIVALENT:
+			return null; // TODO: ALSDFJLASKJDFLK
 		case METHOD_RELICS_PS:
 			return game_state.relics_per_second()[2];
 		case METHOD_STAGE_PS:
@@ -851,8 +873,8 @@ var get_dp_value = function(game_state, method) {
 			return game_state.a_ad;
 		case METHOD_TAP_DAMAGE:
 			return game_state.tap_damage()[1];
-		case METHOD_K:
-			return game_state.gold_multiplier() * 100 / game_state.a_ad;
+		case METHOD_DMG_EQUIVALENT:
+			return null;
 		case METHOD_RELICS_PS:
 			return game_state.relics_per_second()[2];
 		case METHOD_STAGE_PS:
@@ -887,10 +909,12 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 		var base = get_value(g, method);
 		var efficiency = newZeroes(artifact_info.length);
 		var costs = newZeroes(artifact_info.length);
+		var ff_level = current_artifacts[10];
 		for (var i in current_artifacts) {
 			var level = current_artifacts[i];
 			var relic_cost = artifact_info[i].costToLevel(level);
 			costs[i] = relic_cost;
+
 			// TODO: check if isFinite works, temp solution
 			if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) || relic_cost > 18972389172635 ) {
 				if (method == METHOD_STAGE_PS) {
@@ -902,6 +926,20 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 			}
 			var artifacts_copy = current_artifacts.slice();
 			artifacts_copy[i] += 1;
+
+			// Future's Fortune :[
+			if (method == METHOD_GOLD && i == 10) {
+				relic_cost = 0;
+				var level_to = g.next_ff_level();
+				artifacts_copy[i] = level_to;
+				ff_level = level_to;
+				while (level_to > level) {
+					level_to -= 1;
+					relic_cost += artifact_info[i].costToLevel(level_to);
+				}
+				costs[i] = relic_cost;
+			}
+
 			var new_g = new GameState(artifacts_copy, weapons, customizations);
 			if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
 				// TODO: make this user variable
@@ -911,11 +949,10 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 			var e;
 			if (method == METHOD_STAGE_PS) {
 				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
-			} else if (method == METHOD_K) {
-				e = (new_value[0] * new_value[1] / (base[0] * base[1]) - 1) / relic_cost;
 			} else {
 				e = (new_value - base) / relic_cost;
 			}
+
 			efficiency[i] = e;
 		}
 
@@ -936,7 +973,11 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 			break;
 		}
 		relics_left -= costs[best_index];
-		current_artifacts[best_index] += 1;
+		if (best_index == 10) {
+			current_artifacts[best_index] = ff_level;
+		} else {
+			current_artifacts[best_index] += 1;
+		}
 		cumulative += costs[best_index];
 		var step = {};
 		step["index"] = best_index;
@@ -954,23 +995,23 @@ var hashArray = function(array) {
 	return array.toString();
 }
 
-var memoize = {};
+// var memoize = {};
 
-var get_value_memoize = function(a, w, c, m) {
-	var aHash = hashArray(a);
-	if (aHash in memoize) {
-		return memoize[aHash];
-	} else {
-		var g = new GameState(a, w, c);
-		if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(m) == -1) {
-			// TODO: make this user variable
-			g.get_all_skills();
-		}
-		var base = get_dp_value(g, m);
-		memoize[aHash] = base;
-		return base;
-	}
-}
+// var get_value_memoize = function(a, w, c, m) {
+// 	var aHash = hashArray(a);
+// 	if (aHash in memoize) {
+// 		return memoize[aHash];
+// 	} else {
+// 		var g = new GameState(a, w, c);
+// 		if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(m) == -1) {
+// 			// TODO: make this user variable
+// 			g.get_all_skills();
+// 		}
+// 		var base = get_dp_value(g, m);
+// 		memoize[aHash] = base;
+// 		return base;
+// 	}
+// }
 
 // return [best_value, steps]
 var get_best_dp = function(artifacts, weapons, customizations, relics, nsteps, method, steps) {
@@ -1220,6 +1261,80 @@ var get_steps = function(artifacts, weapons, customizations, methods, relics, ns
 	}
 	return response;
 };
+
+
+var memoize = {};
+var get_value_memoize = function(a, w, c, m) {
+	var aHash = hashArray(a);
+	if (aHash in memoize) {
+		return memoize[aHash];
+	} else {
+		var g = new GameState(a, w, c);
+		g.get_all_skills();
+		var base = get_value(g, m);
+		memoize[aHash] = base;
+		return base;
+	}
+}
+
+// console.log("------------------------------------------------------");
+// var a = newZeroes(artifact_info.length);
+// for (var i in a) { a[i] = 1; }
+// var w = newZeroes(hero_info.length);
+// var c = [0, 0, 0, 0, 0, 0];
+// var relics = 1000000;
+
+// var left = relics;
+// var ca = a.slice();
+// while (left > 0) {
+// 	var base = get_value_memoize(ca, w, c, METHOD_GOLD);
+// 	for 
+// }
+
+
+// for (var i in artifact_info) {
+// 	var left = relics;
+// 	var na = a.slice();
+// 	while (artifact_info[i].costToLevel(na[i]) < left) {
+// 		left -= artifact_info[i].costToLevel(na[i]);
+// 		na[i] += 1;
+// 	}
+	
+// 	var g = new GameState(na, w, c);
+// 	gold_single[i] = g.gold_multiplier();
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// console.log("------------------------------------------------------");
+
+
+
+
+
+
+
+
 
 var calculate_weapons_probability = function(weapons) {
 	// TODO: how does javascript not have a good statistics package

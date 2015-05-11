@@ -1,10 +1,19 @@
 yattoApp.controller('CalculatorController',
 	function($scope, $http, $cookies, $cookieStore, $timeout, $rootScope, localStorageService, usSpinnerService) {
+		MathJax.Hub.Configured();
+  		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+
 		$scope.sortableOptions = {
 			'ui-floating': false,
 			'axis': 'y',
 			'containment': "parent",
 			'handle': '> .myHandle',
+			update: function(e, ui) {
+				// TODO: a bit hacky, but seems like the update event is being fired before change to $artifacts is applied?
+				$timeout(function() {
+					$scope.generateStateString();
+				}, 10);
+			}
 		};
 
 		$scope.spinneractive = false;
@@ -64,37 +73,6 @@ yattoApp.controller('CalculatorController',
 			});
 		}
 
-		// $scope.artifacts = [
-		// 	{name: "Amulet of the Valrunes",  index:  0, value: 0},
-		// 	{name: "Axe of Resolution",       index:  1, value: 0},
-		// 	{name: "Barbarian's Mettle",      index:  2, value: 0},
-		// 	{name: "Chest of Contentment",    index:  3, value: 0},
-		// 	{name: "Crafter's Elixir",        index:  4, value: 0},
-		// 	{name: "Crown Egg",               index:  5, value: 0},
-		// 	{name: "Dark Cloak of Life",      index:  6, value: 0},
-		// 	{name: "Death Seeker",            index:  7, value: 0},
-		// 	{name: "Divine Chalice",          index:  8, value: 0},
-		// 	{name: "Drunken Hammer",          index:  9, value: 0},
-		// 	{name: "Future's Fortune",        index: 10, value: 0},
-		// 	{name: "Hero's Thrust",           index: 11, value: 0},
-		// 	{name: "Hunter's Ointment",       index: 12, value: 0},
-		// 	{name: "Knight's Shield",         index: 13, value: 0},
-		// 	{name: "Laborer's Pendant",       index: 14, value: 0},
-		// 	{name: "Ogre's Gauntlet",         index: 15, value: 0},
-		// 	{name: "Otherworldly Armor",      index: 16, value: 0},
-		// 	{name: "Overseer's Lotion",       index: 17, value: 0},
-		// 	{name: "Parchment of Importance", index: 18, value: 0},
-		// 	{name: "Ring of Opulence",        index: 19, value: 0},
-		// 	{name: "Ring of Wondrous Charm",  index: 20, value: 0},
-		// 	{name: "Sacred Scroll",           index: 21, value: 0},
-		// 	{name: "Saintly Shield",          index: 22, value: 0},
-		// 	{name: "Savior Shield",           index: 23, value: 0},
-		// 	{name: "Tincture of the Maker",   index: 24, value: 0},
-		// 	{name: "Undead Aura",             index: 25, value: 0},
-		// 	{name: "Universal Fissure",       index: 26, value: 0},
-		// 	{name: "Warrior's Revival",       index: 27, value: 0},
-		// 	{name: "Worldly Illuminator",     index: 28, value: 0}];
-
 		$scope.weapons = [
 			{name: "Takeda the Blade Assassin",       index:  0, value: 0},
 			{name: "Contessa the Torch Wielder",      index:  1, value: 0},
@@ -129,27 +107,101 @@ yattoApp.controller('CalculatorController',
 			{name: "Pixie the Rebel Fairy",           index: 30, value: 0},
 			{name: "Jackalope the Fireballer",        index: 31, value: 0},
 			{name: "Dark Lord, Punisher of All",      index: 32, value: 0}];
+		
+		$scope.wtotal = 0;
 		$scope.wprobability = 0;
+		$scope.wnext = 0;
+		$scope.wpset = 0;
 
 		$scope.customizations = [
-			{name: "All Damage",      index: 0, value: 0},
-			{name: "Critical Damage", index: 1, value: 0},
-			{name: "Gold Dropped",    index: 2, value: 0},
-			{name: "Chest Gold",      index: 3, value: 0},
-			{name: "Critical Chance", index: 4, value: 0},
-			{name: "Tap Damage",      index: 5, value: 0}];
+			{name: "All Damage",      index: 0, value: 0, step: 0.01},
+			{name: "Critical Damage", index: 1, value: 0, step: 0.01},
+			{name: "Gold Dropped",    index: 2, value: 0, step: 0.01},
+			{name: "Chest Gold",      index: 3, value: 0, step: 0.01},
+			{name: "Critical Chance", index: 4, value: 0, step: 0.005},
+			{name: "Tap Damage",      index: 5, value: 0, step: 0.01}];
 
 		$scope.methods = [
 			{name: "Gold",          index: 0, value: true, tabname: "Gold"},
 			{name: "All Damage",    index: 1, value: true, tabname: "ADmg"},
 			{name: "Tap Damage",    index: 2, value: true,  tabname: "TDmg"},
-			{name: "K",             index: 3, value: true, tabname: "  K  "},
+			{name: "Damage Equivalent",    index: 3, value: true,  tabname: "DmgE"},
 			{name: "Relics/second (experimental!)", index: 4, value: false, tabname: " R/s "},
 			{name: "Stages/second (experimental!)", index: 5, value: false, tabname: " S/s "}];
 
 		$scope.relics = 0;
 		$scope.nsteps = 0;
 		$scope.greedy = 1;
+
+
+		var transformScopeArray = function(scopeArray) {
+			var newArray = newZeroes(scopeArray.length);
+			for (var x in scopeArray) {
+				var thing = scopeArray[x];
+				newArray[thing.index] = parseFloat(thing.value);
+			}
+			return newArray;
+		};
+
+		var factorials = {};
+		var f = 1;
+		factorials[0] = 0;
+		factorials[1] = 1;
+		for (var i = 2; i < 100; i++) {
+			f *= i;
+			factorials[i] = f;
+		}
+
+		$scope.updateRelicInfo = function() {
+			if ($scope.relicsua == null) {
+				$scope.relicsua = 0;
+			}
+			if ($scope.relicsstage == null) {
+				$scope.relicsstage = 0;
+			}
+			var multiplier = 2 + 0.1 * $scope.relicsua;
+			$scope.relicsnext = (Math.floor($scope.relicsstage / 15) + 1) * 15;
+			if ($scope.relicsstage < 90) {
+				$scope.relics = 0;
+				$scope.relicsnext = 90;
+			} else {
+				$scope.relics = Math.floor(multiplier * Math.pow(Math.floor($scope.relicsstage/15) - 5, 1.7));
+			}
+			$scope.relicsatnext = Math.floor(multiplier * Math.pow(Math.floor($scope.relicsnext/15) - 5, 1.7));
+		};
+		$scope.updateRelicInfo();
+
+		$scope.updateWeaponInfo = function() {
+			$scope.wtotal = $scope.weapons.map(function(w) { return w.value; })
+				.reduce(function(a, b) { return a + b; });
+			var weapons = transformScopeArray($scope.weapons);
+			$scope.wprobability = calculate_weapons_probability(weapons);
+
+			var min = weapons[0];
+			var nmin = 1;
+			for (var i = 1; i < weapons.length; i++) {
+				if (weapons[i] == min) {
+					nmin += 1;
+				} else if (weapons[i] < min) {
+					nmin = 1;
+					min = weapons[i];
+				}
+			}
+			var toNextSet = nmin;
+			console.log("to next set: " + toNextSet);
+			var getting = $scope.wnext;
+			console.log("getting: " + getting);
+			if (getting < toNextSet) {
+				$scope.wpset = 0;
+			} else {
+				console.log(factorials[getting]);
+				// TODO: this is wrong
+				var numWays = 1 * Math.pow(33, getting - toNextSet) * factorials[getting];
+				var p = numWays / Math.pow(33, getting);
+				$scope.wpset = p;
+			}
+			console.log($scope.wpset);
+		};
 
 		var readFromCookies = function() {
 			// console.log("reading from cookies");
@@ -177,9 +229,9 @@ yattoApp.controller('CalculatorController',
 			if (typeof cookie_ss !== "undefined" && cookie_ss != null) {
 				$scope.summary_steps = cookie_ss;
 			}
-		};
 
-		readFromCookies();
+			$scope.updateWeaponInfo();
+		};
 
 		var storeToCookies = function() {
 			localStorageService.set('artifacts', $scope.artifacts);
@@ -195,7 +247,7 @@ yattoApp.controller('CalculatorController',
 		};
 
 		$scope.generateStateString = function() {
-			var state = [
+			$scope.state = [
 				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(","),
 				$scope.weapons.map(function(w) { return w.value; }).join(),
 				$scope.customizations.map(function(c) { return c.value; }).join(),
@@ -203,17 +255,52 @@ yattoApp.controller('CalculatorController',
 				$scope.relics,
 				$scope.nsteps,
 				$scope.greedy].join("|");
-			$scope.state = state;
 		};
+
+		$scope.artifactCheck = function(i, ai) {
+			if ($scope.artifact_caps[ai] != null && 
+					$scope.artifacts[i].value > $scope.artifact_caps[ai]) {
+				$scope.artifacts[i].value = $scope.artifact_caps[ai];
+			}
+			if ($scope.artifacts[i].value == null) {
+				$scope.artifacts[i].value = 0;
+			}
+			$scope.generateStateString();
+		};
+
+		$scope.weaponCheck = function(i, ai) {
+			if ($scope.weapons[i].value == null) {
+				$scope.weapons[i].value = 0;
+			}
+			$scope.generateStateString();
+			$scope.updateWeaponInfo();
+		};
+
+		$scope.customizationCheck = function(i, ai) {
+			if ($scope.customizations[i].value == null) {
+				$scope.customizations[i].value = 0;
+			}
+			$scope.generateStateString();
+		};
+
+		readFromCookies();
 		$scope.generateStateString();
+
+		var parseOrZero = function(s, f) {
+			var i = f(s);
+			if (i == null || isNaN(i)) {
+				i = 0;
+			}
+			return i;
+		}
 
 		$scope.importFromString = function(state) {
 			var t = state.split("|");
 			var artifacts = [];
 			t[0].split(",").forEach(function(a, i, array) {
 				var v = a.split(".");
-				var aindex = parseInt(v[0]);
-				var avalue = parseInt(v[1]);
+				var aindex = parseOrZero(v[0], parseInt);
+				var avalue = parseOrZero(v[1], parseInt);
 				artifacts.push({
 					name: artifact_names[aindex],
 					index: aindex,
@@ -222,28 +309,25 @@ yattoApp.controller('CalculatorController',
 			});
 			$scope.artifacts = artifacts;
 			t[1].split(",").forEach(function(w, i, array) {
-				$scope.weapons[i].value = parseInt(w);
+				$scope.weapons[i].value = parseOrZero(w, parseInt);
 			});
 			t[2].split(",").forEach(function(c, i, array) {
-				$scope.customizations[i].value = parseFloat(c);
+				$scope.customizations[i].value = parseOrZero(c, parseFloat);
 			})
 			t[3].split(",").forEach(function(m, i, array) {
 				$scope.methods[i].value = m == 1 ? true : false;
 			})
-			$scope.relics = parseInt(t[4]);
-			$scope.nsteps = parseInt(t[5]);
-			$scope.greedy = parseInt(t[6]);
+			$scope.relics = parseOrZero(t[4], parseInt);
+			$scope.nsteps = parseOrZero(t[5], parseInt);
+			$scope.greedy = parseOrZero(t[6], parseInt);
+			$scope.generateStateString();
 			storeToCookies();
 		};
 
-		var transformScopeArray = function(scopeArray) {
-			var newArray = newZeroes(scopeArray.length);
-			for (var x in scopeArray) {
-				var thing = scopeArray[x];
-				newArray[thing.index] = parseFloat(thing.value);
-			}
-			return newArray;
-		}
+		// // testing stuff
+		// var g = new GameState(transformScopeArray($scope.artifacts), 
+		// 	transformScopeArray($scope.weapons), transformScopeArray($scope.customizations));
+		// console.log(g.next_ff_level());
 
 		$scope.calculate = function() {
 			if ($scope.relics == 0 && $scope.nsteps == 0) {
@@ -261,9 +345,7 @@ yattoApp.controller('CalculatorController',
 				return;
 			}
 
-			console.log($scope.spinneractive);
 			if (!$scope.spinneractive) {
-				console.log("starting spinner");
 				usSpinnerService.spin('spinner');
 			}
 
@@ -287,9 +369,7 @@ yattoApp.controller('CalculatorController',
 					}
 
 					storeToCookies();
-					console.log($scope.spinneractive);
 					if ($scope.spinneractive) {
-						console.log("stopping spinner");
 						usSpinnerService.stop('spinner');
 					}
 				});
@@ -360,6 +440,15 @@ yattoApp.controller('CalculatorController',
 			}
 
 			// if step, go through summary and delete from cost
+			// if summary step is here, hasn't been deleted
+			if (!summary) {
+				for (var ss in $scope.summary_steps[method]) {
+					var sstep = $scope.summary_steps[method][ss];
+					if (sstep.index == step.index) {
+						$scope.summary_steps[method][ss].value -= cost;
+					}
+				}
+			}
 
 			for (var a in $scope.artifacts) {
 				var artifact = $scope.artifacts[a];
@@ -375,5 +464,6 @@ yattoApp.controller('CalculatorController',
 
 			storeToCookies();
 		};
+
 	}
 );

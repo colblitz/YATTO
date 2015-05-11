@@ -14,18 +14,14 @@ yattoApp.config(['$routeProvider', '$locationProvider',
 				templateUrl: 'partials/faq.html',
 				controller: 'FaqController'
 			}).
+      when('/reference', {
+        templateUrl: 'partials/reference.html',
+        controller: 'ReferenceController'
+      }).
 			when('/calculator', {
 				templateUrl: 'partials/calculator.html',
 				controller: 'CalculatorController'
 			}).
-			// when('/roadmaps/:id', {
-			//   templateUrl: 'partials/roadmap.html',
-			//   controller: 'RoadmapPageController'
-			// }).
-			// when('/edit', {
-			//   templateUrl: 'partials/edit.html',
-			//   controller: 'EditPageController'
-			// }).
 			otherwise({
 				templateUrl: 'partials/calculator.html',
 				controller: 'CalculatorController'
@@ -37,4 +33,9 @@ yattoApp.config(['$routeProvider', '$locationProvider',
 yattoApp.controller('FaqController', function($scope) {
 	MathJax.Hub.Configured();
 	MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+});
+
+yattoApp.controller('ReferenceController', function($scope) {
+  MathJax.Hub.Configured();
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 });

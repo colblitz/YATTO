@@ -29,8 +29,16 @@
 
 
 		<script src="components/ui-bootstrap-custom-tpls-0.12.1.js"></script>
+		<script src="components/MathJax.js"></script>
+		<script src="components/angular-ui.min.js"></script>
+
+		<!--
 		<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML&delayStartupUntil=configured'></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
+		-->
+
+
+		
 
 		<script src="javascripts/main.js"></script>
 		<script src="javascripts/calculate.js"></script>
@@ -46,9 +54,20 @@
 			</div>
 			<div class="row" id="navrow">
 				<span class="col-md-1 col-md-offset-1 navlink"><a href="#calculator"><i class="fa"></i>Calculator</a></span>
-				<span class="col-md-1 navlink" ><a href="#faq"><i class="fa"></i>FAQ/Information</a></span>
+				<span class="col-md-1 navlink" ><a href="#faq"><i class="fa"></i>FAQ/Thanks</a></span>
+				<span class="col-md-1 navlink" ><a href="#reference"><i class="fa"></i>Reference</a></span>
+			</div>
+			<div class="row">
+				<div id="banner" class="col-md-10 col-md-offset-1 col-xs-12">
+				Update(5/9/2015): There's been an update (check the reddit post for more details) that requires resetting your cookies - copy your save state, reset all cookies, refresh (everything should be defaults), load from save state
+				</div>
 			</div>
 			<div ng-view></div>
+			<div class="row">
+				<div id="footer" class="col-md-10 col-md-offset-1 col-xs-12">
+				&copy; 2015 Yatto 1.0.0 (All rights reserved and all that)
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

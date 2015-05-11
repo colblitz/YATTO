@@ -9,10 +9,10 @@
 						<div id="options-subbox-1" class="options-block col-md-4">
 							<h3>Efficiency Calculator:</h3>
 							<div id="options-relics" class="small-form-item">
-								Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" />
+								Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" ng-change="generateStateString()"/>
 							</div>
 							<div id="options-nsteps" class="small-form-item">
-								Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" />
+								Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="generateStateString()"/>
 							</div>
 							<br>
 							<div id="options-greedy" ng-init="greedy=1">
@@ -33,7 +33,30 @@
 							<div id="options-methods">
 								<h3>Methods:</h3>
 								<div ng-repeat="m in methods" class="method-options small-form-item">
-									<label><input type="checkbox" ng-model="methods[$index].value" /> {{m.name}}</label>
+									<label><input type="checkbox" ng-model="methods[$index].value" ng-change="generateStateString()"/> {{m.name}}</label>
+								</div>
+							</div>
+
+							<div id="stage-relic-box">
+								<div class="small-form-item">
+									<label>Stage:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="relicsstage" ng-change="updateRelicInfo()"/>
+								</div>
+								<div class="small-form-item">
+									<label>UA Level:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="relicsua" ng-change="updateRelicInfo()"/>
+								</div>
+								<div class="small-form-item">
+									<label>Next breakpoint:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="relicsnext" readonly/>
+								</div>
+								<div class="small-form-item">
+									<label>Relics:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="relics" readonly/>
+								</div>
+								<div class="small-form-item">
+									<label>Relics at next breakpoint:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="relicsatnext" readonly/>
 								</div>
 							</div>
 						</div>
@@ -51,15 +74,73 @@
 							</div> -->
 							<button class="btn btn-danger" id="clear-cookies-button" ng-click="clearAllCookies()">Clear all cookies</button>
 							<button class="btn btn-info" id="weapon-probability-button" ng-click="weaponProbability(weapons)">Get weapon probability</button>
-							<div><label>Probability:</label> <input type="number" class="form-control number-input" id="weapon-p" ng-model="wprobability"/></div>
+							<div>
+								<div class="small-form-item">
+									<label>Current total:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="wtotal" readonly/>
+								</div>
+								<div class="small-form-item">
+									<label id="chi">\(\chi^2\)</label>&nbsp;<label>Probability:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="wprobability" readonly/>
+								</div>
+								<div class="small-form-item">
+									<label>If I get this many weapons:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="wnext" ng-change="updateWeaponInfo()"/>
+								</div>
+								<div class="small-form-item">
+									<label>Probability to get next set:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="wpset" readonly/>
+								</div>
+							</div>
 
-							<button class="btn btn-info" id="weapon-probability-button" ng-click="importFromString(state)">Load from state string</button>
-							<button class="btn btn-info" id="update-state-button" ng-click="generateStateString()">Generate state string</button>
+
+<!-- 							<div id="stage-relic-box">
+								<div class="small-form-item">
+									<label>Stage:</label>
+									<input type="number" class="form-control number-input right-input"/>
+								</div>
+								<div class="small-form-item">
+									<label>UA Level:</label>
+									<input type="number" class="form-control number-input right-input"/>
+								</div>
+								<div class="small-form-item">
+									<label>Next breakpoint:</label>
+								</div>
+								<div class="small-form-item">
+									<label>Relics:</label>
+								</div>
+								<div class="small-form-item">
+									<label>Relics at next breakpoint:</label>
+								</div>
+							</div> -->
 						</div> <!-- options subbox 4 -->
 					</div> <!-- row -->
-					<div class="row">
-						<div class="col-xs-10 col-xs-offset-1"><p id="state-label">State:</p><textarea type="text" class="form-control text-input" id="state-input" ng-model="state"/></div>
+					<div class="row" id="state-row">
+						<div class="col-xs-3 state-buttons">
+							<button class="btn btn-info" id="load-state-button" ng-click="importFromString(state)">Load from state string</button>
+							<button class="btn btn-info" id="update-state-button" ng-click="generateStateString()">Generate state string</button>
+						</div>
+
+						<div class="col-xs-8">
+							<!-- <p id="state-label">State:</p> -->
+							<textarea type="text" rows="3" class="form-control text-input" id="state-input" ng-model="state"/>
+						</div>
 					</div>
+					<!-- <div class="row">
+						<div class="col-xs-10 col-xs-offset-1">
+							<div class="small-form-item">
+								<p>Stage:</p>
+								<input type="number" class="form-control number-input right-input"/>
+							</div>
+							<div class="small-form-item">
+								<p>UA Level:</p>
+								<input type="number" class="form-control number-input right-input"/>
+							</div>
+							<div class="small-form-item">
+								<p>Next breakpoint:</p>
+							</div>
+						</div>
+					</div> -->
 				</div> <!--options-box-->
 			</div> <!-- row -->
 			<div class="row">
@@ -74,7 +155,7 @@
 								</div> -->
 								<div ui-sortable="sortableOptions" ng-model="artifacts">
 									<div class="form-item transition" ng-repeat='a in artifacts'>
-										<span class="fa fa-arrows myHandle"></span><input type="number" class="form-control number-input left-input" ng-model="a.value" min="0" max="{{artifact_caps[a.index]}}" /><div class="input-label">{{a.name}}</div>
+										<span class="fa fa-arrows myHandle"></span><input type="number" class="form-control number-input left-input" ng-model="a.value" min="0" max="{{artifact_caps[a.index]}}" ng-change="artifactCheck($index, a.index)" ng-class="{'at-cap': a.value==artifact_caps[a.index]}"/><div class="input-label">{{a.name}}</div>
 									</div>
 								</div>
 								<!-- <div class="form-item has-feedback transition" ng-repeat-reorder='a in artifacts' ng-repeat-reorder-handle='div.handle'>
@@ -85,7 +166,7 @@
 							<div id="weapons-list" class="list col-md-6">
 								<h3>Weapons:</h3>
 								<div ng-repeat="w in weapons" class="form-item">
-									<input type="number" class="form-control number-input left-input" ng-model="weapons[$index].value" min="0" /><div class="input-label">{{w.name}}</div>
+									<input type="number" class="form-control number-input left-input" ng-model="weapons[$index].value" min="0" ng-change="weaponCheck($index)"/><div class="input-label">{{w.name}}</div>
 								</div>
 							</div>
 						 <!-- artifacts and weapons -->
@@ -95,7 +176,7 @@
 								<h3>Bonuses from Customizations:</h3>
 								<p>(In decimal form - if you have 32%, enter 0.32, not 32)</p>
 								<div ng-repeat="c in customizations" class="form-item">
-									<input type="text" class="form-control number-input left-input" ng-model="customizations[$index].value" /><div class="input-label">{{c.name}}</div>
+									<input type="number" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-change="customizationCheck($index)" min="0" step="{{customizations[$index].step}}"/><div class="input-label">{{c.name}}</div>
 								</div>
 							</div>
 						</div>
