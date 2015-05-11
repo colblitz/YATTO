@@ -244,7 +244,7 @@ yattoApp.controller('CalculatorController',
 			$scope.wtotal = $scope.heroes.map(function(h) { return h.weapons; })
 				.reduce(function(a, b) { return a + b; });
 			var weapons = getWeapons();
-			$scope.wprobability = calculate_weapons_probability(weapons);
+			$scope.wprobability = Math.round(calculate_weapons_probability(weapons) * 100000) / 100000;
 
 			var min = weapons[0];
 			var nmin = 1;
