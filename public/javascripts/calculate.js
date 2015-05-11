@@ -857,7 +857,7 @@ var get_value = function(game_state, method) {
 		case METHOD_TAP_DAMAGE:
 			return game_state.tap_damage()[1];
 		case METHOD_DMG_EQUIVALENT:
-			return null; // TODO: ALSDFJLASKJDFLK
+			return [game_state.gold_multiplier(), game_state.tap_damage()[1]];
 		case METHOD_RELICS_PS:
 			return game_state.relics_per_second()[2];
 		case METHOD_STAGE_PS:

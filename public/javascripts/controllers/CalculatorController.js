@@ -145,7 +145,7 @@ yattoApp.controller('CalculatorController',
 
 		var factorials = {};
 		var f = 1;
-		factorials[0] = 0;
+		factorials[0] = 1;
 		factorials[1] = 1;
 		for (var i = 2; i < 100; i++) {
 			f *= i;
@@ -196,9 +196,14 @@ yattoApp.controller('CalculatorController',
 			} else {
 				console.log(factorials[getting]);
 				// TODO: this is wrong
-				var numWays = 1 * Math.pow(33, getting - toNextSet) * factorials[getting];
-				var p = numWays / Math.pow(33, getting);
-				$scope.wpset = p;
+				// y! / ((y-x)! * z^x)
+
+				// what's the probability of picking at least one each of x things in y tries with z options?
+				$scope.wpset = factorials[getting] / (factorials[getting - toNextSet] * Math.pow(33, getting));
+				$scope.wpset = Math.round($scope.wpset * 1000) / 1000.0;
+				// var numWays = 1 * Math.pow(33, getting - toNextSet) * factorials[getting];
+				// var p = numWays / Math.pow(33, getting);
+				// $scope.wpset = p;
 			}
 			console.log($scope.wpset);
 		};
