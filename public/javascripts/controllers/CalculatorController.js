@@ -73,6 +73,51 @@ yattoApp.controller('CalculatorController',
 			});
 		}
 
+		var hero_names = {
+			 0 : "Takeda the Blade Assassin",
+			 1 : "Contessa the Torch Wielder",
+			 2 : "Hornetta, Queen of the Valrunes",
+			 3 : "Mila the Hammer Stomper",
+			 4 : "Terra the Land Scorcher",
+			 5 : "Inquisireaux the Terrible",
+			 6 : "Charlotte the Special",
+			 7 : "Jordaan, Knight of Mini",
+			 8 : "Jukka, Master of Axes",
+			 9 : "Milo and Clonk-Clonk",
+			10 : "Macelord the Ruthless",
+			11 : "Gertrude the Goat Rider",
+			12 : "Twitterella the Tweeter",
+			13 : "Master Hawk, Lord of Luft",
+			14 : "Elpha, Wielder of Gems",
+			15 : "Poppy, Daughter of Ceremony",
+			16 : "Skulptor, Protector of Bridges",
+			17 : "Sterling the Enchantor",
+			18 : "Orba the Foreseer",
+			19 : "Remus the Noble Archer",
+			20 : "Mikey the Magician Apprentice",
+			21 : "Peter Pricker the Prickly Poker",
+			22 : "Teeny Tom, Keeper of the Castle",
+			23 : "Deznis the Cleanser",
+			24 : "Hamlette, Painter of Skulls",
+			25 : "Eistor the Banisher",
+			26 : "Flavius and Oinksbjorn",
+			27 : "Chester the Beast Tamer",
+			28 : "Mohacas the Wind Warrior",
+			29 : "Jaqulin the Unknown",
+			30 : "Pixie the Rebel Fairy",
+			31 : "Jackalope the Fireballer",
+			32 : "Dark Lord, Punisher of All"};
+
+		$scope.heroes = [];
+		for (var h in hero_names) {
+			$scope.heroes.push({
+				name: hero_names[a],
+				index: a,
+				weapons: 0,
+				level: 800
+			});
+		}
+
 		$scope.weapons = [
 			{name: "Takeda the Blade Assassin",       index:  0, value: 0},
 			{name: "Contessa the Torch Wielder",      index:  1, value: 0},
@@ -107,7 +152,7 @@ yattoApp.controller('CalculatorController',
 			{name: "Pixie the Rebel Fairy",           index: 30, value: 0},
 			{name: "Jackalope the Fireballer",        index: 31, value: 0},
 			{name: "Dark Lord, Punisher of All",      index: 32, value: 0}];
-		
+
 		$scope.wtotal = 0;
 		$scope.wprobability = 0;
 		$scope.wnext = 0;
@@ -152,6 +197,11 @@ yattoApp.controller('CalculatorController',
 			factorials[i] = f;
 		}
 
+		var factorial = function(n) {
+			//console.log(n + ": " + factorials[n]);
+			return factorials[n];
+		}
+
 		$scope.updateRelicInfo = function() {
 			if ($scope.relicsua == null) {
 				$scope.relicsua = 0;
@@ -162,14 +212,24 @@ yattoApp.controller('CalculatorController',
 			var multiplier = 2 + 0.1 * $scope.relicsua;
 			$scope.relicsnext = (Math.floor($scope.relicsstage / 15) + 1) * 15;
 			if ($scope.relicsstage < 90) {
-				$scope.relics = 0;
+				$scope.relicsget = 0;
 				$scope.relicsnext = 90;
 			} else {
-				$scope.relics = Math.floor(multiplier * Math.pow(Math.floor($scope.relicsstage/15) - 5, 1.7));
+				$scope.relicsget = Math.floor(multiplier * Math.pow(Math.floor($scope.relicsstage/15) - 5, 1.7));
 			}
 			$scope.relicsatnext = Math.floor(multiplier * Math.pow(Math.floor($scope.relicsnext/15) - 5, 1.7));
 		};
 		$scope.updateRelicInfo();
+
+		var choose = function(a, b) {
+			// console.log(a + " choose " + b);
+			if (b > a) {
+				// console.log("returning: 0");
+				return 0;
+			}
+			// console.log("returning: " + factorial(a) / (factorial(b) * factorial(a-b)));
+			return factorial(a) / (factorial(b) * factorial(a-b));
+		}
 
 		$scope.updateWeaponInfo = function() {
 			$scope.wtotal = $scope.weapons.map(function(w) { return w.value; })
@@ -188,24 +248,42 @@ yattoApp.controller('CalculatorController',
 				}
 			}
 			var toNextSet = nmin;
-			console.log("to next set: " + toNextSet);
+			$scope.wtonext = toNextSet;
+			// console.log("to next set: " + toNextSet);
 			var getting = $scope.wnext;
-			console.log("getting: " + getting);
+			// console.log("getting: " + getting);
 			if (getting < toNextSet) {
 				$scope.wpset = 0;
 			} else {
-				console.log(factorials[getting]);
+				// https://www.reddit.com/r/TapTitans/comments/33smgn/probability_of_completing_a_full_weapon_set_on/
+				// p = [Sum_{i=0}^{i=w} (-1)^i * C(33-w,i) * (33-i)^n ] / 33^n
+				var summation = 0;
+				var w = 33 - toNextSet;
+				for (var i = 0; i <= w; i++) {
+					// console.log(choose(toNextSet, i));
+					// console.log(Math.pow(-1, i));
+					// console.log(choose(toNextSet, i));
+					// console.log(Math.pow(toNextSet, getting));
+					summation += Math.pow(-1, i) * choose(toNextSet, i) * Math.pow(33-i, getting);
+					// console.log("summation: " + summation);
+				}
+				// console.log("num: " + summation);
+				// console.log("den: " + Math.pow(33, getting));
+				var p = summation / Math.pow(33, getting);
+				// console.log("p: " + p);
+
+				$scope.wpset = Math.round(p * 100000) / 100000;
 				// TODO: this is wrong
 				// y! / ((y-x)! * z^x)
 
 				// what's the probability of picking at least one each of x things in y tries with z options?
-				$scope.wpset = factorials[getting] / (factorials[getting - toNextSet] * Math.pow(33, getting));
-				$scope.wpset = Math.round($scope.wpset * 1000) / 1000.0;
+				// $scope.wpset = factorials[getting] / (factorials[getting - toNextSet] * Math.pow(33, getting));
+				// $scope.wpset = Math.round($scope.wpset * 1000) / 1000.0;
 				// var numWays = 1 * Math.pow(33, getting - toNextSet) * factorials[getting];
 				// var p = numWays / Math.pow(33, getting);
 				// $scope.wpset = p;
 			}
-			console.log($scope.wpset);
+			// console.log($scope.wpset);
 		};
 
 		var readFromCookies = function() {
@@ -263,7 +341,7 @@ yattoApp.controller('CalculatorController',
 		};
 
 		$scope.artifactCheck = function(i, ai) {
-			if ($scope.artifact_caps[ai] != null && 
+			if ($scope.artifact_caps[ai] != null &&
 					$scope.artifacts[i].value > $scope.artifact_caps[ai]) {
 				$scope.artifacts[i].value = $scope.artifact_caps[ai];
 			}
@@ -330,9 +408,12 @@ yattoApp.controller('CalculatorController',
 		};
 
 		// // testing stuff
-		// var g = new GameState(transformScopeArray($scope.artifacts), 
-		// 	transformScopeArray($scope.weapons), transformScopeArray($scope.customizations));
+		var g = new GameState(transformScopeArray($scope.artifacts),
+			transformScopeArray($scope.weapons), transformScopeArray($scope.customizations));
 		// console.log(g.next_ff_level());
+		// g.get_all_skills();
+		console.log(g.gold_multiplier());
+
 
 		$scope.calculate = function() {
 			if ($scope.relics == 0 && $scope.nsteps == 0) {
@@ -351,6 +432,7 @@ yattoApp.controller('CalculatorController',
 			}
 
 			if (!$scope.spinneractive) {
+				console.log("starting spinner");
 				usSpinnerService.spin('spinner');
 			}
 

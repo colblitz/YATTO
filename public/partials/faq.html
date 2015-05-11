@@ -27,100 +27,26 @@
 			<h3>What is the \(\chi^2\) - weapon probability?</h3>
 			<p>The weapon probablity is supposed to give you a measure of how likely your distribution of weapons was just from chance - the higher the number, the more "normal" it is. This is calculated by running a chi-square test on your weapon counts.</p>
 
+			<h3>My probability to get the next weapon set is 0, what's up with that?</h3>
+			<p>Unless you're getting fewer weapons than you need, it's probably not actually zero - it's just that the chance is too small and doesn't fit in the box so I'm displaying it as zero. On that note, max probability is 1, so a probability of 0.0001 is a 0.01% chance.</p>
+
 			<h3>This is cool, can I take a look at how you did it?</h3>
 			<p>Sure, git repo is <a href="https://github.com/colblitz/YATTO">here</a></p>
 
-			<!-- <h3>Formulas</h3>
-
-			<ul>Formulas/Reference:
-				<li>artifact AD
-					$$ ad0 + adpl * (level - 1) $$
-				</li>
-				<li>artifact cost to level
-					$$ a *x^y $$
-				</li>
-				<li>artifact level cap
-				</li>
-				<li>cost to buy next artifact
-					$$ \left \lfloor (\text{# of artifacts owned} + 1) \cdot 1.35^{(\text{# of artifacts} + 1)} \right \rceil $$
-				</li>
-				<li>hero upgrade cost
-					$$ base_cost * 1.075^level, x10 for evolve $$
-				</li>
-				<li>hero skill cost
-					$$ 5 * upgrade cost of next level $$
-				</li>
-				<li>hero evolve cost
-					$$ 10.75 * cost to upgrade 999 $$
-				</li>
-				<li>hero damage
-				</li>
-				<li>all damage
-				</li>
-				<li>base stage hp (hp -> stage)
-				</li>
-				<li>base stage gold
-				</li>
-				<li>relics earned
-				</li>
-				<li>gold multiplier
-				</li>
-				<li>hero dps
-				</li>
-				<li>total dps
-				</li>
-				<li>tapping dps
-				</li>
-			</ul>
-
-			<ul> Symbols and reference
-				<li> \( \left \lfloor x \right \rceil \) means round </li>
-			</ul> -->
-<!--
-			<a href="http://www.reddit.com/user/olaudix">/u/olaudix</a>
-			<a href="http://www.reddit.com/user/gxgx55">/u/gxgx55</a>
-			<a href="http://www.reddit.com/user/bsedmonds">/u/bsedmonds</a>
-			<a href="http://www.reddit.com/user/FateRiddle">/u/FateRiddle</a>
-			<a href="http://www.reddit.com/user/asynchronism">/u/asynchronism</a>
-			<a href="http://www.reddit.com/user/einzen91">/u/einzen91</a>
-			<a href="http://www.reddit.com/user/TheDutchman88">/u/TheDutchman88</a>
-			<a href="http://www.reddit.com/user/contigi">/u/contigi</a> -->
-
-
 			<h3>Special thanks</h3>
 			<ul>
-				<li>I got a bunch of formulas from <a href="http://www.reddit.com/user/olaudix">/u/olaudix's</a> <a href="https://github.com/oLaudix/oLaudix.github.io">optimizer</a></li>
+				<li><a href="http://www.reddit.com/user/olaudix">/u/olaudix's</a> for his original <a href="https://github.com/oLaudix/oLaudix.github.io">optimizer</a> that I got a bunch of formulas from</li>
 				<li><a href="http://www.reddit.com/user/gxgx55">/u/gxgx55</a> and <a href="http://www.reddit.com/user/bsedmonds">/u/bsedmonds</a> for the current spreadsheets (<a href="http://www.reddit.com/r/TapTitans/comments/2xypot/my_gold_and_damage_artifact_efficiency_calculator/">here</a> and <a href="https://www.reddit.com/r/TapTitans/comments/303ngz/updated_artifact_efficiency_calculator_all_credit/">here</a>)</li>
-				<li><a href="http://www.reddit.com/user/FateRiddle">/u/FateRiddle</a> for the <a href="http://www.reddit.com/r/TapTitans/comments/31md50/the_ultimate_artifact_calculator_based_on_theory/">concept of K</a></li>
 				<li><a href="http://www.reddit.com/user/asynchronism">/u/asynchronism</a> for <a href="http://www.reddit.com/r/TapTitans/comments/32m0r4/repost_the_everything_spreadsheet_is_back_and/">the everything spreadsheet</a></li>
 				<li><a href="http://www.reddit.com/user/einzen91">/u/einzen91</a> for <a href="http://www.reddit.com/r/TapTitans/comments/3162h7/exact_stage_progression_speed/">stage progression times</a></li>
 				<li><a href="http://www.reddit.com/user/TheDutchman88">/u/TheDutchman88</a> for <a href="http://www.reddit.com/r/TapTitans/comments/2u7scp/hero_upgrade_cost_explained/">hero upgrade costs</a></li>
 				<li><a href="http://www.reddit.com/user/contigi">/u/contigi</a> for <a href="http://www.reddit.com/r/TapTitans/comments/317usc/new_damage_and_gold_formulas/">damage and gold formulas</a></li>
-				<li><a href="http://www.reddit.com/r/TapTitans/comments/32hxes/i_need_data_need_some_more_help/">Data</a> from <a href="http://www.reddit.com/user/SnakeMGL">/u/SnakeMGL</a>, <a href="http://www.reddit.com/user/raffishtenant">/u/raffishtenant</a>, <a href="http://www.reddit.com/user/mowmoth">/u/mowmoth</a>, <a href="http://www.reddit.com/user/TRB4">/u/TRB4</a>, <a href="http://www.reddit.com/user/LeonProfessional">/u/LeonProfessional</a>, <a href="http://www.reddit.com/user/Iottie">/u/Iottie</a>, <a href="http://www.reddit.com/user/Badeky">/u/Badeky</a>, <a href="http://www.reddit.com/user/rajnod">/u/rajnod</a>, <a href="http://www.reddit.com/user/superliro">/u/superliro</a>, <a href="http://www.reddit.com/user/rcbjmbadb">/u/rcbjmbadb</a>, and <a href="http://www.reddit.com/user/Grimspork">/u/Grimspork</a>
+				<li><a href="http://www.reddit.com/user/SnakeMGL">/u/SnakeMGL</a>, <a href="http://www.reddit.com/user/raffishtenant">/u/raffishtenant</a>, <a href="http://www.reddit.com/user/mowmoth">/u/mowmoth</a>, <a href="http://www.reddit.com/user/TRB4">/u/TRB4</a>, <a href="http://www.reddit.com/user/LeonProfessional">/u/LeonProfessional</a>, <a href="http://www.reddit.com/user/Iottie">/u/Iottie</a>, <a href="http://www.reddit.com/user/Badeky">/u/Badeky</a>, <a href="http://www.reddit.com/user/rajnod">/u/rajnod</a>, <a href="http://www.reddit.com/user/superliro">/u/superliro</a>, <a href="http://www.reddit.com/user/rcbjmbadb">/u/rcbjmbadb</a>, and <a href="http://www.reddit.com/user/Grimspork">/u/Grimspork</a> for helping me gather some <a href="http://www.reddit.com/r/TapTitans/comments/32hxes/i_need_data_need_some_more_help/">data</a>
+				</li>
+				<li><a href="https://www.reddit.com/user/ah_b">/u/ah_b</a> for the relationship between gold and damage (<a href="https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/">this thread</a>)</li>
+				<li><a href="http://www.reddit.com/user/raffishtenant">/u/raffishtenant</a> for the probability of completing weapon sets (<a href="https://www.reddit.com/r/TapTitans/comments/33smgn/probability_of_completing_a_full_weapon_set_on/">this thread</a>)</li>
+				<li><a href="https://www.reddit.com/user/Looding">/u/Looding</a>, <a href="https://www.reddit.com/user/jarboo69">/u/jarboo69</a>, <a href="https://www.reddit.com/user/roflswithcopters">/u/roflswithcopters</a>, <a href="https://www.reddit.com/user/Th3Ph1l0s0ph3r">/u/Th3Ph1l0s0ph3r</a>, <a href="https://www.reddit.com/user/gezmodean">/u/gezmodean</a>, <a href="https://www.reddit.com/user/Sentient64">/u/Sentient64</a>, <a href="https://www.reddit.com/user/KauZs">/u/KauZs</a>, <a href="https://www.reddit.com/user/Pokieboy">/u/Pokieboy</a>, and <a href="https://www.reddit.com/user/jarch3r">/u/jarch3r</a> for various ideas and pointing out bugs</li>
 			</ul>
-
-			<!-- <h3>Current TODO list</h3>
-			<ul>
-				<li>CSS so it's not ugly</li>
-				<li>Form validation</li>
-				<li>Option to save to cookies instead of automatic?</li>
-				<li>Make a formulas/reference page (for people who are interested, just look at the code for now)</li>
-				<li>Take care of TODOs in calculate.js</li>
-				<li>More CSS</li>
-				<li>Show/hide weapons/customizations</li>
-				<li>Recheck against bsedmonds 2.0.0</li>
-				<li>Disclaimer footer thing?</li>
-				<li>Dynamic programming</li>
-				<li>Think about weapon probability - is chisquare correct?</li>
-				<li>Better simulation for relics/stages per second (logic, time calculations)</li>
-				<li>Check boss health and gold formula</li>
-				<li>User variables for simulation (taps/second, amount to grind, hero skills, etc)</li>
-			</ul> -->
-
 		</div>
-
-
 	</div>
-
-
 </div>

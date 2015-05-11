@@ -373,6 +373,7 @@ var base_stage_gold = function(stage) {
 
 // TODO: Check this constant
 var BOSS_CONSTANT = (2 + 4*1.14 + 6*Math.pow(1.14, 2) + 7*Math.pow(1.14, 3) + 10*Math.pow(1.14, 4))/(1 + 1.14 + Math.pow(1.14, 2) + Math.pow(1.14, 3) + Math.pow(1.14, 4));
+BOSS_CONSTANT = 6;
 
 var newZeroes = function(length) {
 	return Array.apply(null, new Array(length)).map(Number.prototype.valueOf,0);
@@ -483,16 +484,26 @@ var GameState = function(artifacts, weapons, customizations) {
 		var multiplier = function(l) {
 			return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED);
 		}
-		console.log(1 + 0.05 * this.l_fortune + TOTAL_STYPE_GOLD_DROPPED);
+		// console.log(1 + 0.05 * this.l_fortune + TOTAL_STYPE_GOLD_DROPPED);
 		while (multiplier(new_level) == multiplier(this.l_fortune)) {
 			new_level += 1;
 		}
-		console.log(1 + 0.05 * new_level + TOTAL_STYPE_GOLD_DROPPED);
-		console.log(new_level);
+		// console.log(1 + 0.05 * new_level + TOTAL_STYPE_GOLD_DROPPED);
+		// console.log(new_level);
 		return new_level;
 	}
 
 	this.gold_multiplier = function() {
+
+
+		// this.n_gold = 1 + 0.1 * this.l_amulet;
+		// this.d_chance = Math.min(1, 0.005 * this.l_chalice);
+		// this.d_multiplier = 1 - this.d_chance + 10 * this.d_chance;
+		// this.m_multiplier = this.n_chance * this.n_gold * this.d_multiplier;
+		// this.boss_gold = BOSS_CONSTANT * (1 + this.l_kshield);
+// this.other_total = (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
+
+
 		var mobs = 10 - this.l_world;
 
 		var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
@@ -588,8 +599,22 @@ var GameState = function(artifacts, weapons, customizations) {
 
 		var overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier));
 		var total_tapping = total_tap * overall_crit_multiplier;
+
 		return [total_tap, total_tapping]
 	};
+
+	this.damage_multiplier = function() {
+		var h_td = this.get_total_bonus(STYPE_TAP_DAMAGE);
+
+		var total_tap = (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer) * (1 + this.c_ad);
+
+		var crit_multiplier = this.get_crit_multiplier();
+		var crit_chance = this.get_crit_chance();
+
+		var overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier));
+		var total_tapping = total_tap * overall_crit_multiplier;
+		return total_tapping;
+	}
 
 	this.level_heroes = function() {
 		// buy all the heroes that you can buy
@@ -857,7 +882,7 @@ var get_value = function(game_state, method) {
 		case METHOD_TAP_DAMAGE:
 			return game_state.tap_damage()[1];
 		case METHOD_DMG_EQUIVALENT:
-			return [game_state.gold_multiplier(), game_state.tap_damage()[1]];
+			return [game_state.gold_multiplier(), game_state.damage_multiplier()];
 		case METHOD_RELICS_PS:
 			return game_state.relics_per_second()[2];
 		case METHOD_STAGE_PS:
@@ -872,7 +897,7 @@ var get_dp_value = function(game_state, method) {
 		case METHOD_ALL_DAMAGE:
 			return game_state.a_ad;
 		case METHOD_TAP_DAMAGE:
-			return game_state.tap_damage()[1];
+			return game_state.damage_multiplier();
 		case METHOD_DMG_EQUIVALENT:
 			return null;
 		case METHOD_RELICS_PS:
@@ -949,12 +974,28 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 			var e;
 			if (method == METHOD_STAGE_PS) {
 				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
+			} else if (method == METHOD_DMG_EQUIVALENT) {
+				// https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/
+				// console.log(artifact_info[i].name);
+				var gold_ratio = new_value[0] / base[0];
+				var tdmg_ratio = new_value[1] / base[1];
+				var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_ratio) / Math.log(1.075));
+				var total_change = tdmg_ratio * gold_dmg_equivalent;
+				// console.log(gold_ratio);
+				// console.log(tdmg_ratio);
+				// console.log(gold_dmg_equivalent);
+				// console.log(total_change);
+				e = total_change / relic_cost;
 			} else {
 				e = (new_value - base) / relic_cost;
 			}
 
 			efficiency[i] = e;
 		}
+
+		// if (method == METHOD_DMG_EQUIVALENT) {
+		// 	console.log(efficiency);
+		// }
 
 		var best_index;
 		if (method != METHOD_STAGE_PS) {
@@ -973,7 +1014,7 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 			break;
 		}
 		relics_left -= costs[best_index];
-		if (best_index == 10) {
+		if (method == METHOD_GOLD && best_index == 10) {
 			current_artifacts[best_index] = ff_level;
 		} else {
 			current_artifacts[best_index] += 1;
@@ -1288,7 +1329,7 @@ var get_value_memoize = function(a, w, c, m) {
 // var ca = a.slice();
 // while (left > 0) {
 // 	var base = get_value_memoize(ca, w, c, METHOD_GOLD);
-// 	for 
+// 	for
 // }
 
 
@@ -1299,7 +1340,7 @@ var get_value_memoize = function(a, w, c, m) {
 // 		left -= artifact_info[i].costToLevel(na[i]);
 // 		na[i] += 1;
 // 	}
-	
+
 // 	var g = new GameState(na, w, c);
 // 	gold_single[i] = g.gold_multiplier();
 // }
