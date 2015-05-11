@@ -383,7 +383,7 @@ var sumArray = function(array) {
 	return array.reduce(function(a, b) { return a + b; });
 };
 
-var GameState = function(artifacts, weapons, customizations) {
+var GameState = function(artifacts, weapons, levels, customizations) {
 	this.artifacts = artifacts.slice();
 	this.a_ad = 0.01 * all_damage(this.artifacts);
 	this.l_amulet = artifacts[0];
@@ -424,7 +424,8 @@ var GameState = function(artifacts, weapons, customizations) {
 
 	this.other_total = (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
 
-	this.heroes = newZeroes(hero_info.length);
+	this.heroes = levels.slice();
+	// this.heroes = newZeroes(hero_info.length);
 	this.hero_skills = newZeroes(hero_info.length);
 	this.skill_bonuses = newZeroes(numSkillTypes);
 	this.current_stage = 1;
@@ -446,23 +447,30 @@ var GameState = function(artifacts, weapons, customizations) {
 	};
 
 	this.get_all_skills = function() {
-		var heroes_after = this.heroes.slice();
-		for (var i = 0; i < heroes_after.length; i++) {
-			var level = heroes_after[i];
-			var temp = hero_info[i].get_cost_to_next_skill(level);
-			var next_skill_level = temp[0];
-			var c = temp[1];
-			while (level < 800) {
-				heroes_after[i] = next_skill_level;
-				this.add_skill(i, this.hero_skills[i]);
-				this.hero_skills[i] += 1;
-				level = next_skill_level;
-				temp = hero_info[i].get_cost_to_next_skill(level);
-				next_skill_level = temp[0];
-				c = temp[1];
+		for (var i = 0; i < this.heroes.length; i++) {
+			var skills = level_to_skills(this.heroes[i]);
+			for (var s = 0; s < skills; s++) {
+				this.add_skill(i, s);
+				this.hero_skills[i] = s;
 			}
 		}
-		this.heroes = heroes_after;
+		// var heroes_after = this.heroes.slice();
+		// for (var i = 0; i < heroes_after.length; i++) {
+		// 	var level = heroes_after[i];
+		// 	var temp = hero_info[i].get_cost_to_next_skill(level);
+		// 	var next_skill_level = temp[0];
+		// 	var c = temp[1];
+		// 	while (level < 800) {
+		// 		heroes_after[i] = next_skill_level;
+		// 		this.add_skill(i, this.hero_skills[i]);
+		// 		this.hero_skills[i] += 1;
+		// 		level = next_skill_level;
+		// 		temp = hero_info[i].get_cost_to_next_skill(level);
+		// 		next_skill_level = temp[0];
+		// 		c = temp[1];
+		// 	}
+		// }
+		// this.heroes = heroes_after;
 	};
 
 	this.total_relics = function() {
@@ -658,6 +666,7 @@ var GameState = function(artifacts, weapons, customizations) {
 			cost += hero_info[i].cost_to_buy_skill(next_skill_level);
 			while (cost < this.current_gold && level < 800) {
 				heroes_after[i] = next_skill_level;
+				// TODO: check this, hero_skills
 				this.add_skill(i, this.hero_skills[i]);
 				this.hero_skills[i] += 1;
 				level = next_skill_level;
@@ -920,13 +929,13 @@ var index_max = function(array, custom) {
 	return maxIndex;
 };
 
-var get_best = function(artifacts, weapons, customizations, relics, nsteps, method) {
+var get_best = function(artifacts, weapons, levels, customizations, relics, nsteps, method) {
 	var relics_left = relics;
 	var current_artifacts = artifacts.slice();
 	var steps = [];
 	var cumulative = 0;
 	while (relics_left > 0 || steps.length < nsteps) {
-		var g = new GameState(current_artifacts, weapons, customizations);
+		var g = new GameState(current_artifacts, weapons, levels, customizations);
 		if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
 			// TODO: make this user variable
 			g.get_all_skills();
@@ -965,7 +974,7 @@ var get_best = function(artifacts, weapons, customizations, relics, nsteps, meth
 				costs[i] = relic_cost;
 			}
 
-			var new_g = new GameState(artifacts_copy, weapons, customizations);
+			var new_g = new GameState(artifacts_copy, weapons, levels, customizations);
 			if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
 				// TODO: make this user variable
 				new_g.get_all_skills();
@@ -1267,13 +1276,13 @@ var get_hero_levels = function(heroes, gold) {
 	return last_heroes;
 };
 
-var get_steps = function(artifacts, weapons, customizations, methods, relics, nsteps, greedy) {
+var get_steps = function(artifacts, weapons, levels, customizations, methods, relics, nsteps, greedy) {
 	var response = {};
 	for (var mi in methods) {
 		var m = methods[mi];
 		var steps = [];
 		if (greedy == 1) {
-			steps = get_best(artifacts, weapons, customizations, relics, nsteps, m);
+			steps = get_best(artifacts, weapons, levels, customizations, relics, nsteps, m);
 		} else {
 			memoize = {};
 			steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];

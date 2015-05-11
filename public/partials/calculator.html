@@ -64,7 +64,7 @@
 						<div id="options-subbox-3" class="options-block col-md-4">
 							<h3>Other Stuff:</h3>
 							<button class="btn btn-danger" id="clear-cookies-button" ng-click="clearAllCookies()">Clear all cookies</button>
-							<button class="btn btn-info" id="weapon-probability-button" ng-click="weaponProbability(weapons)">Get weapon probability</button>
+							<!-- <button class="btn btn-info" id="weapon-probability-button" ng-click="weaponProbability(weapons)">Get weapon probability</button> -->
 							<div>
 								<div class="small-form-item">
 									<label id="chi">\(\chi^2\)</label>&nbsp;<label>Probability:</label>
@@ -96,7 +96,7 @@
 						</div>
 
 						<div class="col-xs-8">
-							<textarea type="text" rows="3" class="form-control text-input" id="state-input" ng-model="state"/>
+							<textarea type="text" rows="4" class="form-control text-input" id="state-input" ng-model="state"/>
 						</div>
 					</div>
 				</div> <!--options-box-->
@@ -106,7 +106,7 @@
 					<div id="inputs-box" class="panel">
 						<div class="row">
 							<!-- <h2 class="title">Enter your info here:</h2> -->
-							<div id="artifacts-list" class="list col-md-6">
+							<div id="artifacts-list" class="list col-md-5">
 								<h3>Artifact Levels:</h3>
 								<div ui-sortable="sortableOptions" ng-model="artifacts">
 									<div class="form-item transition" ng-repeat='a in artifacts'>
@@ -118,10 +118,10 @@
 							</div>
 							<div id="weapons-list" class="list col-md-6">
 								<h3>Heroes (Levels / Weapons):</h3>
-								<div ng-repeat="w in weapons" class="form-item">
-									<input type="number" class="form-control number-input left-input level-input" ng-model="levels[$index].value" min="0" ng-change="levelCheck($index)"/>
-									<input type="number" class="form-control number-input left-input weapon-input" ng-model="weapons[$index].value" min="0" ng-change="weaponCheck($index)"/>
-									<div class="input-label">{{w.name}}</div>
+								<div ng-repeat="h in heroes" class="form-item">
+									<input type="number" class="form-control number-input left-input level-input" ng-model="heroes[$index].level" min="0" ng-change="levelCheck($index)"/>
+									<input type="number" class="form-control number-input left-input weapon-input" ng-model="heroes[$index].weapons" min="0" ng-change="weaponCheck($index)" tabindex="{{$index+1}}"/>
+									<div class="input-label">{{h.name}}</div>
 								</div>
 							</div>
 						 <!-- artifacts and weapons -->

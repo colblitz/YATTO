@@ -111,9 +111,9 @@ yattoApp.controller('CalculatorController',
 		$scope.heroes = [];
 		for (var h in hero_names) {
 			$scope.heroes.push({
-				name: hero_names[a],
-				index: a,
-				weapons: 0,
+				name: hero_names[h],
+				index: h,
+				weapons: 1,
 				level: 800
 			});
 		}
@@ -178,7 +178,6 @@ yattoApp.controller('CalculatorController',
 		$scope.nsteps = 0;
 		$scope.greedy = 1;
 
-
 		var transformScopeArray = function(scopeArray) {
 			var newArray = newZeroes(scopeArray.length);
 			for (var x in scopeArray) {
@@ -231,10 +230,20 @@ yattoApp.controller('CalculatorController',
 			return factorial(a) / (factorial(b) * factorial(a-b));
 		}
 
+		var getWeapons = function() {
+			return transformScopeArray($scope.heroes.map(function (h) {
+				return {index: h.index, value: h.weapons}; }));
+		}
+
+		var getLevels = function() {
+			return transformScopeArray($scope.heroes.map(function (h) {
+				return {index: h.index, value: h.level}; }));
+		}
+
 		$scope.updateWeaponInfo = function() {
-			$scope.wtotal = $scope.weapons.map(function(w) { return w.value; })
+			$scope.wtotal = $scope.heroes.map(function(h) { return h.weapons; })
 				.reduce(function(a, b) { return a + b; });
-			var weapons = transformScopeArray($scope.weapons);
+			var weapons = getWeapons();
 			$scope.wprobability = calculate_weapons_probability(weapons);
 
 			var min = weapons[0];
@@ -289,7 +298,8 @@ yattoApp.controller('CalculatorController',
 		var readFromCookies = function() {
 			// console.log("reading from cookies");
 			var cookie_a = localStorageService.get('artifacts');
-			var cookie_w = localStorageService.get('weapons');
+			// var cookie_w = localStorageService.get('weapons');
+			var cookie_h = localStorageService.get('heroes');
 			var cookie_c = localStorageService.get('customizations');
 			var cookie_m = localStorageService.get('methods');
 			var cookie_s = localStorageService.get('steps');
@@ -299,6 +309,9 @@ yattoApp.controller('CalculatorController',
 			}
 			if (typeof cookie_w !== "undefined" && cookie_w != null) {
 				$scope.weapons = cookie_w;
+			}
+			if (typeof cookie_h !== "undefined" && cookie_h != null) {
+				$scope.heroes = cookie_h;
 			}
 			if (typeof cookie_c !== "undefined" && cookie_c != null) {
 				$scope.customizations = cookie_c;
@@ -318,7 +331,8 @@ yattoApp.controller('CalculatorController',
 
 		var storeToCookies = function() {
 			localStorageService.set('artifacts', $scope.artifacts);
-			localStorageService.set('weapons', $scope.weapons);
+			// localStorageService.set('weapons', $scope.weapons);
+			localStorageService.set('heroes', $scope.heroes);
 			localStorageService.set('customizations', $scope.customizations);
 			localStorageService.set('methods', $scope.methods);
 			localStorageService.set('steps', $scope.steps);
@@ -331,8 +345,9 @@ yattoApp.controller('CalculatorController',
 
 		$scope.generateStateString = function() {
 			$scope.state = [
-				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(","),
-				$scope.weapons.map(function(w) { return w.value; }).join(),
+				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
+				$scope.heroes.map(function(h) { return h.level + "." + h.weapons; }).join(),
+				// $scope.weapons.map(function(w) { return w.value; }).join(),
 				$scope.customizations.map(function(c) { return c.value; }).join(),
 				$scope.methods.map(function(m) { return m.value ? 1 : 0; }).join(),
 				$scope.relics,
@@ -351,10 +366,16 @@ yattoApp.controller('CalculatorController',
 			$scope.generateStateString();
 		};
 
-		$scope.weaponCheck = function(i, ai) {
-			if ($scope.weapons[i].value == null) {
-				$scope.weapons[i].value = 0;
+		$scope.heroesCheck = function(i, ai) {
+			if ($scope.heroes[i].level == null) {
+				$scope.heroes[i].level = 0;
 			}
+			if ($scope.heroes[i].weapons == null) {
+				$scope.heroes[i].weapons = 0;
+			}
+			// if ($scope.weapons[i].value == null) {
+			// 	$scope.weapons[i].value = 0;
+			// }
 			$scope.generateStateString();
 			$scope.updateWeaponInfo();
 		};
@@ -391,8 +412,13 @@ yattoApp.controller('CalculatorController',
 				});
 			});
 			$scope.artifacts = artifacts;
-			t[1].split(",").forEach(function(w, i, array) {
-				$scope.weapons[i].value = parseOrZero(w, parseInt);
+			t[1].split(",").forEach(function(h, i, array) {
+				var v = h.split(".");
+				var hlevel = parseOrZero(v[0], parseInt);
+				var hweapons = parseOrZero(v[1], parseInt);
+				$scope.heroes[i].level = hlevel;
+				$scope.heroes[i].weapons = hweapons;
+				// $scope.weapons[i].value = parseOrZero(w, parseInt);
 			});
 			t[2].split(",").forEach(function(c, i, array) {
 				$scope.customizations[i].value = parseOrZero(c, parseFloat);
@@ -409,7 +435,7 @@ yattoApp.controller('CalculatorController',
 
 		// // testing stuff
 		var g = new GameState(transformScopeArray($scope.artifacts),
-			transformScopeArray($scope.weapons), transformScopeArray($scope.customizations));
+			getWeapons(), getLevels(), transformScopeArray($scope.customizations));
 		// console.log(g.next_ff_level());
 		// g.get_all_skills();
 		console.log(g.gold_multiplier());
@@ -436,7 +462,8 @@ yattoApp.controller('CalculatorController',
 				usSpinnerService.spin('spinner');
 			}
 
-			var weapons = transformScopeArray($scope.weapons);
+			var weapons = getWeapons();
+			var levels = getLevels();
 			var customizations = transformScopeArray($scope.customizations);
 			var methods = [];
 			for (var m in $scope.methods) {
@@ -447,7 +474,7 @@ yattoApp.controller('CalculatorController',
 
 			var response;
 			$timeout(function() {
-				response = get_steps(artifacts, weapons, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
+				response = get_steps(artifacts, weapons, levels, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
 
 				$scope.$apply(function() {
 					for (var m in response) {
@@ -471,10 +498,10 @@ yattoApp.controller('CalculatorController',
 			localStorageService.remove('summary');
 		};
 
-		$scope.weaponProbability = function() {
-			var weapons = transformScopeArray($scope.weapons);
-			$scope.wprobability = calculate_weapons_probability(weapons);
-		};
+		// $scope.weaponProbability = function() {
+		// 	var weapons = transformScopeArray($scope.weapons);
+		// 	$scope.wprobability = calculate_weapons_probability(weapons);
+		// };
 
 		$scope.step = function(summary, method, stepindex) {
 			var step = summary ? $scope.summary_steps[method][stepindex] : $scope.steps[method][stepindex];
