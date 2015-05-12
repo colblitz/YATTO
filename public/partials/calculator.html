@@ -132,7 +132,7 @@
 								<h3>Bonuses from Customizations:</h3>
 								<p>(In decimal form - if you have 32%, enter 0.32, not 32)</p>
 								<div ng-repeat="c in customizations" class="form-item">
-									<input type="number" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-change="customizationCheck($index)" min="0" step="{{customizations[$index].step}}"/>
+									<input type="text" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-change="customizationCheck($index)" min="0" step="{{customizations[$index].step}}"/>
 									<div class="input-label">{{c.name}}</div>
 								</div>
 							</div>

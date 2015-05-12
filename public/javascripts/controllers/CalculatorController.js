@@ -392,9 +392,13 @@ yattoApp.controller('CalculatorController',
 		};
 
 		$scope.customizationCheck = function(i, ai) {
-			if ($scope.customizations[i].value == null) {
-				$scope.customizations[i].value = 0;
-			}
+			// console.log($scope.customizations[i].value);
+			// var v = parseFloat($scope.customizations[i].value);
+			// if (v == null || isNaN(v)) {
+			// 	$scope.customizations[i].value = 0;
+			// } else {
+			// 	$scope.customizations[i].value = v;
+			// }
 			$scope.generateStateString();
 		};
 
