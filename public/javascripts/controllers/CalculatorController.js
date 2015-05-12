@@ -64,15 +64,6 @@ yattoApp.controller('CalculatorController',
 			27 : "Warrior's Revival",
 			28 : "Worldly Illuminator"};
 
-		$scope.artifacts = [];
-		for (var a in artifact_names) {
-			$scope.artifacts.push({
-				name: artifact_names[a],
-				index: a,
-				value: 0
-			});
-		}
-
 		var hero_names = {
 			 0 : "Takeda the Blade Assassin",
 			 1 : "Contessa the Torch Wielder",
@@ -108,75 +99,62 @@ yattoApp.controller('CalculatorController',
 			31 : "Jackalope the Fireballer",
 			32 : "Dark Lord, Punisher of All"};
 
-		$scope.heroes = [];
-		for (var h in hero_names) {
-			$scope.heroes.push({
-				name: hero_names[h],
-				index: h,
-				weapons: 0,
-				level: 800
-			});
-		}
+		var setDefaults = function() {
+			$scope.artifacts = [];
+			for (var a in artifact_names) {
+				$scope.artifacts.push({
+					name: artifact_names[a],
+					index: a,
+					value: 0
+				});
+			}
 
-		$scope.weapons = [
-			{name: "Takeda the Blade Assassin",       index:  0, value: 0},
-			{name: "Contessa the Torch Wielder",      index:  1, value: 0},
-			{name: "Hornetta, Queen of the Valrunes", index:  2, value: 0},
-			{name: "Mila the Hammer Stomper",         index:  3, value: 0},
-			{name: "Terra the Land Scorcher",         index:  4, value: 0},
-			{name: "Inquisireaux the Terrible",       index:  5, value: 0},
-			{name: "Charlotte the Special",           index:  6, value: 0},
-			{name: "Jordaan, Knight of Mini",         index:  7, value: 0},
-			{name: "Jukka, Master of Axes",           index:  8, value: 0},
-			{name: "Milo and Clonk-Clonk",            index:  9, value: 0},
-			{name: "Macelord the Ruthless",           index: 10, value: 0},
-			{name: "Gertrude the Goat Rider",         index: 11, value: 0},
-			{name: "Twitterella the Tweeter",         index: 12, value: 0},
-			{name: "Master Hawk, Lord of Luft",       index: 13, value: 0},
-			{name: "Elpha, Wielder of Gems",          index: 14, value: 0},
-			{name: "Poppy, Daughter of Ceremony",     index: 15, value: 0},
-			{name: "Skulptor, Protector of Bridges",  index: 16, value: 0},
-			{name: "Sterling the Enchantor",          index: 17, value: 0},
-			{name: "Orba the Foreseer",               index: 18, value: 0},
-			{name: "Remus the Noble Archer",          index: 19, value: 0},
-			{name: "Mikey the Magician Apprentice",   index: 20, value: 0},
-			{name: "Peter Pricker the Prickly Poker", index: 21, value: 0},
-			{name: "Teeny Tom, Keeper of the Castle", index: 22, value: 0},
-			{name: "Deznis the Cleanser",             index: 23, value: 0},
-			{name: "Hamlette, Painter of Skulls",     index: 24, value: 0},
-			{name: "Eistor the Banisher",             index: 25, value: 0},
-			{name: "Flavius and Oinksbjorn",          index: 26, value: 0},
-			{name: "Chester the Beast Tamer",         index: 27, value: 0},
-			{name: "Mohacas the Wind Warrior",        index: 28, value: 0},
-			{name: "Jaqulin the Unknown",             index: 29, value: 0},
-			{name: "Pixie the Rebel Fairy",           index: 30, value: 0},
-			{name: "Jackalope the Fireballer",        index: 31, value: 0},
-			{name: "Dark Lord, Punisher of All",      index: 32, value: 0}];
+			$scope.heroes = [];
+			for (var h in hero_names) {
+				$scope.heroes.push({
+					name: hero_names[h],
+					index: h,
+					weapons: 0,
+					level: 800
+				});
+			}
 
-		$scope.wtotal = 0;
-		$scope.wprobability = 0;
-		$scope.wnext = 0;
-		$scope.wpset = 0;
+			$scope.customizations = [
+				{name: "All Damage",      index: 0, value: 0, step: 0.01},
+				{name: "Critical Damage", index: 1, value: 0, step: 0.01},
+				{name: "Gold Dropped",    index: 2, value: 0, step: 0.01},
+				{name: "Chest Gold",      index: 3, value: 0, step: 0.01},
+				{name: "Critical Hit",    index: 4, value: 0, step: 0.005},
+				{name: "Tap Damage",      index: 5, value: 0, step: 0.01}];
 
-		$scope.customizations = [
-			{name: "All Damage",      index: 0, value: 0, step: 0.01},
-			{name: "Critical Damage", index: 1, value: 0, step: 0.01},
-			{name: "Gold Dropped",    index: 2, value: 0, step: 0.01},
-			{name: "Chest Gold",      index: 3, value: 0, step: 0.01},
-			{name: "Critical Chance", index: 4, value: 0, step: 0.005},
-			{name: "Tap Damage",      index: 5, value: 0, step: 0.01}];
+			$scope.methods = [
+				{name: "Gold",          index: 0, value: true, tabname: "Gold"},
+				{name: "All Damage",    index: 1, value: true, tabname: "ADmg"},
+				{name: "Tap Damage",    index: 2, value: true,  tabname: "TDmg"},
+				{name: "Damage Equivalent",    index: 3, value: true,  tabname: "DmgE"},
+				{name: "Relics/second (experimental!)", index: 4, value: false, tabname: " R/s "},
+				{name: "Stages/second (experimental!)", index: 5, value: false, tabname: " S/s "}];
 
-		$scope.methods = [
-			{name: "Gold",          index: 0, value: true, tabname: "Gold"},
-			{name: "All Damage",    index: 1, value: true, tabname: "ADmg"},
-			{name: "Tap Damage",    index: 2, value: true,  tabname: "TDmg"},
-			{name: "Damage Equivalent",    index: 3, value: true,  tabname: "DmgE"},
-			{name: "Relics/second (experimental!)", index: 4, value: false, tabname: " R/s "},
-			{name: "Stages/second (experimental!)", index: 5, value: false, tabname: " S/s "}];
+			$scope.relics = 0;
+			$scope.nsteps = 0;
+			$scope.greedy = 1;
 
-		$scope.relics = 0;
-		$scope.nsteps = 0;
-		$scope.greedy = 1;
+			$scope.w_chiprob = 0;
+			$scope.w_totalwp = 0;
+			$scope.w_tonexts = 0;
+			$scope.w_getting = 0;
+			$scope.w_probset = 0;
+
+			$scope.r_cstage = 0;
+			$scope.r_undead = 0;
+			$scope.r_levels = 0;
+			$scope.r_nextbp = 0;
+			$scope.r_reward = 0;
+			$scope.r_atnext = 0;
+
+			$scope.autocookies = 'On';
+			$scope.generateStateString();
+		};
 
 		var transformScopeArray = function(scopeArray) {
 			var newArray = newZeroes(scopeArray.length);
@@ -197,213 +175,177 @@ yattoApp.controller('CalculatorController',
 		}
 
 		var factorial = function(n) {
-			//console.log(n + ": " + factorials[n]);
 			return factorials[n];
-		}
-
-		$scope.updateRelicInfo = function() {
-			if ($scope.relicsua == null) {
-				$scope.relicsua = 0;
-			}
-			if ($scope.relicsstage == null) {
-				$scope.relicsstage = 0;
-			}
-			var multiplier = 2 + 0.1 * $scope.relicsua;
-			$scope.relicsnext = (Math.floor($scope.relicsstage / 15) + 1) * 15;
-			if ($scope.relicsstage < 90) {
-				$scope.relicsget = 0;
-				$scope.relicsnext = 90;
-			} else {
-				$scope.relicsget = Math.floor(multiplier * Math.pow(Math.floor($scope.relicsstage/15) - 5, 1.7));
-			}
-			$scope.relicsatnext = Math.floor(multiplier * Math.pow(Math.floor($scope.relicsnext/15) - 5, 1.7));
 		};
-		$scope.updateRelicInfo();
 
 		var choose = function(a, b) {
-			// console.log(a + " choose " + b);
 			if (b > a) {
-				// console.log("returning: 0");
 				return 0;
 			}
-			// console.log("returning: " + factorial(a) / (factorial(b) * factorial(a-b)));
 			return factorial(a) / (factorial(b) * factorial(a-b));
-		}
+		};
 
 		var getWeapons = function() {
 			return transformScopeArray($scope.heroes.map(function (h) {
 				return {index: h.index, value: h.weapons}; }));
-		}
+		};
 
 		var getLevels = function() {
 			return transformScopeArray($scope.heroes.map(function (h) {
 				return {index: h.index, value: h.level}; }));
-		}
-
-		$scope.updateWeaponInfo = function() {
-			$scope.wtotal = $scope.heroes.map(function(h) { return h.weapons; })
-				.reduce(function(a, b) { return a + b; });
-			var weapons = getWeapons();
-			$scope.wprobability = Math.round(calculate_weapons_probability(weapons) * 100000) / 100000;
-
-			var min = weapons[0];
-			var nmin = 1;
-			for (var i = 1; i < weapons.length; i++) {
-				if (weapons[i] == min) {
-					nmin += 1;
-				} else if (weapons[i] < min) {
-					nmin = 1;
-					min = weapons[i];
-				}
-			}
-			var toNextSet = nmin;
-			$scope.wtonext = toNextSet;
-			// console.log("to next set: " + toNextSet);
-			var getting = $scope.wnext;
-			// console.log("getting: " + getting);
-			if (getting < toNextSet) {
-				$scope.wpset = 0;
-			} else {
-				// https://www.reddit.com/r/TapTitans/comments/33smgn/probability_of_completing_a_full_weapon_set_on/
-				// p = [Sum_{i=0}^{i=w} (-1)^i * C(33-w,i) * (33-i)^n ] / 33^n
-				var summation = 0;
-				var w = 33 - toNextSet;
-				for (var i = 0; i <= w; i++) {
-					// console.log(choose(toNextSet, i));
-					// console.log(Math.pow(-1, i));
-					// console.log(choose(toNextSet, i));
-					// console.log(Math.pow(toNextSet, getting));
-					summation += Math.pow(-1, i) * choose(toNextSet, i) * Math.pow(33-i, getting);
-					// console.log("summation: " + summation);
-				}
-				// console.log("num: " + summation);
-				// console.log("den: " + Math.pow(33, getting));
-				var p = summation / Math.pow(33, getting);
-				// console.log("p: " + p);
-
-				$scope.wpset = Math.round(p * 100000) / 100000;
-				// TODO: this is wrong
-				// y! / ((y-x)! * z^x)
-
-				// what's the probability of picking at least one each of x things in y tries with z options?
-				// $scope.wpset = factorials[getting] / (factorials[getting - toNextSet] * Math.pow(33, getting));
-				// $scope.wpset = Math.round($scope.wpset * 1000) / 1000.0;
-				// var numWays = 1 * Math.pow(33, getting - toNextSet) * factorials[getting];
-				// var p = numWays / Math.pow(33, getting);
-				// $scope.wpset = p;
-			}
-			// console.log($scope.wpset);
 		};
 
-		var readFromCookies = function() {
-			// console.log("reading from cookies");
-			var cookie_a = localStorageService.get('artifacts');
-			// var cookie_w = localStorageService.get('weapons');
-			var cookie_h = localStorageService.get('heroes');
-			var cookie_c = localStorageService.get('customizations');
-			var cookie_m = localStorageService.get('methods');
-			var cookie_r = localStorageService.get('relics');
-			var cookie_n = localStorageService.get('nsteps');
-			var cookie_s = localStorageService.get('steps');
-			var cookie_ss = localStorageService.get('summary');
-			if (typeof cookie_a !== "undefined" && cookie_a != null) {
-				$scope.artifacts = cookie_a;
-			}
-			if (typeof cookie_w !== "undefined" && cookie_w != null) {
-				$scope.weapons = cookie_w;
-			}
-			if (typeof cookie_h !== "undefined" && cookie_h != null) {
-				$scope.heroes = cookie_h;
-			}
-			if (typeof cookie_c !== "undefined" && cookie_c != null) {
-				$scope.customizations = cookie_c;
-			}
-			if (typeof cookie_m !== "undefined" && cookie_m != null) {
-				$scope.methods = cookie_m;
-			}
-			if (typeof cookie_r !== "undefined" && cookie_r != null) {
-				$scope.relics = cookie_r;
-			}
-			if (typeof cookie_n !== "undefined" && cookie_n != null) {
-				$scope.nsteps = cookie_n;
-			}
-			if (typeof cookie_s !== "undefined" && cookie_s != null) {
-				$scope.steps = cookie_s;
-			}
-			if (typeof cookie_ss !== "undefined" && cookie_ss != null) {
-				$scope.summary_steps = cookie_ss;
-			}
-
-			$scope.updateWeaponInfo();
+		var hasCookie = function(cookie) {
+			return (typeof cookie !== "undefined" && cookie != null);
 		};
 
-		var storeToCookies = function() {
-			localStorageService.set('artifacts', $scope.artifacts);
-			// localStorageService.set('weapons', $scope.weapons);
-			localStorageService.set('heroes', $scope.heroes);
-			localStorageService.set('customizations', $scope.customizations);
-			localStorageService.set('methods', $scope.methods);
-			localStorageService.set('relics', $scope.relics);
-			localStorageService.set('nsteps', $scope.nsteps);
+		$scope.readFromCookies = function() {
+			var cookie_state = localStorageService.get('state');
+			var cookie_steps = localStorageService.get('steps');
+			var cookie_summs = localStorageService.get('summs');
+			var cookie_autoc = localStorageService.get('autoc');
+
+			if (hasCookie(cookie_state)) { $scope.state = cookie_state; }
+			if (hasCookie(cookie_steps)) { $scope.steps = cookie_steps; }
+			if (hasCookie(cookie_summs)) { $scope.summary_steps = cookie_summs; }
+			if (hasCookie(cookie_autoc)) { $scope.autocookies = cookie_autoc; }
+
+			$scope.importFromString($scope.state);
+		};
+
+		$scope.storeToCookies = function() {
+			localStorageService.set('state', $scope.state);
 			localStorageService.set('steps', $scope.steps);
-			localStorageService.set('summary', $scope.summary_steps);
+			localStorageService.set('summs', $scope.summary_steps);
+			localStorageService.set('autoc', $scope.autocookies);
+		};
+
+		$scope.updateCookies = function() {
+			if ($scope.autocookies == 'On') {
+				$scope.storeToCookies();
+			} else {
+				localStorageService.set('autoc', $scope.autocookies);
+			}
 		};
 
 		$scope.clearAllCookies = function() {
 			localStorageService.clearAll();
 		};
 
+		$scope.updateRelicInfo = function() {
+			var uaMultiplier = 1 + 0.05 * $scope.r_undead;
+
+			// ua 255, levels 33432 --> 461
+			// ua 255, levels 33605 --> 463
+
+			var h1 = Math.ceil($scope.r_levels / 1000);
+			var h2 = ($scope.r_levels + 600)/ 1000;
+			var h3 = Math.floor(h1);
+			var h4 = Math.floor(h2);
+			var h5 = Math.round(h1);
+			var h6 = Math.round(h2);
+			var h7 = Math.ceil(h1);
+			var h8 = Math.ceil(h2);
+
+			var hr1 = h1 * uaMultiplier;
+			var hr2 = h2 * uaMultiplier;
+			var hr3 = h3 * uaMultiplier;
+			var hr4 = h4 * uaMultiplier;
+			var hr5 = h5 * uaMultiplier;
+			var hr6 = h6 * uaMultiplier;
+			var hr7 = h7 * uaMultiplier;
+			var hr8 = h8 * uaMultiplier;
+			var hr9 = $scope.r_levels * uaMultiplier;
+			var hr10 = ($scope.r_levels + 600) * uaMultiplier;
+
+			console.log("---------------");
+			console.log(hr1);
+			console.log(hr2);
+			console.log(hr3);
+			console.log(hr4);
+			console.log(hr5);
+			console.log(hr6);
+			console.log(hr7);
+			console.log(hr8);
+			console.log(hr9);
+			console.log(hr10);
+
+			var heroRelics = $scope.r_levels / 1000;
+			var stageRelics = Math.pow(Math.floor($scope.r_cstage/15) - 5, 1.7);
+
+			heroRelics = Math.ceil(heroRelics * uaMultiplier);
+			stageRelics = Math.ceil(stageRelics * uaMultiplier);
+
+			$scope.r_nextbp = (Math.floor($scope.r_cstage / 15) + 1) * 15;
+			if ($scope.r_cstage < 90) {
+				$scope.r_reward = 0;
+				$scope.r_nextbp = 90;
+			} else {
+				$scope.r_reward = Math.round(2 * (stageRelics + heroRelics));
+			}
+			stageRelics = Math.pow(Math.floor($scope.r_nextbp/15) - 5, 1.7);
+			stageRelics = Math.ceil(stageRelics * uaMultiplier);
+			$scope.r_atnext = Math.round(2 * (stageRelics + heroRelics));
+		};
+
+		$scope.updateWeaponInfo = function() {
+			var weapons = getWeapons();
+			$scope.w_totalwp = weapons.reduce(function(a, b) { return a + b; });
+			$scope.w_chiprob = Math.round(calculate_weapons_probability(weapons) * 100000) / 100000;
+
+			var min = weapons[0];
+			var toNextSet = 1;
+			for (var i = 1; i < weapons.length; i++) {
+				if (weapons[i] == min) {
+					toNextSet += 1;
+				} else if (weapons[i] < min) {
+					toNextSet = 1;
+					min = weapons[i];
+				}
+			}
+			$scope.w_tonexts = toNextSet;
+			var getting = $scope.w_getting;
+			if (getting < toNextSet) {
+				$scope.w_probset = 0;
+			} else {
+				// https://www.reddit.com/r/TapTitans/comments/33smgn/probability_of_completing_a_full_weapon_set_on/
+				// p = [Sum_{i=0}^{i=w} (-1)^i * C(33-w,i) * (33-i)^n ] / 33^n
+				var summation = 0;
+				var w = 33 - toNextSet;
+				for (var i = 0; i <= w; i++) {
+					summation += Math.pow(-1, i) * choose(toNextSet, i) * Math.pow(33-i, getting);
+				}
+				var p = summation / Math.pow(33, getting);
+				$scope.w_probset = Math.round(p * 100000) / 100000;
+			}
+		};
+
 		$scope.generateStateString = function() {
 			$scope.state = [
 				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
 				$scope.heroes.map(function(h) { return h.level + "." + h.weapons; }).join(),
-				// $scope.weapons.map(function(w) { return w.value; }).join(),
 				$scope.customizations.map(function(c) { return c.value; }).join(),
 				$scope.methods.map(function(m) { return m.value ? 1 : 0; }).join(),
 				$scope.relics,
 				$scope.nsteps,
-				$scope.greedy].join("|");
-			storeToCookies();
+				$scope.greedy,
+				$scope.w_getting,
+				$scope.r_cstage,
+				$scope.r_undead,
+				$scope.r_levels].join("|");
 		};
 
-		$scope.artifactCheck = function(i, ai) {
-			if ($scope.artifact_caps[ai] != null &&
-					$scope.artifacts[i].value > $scope.artifact_caps[ai]) {
-				$scope.artifacts[i].value = $scope.artifact_caps[ai];
-			}
-			if ($scope.artifacts[i].value == null) {
-				$scope.artifacts[i].value = 0;
-			}
+		$scope.stateChanged = function() {
+			// re-generate state
 			$scope.generateStateString();
-		};
 
-		$scope.heroesCheck = function(i, ai) {
-			if ($scope.heroes[i].level == null) {
-				$scope.heroes[i].level = 0;
-			}
-			if ($scope.heroes[i].weapons == null) {
-				$scope.heroes[i].weapons = 0;
-			}
-			// if ($scope.weapons[i].value == null) {
-			// 	$scope.weapons[i].value = 0;
-			// }
-			$scope.generateStateString();
+			// store state to cookies
+			$scope.updateCookies();
+
+			// recalculate things
+			$scope.updateRelicInfo();
 			$scope.updateWeaponInfo();
 		};
-
-		$scope.customizationCheck = function(i, ai) {
-			// console.log($scope.customizations[i].value);
-			// var v = parseFloat($scope.customizations[i].value);
-			// if (v == null || isNaN(v)) {
-			// 	$scope.customizations[i].value = 0;
-			// } else {
-			// 	$scope.customizations[i].value = v;
-			// }
-			$scope.generateStateString();
-		};
-
-		readFromCookies();
-		$scope.generateStateString();
 
 		var parseOrZero = function(s, f) {
 			var i = f(s);
@@ -411,7 +353,7 @@ yattoApp.controller('CalculatorController',
 				i = 0;
 			}
 			return i;
-		}
+		};
 
 		$scope.importFromString = function(state) {
 			var t = state.split("|");
@@ -441,11 +383,40 @@ yattoApp.controller('CalculatorController',
 			t[3].split(",").forEach(function(m, i, array) {
 				$scope.methods[i].value = m == 1 ? true : false;
 			})
-			$scope.relics = parseOrZero(t[4], parseInt);
-			$scope.nsteps = parseOrZero(t[5], parseInt);
-			$scope.greedy = parseOrZero(t[6], parseInt);
-			$scope.generateStateString();
-			storeToCookies();
+			$scope.relics    = parseOrZero(t[4], parseInt);
+			$scope.nsteps    = parseOrZero(t[5], parseInt);
+			$scope.greedy    = parseOrZero(t[6], parseInt);
+			$scope.w_getting = parseOrZero(t[7], parseInt);
+			$scope.r_cstage  = parseOrZero(t[8], parseInt);
+			$scope.r_undead  = parseOrZero(t[9], parseInt);
+			$scope.r_levels  = parseOrZero(t[10], parseInt);
+
+			$scope.stateChanged();
+		};
+
+		$scope.artifactCheck = function(i, ai) {
+			if ($scope.artifact_caps[ai] != null &&
+					$scope.artifacts[i].value > $scope.artifact_caps[ai]) {
+				$scope.artifacts[i].value = $scope.artifact_caps[ai];
+			}
+			if ($scope.artifacts[i].value == null) {
+				$scope.artifacts[i].value = 0;
+			}
+			$scope.stateChanged();
+		};
+
+		$scope.heroesCheck = function(i, ai) {
+			if ($scope.heroes[i].level == null) {
+				$scope.heroes[i].level = 0;
+			}
+			if ($scope.heroes[i].weapons == null) {
+				$scope.heroes[i].weapons = 0;
+			}
+			$scope.stateChanged();
+		};
+
+		$scope.customizationCheck = function(i, ai) {
+			// $scope.generateStateString();
 		};
 
 		// // testing stuff
@@ -454,7 +425,6 @@ yattoApp.controller('CalculatorController',
 		// // console.log(g.next_ff_level());
 		// // g.get_all_skills();
 		// console.log(g.gold_multiplier());
-
 
 		$scope.calculate = function() {
 			if ($scope.relics == 0 && $scope.nsteps == 0) {
@@ -497,7 +467,7 @@ yattoApp.controller('CalculatorController',
 						$scope.summary_steps[m] = response[m]["summary"];
 					}
 
-					storeToCookies();
+					$scope.updateCookies();
 					if ($scope.spinneractive) {
 						usSpinnerService.stop('spinner');
 					}
@@ -509,14 +479,8 @@ yattoApp.controller('CalculatorController',
 			$scope.stepmessage = "Click calculate to get steps!";
 			$scope.steps = [];
 			$scope.summary_steps = [];
-			localStorageService.remove('steps');
-			localStorageService.remove('summary');
+			udpateCookies();
 		};
-
-		// $scope.weaponProbability = function() {
-		// 	var weapons = transformScopeArray($scope.weapons);
-		// 	$scope.wprobability = calculate_weapons_probability(weapons);
-		// };
 
 		$scope.step = function(summary, method, stepindex) {
 			var step = summary ? $scope.summary_steps[method][stepindex] : $scope.steps[method][stepindex];
@@ -591,8 +555,14 @@ yattoApp.controller('CalculatorController',
 
 			// TODO: impact on other methods (grey out?)
 
-			storeToCookies();
+			$scope.updateCookies();
 		};
 
+		// initialize
+		setDefaults();
+		$scope.readFromCookies();
+		$scope.generateStateString();
+		$scope.updateRelicInfo();
+		$scope.updateWeaponInfo();
 	}
 );
