@@ -889,9 +889,11 @@ var get_value = function(game_state, method) {
 		case METHOD_ALL_DAMAGE:
 			return game_state.a_ad;
 		case METHOD_TAP_DAMAGE:
+			//return game_state.damage_multiplier();
 			return game_state.tap_damage()[1];
 		case METHOD_DMG_EQUIVALENT:
-			return [game_state.gold_multiplier(), game_state.damage_multiplier()];
+			//return [game_state.gold_multiplier(), game_state.damage_multiplier()];
+			return [game_state.gold_multiplier(), game_state.tap_damage()[1]];
 		case METHOD_RELICS_PS:
 			return game_state.relics_per_second()[2];
 		case METHOD_STAGE_PS:
@@ -943,6 +945,7 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 		var base = get_value(g, method);
 		var efficiency = newZeroes(artifact_info.length);
 		var costs = newZeroes(artifact_info.length);
+		var change = newZeroes(artifact_info.length);
 		var ff_level = current_artifacts[10];
 		// if (method == METHOD_GOLD) {
 		// 	console.log("------------------------------------");
@@ -994,12 +997,24 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				var gold_ratio = new_value[0] / base[0];
 				var tdmg_ratio = new_value[1] / base[1];
 				var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_ratio) / Math.log(1.075));
-				var total_change = tdmg_ratio * gold_dmg_equivalent;
+				//var total_change = tdmg_ratio * gold_dmg_equivalent;
+				var total_change = tdmg_ratio;// * gold_dmg_equivalent;
+
+				if (i == 8) {
+					// console.log("-------------");
+					// console.log(gold_ratio);
+					// console.log(gold_dmg_equivalent);
+					// console.log(tdmg_ratio);
+					// console.log(total_change);
+				}
+
+
 				// console.log(gold_ratio);
 				// console.log(tdmg_ratio);
 				// console.log(gold_dmg_equivalent);
 				// console.log(total_change);
 				e = total_change / relic_cost;
+				change[i] = total_change;
 			} else {
 				// if (method == METHOD_GOLD && (new_value - base != 0)) {
 				// 	console.log(artifact_info[i].name + " " + artifacts_copy[i] + " " + relic_cost);
@@ -1017,10 +1032,6 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 		// 	console.log(efficiency);
 		// }
 
-		// if (method == METHOD_DMG_EQUIVALENT) {
-		// 	console.log(efficiency);
-		// }
-
 		var best_index;
 		if (method != METHOD_STAGE_PS) {
 			best_index = index_max(efficiency);
@@ -1034,6 +1045,14 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				return st1[1] > st2[1];
 			});
 		}
+
+		if (best_index == 8 && method == METHOD_DMG_EQUIVALENT) {
+			console.log(efficiency);
+			console.log(costs);
+			console.log(change);
+
+		}
+
 		if (costs[best_index] > relics_left && nsteps == 0) {
 			break;
 		}
