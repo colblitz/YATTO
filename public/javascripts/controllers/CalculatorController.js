@@ -113,7 +113,7 @@ yattoApp.controller('CalculatorController',
 			$scope.heroes.push({
 				name: hero_names[h],
 				index: h,
-				weapons: 1,
+				weapons: 0,
 				level: 800
 			});
 		}
