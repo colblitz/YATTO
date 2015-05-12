@@ -744,7 +744,7 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 				}
 
 				var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
-				console.log(gold_needed / mob_gold);
+				// console.log(gold_needed / mob_gold);
 				if (gold_needed < 10000 * mob_gold) {
 					this.current_gold += mob_gold;
 					this.time += mobs_time;
@@ -763,9 +763,9 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 				rps[this.current_stage] = [this.total_relics() / this.time, boss_time];
 			}
 		}
-		for (var s in rps) {
-			console.log("Stage " + s + ": " + rps[s]);
-		}
+		// for (var s in rps) {
+		// 	console.log("Stage " + s + ": " + rps[s]);
+		// }
 	}
 
 	// TODO: make list of log so people can see what's going on
@@ -944,6 +944,9 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 		var efficiency = newZeroes(artifact_info.length);
 		var costs = newZeroes(artifact_info.length);
 		var ff_level = current_artifacts[10];
+		// if (method == METHOD_GOLD) {
+		// 	console.log("------------------------------------");
+		// }
 		for (var i in current_artifacts) {
 			var level = current_artifacts[i];
 			var relic_cost = artifact_info[i].costToLevel(level);
@@ -970,8 +973,10 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				while (level_to > level) {
 					level_to -= 1;
 					relic_cost += artifact_info[i].costToLevel(level_to);
+					// console.log("cost at level " + level_to + " is " + artifact_info[i].costToLevel(level_to));
 				}
 				costs[i] = relic_cost;
+				// console.log("ff level is " + ff_level + " and cost is " + relic_cost);
 			}
 
 			var new_g = new GameState(artifacts_copy, weapons, levels, customizations);
@@ -996,11 +1001,21 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				// console.log(total_change);
 				e = total_change / relic_cost;
 			} else {
+				// if (method == METHOD_GOLD && (new_value - base != 0)) {
+				// 	console.log(artifact_info[i].name + " " + artifacts_copy[i] + " " + relic_cost);
+				// 	console.log("new value: " + new_value);
+				// 	console.log("base: " + base);
+				// 	console.log("e: " + (new_value - base) / relic_cost);
+				// }
 				e = (new_value - base) / relic_cost;
 			}
 
 			efficiency[i] = e;
 		}
+
+		// if (method == METHOD_GOLD) {
+		// 	console.log(efficiency);
+		// }
 
 		// if (method == METHOD_DMG_EQUIVALENT) {
 		// 	console.log(efficiency);

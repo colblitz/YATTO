@@ -302,6 +302,8 @@ yattoApp.controller('CalculatorController',
 			var cookie_h = localStorageService.get('heroes');
 			var cookie_c = localStorageService.get('customizations');
 			var cookie_m = localStorageService.get('methods');
+			var cookie_r = localStorageService.get('relics');
+			var cookie_n = localStorageService.get('nsteps');
 			var cookie_s = localStorageService.get('steps');
 			var cookie_ss = localStorageService.get('summary');
 			if (typeof cookie_a !== "undefined" && cookie_a != null) {
@@ -319,6 +321,12 @@ yattoApp.controller('CalculatorController',
 			if (typeof cookie_m !== "undefined" && cookie_m != null) {
 				$scope.methods = cookie_m;
 			}
+			if (typeof cookie_r !== "undefined" && cookie_r != null) {
+				$scope.relics = cookie_r;
+			}
+			if (typeof cookie_n !== "undefined" && cookie_n != null) {
+				$scope.nsteps = cookie_n;
+			}
 			if (typeof cookie_s !== "undefined" && cookie_s != null) {
 				$scope.steps = cookie_s;
 			}
@@ -335,6 +343,8 @@ yattoApp.controller('CalculatorController',
 			localStorageService.set('heroes', $scope.heroes);
 			localStorageService.set('customizations', $scope.customizations);
 			localStorageService.set('methods', $scope.methods);
+			localStorageService.set('relics', $scope.relics);
+			localStorageService.set('nsteps', $scope.nsteps);
 			localStorageService.set('steps', $scope.steps);
 			localStorageService.set('summary', $scope.summary_steps);
 		};
@@ -353,6 +363,7 @@ yattoApp.controller('CalculatorController',
 				$scope.relics,
 				$scope.nsteps,
 				$scope.greedy].join("|");
+			storeToCookies();
 		};
 
 		$scope.artifactCheck = function(i, ai) {
@@ -434,11 +445,11 @@ yattoApp.controller('CalculatorController',
 		};
 
 		// // testing stuff
-		var g = new GameState(transformScopeArray($scope.artifacts),
-			getWeapons(), getLevels(), transformScopeArray($scope.customizations));
-		// console.log(g.next_ff_level());
-		// g.get_all_skills();
-		console.log(g.gold_multiplier());
+		// var g = new GameState(transformScopeArray($scope.artifacts),
+		// 	getWeapons(), getLevels(), transformScopeArray($scope.customizations));
+		// // console.log(g.next_ff_level());
+		// // g.get_all_skills();
+		// console.log(g.gold_multiplier());
 
 
 		$scope.calculate = function() {

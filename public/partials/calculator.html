@@ -58,6 +58,7 @@
 									<label>Relics at next breakpoint:</label>
 									<input type="number" class="form-control number-input right-input" ng-model="relicsatnext" readonly/>
 								</div>
+								{{relicsua}}
 							</div>
 						</div>
 
@@ -65,7 +66,7 @@
 							<h3>Other Stuff:</h3>
 							<button class="btn btn-danger" id="clear-cookies-button" ng-click="clearAllCookies()">Clear all cookies</button>
 							<!-- <button class="btn btn-info" id="weapon-probability-button" ng-click="weaponProbability(weapons)">Get weapon probability</button> -->
-							<div>
+							<div id="weapons-info">
 								<div class="small-form-item">
 									<label id="chi">\(\chi^2\)</label>&nbsp;<label>Probability:</label>
 									<input type="number" class="form-control number-input right-input" ng-model="wprobability" readonly/>
