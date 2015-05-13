@@ -371,9 +371,9 @@ yattoApp.controller('CalculatorController',
 
 		var getGameState = function() {
 			return new GameState(
-				transformScopeArray($scope.artifacts), 
-				getWeapons(), 
-				getLevels(), 
+				transformScopeArray($scope.artifacts),
+				getWeapons(),
+				getLevels(),
 				transformScopeArray($scope.customizations));
 		};
 
@@ -466,7 +466,7 @@ yattoApp.controller('CalculatorController',
 			$scope.stepmessage = "Click calculate to get steps!";
 			$scope.steps = [];
 			$scope.summary_steps = [];
-			udpateCookies();
+			$scope.updateCookies();
 		};
 
 		$scope.step = function(summary, method, stepindex) {

@@ -922,14 +922,14 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 			var e;
 			if (method == METHOD_STAGE_PS) {
 				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
-			} else if (method == METHOD_DMG_EQUIVALENT) {				
+			} else if (method == METHOD_DMG_EQUIVALENT) {
 				// https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/
 				var gold_ratio = new_value[0] / base[0];
 				var tdmg_ratio = new_value[1] / base[1];
 				var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_ratio) / Math.log(1.075));
 				var total_change = tdmg_ratio * gold_dmg_equivalent;
 
-				e = total_change / relic_cost;
+				e = (total_change - 1) / relic_cost;
 			} else {
 				e = (new_value - base) / relic_cost;
 			}
