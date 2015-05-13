@@ -99,6 +99,11 @@ var Hero = function(name, id, base_cost, skills) {
 		if (level < precompute_upgrade_cost) {
 			return this.upgrade_costs[level];
 		}
+		// console.log("lol");
+		// console.log((level < 1000 ? this.base_cost : this.base_cost10));
+		// console.log(Math.pow(1.075, level));
+		// console.log((level < 1000 ? this.base_cost : this.base_cost10) * Math.pow(1.075, level))
+		// console.log("####");
 		return (level < 1000 ? this.base_cost : this.base_cost10) * Math.pow(1.075, level);
 	};
 
@@ -155,11 +160,22 @@ var Hero = function(name, id, base_cost, skills) {
 	this.get_base_damage = function(level) {
 		// source: https://github.com/oLaudix/oLaudix.github.io/blob/master/TTcalc.html
 		if (level >= 1001) {
-			var n1 = Math.pow(0.904, level - 1001) * Math.pow(0.715, this.id + 30);
-			return ((this.get_upgrade_cost(level - 1) * (Math.pow(1.075, level - 1000) - 1) / 1.075) - 1) * n1 * 0.1;
+			var n1 = Math.pow(0.904, level - 1001) * Math.pow(0.715, this.id + 30) * 0.1;
+			// console.log("getting base damage");
+			// console.log("n1: "+  n1);
+			// console.log("upgrade: " + this.get_upgrade_cost(level - 1));
+			// console.log((Math.pow(1.075, level - 1000) - 1));
+			// console.log((this.get_upgrade_cost(level - 1) * (Math.pow(1.075, level - 1000) - 1) / 1.075));
+			var x = this.get_upgrade_cost(level - 1);
+			var y = Math.pow(1.075, level - 1000);
+			return (x * n1 * (y - 1) / 1.075) - n1;
+			// return ((this.get_upgrade_cost(level - 1) * (Math.pow(1.075, level - 1000) - 1) / 1.075) - 1) * n1 * 0.1;
+
 		} else {
 			var n1 = Math.pow(0.904, level - 1) * Math.pow(1 - (0.019 * Math.min(this.id, 15)), this.id);
-			return this.get_upgrade_cost(level - 1) * (Math.pow(1.075, level) - 1) / 0.0075 * n1;
+			var x = this.get_upgrade_cost(level - 1);
+			var y = (Math.pow(1.075, level) - 1);
+			return x * n1 * y / 0.0075;
 		}
 	};
 }
@@ -273,15 +289,15 @@ for (var h in hero_info) {
 		}
 	}
 }
-console.log("total gold dropped: " + TOTAL_STYPE_GOLD_DROPPED);
+// console.log("total gold dropped: " + TOTAL_STYPE_GOLD_DROPPED);
 // Hero	Old cost/DPS	New cost/DPS
 // Pixie the Rebel Fairy	3.76E+101 / 4.57E+115	3.76E+116 / 1.14E+111
 // Jackalope the Fireballer	5.94E+95 / 4.56E+141	4.14E+136 / 9.01E+130
 // Dark Lord, Punisher of All	4.14E+121 / 3.52E+135	4.56E+156 / 7.1E+150
 
-console.log("Pixie: " + hero_info[30].get_base_damage(1));
-console.log("Jack: " + hero_info[31].get_base_damage(1));
-console.log("DL: " + hero_info[32].get_base_damage(1));
+// console.log("Pixie: " + hero_info[30].get_base_damage(1));
+// console.log("Jack: " + hero_info[31].get_base_damage(1));
+// console.log("DL: " + hero_info[32].get_base_damage(1));
 
 // calculate.js:275 Pixie: 1.1446563997839293e+113
 // calculate.js:276 Jack: 9.011429279256408e+132
@@ -582,7 +598,18 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 			var m_customization = 1 + this.c_ad;
 			var m_set = this.w_sb;
 
+			// console.log("---------");
+			// console.log(hero_dps);
+			// console.log(m_hero);
+			// console.log(m_artifact);
+			// console.log(m_weapon);
+			// console.log(m_customization);
+			// console.log(m_set);
+
+
 			hero_dps = hero_dps * m_hero * m_artifact * m_weapon * m_customization * m_set;
+			// console.log(hero_dps);
+			// console.log("---------");
 			dps += hero_dps;
 		}
 		return dps;
@@ -596,6 +623,7 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 		var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
 
 		var hero_total_dps = this.get_hero_dps();
+		// console.log("hero: " + hero_total_dps);
 
 		// from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + h_ad)
 		var from_main = this.main_dmg * (1 + h_ad);
@@ -889,6 +917,7 @@ var get_value = function(game_state, method) {
 		case METHOD_ALL_DAMAGE:
 			return game_state.a_ad;
 		case METHOD_TAP_DAMAGE:
+			// console.log(game_state.tap_damage());
 			//return game_state.damage_multiplier();
 			return game_state.tap_damage()[1];
 		case METHOD_DMG_EQUIVALENT:
@@ -950,10 +979,13 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 		// if (method == METHOD_GOLD) {
 		// 	console.log("------------------------------------");
 		// }
+		// console.log(current_artifacts);
 		for (var i in current_artifacts) {
 			var level = current_artifacts[i];
 			var relic_cost = artifact_info[i].costToLevel(level);
 			costs[i] = relic_cost;
+
+			// console.log(relic_cost);
 
 			// TODO: check if isFinite works, temp solution
 			if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) || relic_cost > 18972389172635 ) {
@@ -988,6 +1020,8 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				new_g.get_all_skills();
 			}
 			var new_value = get_value(new_g, method);
+
+			// console.log("new value: " + new_value);
 			var e;
 			if (method == METHOD_STAGE_PS) {
 				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
@@ -1022,6 +1056,9 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				// 	console.log("base: " + base);
 				// 	console.log("e: " + (new_value - base) / relic_cost);
 				// }
+				if (method == METHOD_TAP_DAMAGE) {
+					// console.log(new_value);
+				}
 				e = (new_value - base) / relic_cost;
 			}
 
@@ -1046,12 +1083,12 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 			});
 		}
 
-		if (best_index == 8 && method == METHOD_DMG_EQUIVALENT) {
-			console.log(efficiency);
-			console.log(costs);
-			console.log(change);
+		// if (best_index == 8 && method == METHOD_DMG_EQUIVALENT) {
+		// 	console.log(efficiency);
+		// 	console.log(costs);
+		// 	console.log(change);
 
-		}
+		// }
 
 		if (costs[best_index] > relics_left && nsteps == 0) {
 			break;

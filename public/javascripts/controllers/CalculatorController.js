@@ -402,6 +402,9 @@ yattoApp.controller('CalculatorController',
 			if ($scope.artifacts[i].value == null) {
 				$scope.artifacts[i].value = 0;
 			}
+			if (ai == 25) {
+				$scope.r_undead = $scope.artifacts[i].value;
+			}
 			$scope.stateChanged();
 		};
 
@@ -412,6 +415,7 @@ yattoApp.controller('CalculatorController',
 			if ($scope.heroes[i].weapons == null) {
 				$scope.heroes[i].weapons = 0;
 			}
+			$scope.r_levels = getLevels().reduce(function(a, b) { return a + b; });
 			$scope.stateChanged();
 		};
 
