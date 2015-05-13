@@ -277,6 +277,18 @@ for (var h in hero_info) {
 		}
 	}
 }
+
+var next_ff_level = function(ff) {
+	var new_level = ff;
+	var multiplier = function(l) {
+		return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED);
+	}
+	while (multiplier(new_level) == multiplier(ff)) {
+		new_level += 1;
+	}
+	return new_level;
+};
+
 // console.log("total gold dropped: " + TOTAL_STYPE_GOLD_DROPPED);
 // Hero	Old cost/DPS	New cost/DPS
 // Pixie the Rebel Fairy	3.76E+101 / 4.57E+115	3.76E+116 / 1.14E+111
@@ -473,17 +485,6 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 		return this.skill_bonuses[stype];
 	};
 
-	this.next_ff_level = function() {
-		var new_level = this.l_fortune;
-		var multiplier = function(l) {
-			return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED);
-		}
-		while (multiplier(new_level) == multiplier(this.l_fortune)) {
-			new_level += 1;
-		}
-		return new_level;
-	}
-
 	this.gold_multiplier = function() {
 		var mobs = 10 - this.l_world;
 
@@ -584,19 +585,6 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 		return [total_tap, total_tapping]
 	};
 
-	this.damage_multiplier = function() {
-		var h_td = this.get_total_bonus(STYPE_TAP_DAMAGE);
-
-		var total_tap = (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer) * (1 + this.c_ad);
-
-		var crit_multiplier = this.get_crit_multiplier();
-		var crit_chance = this.get_crit_chance();
-
-		var overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier));
-		var total_tapping = total_tap * overall_crit_multiplier;
-		return total_tapping;
-	}
-
 	this.level_heroes = function() {
 		// buy all the heroes that you can buy
 		var heroes_after = this.heroes.slice();
@@ -666,6 +654,7 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 		this.heroes = heroes_after;
 	};
 
+	// TODO: Use this to figure out when to prestige
 	this.calculate_rps_per_stage = function() {
 		var TAPS_PER_SECOND = 10;
 		this.new_run();
@@ -868,34 +857,36 @@ var get_value = function(game_state, method) {
 	}
 };
 
-var get_dp_value = function(game_state, method) {
-	switch (method) {
-		case METHOD_GOLD:
-			return game_state.gold_multiplier();
-		case METHOD_ALL_DAMAGE:
-			return game_state.a_ad;
-		case METHOD_TAP_DAMAGE:
-			return game_state.damage_multiplier();
-		case METHOD_DMG_EQUIVALENT:
-			return null;
-		case METHOD_RELICS_PS:
-			return game_state.relics_per_second()[2];
-		case METHOD_STAGE_PS:
-			return game_state.relics_per_second()[0];
+var hashArray = function(array) {
+	// TODO: find better hash?
+	return array.toString();
+};
+
+var memoize = {};
+var get_value_memoize = function(a, w, l, c, m) {
+	var aHash = m + hashArray(a);
+	if (aHash in memoize) {
+		return memoize[aHash];
+	} else {
+		var g = new GameState(a, w, l, c);
+		// if rps or sps, will reset anyways
+		g.get_all_skills();
+		var base = get_value(g, m);
+		memoize[aHash] = base;
+		return base;
 	}
 };
 
-var index_max = function(array, custom) {
+var get_max = function(array, custom) {
 	var max = array[0];
 	var maxIndex = 0;
 	for (var i = 1; i < array.length; i++) {
-		if ((typeof custom !== "undefined" && custom(array[i], max)) ||
-			(typeof custom === "undefined" && array[i] > max)) {
+		if (custom(array[i], max)) {
 			maxIndex = i;
 			max = array[i];
 		}
 	}
-	return maxIndex;
+	return max;
 };
 
 var get_best = function(artifacts, weapons, levels, customizations, relics, nsteps, method) {
@@ -904,58 +895,34 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 	var steps = [];
 	var cumulative = 0;
 	while (relics_left > 0 || steps.length < nsteps) {
-		var g = new GameState(current_artifacts, weapons, levels, customizations);
-		if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
-			// TODO: make this user variable
-			g.get_all_skills();
-		}
-		var base = get_value(g, method);
-		var efficiency = newZeroes(artifact_info.length);
-		var costs = newZeroes(artifact_info.length);
-		var change = newZeroes(artifact_info.length);
-		var ff_level = current_artifacts[10];
+		var options = [];
+		var base = get_value_memoize(current_artifacts, weapons, levels, customizations, method);
 
 		for (var i in current_artifacts) {
 			var level = current_artifacts[i];
-			var relic_cost = artifact_info[i].costToLevel(level);
-			costs[i] = relic_cost;
-
-			// TODO: check if isFinite works, temp solution
-			if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) || relic_cost > 18972389172635 ) {
-				if (method == METHOD_STAGE_PS) {
-					efficiency[i] = [-Infinity, -Infinity];
-				} else {
-					efficiency[i] = -Infinity;
-				}
+			if (level == 0 || level == artifact_info[i].levelcap) {
 				continue;
 			}
+			var relic_cost = artifact_info[i].costToLevel(level);
 			var artifacts_copy = current_artifacts.slice();
 			artifacts_copy[i] += 1;
 
-			// Future's Fortune :[
+			// Future's Fortune for gold
 			if (method == METHOD_GOLD && i == 10) {
 				relic_cost = 0;
-				var level_to = g.next_ff_level();
+				var level_to = next_ff_level(current_artifacts[i]);
 				artifacts_copy[i] = level_to;
-				ff_level = level_to;
 				while (level_to > level) {
 					level_to -= 1;
 					relic_cost += artifact_info[i].costToLevel(level_to);
 				}
-				costs[i] = relic_cost;
 			}
 
-			var new_g = new GameState(artifacts_copy, weapons, levels, customizations);
-			if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
-				// TODO: make this user variable
-				new_g.get_all_skills();
-			}
-			var new_value = get_value(new_g, method);
-
+			var new_value = get_value_memoize(artifacts_copy, weapons, levels, customizations, method);
 			var e;
 			if (method == METHOD_STAGE_PS) {
 				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
-			} else if (method == METHOD_DMG_EQUIVALENT) {
+			} else if (method == METHOD_DMG_EQUIVALENT) {				
 				// https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/
 				var gold_ratio = new_value[0] / base[0];
 				var tdmg_ratio = new_value[1] / base[1];
@@ -963,314 +930,49 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				var total_change = tdmg_ratio * gold_dmg_equivalent;
 
 				e = total_change / relic_cost;
-				change[i] = total_change;
 			} else {
 				e = (new_value - base) / relic_cost;
 			}
 
-			efficiency[i] = e;
-		}
-
-		var best_index;
-		if (method != METHOD_STAGE_PS) {
-			best_index = index_max(efficiency);
-		} else {
-			best_index = index_max(efficiency, function(st1, st2) {
-				if (st1[0] > st2[0]) {
-					return true;
-				} else if (st1[0] < st2[0]) {
-					return false;
-				}
-				return st1[1] > st2[1];
+			options.push({
+				efficiency: e,
+				index: i,
+				name: artifact_info[i].name,
+				level: artifacts_copy[i],
+				cost: relic_cost,
+				cumulative: cumulative + relic_cost
 			});
 		}
 
-		if (costs[best_index] > relics_left && nsteps == 0) {
-			break;
-		}
-		relics_left -= costs[best_index];
-		if (method == METHOD_GOLD && best_index == 10) {
-			current_artifacts[best_index] = ff_level;
-		} else {
-			current_artifacts[best_index] += 1;
-		}
-		cumulative += costs[best_index];
-		var step = {};
-		step["index"] = best_index;
-		step["name"] = artifact_info[best_index].name;
-		step["level"] = current_artifacts[best_index];
-		step["cost"] = costs[best_index];
-		step["cumulative"] = cumulative;
-		steps.push(step);
-	}
-	return steps;
-};
-
-var get_best2 = function(artifacts, weapons, levels, customizations, relics, nsteps, method) {
-	var relics_left = relics;
-	var current_artifacts = artifacts.slice();
-	var steps = [];
-	var cumulative = 0;
-	var options = {};
-	while (relics_left > 0 || steps.length < nsteps) {
-		var g = new GameState(current_artifacts, weapons, levels, customizations);
-		if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
-			// Get all the skills that the user set levels can get
-			g.get_all_skills();
-		}
-		var base = get_value(g, method);
-		var efficiency = newZeroes(artifact_info.length);
-		var costs = newZeroes(artifact_info.length);
-		var change = newZeroes(artifact_info.length);
-		var ff_level = current_artifacts[10];
-
-		for (var i in current_artifacts) {
-			var level = current_artifacts[i];
-			var relic_cost = artifact_info[i].costToLevel(level);
-			costs[i] = relic_cost;
-
-			// TODO: check if isFinite works, temp solution
-			if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) || relic_cost > 18972389172635 ) {
-				if (method == METHOD_STAGE_PS) {
-					efficiency[i] = [-Infinity, -Infinity];
-				} else {
-					efficiency[i] = -Infinity;
-				}
-				continue;
-			}
-			var artifacts_copy = current_artifacts.slice();
-			artifacts_copy[i] += 1;
-
-			// Future's Fortune :[
-			if (method == METHOD_GOLD && i == 10) {
-				relic_cost = 0;
-				var level_to = g.next_ff_level();
-				artifacts_copy[i] = level_to;
-				ff_level = level_to;
-				while (level_to > level) {
-					level_to -= 1;
-					relic_cost += artifact_info[i].costToLevel(level_to);
-				}
-				costs[i] = relic_cost;
-			}
-
-			var new_g = new GameState(artifacts_copy, weapons, levels, customizations);
-			if ([METHOD_RELICS_PS, METHOD_STAGE_PS].indexOf(method) == -1) {
-				// TODO: make this user variable
-				new_g.get_all_skills();
-			}
-			var new_value = get_value(new_g, method);
-
-			var e;
-			if (method == METHOD_STAGE_PS) {
-				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
-			} else if (method == METHOD_DMG_EQUIVALENT) {
-				// https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/
-				var gold_ratio = new_value[0] / base[0];
-				var tdmg_ratio = new_value[1] / base[1];
-				var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_ratio) / Math.log(1.075));
-				var total_change = tdmg_ratio;// * gold_dmg_equivalent;
-
-				e = total_change / relic_cost;
-				change[i] = total_change;
+		// pick best option
+		var best_option = get_max(options, function(o1, o2) {
+			if (method != METHOD_STAGE_PS) {
+				return o1.efficiency > o2.efficiency;
 			} else {
-				e = (new_value - base) / relic_cost;
-			}
-
-			efficiency[i] = e;
-		}
-
-		var best_index;
-		if (method != METHOD_STAGE_PS) {
-			best_index = index_max(efficiency);
-		} else {
-			best_index = index_max(efficiency, function(st1, st2) {
-				if (st1[0] > st2[0]) {
+				if (o1.efficiency[0] > o2.efficiency[0]) {
 					return true;
-				} else if (st1[0] < st2[0]) {
+				} else if (o1.efficiency[0] < o2.efficiency[0]) {
 					return false;
 				}
-				return st1[1] > st2[1];
-			});
-		}
+				return o1.efficiency[1] > o2.efficiency[1];
+			}
+		});
 
-		if (costs[best_index] > relics_left && nsteps == 0) {
+		if (best_option.cost > relics_left && nsteps == 0) {
 			break;
 		}
-		relics_left -= costs[best_index];
-		if (method == METHOD_GOLD && best_index == 10) {
-			current_artifacts[best_index] = ff_level;
-		} else {
-			current_artifacts[best_index] += 1;
-		}
-		cumulative += costs[best_index];
-		var step = {};
-		step["index"] = best_index;
-		step["name"] = artifact_info[best_index].name;
-		step["level"] = current_artifacts[best_index];
-		step["cost"] = costs[best_index];
-		step["cumulative"] = cumulative;
-		steps.push(step);
+		relics_left -= best_option.cost;
+		cumulative += best_option.cost;
+		current_artifacts[best_option.index] = best_option.level;
+		delete best_option.efficiency;
+		steps.push(best_option);
 	}
 	return steps;
-};
-
-var hashArray = function(array) {
-	// TODO: find better hash?
-	return array.toString();
-}
-
-// return [best_value, steps]
-var get_best_dp = function(artifacts, weapons, customizations, relics, nsteps, method, steps) {
-	console.log("starting get best dp with " + relics.toString() + " left and " + nsteps.toString());
-	console.log(artifacts);
-	console.log(steps);
-	var current_artifacts = artifacts.slice();
-	var base = get_value_memoize(current_artifacts, weapons, customizations, method);
-	console.log("base: " + base.toString());
-	if (relics <= 0 && nsteps <= 0) {
-		return [base, steps];
-	}
-
-	var options = [];
-
-	// Level an artifact
-	for (var i in current_artifacts) {
-		var level = current_artifacts[i];
-		var relic_cost = artifact_info[i].costToLevel(level);
-		if (level == 0 || level == artifact_info[i].levelcap || !isFinite(relic_cost) ) {
-			continue;
-		}
-		if (relic_cost > relics) {
-			continue;
-		}
-		var artifacts_copy = current_artifacts.slice();
-		artifacts_copy[i] += 1;
-
-		var step = {
-			"index": i,
-			"name": artifact_info[i].name,
-			"level": level + 1,
-			"cost": relic_cost};
-
-		var new_steps = steps.slice();
-		new_steps.push(step);
-		var state = get_best_dp(artifacts_copy, weapons, customizations, relics - relic_cost, nsteps - 1, method, new_steps);
-		var new_value = state[0];
-		options.push([new_value, step]);
-	}
-
-
-	var cost_to_buy = cost_to_buy_next(current_artifacts);
-	if (relics >= cost_to_buy) {
-		var buy_value = 0;
-		var b = 0;
-		for (var i in current_artifacts) {
-			if (current_artifacts[i] == 0) {
-				var artifacts_copy = current_artifacts.slice();
-				artifacts_copy[i] += 1;
-
-				var step = {
-					"index": i,
-					"name": artifact_info[i].name,
-					"level": 1,
-					"cost": cost_to_buy};
-
-				var new_steps = steps.slice();
-				new_steps.push(step);
-				var state = get_best_dp(artifacts_copy, weapons, customizations, relics - relic_cost, nsteps - 1, method, new_steps);
-				var new_value = state[0];
-				buy_value += new_value;
-				b += 1;
-			}
-		}
-
-		var step = {
-			"index": 30,
-			"name": "Buy new artifact",
-			"level": 1,
-			"cost": cost_to_buy};
-
-		buy_value = buy_value / b; // average
-		options.push([buy_value, step]);
-	}
-
-	if (options.length == 0) {
-		return [base, steps];
-	}
-	for (var o in options) {
-		console.log(options[o][0] + ", " + options[o][1].toString());
-	}
-
-	var best_index = index_max(options, function(o1, o2) {
-		return o1[0] > o2[0];
-	});
-
-	var best_option = options[best_index];
-	var new_steps = steps.slice();
-	new_steps.push(best_option[1]);
-	return [best_option[0], new_steps];
-};
-
-var get_hero_levels = function(heroes, gold) {
-	var gold_left = gold;
-	var cost100 = gold / 1000;
-	var heroes_new = heroes.slice();
-	for (var i in heroes_new) {
-		var level = heroes_new[i];
-		var cost = hero_info[i].cost_to_level(level, level + 100);
-		while (cost < cost100) {
-			level += 100;
-			gold_left -= cost;
-			cost = hero_info[i].cost_to_level(level, level + 100);
-		}
-		heroes_new[i] = level;
-	}
-
-	var cost10 = gold_left / 1000;
-	for (var i in heroes_new) {
-		var level = heroes_new[i];
-		var cost = hero_info[i].cost_to_level(level, level + 10);
-		while (cost < cost10) {
-			level += 10;
-			gold_left -= cost;
-			cost = hero_info[i].cost_to_level(level, level + 10);
-		}
-		heroes_new[i] = level;
-	}
-
-	var last1000 = Math.floor(sumArray(heroes_new)/1000);
-	var last_heroes = heroes_new.slice();
-	var costs = new Heap(function(a, b) {
-		return a[0] - b[0];
-	});
-	for (var i in heroes_new) {
-		var level = heroes_new[i];
-		var cost = hero_info[i].get_upgrade_cost(level);
-		costs.push([cost, i]);
-	}
-
-	while (gold_left > 0) {
-		var temp = costs.pop();
-		var cost = temp[0];
-		var index = temp[1];
-		if (gold_left > cost) {
-			gold_left -= cost;
-			heroes_new[index] += 1;
-			if (Math.floor(sumArray(heroes_new)/1000) > last1000) {
-				last1000 = Math.floor(sumArray(heroes_new)/1000);
-				last_heroes = heroes_new.slice();
-			}
-			cost = hero_info[index].get_upgrade_cost(heroes_new[index]);
-			costs.push([cost, index]);
-		} else {
-			break;
-		}
-	}
-	return last_heroes;
 };
 
 var get_steps = function(artifacts, weapons, levels, customizations, methods, relics, nsteps, greedy) {
+	// reset cache
+	memoize = {};
 	var response = {};
 	for (var mi in methods) {
 		var m = methods[mi];
@@ -1278,8 +980,8 @@ var get_steps = function(artifacts, weapons, levels, customizations, methods, re
 		if (greedy == 1) {
 			steps = get_best(artifacts, weapons, levels, customizations, relics, nsteps, m);
 		} else {
-			memoize = {};
-			steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];
+			// TODO: shouldn't get here yet
+			// steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];
 		}
 		var summary = {};
 		var costs = {};
@@ -1305,21 +1007,6 @@ var get_steps = function(artifacts, weapons, levels, customizations, methods, re
 	}
 	return response;
 };
-
-
-var memoize = {};
-var get_value_memoize = function(a, w, c, m) {
-	var aHash = hashArray(a);
-	if (aHash in memoize) {
-		return memoize[aHash];
-	} else {
-		var g = new GameState(a, w, c);
-		g.get_all_skills();
-		var base = get_value(g, m);
-		memoize[aHash] = base;
-		return base;
-	}
-}
 
 var calculate_weapons_probability = function(weapons) {
 	// TODO: how does javascript not have a good statistics package
