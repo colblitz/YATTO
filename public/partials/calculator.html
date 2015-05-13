@@ -27,6 +27,17 @@
 
 							<button class="btn btn-primary" id="calculate-button" ng-click="calculate()">Calculate</button>
 							<span us-spinner="{radius:4, width:3, length: 5}" spinner-key="spinner"></span>
+
+							<div id="random-info-box">
+								<div class="small-form-item">
+									<label>All damage:</label>
+									<input type="number" class="form-control number-input right-input random-input" ng-model="all_damage" readonly/>
+								</div>
+								<div class="small-form-item">
+									<label>Tap damage:</label>
+									<input type="number" class="form-control number-input right-input random-input" ng-model="tap_damage" readonly/>
+								</div>
+							</div>
 						</div>
 
 						<div id="options-subbox-2" class="options-block col-md-4">

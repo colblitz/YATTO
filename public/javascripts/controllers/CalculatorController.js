@@ -152,6 +152,9 @@ yattoApp.controller('CalculatorController',
 			$scope.r_reward = 0;
 			$scope.r_atnext = 0;
 
+			$scope.all_damage = 0;
+			$scope.tap_damage = 0;
+
 			$scope.autocookies = 'On';
 			$scope.generateStateString();
 		};
@@ -234,42 +237,6 @@ yattoApp.controller('CalculatorController',
 
 		$scope.updateRelicInfo = function() {
 			var uaMultiplier = 1 + 0.05 * $scope.r_undead;
-
-			// ua 255, levels 33432 --> 461
-			// ua 255, levels 33605 --> 463
-
-			// var h1 = Math.ceil($scope.r_levels / 1000);
-			// var h2 = ($scope.r_levels + 600)/ 1000;
-			// var h3 = Math.floor(h1);
-			// var h4 = Math.floor(h2);
-			// var h5 = Math.round(h1);
-			// var h6 = Math.round(h2);
-			// var h7 = Math.ceil(h1);
-			// var h8 = Math.ceil(h2);
-
-			// var hr1 = h1 * uaMultiplier;
-			// var hr2 = h2 * uaMultiplier;
-			// var hr3 = h3 * uaMultiplier;
-			// var hr4 = h4 * uaMultiplier;
-			// var hr5 = h5 * uaMultiplier;
-			// var hr6 = h6 * uaMultiplier;
-			// var hr7 = h7 * uaMultiplier;
-			// var hr8 = h8 * uaMultiplier;
-			// var hr9 = $scope.r_levels * uaMultiplier;
-			// var hr10 = ($scope.r_levels + 600) * uaMultiplier;
-
-			// console.log("---------------");
-			// console.log(hr1);
-			// console.log(hr2);
-			// console.log(hr3);
-			// console.log(hr4);
-			// console.log(hr5);
-			// console.log(hr6);
-			// console.log(hr7);
-			// console.log(hr8);
-			// console.log(hr9);
-			// console.log(hr10);
-
 			var heroRelics = $scope.r_levels / 1000;
 			var stageRelics = Math.pow(Math.floor($scope.r_cstage/15) - 5, 1.7);
 
@@ -320,6 +287,13 @@ yattoApp.controller('CalculatorController',
 			}
 		};
 
+		$scope.updateRandomInfo = function() {
+			var g = getGameState();
+			$scope.all_damage = g.a_ad * 100;
+			g.get_all_skills();
+			$scope.tap_damage = parseFloat(g.tap_damage()[0].toPrecision(4));
+		};
+
 		$scope.generateStateString = function() {
 			$scope.state = [
 				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
@@ -345,6 +319,7 @@ yattoApp.controller('CalculatorController',
 			// recalculate things
 			$scope.updateRelicInfo();
 			$scope.updateWeaponInfo();
+			$scope.updateRandomInfo();
 		};
 
 		var parseOrZero = function(s, f) {
@@ -392,6 +367,14 @@ yattoApp.controller('CalculatorController',
 			$scope.r_levels  = parseOrZero(t[10], parseInt);
 
 			$scope.stateChanged();
+		};
+
+		var getGameState = function() {
+			return new GameState(
+				transformScopeArray($scope.artifacts), 
+				getWeapons(), 
+				getLevels(), 
+				transformScopeArray($scope.customizations));
 		};
 
 		$scope.artifactCheck = function(i, ai) {
