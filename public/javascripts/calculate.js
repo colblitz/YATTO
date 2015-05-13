@@ -960,7 +960,7 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				var gold_ratio = new_value[0] / base[0];
 				var tdmg_ratio = new_value[1] / base[1];
 				var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_ratio) / Math.log(1.075));
-				var total_change = tdmg_ratio;// * gold_dmg_equivalent;
+				var total_change = tdmg_ratio * gold_dmg_equivalent;
 
 				e = total_change / relic_cost;
 				change[i] = total_change;
