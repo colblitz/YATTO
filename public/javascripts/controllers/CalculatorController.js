@@ -414,6 +414,21 @@ yattoApp.controller('CalculatorController',
 		// // g.get_all_skills();
 		// console.log(g.gold_multiplier());
 
+		var sortByArtifactOrder = function(s) {
+			var indexToSStep = {};
+			for (var ss in s) {
+				indexToSStep[s[ss].index] = s[ss];
+			}
+			var newSS = [];
+			var aOrder = $scope.artifacts.map(function(a) { return a.index; });
+			for (var i in aOrder) {
+				if (aOrder[i] in indexToSStep) {
+					newSS.push(indexToSStep[aOrder[i]]);
+				}
+			}
+			return newSS;
+		};
+
 		$scope.calculate = function() {
 			if ($scope.relics == 0 && $scope.nsteps == 0) {
 				$scope.stepmessage = "Get some relics or enter a number of steps!";
@@ -451,7 +466,7 @@ yattoApp.controller('CalculatorController',
 				$scope.$apply(function() {
 					for (var m in response) {
 						$scope.steps[m] = response[m]["steps"];
-						$scope.summary_steps[m] = response[m]["summary"];
+						$scope.summary_steps[m] = sortByArtifactOrder(response[m]["summary"]);
 					}
 
 					$scope.updateCookies();
