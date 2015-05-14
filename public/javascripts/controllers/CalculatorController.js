@@ -552,7 +552,7 @@ yattoApp.controller('CalculatorController',
 		$scope.readFromCookies();
 		if ("state" in $routeParams) {
 			$scope.state = $routeParams.state;
-			$scope.importFromString
+			$scope.importFromString($scope.state);
 		}
 
 		$scope.generateStateString();
