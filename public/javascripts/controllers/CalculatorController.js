@@ -308,7 +308,6 @@ yattoApp.controller('CalculatorController',
 				$scope.r_undead,
 				$scope.r_levels].join("|");
 			$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($scope.state);
-			console.log($scope.url);
 		};
 
 		$scope.stateChanged = function() {
@@ -432,7 +431,6 @@ yattoApp.controller('CalculatorController',
 			}
 
 			if (!$scope.spinneractive) {
-				console.log("starting spinner");
 				usSpinnerService.spin('spinner');
 			}
 
