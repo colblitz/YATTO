@@ -1,5 +1,5 @@
 yattoApp.controller('CalculatorController',
-	function($scope, $http, $cookies, $cookieStore, $timeout, $rootScope, localStorageService, usSpinnerService) {
+	function($scope, $http, $cookies, $cookieStore, $timeout, $rootScope, $routeParams, localStorageService, usSpinnerService) {
 		MathJax.Hub.Configured();
   		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
@@ -307,6 +307,8 @@ yattoApp.controller('CalculatorController',
 				$scope.r_cstage,
 				$scope.r_undead,
 				$scope.r_levels].join("|");
+			$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($scope.state);
+			console.log($scope.url);
 		};
 
 		$scope.stateChanged = function() {
@@ -548,6 +550,11 @@ yattoApp.controller('CalculatorController',
 		// initialize
 		setDefaults();
 		$scope.readFromCookies();
+		if ("state" in $routeParams) {
+			$scope.state = $routeParams.state;
+			$scope.importFromString
+		}
+
 		$scope.generateStateString();
 		$scope.updateRelicInfo();
 		$scope.updateWeaponInfo();
