@@ -551,7 +551,7 @@ yattoApp.controller('CalculatorController',
 		setDefaults();
 		$scope.readFromCookies();
 		if ("state" in $routeParams) {
-			$scope.state = $routeParams.state;
+			$scope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
 			$scope.importFromString($scope.state);
 		}
 
