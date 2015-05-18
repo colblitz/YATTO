@@ -15,14 +15,15 @@ yattoApp.controller('ReferenceController',
   				index: i,
   				ad0: a.ad0,
   				adpl: a.adpl,
-  				cap: a.levelcap,
-  				x: 1,
-  				y: 2,
-  				current: 3,
-  				desired: 4,
-  				cost: 5,
-  				cumulative: 6,
-  				stats: 7
+  				cap: isFinite(a.levelcap) ? a.levelcap : null,
+  				x: a.x.toFixed(1),
+  				y: a.y.toFixed(1),
+  				current: 0,
+  				desired: 0,
+  				cost: 0,
+  				cumulative: 0,
+  				stats: "",
+  				costf: a.cost
   			};
   			$scope.r_artifacts.push(artifact);
   		}

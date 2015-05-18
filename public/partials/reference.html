@@ -5,11 +5,16 @@
 				<h3>Artifact information</h3>
 				<tr>
 					<th>Artifact</th>
-					<th>Base AD (\(ad_0\))</th>
-					<th>AD per level (\(ad_{pl}\))</th>
-					<th>Level cap</th>
+					<th>\(ad_0\)</th>
+					<th>\(ad_{pl}\)</th>
+					<th>Cap</th>
 					<th>x</th>
 					<th>y</th>
+					<th>Current</th>
+					<th>Desired</th>
+					<th>Cost</th>
+					<th>Cumulative</th>
+					<th>Stats</th>
 				</tr>
 				<tr ng-repeat="a in r_artifacts track by $index">
 					<td class="r-artifacts-col00">{{a.name}}</td>
@@ -18,9 +23,11 @@
 					<td class="r-artifacts-col03">{{a.cap}}</td>
 					<td class="r-artifacts-col04">{{a.x}}</td>
 					<td class="r-artifacts-col05">{{a.y}}</td>
-					<td class="r-artifacts-col06">{{a.current}}</td>
-					<td class="r-artifacts-col07">{{a.desired}}
-						<input type="number" class="form-control number-input artifact-input" ng-model="a.desired"/>
+					<td class="r-artifacts-col06">
+						<input type="number" class="form-control number-input artifact-input" ng-model="a.current" min="0" ng-change="calcArtifact($index, a.index)"/>
+					</td>
+					<td class="r-artifacts-col07">
+						<input type="number" class="form-control number-input artifact-input" ng-model="a.desired" min="0"/>
 					</td>
 					<td class="r-artifacts-col08">{{a.cost}}</td>
 					<td class="r-artifacts-col09">{{a.cumulative}}</td>

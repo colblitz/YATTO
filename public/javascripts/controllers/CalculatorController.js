@@ -294,6 +294,81 @@ yattoApp.controller('CalculatorController',
 			$scope.tap_damage = parseFloat(g.tap_damage()[0].toPrecision(4));
 		};
 
+
+
+
+		/*
+			convert.js
+			http://rot47.net
+		  https://helloacm.com
+		  http://codingforspeed.com  
+			Dr Zhihua Lai
+		*/
+		// var BASE2  = "01";
+		// var BASE8  = "01234567";
+		
+		// var BASE16 = "0123456789abcdef";
+		// var BASE32 = "0123456789abcdefghijklmnopqrstuvwxyz";
+		var BASE10 = "0123456789";
+		var BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		// var BASE75 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.,!=-*(){}[]";
+
+		var convert = function(src, srctable, desttable) {
+			var srclen = srctable.length;
+			var destlen = desttable.length;
+			// first convert to base 10
+			var val = 0;
+			var numlen = src.length;
+			for (var i = 0; i < numlen; i ++)
+			{
+				val = val * srclen + srctable.indexOf(src.charAt(i));
+			}
+			if (val < 0)
+			{
+				return 0;
+			}
+			// then covert to any base
+			var r = val % destlen;
+			var res = desttable.charAt(r);
+			var q = Math.floor(val / destlen);
+			while (q)
+			{
+				r = q % destlen;
+				q = Math.floor(q / destlen);
+				res = desttable.charAt(r) + res;
+			}
+			return res;
+		};
+
+		var encode = function(s) {
+			return convert(s, BASE10, BASE62);
+		};
+
+		var decode = function(s) {
+			return convert(s, BASE62, BASE10);
+		};
+
+		var stateToUrl = function(s) {
+			var pieces = s.split("|");
+			var newA = [];
+			pieces[0].split(",").forEach(function(a, i, array) {
+				var v = a.split(".");
+				var aindex = parseOrZero(v[0], parseInt);
+				var avalue = parseOrZero(v[1], parseInt);
+				newA.push(encode(aindex.toString()) + "." + encode(avalue.toString()));
+			});
+			pieces[0] = newA.join();
+			var newH = [];
+			pieces[1].split(",").forEach(function(h, i, array) {
+				var v = h.split(".");
+				var hlevel = parseOrZero(v[0], parseInt);
+				var hweapons = parseOrZero(v[1], parseInt);
+				newH.push(encode(hlevel.toString()) + "." + encode(hweapons.toString()));
+			});
+			pieces[1] = newH.join();
+			return pieces.join("|");
+		};
+
 		$scope.generateStateString = function() {
 			$scope.state = [
 				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
@@ -307,6 +382,9 @@ yattoApp.controller('CalculatorController',
 				$scope.r_cstage,
 				$scope.r_undead,
 				$scope.r_levels].join("|");
+			// console.log(stateToUrl($scope.state));
+			// console.log(LZString.compressToEncodedURIComponent(stateToUrl($scope.state)));
+			// console.log(LZString.compressToEncodedURIComponent($scope.state));
 			$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($scope.state);
 		};
 
@@ -341,7 +419,7 @@ yattoApp.controller('CalculatorController',
 				var aindex = parseOrZero(v[0], parseInt);
 				var avalue = parseOrZero(v[1], parseInt);
 				artifacts.push({
-					name: artifact_names[aindex],
+					name: artifact_info[aindex].name,
 					index: aindex,
 					value: avalue
 				});
@@ -406,6 +484,7 @@ yattoApp.controller('CalculatorController',
 		};
 
 		$scope.customizationCheck = function(i, ai) {
+			$scope.stateChanged();
 			// $scope.generateStateString();
 		};
 
