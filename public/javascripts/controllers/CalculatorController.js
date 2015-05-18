@@ -1,5 +1,5 @@
 yattoApp.controller('CalculatorController',
-	function($scope, $http, $cookies, $cookieStore, $timeout, $rootScope, $routeParams, localStorageService, usSpinnerService) {
+	function($scope, $http, $cookies, $cookieStore, $timeout, $rootScope, $routeParams, localStorageService, usSpinnerService, shareVariables) {
 		MathJax.Hub.Configured();
   		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
@@ -33,86 +33,86 @@ yattoApp.controller('CalculatorController',
 
 		$scope.artifact_caps = [null, null, 10, null, null, null, 25, 25, null, null, null, null, 10, null, 10, null, 10, 10, null, null, 25, 10, 10, 25, null, null, null, 10, 5];
 
-		var artifact_names = {
-			 0 : "Amulet of the Valrunes",
-			 1 : "Axe of Resolution",
-			 2 : "Barbarian's Mettle",
-			 3 : "Chest of Contentment",
-			 4 : "Crafter's Elixir",
-			 5 : "Crown Egg",
-			 6 : "Dark Cloak of Life",
-			 7 : "Death Seeker",
-			 8 : "Divine Chalice",
-			 9 : "Drunken Hammer",
-			10 : "Future's Fortune",
-			11 : "Hero's Thrust",
-			12 : "Hunter's Ointment",
-			13 : "Knight's Shield",
-			14 : "Laborer's Pendant",
-			15 : "Ogre's Gauntlet",
-			16 : "Otherworldly Armor",
-			17 : "Overseer's Lotion",
-			18 : "Parchment of Importance",
-			19 : "Ring of Opulence",
-			20 : "Ring of Wondrous Charm",
-			21 : "Sacred Scroll",
-			22 : "Saintly Shield",
-			23 : "Savior Shield",
-			24 : "Tincture of the Maker",
-			25 : "Undead Aura",
-			26 : "Universal Fissure",
-			27 : "Warrior's Revival",
-			28 : "Worldly Illuminator"};
+		// var artifact_names = {
+		// 	 0 : "Amulet of the Valrunes",
+		// 	 1 : "Axe of Resolution",
+		// 	 2 : "Barbarian's Mettle",
+		// 	 3 : "Chest of Contentment",
+		// 	 4 : "Crafter's Elixir",
+		// 	 5 : "Crown Egg",
+		// 	 6 : "Dark Cloak of Life",
+		// 	 7 : "Death Seeker",
+		// 	 8 : "Divine Chalice",
+		// 	 9 : "Drunken Hammer",
+		// 	10 : "Future's Fortune",
+		// 	11 : "Hero's Thrust",
+		// 	12 : "Hunter's Ointment",
+		// 	13 : "Knight's Shield",
+		// 	14 : "Laborer's Pendant",
+		// 	15 : "Ogre's Gauntlet",
+		// 	16 : "Otherworldly Armor",
+		// 	17 : "Overseer's Lotion",
+		// 	18 : "Parchment of Importance",
+		// 	19 : "Ring of Opulence",
+		// 	20 : "Ring of Wondrous Charm",
+		// 	21 : "Sacred Scroll",
+		// 	22 : "Saintly Shield",
+		// 	23 : "Savior Shield",
+		// 	24 : "Tincture of the Maker",
+		// 	25 : "Undead Aura",
+		// 	26 : "Universal Fissure",
+		// 	27 : "Warrior's Revival",
+		// 	28 : "Worldly Illuminator"};
 
-		var hero_names = {
-			 0 : "Takeda the Blade Assassin",
-			 1 : "Contessa the Torch Wielder",
-			 2 : "Hornetta, Queen of the Valrunes",
-			 3 : "Mila the Hammer Stomper",
-			 4 : "Terra the Land Scorcher",
-			 5 : "Inquisireaux the Terrible",
-			 6 : "Charlotte the Special",
-			 7 : "Jordaan, Knight of Mini",
-			 8 : "Jukka, Master of Axes",
-			 9 : "Milo and Clonk-Clonk",
-			10 : "Macelord the Ruthless",
-			11 : "Gertrude the Goat Rider",
-			12 : "Twitterella the Tweeter",
-			13 : "Master Hawk, Lord of Luft",
-			14 : "Elpha, Wielder of Gems",
-			15 : "Poppy, Daughter of Ceremony",
-			16 : "Skulptor, Protector of Bridges",
-			17 : "Sterling the Enchantor",
-			18 : "Orba the Foreseer",
-			19 : "Remus the Noble Archer",
-			20 : "Mikey the Magician Apprentice",
-			21 : "Peter Pricker the Prickly Poker",
-			22 : "Teeny Tom, Keeper of the Castle",
-			23 : "Deznis the Cleanser",
-			24 : "Hamlette, Painter of Skulls",
-			25 : "Eistor the Banisher",
-			26 : "Flavius and Oinksbjorn",
-			27 : "Chester the Beast Tamer",
-			28 : "Mohacas the Wind Warrior",
-			29 : "Jaqulin the Unknown",
-			30 : "Pixie the Rebel Fairy",
-			31 : "Jackalope the Fireballer",
-			32 : "Dark Lord, Punisher of All"};
+		// var hero_names = {
+		// 	 0 : "Takeda the Blade Assassin",
+		// 	 1 : "Contessa the Torch Wielder",
+		// 	 2 : "Hornetta, Queen of the Valrunes",
+		// 	 3 : "Mila the Hammer Stomper",
+		// 	 4 : "Terra the Land Scorcher",
+		// 	 5 : "Inquisireaux the Terrible",
+		// 	 6 : "Charlotte the Special",
+		// 	 7 : "Jordaan, Knight of Mini",
+		// 	 8 : "Jukka, Master of Axes",
+		// 	 9 : "Milo and Clonk-Clonk",
+		// 	10 : "Macelord the Ruthless",
+		// 	11 : "Gertrude the Goat Rider",
+		// 	12 : "Twitterella the Tweeter",
+		// 	13 : "Master Hawk, Lord of Luft",
+		// 	14 : "Elpha, Wielder of Gems",
+		// 	15 : "Poppy, Daughter of Ceremony",
+		// 	16 : "Skulptor, Protector of Bridges",
+		// 	17 : "Sterling the Enchantor",
+		// 	18 : "Orba the Foreseer",
+		// 	19 : "Remus the Noble Archer",
+		// 	20 : "Mikey the Magician Apprentice",
+		// 	21 : "Peter Pricker the Prickly Poker",
+		// 	22 : "Teeny Tom, Keeper of the Castle",
+		// 	23 : "Deznis the Cleanser",
+		// 	24 : "Hamlette, Painter of Skulls",
+		// 	25 : "Eistor the Banisher",
+		// 	26 : "Flavius and Oinksbjorn",
+		// 	27 : "Chester the Beast Tamer",
+		// 	28 : "Mohacas the Wind Warrior",
+		// 	29 : "Jaqulin the Unknown",
+		// 	30 : "Pixie the Rebel Fairy",
+		// 	31 : "Jackalope the Fireballer",
+		// 	32 : "Dark Lord, Punisher of All"};
 
 		var setDefaults = function() {
 			$scope.artifacts = [];
-			for (var a in artifact_names) {
+			for (var a in artifact_info) {
 				$scope.artifacts.push({
-					name: artifact_names[a],
+					name: artifact_info[a].name,
 					index: a,
 					value: 0
 				});
 			}
 
 			$scope.heroes = [];
-			for (var h in hero_names) {
+			for (var h in hero_info) {
 				$scope.heroes.push({
-					name: hero_names[h],
+					name: hero_info[h].name,
 					index: h,
 					weapons: 0,
 					level: 800
@@ -313,6 +313,8 @@ yattoApp.controller('CalculatorController',
 		$scope.stateChanged = function() {
 			// re-generate state
 			$scope.generateStateString();
+
+			shareVariables.setVariable("artifacts", $scope.artifacts);
 
 			// store state to cookies
 			$scope.updateCookies();

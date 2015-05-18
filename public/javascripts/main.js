@@ -3,6 +3,18 @@ var yattoApp = angular.module('yattoApp', [
 	'ngRoute', 'ngCookies', 'ngRepeatReorder', 'ui.sortable', 'ui.bootstrap', 'LocalStorageModule', 'angularSpinner'
 ]);
 
+yattoApp.service('shareVariables', function () {
+  var variables = {};
+  return {
+    getVariable: function(k) {
+      return variables[k];
+    },
+    setVariable: function(k, v) {
+      variables[k] = v;
+    }
+  };
+});
+
 yattoApp.config(['$routeProvider', '$locationProvider',
 	function($routeProvider, $locationProvider) {
 		$routeProvider.
@@ -33,9 +45,4 @@ yattoApp.config(['$routeProvider', '$locationProvider',
 yattoApp.controller('FaqController', function($scope) {
 	MathJax.Hub.Configured();
 	MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-});
-
-yattoApp.controller('ReferenceController', function($scope) {
-  MathJax.Hub.Configured();
-  MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 });

@@ -11,6 +11,23 @@
 					<th>x</th>
 					<th>y</th>
 				</tr>
+				<tr ng-repeat="a in r_artifacts track by $index">
+					<td class="r-artifacts-col00">{{a.name}}</td>
+					<td class="r-artifacts-col01">{{a.ad0}}</td>
+					<td class="r-artifacts-col02">{{a.adpl}}</td>
+					<td class="r-artifacts-col03">{{a.cap}}</td>
+					<td class="r-artifacts-col04">{{a.x}}</td>
+					<td class="r-artifacts-col05">{{a.y}}</td>
+					<td class="r-artifacts-col06">{{a.current}}</td>
+					<td class="r-artifacts-col07">{{a.desired}}
+						<input type="number" class="form-control number-input artifact-input" ng-model="a.desired"/>
+					</td>
+					<td class="r-artifacts-col08">{{a.cost}}</td>
+					<td class="r-artifacts-col09">{{a.cumulative}}</td>
+					<td class="r-artifacts-col10">{{a.stats}}</td>
+				</tr>
+
+								
 				<tr><td>Amulet of the Valrunes</td><td>50</td><td>25</td><td>0</td><td>0.7</td><td>2.0</td></tr>
 				<tr><td>Axe of Resolution</td><td>70</td><td>35</td><td>0</td><td>0.5</td><td>1.7</td></tr>
 				<tr><td>Barbarian's Mettle</td><td>70</td><td>35</td><td>10</td><td>0.4</td><td>1.5</td></tr>
