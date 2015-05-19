@@ -24,11 +24,27 @@ yattoApp.controller('ReferenceController',
   				cumulative: 0,
   				stats: "",
   				costf: a.cost
+  				// test: function(l) { return Math.round(a.cost(l)); } // TODO: wtf doesn't this work
   			};
   			$scope.r_artifacts.push(artifact);
   		}
 
   		console.log(artifact_info);
 
+  		$scope.calcArtifacts = function() {
+  			for (var i in $scope.r_artifacts) {
+  				var a = $scope.r_artifacts[i];
+  				if (a.current != 0) {
+  					a.cost = Math.ceil(a.costf(a.current));
+  					a.cumulative = 0;
+  					for (var l = a.current; l < a.desired; l++) {
+	  					a.cumulative += Math.ceil(a.costf(l));
+  					}  				
+  				} else {
+  					a.cost = 0;
+  					a.cumulative = 0;
+  				}
+  			}
+  		};
 	}
 );

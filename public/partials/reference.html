@@ -24,10 +24,10 @@
 					<td class="r-artifacts-col04">{{a.x}}</td>
 					<td class="r-artifacts-col05">{{a.y}}</td>
 					<td class="r-artifacts-col06">
-						<input type="number" class="form-control number-input artifact-input" ng-model="a.current" min="0" ng-change="calcArtifact($index, a.index)"/>
+						<input type="number" class="form-control number-input artifact-input" ng-model="a.current" min="0" max="{{a.cap}}" ng-change="calcArtifacts()"/>
 					</td>
 					<td class="r-artifacts-col07">
-						<input type="number" class="form-control number-input artifact-input" ng-model="a.desired" min="0"/>
+						<input type="number" class="form-control number-input artifact-input" ng-model="a.desired" min="0" max="{{a.cap}}" ng-change="calcArtifacts()"/>
 					</td>
 					<td class="r-artifacts-col08">{{a.cost}}</td>
 					<td class="r-artifacts-col09">{{a.cumulative}}</td>
@@ -35,7 +35,7 @@
 				</tr>
 
 								
-				<tr><td>Amulet of the Valrunes</td><td>50</td><td>25</td><td>0</td><td>0.7</td><td>2.0</td></tr>
+				<!-- <tr><td>Amulet of the Valrunes</td><td>50</td><td>25</td><td>0</td><td>0.7</td><td>2.0</td></tr>
 				<tr><td>Axe of Resolution</td><td>70</td><td>35</td><td>0</td><td>0.5</td><td>1.7</td></tr>
 				<tr><td>Barbarian's Mettle</td><td>70</td><td>35</td><td>10</td><td>0.4</td><td>1.5</td></tr>
 				<tr><td>Chest of Contentment</td><td>40</td><td>20</td><td>0</td><td>0</td><td>1.5</td></tr>
@@ -63,7 +63,7 @@
 				<tr><td>Undead Aura</td><td>30</td><td>15</td><td>0</td><td>0.7</td><td>2.0</td></tr>
 				<tr><td>Universal Fissure</td><td>120</td><td>60</td><td>0</td><td>0.5</td><td>1.7</td></tr>
 				<tr><td>Warrior's Revival</td><td>70</td><td>35</td><td>10</td><td>0</td><td>2.2</td></tr>
-				<tr><td>Worldly Illuminator</td><td>300</td><td>150</td><td>5</td><td>0.6</td><td>3.0</td>
+				<tr><td>Worldly Illuminator</td><td>300</td><td>150</td><td>5</td><td>0.6</td><td>3.0</td> -->
 			</table>
 
 				 <!-- - cost for artifact from level x to level y -->
@@ -90,6 +90,32 @@
 					<td>=</td>
 					<td>$$ \left \lfloor (\text{# owned} + 1) \cdot 1.35^{(\text{# owned} + 1)} \right \rceil  $$</td>
 				</tr>
+				<tr>
+					<td>Gold Multiplier</td>
+					<td>=</td>
+					<td>
+						\begin{align*}
+							\text{mobs} &= 10 - l_{\text{world}} \\
+							\\
+							\text{chalice chance} &= \min(1, 0.005 \cdot l_{\text{chalice}}) \\
+							\text{chalice multiplier} &= 1 - \text{chalice chance} + 10 \cdot \text{chalice chance} \\
+							\text{normal gold} &= (1 + 0.1 \cdot l_{\text{amulet}}) \cdot \text{chalice multiplier} \\
+							\\
+							\text{chest chance} &= \min(1, 0.02 + 0.004 \cdot l_{\text{egg}}) \\
+							\text{chest gold} &= 10 \cdot (1 + 0.2 \cdot l_{\text{chest}}) \cdot (1 + c_{cg}) \cdot (1 + h_{cg}) \\
+							\text{mob gold} &= \text{chest chance} \cdot \text{chest gold} + (1 - \text{chest chance}) \cdot \text{normal gold}\\
+							\text{boss gold} &\approx 6.2961 \cdot (1 + l_{\text{shield}}) \\
+							\\
+							\text{mob multiplier} &= \frac{\text{mobs} \cdot \text{mob gold} + \text{boss gold}}{\text{mobs} + 1} \\
+							\text{other multipliers} &= \left \lceil 1 + 0.05 \cdot l_{\text{ff}} + h_{gd} \right \rceil \cdot (1 + c_{gd}) \cdot (1 + 0.15 \cdot l_{\text{elixir}}) \cdot \left(\frac{1}{1 - 0.02 \cdot l_{charm}}\right) \\
+							\text{overall multiplier} &= \text{mob multiplier} \cdot \text{other multipliers}
+						\end{align*}
+					</td>
+				</tr>
+<!-- 
+ (mobs * (Math.min(1, 0.02 + 0.004 * this.l_egg) * 10 * (1 + 0.2 * this.l_chest) * (1 + c_cg) * (1 + h_cg) + (1 - Math.min(1, 0.02 + 0.004 * this.l_egg)) * (1 + 0.1 * this.l_amulet) * 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice)) + BOSS_CONSTANT * (1 + this.l_kshield)) / (mobs + 1) * Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm)) $$ -->
+				
+
 				<!-- <tr>
 					<td>Hero upgrade cost</td>
 					<td>$$ base_cost * 1.075^level, x10 for evolve $$</td>
@@ -124,6 +150,93 @@
 				</tr>
 				<tr>
 					<td>Gold Multiplier</td>
+					<td>=</td>
+					<td>$$ \left \lfloor (\text{# owned} + 1) \cdot 1.35^{(\text{# owned} + 1)} \right \rceil  $$</td>
+				</tr>
+				<tr>
+					<td>Gold Multiplier</td>
+
+
+\text{mobs} &= 10 - l_{\text{world}} \\
+
+\text{chest chance} &= \min(1, 0.02 + 0.004 * l_{\text{egg}}) \\
+\text{chest gold} &= 10 * (1 + 0.2 * l_{\text{chest}}) * (1 + c_{cg}) * (1 + h_{cg}) \\
+
+\text{chalice chance} &= \min(1, 0.005 * l_{\text{chalice}}) \\
+\text{chalice multiplier} &= 1 - \text{chalice chance} + 10 * \text{chalice chance} \\
+\text{normal gold} &= (1 + 0.1 * l_{\text{amulet}}) * \text{chalice multiplier} \\
+
+\text{mob gold} &= \text{mobs} * \left(\text{chest chance} * \text{chest gold} + (1 - \text{chest chance}) * \text{normal gold} \right)\\
+
+\text{boss constant} &\approx 6.2961 \\
+\text{boss gold} &= \text{boss constant} * (1 + l_{\text{shield}}) \\
+
+\text{mob multiplier} &= \frac{\text{mobs} * \text{mob gold} + \text{boss gold}}{\text{mobs} + 1} \\
+\text{other multipliers} &= \left \lceil 1 + 0.05 * l_{\text{ff}} = h_{gd} \right \rceil * (1 + c_{gd}) * (1 + 0.15 * l_{\text{elixir}}) * (\frac{1}{1 - 0.02 * l_{charm}}) \\
+\text{overall multiplier} &= \text{mob multiplier} * \text{other multipliers}
+
+
+	this.c_chance = Math.min(1, 0.02 + 0.004 * this.l_egg);
+	this.n_chance = 1 - this.c_chance;
+
+	this.n_gold = 1 + 0.1 * this.l_amulet;
+	this.d_chance = Math.min(1, 0.005 * this.l_chalice);
+	this.d_multiplier = 1 - this.d_chance + 10 * this.d_chance;
+	this.m_multiplier = this.n_chance * this.n_gold * this.d_multiplier;
+	this.boss_gold = BOSS_CONSTANT * (1 + this.l_kshield);
+
+	this.other_total = (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
+
+
+this.gold_multiplier = function() {
+		var mobs = 10 - this.l_world;
+
+		var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
+		var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
+
+		var c_gold = 10 * (1 + 0.2 * this.l_chest) * (1 + this.c_cg) * (1 + h_cg);
+
+		var m_gold = mobs * (this.c_chance * c_gold + this.m_multiplier);
+		var multiplier_gold = (m_gold + this.boss_gold) / (mobs + 1);
+		var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
+
+		return multiplier_gold * multiplier_total;
+	};
+
+
+
+
+(mobs * (Math.min(1, 0.02 + 0.004 * this.l_egg) * 10 * (1 + 0.2 * this.l_chest) * (1 + c_cg) * (1 + h_cg) + (1 - Math.min(1, 0.02 + 0.004 * this.l_egg)) * (1 + 0.1 * this.l_amulet) * 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice)) + BOSS_CONSTANT * (1 + this.l_kshield)) / (mobs + 1) * Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm))
+
+
+
+
+
+					this.gold_multiplier = function() {
+		var mobs = 10 - this.l_world;
+
+		var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
+		var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
+
+		var c_gold = ;
+
+		var m_gold = ;
+		var multiplier_gold = ;
+		var multiplier_total = ;
+
+		return multiplier_gold * multiplier_total;
+	};
+
+	this.c_chance = ;
+	this.n_chance = ;
+
+	this.n_gold = ;
+	this.d_chance = Math.min(1, 0.005 * this.l_chalice);
+	this.d_multiplier = 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice);
+	this.m_multiplier = ;
+	this.boss_gold = BOSS_CONSTANT * (1 + this.l_kshield);
+
+	this.other_total = ;
 					<td>$$ 10.75 * cost to upgrade 999 $$</td>
 				</tr>
 				<tr>
@@ -142,9 +255,39 @@
 
 
 			<h4>Symbols and reference</h4>
+			<table id="ref-symbols-table">
+				<tr>
+					<th>Symbol</th>
+					<th></th>
+					<th>Explanation</th>
+				</tr>
+				<tr><td>\( \left \lfloor x \right \rceil \)</td><td>=</td><td>round(x)</td></tr>
+				<tr><td>\( \left \lceil x \right \rceil \)</td><td>=</td><td>ceil(x) or roundup(x)</td></tr>
+				<tr><td>\( l_{\text{name}} \)</td><td>=</td><td>level of [name]</td></tr>
+				<tr><td>\( ad_0 \)</td><td>=</td><td>artifact base all damage</td></tr>
+				<tr><td>\( ad_{pl} \)</td><td>=</td><td>artifact all damage increase per level</td></tr>
+				<tr><td>\( h_{hd} \)</td><td>=</td><td>hero damage bonus (individual hero)</td></tr>
+				<tr><td>\( h_{ad} \)</td><td>=</td><td>hero all damage bonus</td></tr>
+				<tr><td>\( h_{cd} \)</td><td>=</td><td>hero crit damage bonus</td></tr>
+				<tr><td>\( h_{td} \)</td><td>=</td><td>hero tap damage bonus</td></tr>
+				<tr><td>\( h_{pd} \)</td><td>=</td><td>hero percent dps bonus</td></tr>
+				<tr><td>\( h_{bd} \)</td><td>=</td><td>hero boss damage bonus</td></tr>
+				<tr><td>\( h_{cg} \)</td><td>=</td><td>hero chest gold bonus</td></tr>
+				<tr><td>\( h_{gd} \)</td><td>=</td><td>hero gold dropped bonus</td></tr>
+				<tr><td>\( c_{ad} \)</td><td>=</td><td>customization all damage bonus</td></tr>
+				<tr><td>\( c_{cd} \)</td><td>=</td><td>customization crit damage bonus</td></tr>
+				<tr><td>\( c_{gd} \)</td><td>=</td><td>customization gold dropped bonus</td></tr>
+				<tr><td>\( c_{cg} \)</td><td>=</td><td>customization chest gold bonus</td></tr>
+				<tr><td>\( c_{cc} \)</td><td>=</td><td>customization crit chance (critical hit) bonus</td></tr>
+				<tr><td>\( c_{tc} \)</td><td>=</td><td>customization tap damage bonus</td></tr>
+			</table>
+
+<!-- 
 			<ul> 
-				<li> \( \left \lfloor x \right \rceil \) = round(x) </li>
-			</ul>
+				<li> \(  = \text{round}(x) \) </li>
+				<li> \( ad_0 \) = base all damage of artifact </li>
+				<li> \( ad_{pl} \) = all damage increase per level of artifact </li>
+			</ul> -->
 
 
 						<!-- <h3>Formulas</h3>

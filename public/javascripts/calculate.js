@@ -423,7 +423,7 @@ var base_stage_gold = function(stage) {
 
 // TODO: Check this constant
 var BOSS_CONSTANT = (2 + 4*1.14 + 6*Math.pow(1.14, 2) + 7*Math.pow(1.14, 3) + 10*Math.pow(1.14, 4))/(1 + 1.14 + Math.pow(1.14, 2) + Math.pow(1.14, 3) + Math.pow(1.14, 4));
-BOSS_CONSTANT = 6;
+//BOSS_CONSTANT = 6;
 
 var newZeroes = function(length) {
 	return Array.apply(null, new Array(length)).map(Number.prototype.valueOf,0);
