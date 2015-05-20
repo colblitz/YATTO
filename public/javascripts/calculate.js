@@ -244,7 +244,7 @@ var hero_info = [
 		[0.20, STYPE_CHEST_GOLD], [0.25, STYPE_CHEST_GOLD], [0.15, STYPE_ALL_DAMAGE]]),
 	new Hero("Macelord the Ruthless", 11, 943.00e6, [
 		[2.00, STYPE_HERO_DPS], [8.50, STYPE_HERO_DPS], [0.05, STYPE_TAP_DAMAGE], [0.004, STYPE_PERCENT_DPS],
-		[0.15, STYPE_GOLD_DROPPED], [0.05, STYPE_TAP_DAMAGE], [0.20, STYPE_GOLD_DROPPED]]),
+		[0.15, STYPE_GOLD_DROPPED], [0.05, STYPE_TAP_DAMAGE], [38.00, STYPE_HERO_DPS]]),
 	new Hero("Gertrude the Goat Rider", 12, 6.84e9, [
 		[2.50, STYPE_HERO_DPS], [13.00, STYPE_HERO_DPS], [0.07, STYPE_BOSS_DAMAGE], [0.05, STYPE_CRIT_DAMAGE],
 		[0.004, STYPE_PERCENT_DPS], [0.05, STYPE_TAP_DAMAGE], [0.20, STYPE_GOLD_DROPPED]]),
@@ -321,10 +321,10 @@ for (var h in hero_info) {
 	}
 }
 
-var next_ff_level = function(ff) {
+var next_ff_level = function(ff, c_gd) {
 	var new_level = ff;
 	var multiplier = function(l) {
-		return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED);
+		return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED + c_gd);
 	}
 	while (multiplier(new_level) == multiplier(ff)) {
 		new_level += 1;
@@ -481,7 +481,8 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 	this.m_multiplier = this.n_chance * this.n_gold * this.d_multiplier;
 	this.boss_gold = BOSS_CONSTANT * (1 + this.l_kshield);
 
-	this.other_total = (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
+	// this.other_total = (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
+	this.other_total = (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
 
 	this.heroes = levels.slice();
 	this.hero_skills = newZeroes(hero_info.length);
@@ -538,10 +539,30 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 
 		var m_gold = mobs * (this.c_chance * c_gold + this.m_multiplier);
 		var multiplier_gold = (m_gold + this.boss_gold) / (mobs + 1);
-		var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
+		//var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
+		var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd + this.c_gd) * this.other_total;
 
 		return multiplier_gold * multiplier_total;
 	};
+
+	// this.chest_multiplier = function() {
+	// 	var mobs = 10 - this.l_world;
+
+	// 	var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
+	// 	var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
+
+	// 	return 10 * (1 + 0.2 * this.l_chest) * (1 + this.c_cg) * (1 + h_cg);
+	// };
+
+	// this.multiplier1 = function() {
+	// 	var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
+	// 	return Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
+	// };
+
+	// this.multiplier2 = function() {
+	// 	var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
+	// 	return Math.ceil(1 + 0.05 * this.l_fortune + h_gd + this.c_gd) * this.other_total2;
+	// };
 
 	this.mob_multiplier = function() {
 		var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
@@ -876,6 +897,20 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 	};
 }
 
+// var a = [58, 190, 10, 307, 209, 245, 25, 25, 118, 279, 93, 267, 10, 225, 10, 280, 10, 10, 190, 108, 25, 10, 10, 25, 88, 267, 177, 10, 5];
+// var w = [10, 8, 7, 5, 6, 8, 6, 8, 10, 8, 10, 10, 11, 2, 5, 3, 3, 5, 7, 5, 8, 6, 4, 4, 3, 9, 5, 6, 4, 9, 3, 12, 5];
+// var c = [0.8, 0.81, 0.66, 1.67, 0.11, 0.44];
+// var l = [1, 101, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 101, 1, 0, 0, 0, 0, 0, 0];
+// var g = new GameState(a, w, l, c);
+// g.get_all_skills();
+// var base = base_stage_gold(404);
+// var m1 = g.multiplier1();
+// var m2 = g.multiplier2();
+// console.log("1: " + base * m1);
+// console.log("2: " + base * m2);
+
+
+
 // TESTING STUFF
 var a = [58, 150, 10, 265, 188, 245, 25, 25, 118, 262, 93, 250, 10, 225, 10, 220, 10, 10, 150, 108, 25, 10, 10, 25, 83, 255, 165, 10, 5];
 var w = [10, 7, 6, 5, 5, 7, 5, 8, 8, 8, 7, 9, 11, 2, 3, 3, 3, 4, 6, 5, 6, 5, 3, 3, 3, 7, 5, 6, 4, 7, 2, 11, 5];
@@ -883,6 +918,7 @@ var c = [0.80, 0.81, 0.66, 1.67, 0.095, 0.44];
 
 var l;
 // 2.47e121 tap damage
+
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 801, 1, 0, 0];
 
 // 1.08e129 tap damage
@@ -991,6 +1027,7 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 	var current_artifacts = artifacts.slice();
 	var steps = [];
 	var cumulative = 0;
+
 	while (relics_left > 0 || steps.length < nsteps) {
 		var options = [];
 		var base = get_value_memoize(current_artifacts, weapons, levels, customizations, method);
@@ -1007,7 +1044,7 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 			// Future's Fortune for gold
 			if (method == METHOD_GOLD && i == 10) {
 				relic_cost = 0;
-				var level_to = next_ff_level(current_artifacts[i]);
+				var level_to = next_ff_level(current_artifacts[i], customizations[2]);
 				artifacts_copy[i] = level_to;
 				while (level_to > level) {
 					level_to -= 1;
