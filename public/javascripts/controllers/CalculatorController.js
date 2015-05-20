@@ -652,5 +652,7 @@ yattoApp.controller('CalculatorController',
 		$scope.generateStateString();
 		$scope.updateRelicInfo();
 		$scope.updateWeaponInfo();
+
+		shareVariables.setVariable("artifacts", $scope.artifacts);
 	}
 );
