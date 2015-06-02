@@ -474,7 +474,7 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 	this.c_cc = customizations[4];
 	this.c_td = customizations[5];
 
-	this.c_chance = Math.min(1, 0.01 + 0.004 * this.l_egg);
+	this.c_chance = Math.min(1, 0.02 + 0.004 * this.l_egg);
 	this.n_chance = 1 - this.c_chance;
 
 	this.n_gold = 1 + 0.1 * this.l_amulet;
@@ -602,7 +602,7 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 
 	this.get_crit_chance = function() {
 		var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
-		return 0.02 + 0.02 * this.l_dseeker + this.c_cc + h_cc;
+		return 0.01 + 0.02 * this.l_dseeker + this.c_cc + h_cc;
 	};
 
 	this.get_hero_dps = function() {
