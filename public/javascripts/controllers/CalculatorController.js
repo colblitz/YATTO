@@ -612,7 +612,7 @@ yattoApp.controller('CalculatorController',
 
 			// TODO: impact on other methods (grey out?)
 
-			$scope.updateCookies();
+			$scope.stateChanged();
 		};
 
 		// initialize
