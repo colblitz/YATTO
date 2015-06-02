@@ -4,15 +4,18 @@ var yattoApp = angular.module('yattoApp', [
 ]);
 
 yattoApp.service('shareVariables', function () {
-  var variables = {};
-  return {
-    getVariable: function(k) {
-      return variables[k];
-    },
-    setVariable: function(k, v) {
-      variables[k] = v;
-    }
-  };
+	var variables = {};
+	return {
+		getVariable: function(k) {
+			return variables[k];
+		},
+		setVariable: function(k, v) {
+			variables[k] = v;
+		},
+		hasVariable: function(k) {
+			return k in variables;
+		}
+	};
 });
 
 yattoApp.config(['$routeProvider', '$locationProvider',
@@ -26,10 +29,10 @@ yattoApp.config(['$routeProvider', '$locationProvider',
 				templateUrl: 'partials/faq.html',
 				controller: 'FaqController'
 			}).
-      when('/reference', {
-        templateUrl: 'partials/reference.html',
-        controller: 'ReferenceController'
-      }).
+			when('/reference', {
+				templateUrl: 'partials/reference.html',
+				controller: 'ReferenceController'
+			}).
 			when('/calculator', {
 				templateUrl: 'partials/calculator.html',
 				controller: 'CalculatorController'

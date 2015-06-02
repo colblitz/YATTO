@@ -33,72 +33,6 @@ yattoApp.controller('CalculatorController',
 
 		$scope.artifact_caps = [null, null, 10, null, null, null, 25, 25, null, null, null, null, 10, null, 10, null, 10, 10, null, null, 25, 10, 10, 25, null, null, null, 10, 5];
 
-		// var artifact_names = {
-		// 	 0 : "Amulet of the Valrunes",
-		// 	 1 : "Axe of Resolution",
-		// 	 2 : "Barbarian's Mettle",
-		// 	 3 : "Chest of Contentment",
-		// 	 4 : "Crafter's Elixir",
-		// 	 5 : "Crown Egg",
-		// 	 6 : "Dark Cloak of Life",
-		// 	 7 : "Death Seeker",
-		// 	 8 : "Divine Chalice",
-		// 	 9 : "Drunken Hammer",
-		// 	10 : "Future's Fortune",
-		// 	11 : "Hero's Thrust",
-		// 	12 : "Hunter's Ointment",
-		// 	13 : "Knight's Shield",
-		// 	14 : "Laborer's Pendant",
-		// 	15 : "Ogre's Gauntlet",
-		// 	16 : "Otherworldly Armor",
-		// 	17 : "Overseer's Lotion",
-		// 	18 : "Parchment of Importance",
-		// 	19 : "Ring of Opulence",
-		// 	20 : "Ring of Wondrous Charm",
-		// 	21 : "Sacred Scroll",
-		// 	22 : "Saintly Shield",
-		// 	23 : "Savior Shield",
-		// 	24 : "Tincture of the Maker",
-		// 	25 : "Undead Aura",
-		// 	26 : "Universal Fissure",
-		// 	27 : "Warrior's Revival",
-		// 	28 : "Worldly Illuminator"};
-
-		// var hero_names = {
-		// 	 0 : "Takeda the Blade Assassin",
-		// 	 1 : "Contessa the Torch Wielder",
-		// 	 2 : "Hornetta, Queen of the Valrunes",
-		// 	 3 : "Mila the Hammer Stomper",
-		// 	 4 : "Terra the Land Scorcher",
-		// 	 5 : "Inquisireaux the Terrible",
-		// 	 6 : "Charlotte the Special",
-		// 	 7 : "Jordaan, Knight of Mini",
-		// 	 8 : "Jukka, Master of Axes",
-		// 	 9 : "Milo and Clonk-Clonk",
-		// 	10 : "Macelord the Ruthless",
-		// 	11 : "Gertrude the Goat Rider",
-		// 	12 : "Twitterella the Tweeter",
-		// 	13 : "Master Hawk, Lord of Luft",
-		// 	14 : "Elpha, Wielder of Gems",
-		// 	15 : "Poppy, Daughter of Ceremony",
-		// 	16 : "Skulptor, Protector of Bridges",
-		// 	17 : "Sterling the Enchantor",
-		// 	18 : "Orba the Foreseer",
-		// 	19 : "Remus the Noble Archer",
-		// 	20 : "Mikey the Magician Apprentice",
-		// 	21 : "Peter Pricker the Prickly Poker",
-		// 	22 : "Teeny Tom, Keeper of the Castle",
-		// 	23 : "Deznis the Cleanser",
-		// 	24 : "Hamlette, Painter of Skulls",
-		// 	25 : "Eistor the Banisher",
-		// 	26 : "Flavius and Oinksbjorn",
-		// 	27 : "Chester the Beast Tamer",
-		// 	28 : "Mohacas the Wind Warrior",
-		// 	29 : "Jaqulin the Unknown",
-		// 	30 : "Pixie the Rebel Fairy",
-		// 	31 : "Jackalope the Fireballer",
-		// 	32 : "Dark Lord, Punisher of All"};
-
 		var setDefaults = function() {
 			$scope.artifacts = [];
 			for (var a in artifact_info) {
@@ -213,7 +147,7 @@ yattoApp.controller('CalculatorController',
 			if (hasCookie(cookie_summs)) { $scope.summary_steps = cookie_summs; }
 			if (hasCookie(cookie_autoc)) { $scope.autocookies = cookie_autoc; }
 
-			$scope.importFromString($scope.state);
+			$scope.importFromString($scope.state, true);
 		};
 
 		$scope.storeToCookies = function() {
@@ -297,56 +231,56 @@ yattoApp.controller('CalculatorController',
 
 
 
-		/*
-			convert.js
-			http://rot47.net
-		  https://helloacm.com
-		  http://codingforspeed.com  
-			Dr Zhihua Lai
-		*/
-		// var BASE2  = "01";
-		// var BASE8  = "01234567";
-		
-		// var BASE16 = "0123456789abcdef";
-		// var BASE32 = "0123456789abcdefghijklmnopqrstuvwxyz";
-		var BASE10 = "0123456789";
-		var BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		// var BASE75 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.,!=-*(){}[]";
+		// /*
+		// 	convert.js
+		// 	http://rot47.net
+		//   https://helloacm.com
+		//   http://codingforspeed.com
+		// 	Dr Zhihua Lai
+		// */
+		// // var BASE2  = "01";
+		// // var BASE8  = "01234567";
 
-		var convert = function(src, srctable, desttable) {
-			var srclen = srctable.length;
-			var destlen = desttable.length;
-			// first convert to base 10
-			var val = 0;
-			var numlen = src.length;
-			for (var i = 0; i < numlen; i ++)
-			{
-				val = val * srclen + srctable.indexOf(src.charAt(i));
-			}
-			if (val < 0)
-			{
-				return 0;
-			}
-			// then covert to any base
-			var r = val % destlen;
-			var res = desttable.charAt(r);
-			var q = Math.floor(val / destlen);
-			while (q)
-			{
-				r = q % destlen;
-				q = Math.floor(q / destlen);
-				res = desttable.charAt(r) + res;
-			}
-			return res;
-		};
+		// // var BASE16 = "0123456789abcdef";
+		// // var BASE32 = "0123456789abcdefghijklmnopqrstuvwxyz";
+		// var BASE10 = "0123456789";
+		// var BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		// // var BASE75 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.,!=-*(){}[]";
 
-		var encode = function(s) {
-			return convert(s, BASE10, BASE62);
-		};
+		// var convert = function(src, srctable, desttable) {
+		// 	var srclen = srctable.length;
+		// 	var destlen = desttable.length;
+		// 	// first convert to base 10
+		// 	var val = 0;
+		// 	var numlen = src.length;
+		// 	for (var i = 0; i < numlen; i ++)
+		// 	{
+		// 		val = val * srclen + srctable.indexOf(src.charAt(i));
+		// 	}
+		// 	if (val < 0)
+		// 	{
+		// 		return 0;
+		// 	}
+		// 	// then covert to any base
+		// 	var r = val % destlen;
+		// 	var res = desttable.charAt(r);
+		// 	var q = Math.floor(val / destlen);
+		// 	while (q)
+		// 	{
+		// 		r = q % destlen;
+		// 		q = Math.floor(q / destlen);
+		// 		res = desttable.charAt(r) + res;
+		// 	}
+		// 	return res;
+		// };
 
-		var decode = function(s) {
-			return convert(s, BASE62, BASE10);
-		};
+		// var encode = function(s) {
+		// 	return convert(s, BASE10, BASE62);
+		// };
+
+		// var decode = function(s) {
+		// 	return convert(s, BASE62, BASE10);
+		// };
 
 		var stateToUrl = function(s) {
 			var pieces = s.split("|");
@@ -388,14 +322,16 @@ yattoApp.controller('CalculatorController',
 			$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($scope.state);
 		};
 
-		$scope.stateChanged = function() {
+		$scope.stateChanged = function(cookies) {
 			// re-generate state
 			$scope.generateStateString();
 
 			shareVariables.setVariable("artifacts", $scope.artifacts);
 
 			// store state to cookies
-			$scope.updateCookies();
+			if (cookies) {
+				$scope.updateCookies();
+			}
 
 			// recalculate things
 			$scope.updateRelicInfo();
@@ -411,8 +347,46 @@ yattoApp.controller('CalculatorController',
 			return i;
 		};
 
-		$scope.importFromString = function(state) {
+		/** Function count the occurrences of substring in a string;
+		 * @param {String} string   Required. The string;
+		 * @param {String} subString    Required. The string to search for;
+		 * @param {Boolean} allowOverlapping    Optional. Default: false;
+		 */
+		var occurrences = function(string, subString, allowOverlapping){
+		    string+=""; subString+="";
+		    if(subString.length<=0) return string.length+1;
+
+		    var n=0, pos=0;
+		    var step=(allowOverlapping)?(1):(subString.length);
+
+		    while(true){
+		        pos=string.indexOf(subString,pos);
+		        if(pos>=0){ n++; pos+=step; } else break;
+		    }
+		    return(n);
+		};
+
+		// 9.289,4.217,1.190,10.94,3.319,0.58,18.190,11.276,15.290,26.180,19.108,5.245,25.350,13.
+		// 225,24.90,8.118,6.25,7.25,12.10,14.10,16.10,17.10,2.10,20.25,21.10,22.10,23.25,27.10,
+		// 28.5|800.12,800.8,800.11,800.6,800.6,800.8,800.8,800.8,800.12,800.13,800.14,800.14,800.
+		// 12,800.3,800.5,800.7,800.4,800.5,800.9,800.6,800.8,800.7,800.7,800.6,800.3,800.10,800.8,
+		// 800.9,800.4,800.11,800.5,800.13,2100.5|0.8,0.81,0.66,1.67,0.11,0.44|1,1,1,1,0,0|542280|0|1|15|0|350|27700
+		$scope.importFromString = function(state, cookies) {
 			var t = state.split("|");
+
+			// state verification
+			if (occurrences(state, "|", false) != 10 ||
+				  occurrences(t[0], ",", false) != 28 ||
+				  occurrences(t[0], ".", false) != 29 ||
+				  occurrences(t[1], ",", false) != 32 ||
+				  occurrences(t[1], ".", false) != 33 ||
+				  occurrences(t[2], ",", false) != 5  ||
+				  occurrences(t[3], ",", false) != 5) {
+				console.log("bad state:");
+				console.log(state);
+				return;
+			}
+
 			var artifacts = [];
 			t[0].split(",").forEach(function(a, i, array) {
 				var v = a.split(".");
@@ -447,7 +421,7 @@ yattoApp.controller('CalculatorController',
 			$scope.r_undead  = parseOrZero(t[9], parseInt);
 			$scope.r_levels  = parseOrZero(t[10], parseInt);
 
-			$scope.stateChanged();
+			$scope.stateChanged(cookies);
 		};
 
 		var getGameState = function() {
@@ -469,7 +443,7 @@ yattoApp.controller('CalculatorController',
 			if (ai == 25) {
 				$scope.r_undead = $scope.artifacts[i].value;
 			}
-			$scope.stateChanged();
+			$scope.stateChanged(true);
 		};
 
 		$scope.heroesCheck = function(i, ai) {
@@ -480,11 +454,11 @@ yattoApp.controller('CalculatorController',
 				$scope.heroes[i].weapons = 0;
 			}
 			$scope.r_levels = getLevels().reduce(function(a, b) { return a + b; });
-			$scope.stateChanged();
+			$scope.stateChanged(true);
 		};
 
 		$scope.customizationCheck = function(i, ai) {
-			$scope.stateChanged();
+			$scope.stateChanged(true);
 			// $scope.generateStateString();
 		};
 
@@ -646,7 +620,7 @@ yattoApp.controller('CalculatorController',
 		$scope.readFromCookies();
 		if ("state" in $routeParams) {
 			$scope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-			$scope.importFromString($scope.state);
+			$scope.importFromString($scope.state, false);
 		}
 
 		$scope.generateStateString();

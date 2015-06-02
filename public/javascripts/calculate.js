@@ -312,6 +312,8 @@ var hero_info = [
 		[20.00, STYPE_HERO_DPS], [0.20, STYPE_TAP_DAMAGE], [0.01, STYPE_PERCENT_DPS], [0.25, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_ALL_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.40, STYPE_ALL_DAMAGE]])];
 
+// console.log("cost: " + hero_info[0].get_upgrade_cost(9729));
+
 var TOTAL_STYPE_GOLD_DROPPED = 0;
 for (var h in hero_info) {
 	for (var s in hero_info[h].skills) {
@@ -472,7 +474,7 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 	this.c_cc = customizations[4];
 	this.c_td = customizations[5];
 
-	this.c_chance = Math.min(1, 0.02 + 0.004 * this.l_egg);
+	this.c_chance = Math.min(1, 0.01 + 0.004 * this.l_egg);
 	this.n_chance = 1 - this.c_chance;
 
 	this.n_gold = 1 + 0.1 * this.l_amulet;
@@ -965,6 +967,11 @@ l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 100
 
 // 1.48e204 tap damage, 8.46e199 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1694];
+
+a = [500, 500, 10, 500, 500, 500, 25, 25, 500, 500, 500, 500, 10, 500, 10, 500, 10, 10, 500, 500, 25, 10, 10, 25, 500, 500, 500, 10, 5];
+// var g = new GameState(a, w, l, c);
+// g.get_all_skills();
+// console.log("gold multiplier: " + g.gold_multiplier());
 
 var METHOD_GOLD = 0;
 var METHOD_ALL_DAMAGE = 1;
