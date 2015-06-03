@@ -72,12 +72,17 @@ yattoApp.controller('SequencerController',
 			}
 		};
 
-		$scope.getList = function() {
+		$scope.getList = function(reset) {
 			var steps = [];
 			var currentSeed = $scope.seed;
 			var list = getOrderList().filter(function(x) {
 				return !$scope.s_artifacts[x].owned;
 			});
+
+			var salvages = [];
+			if (!reset && typeof $scope.steps !== "undefined" && $scope.steps != null) {
+				salvages = $scope.steps.map(function(s) { return s.salvage; });
+			}
 
 			while (list.length > 0) {
 				if (list.length == 1) {
@@ -88,6 +93,7 @@ yattoApp.controller('SequencerController',
 					});
 					list = [];
 				} else {
+
 					// console.log("list: " + list);
 					// console.log("current seed: " + currentSeed);
 
@@ -97,11 +103,21 @@ yattoApp.controller('SequencerController',
 					var index = $scope.unityRandom[currentSeed].values[numOwned];
 					// console.log("index: " + index);
 
-					var next = list.splice(index, 1)[0];
+					// var next = list.splice(index, 1)[0];
+					var next = list[index];
+					if (salvages[steps.length]) {
+						steps.push($scope.steps[steps.length]);
+						currentSeed = $scope.unityRandom[currentSeed].nextSeed;
+						continue;
+					} else {
+						list.splice(index, 1);
+					}
+
 					// console.log(artifact_info[next].name);
 					steps.push({
 						index: next,
-						name: artifact_info[next].name
+						name: artifact_info[next].name,
+						salvage: false
 					});
 					currentSeed = $scope.unityRandom[currentSeed].nextSeed;
 				}
@@ -200,11 +216,11 @@ yattoApp.controller('SequencerController',
 			// }
 		};
 
-		$scope.stateChanged = function() {
-			$scope.getList();
+		$scope.stateChanged = function(reset) {
+			$scope.getList(reset);
 		};
 
 		$scope.initialize();
-		$scope.getList();
+		$scope.getList(true);
 	}
 );

@@ -3,7 +3,7 @@
 		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
 			<h3>Stuff</h3>
 
-			Artifact Seed: <input type="number" class="form-control number-input right-input" ng-model="seed" min="0" ng-change="stateChanged()"/>
+			Artifact Seed: <input type="number" class="form-control number-input right-input" ng-model="seed" min="0" ng-change="stateChanged(true)"/>
 
 			<table id="ref-artifact-table">
 				<tr>
@@ -17,7 +17,7 @@
 						<input type="number" class="form-control number-input artifact-input" ng-model="a.priority" min="0" max="100"/>
 					</td>
 					<td class="s-artifacts-col02">
-						<input type="checkbox" ng-model="a.owned" ng-change="stateChanged()"/>
+						<input type="checkbox" ng-model="a.owned" ng-change="stateChanged(true)"/>
 					</td>
 				</tr>
 			</table>
@@ -26,10 +26,14 @@
 				<tr>
 					<th class="s-steps-colh0 colh"></th>
 					<th class="s-steps-colh1 colh">Artifact</th>
+					<th class="s-steps-colh2 colh"></th>
 				</tr>
 				<tr ng-repeat="s in steps track by $index" class="step-row">
 					<td class="s-steps-col0"><span class="checkmark" ng-click=""><i class="fa fa-check"></i></span></td>
 					<td class="s-steps-col1">{{s.name}}</td>
+					<td class="s-steps-col2">
+						<input type="checkbox" ng-model="s.salvage" ng-change="stateChanged(false)"/>
+					</td>
 				</tr>
 			</table>
 		</div>
