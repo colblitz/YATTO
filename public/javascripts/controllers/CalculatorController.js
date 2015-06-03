@@ -11,7 +11,7 @@ yattoApp.controller('CalculatorController',
 			update: function(e, ui) {
 				// TODO: a bit hacky, but seems like the update event is being fired before change to $artifacts is applied?
 				$timeout(function() {
-					$scope.generateStateString();
+					$scope.stateChanged(true);
 				}, 10);
 			}
 		};
@@ -228,60 +228,6 @@ yattoApp.controller('CalculatorController',
 			$scope.tap_damage = parseFloat(g.tap_damage()[0].toPrecision(4));
 		};
 
-
-
-
-		// /*
-		// 	convert.js
-		// 	http://rot47.net
-		//   https://helloacm.com
-		//   http://codingforspeed.com
-		// 	Dr Zhihua Lai
-		// */
-		// // var BASE2  = "01";
-		// // var BASE8  = "01234567";
-
-		// // var BASE16 = "0123456789abcdef";
-		// // var BASE32 = "0123456789abcdefghijklmnopqrstuvwxyz";
-		// var BASE10 = "0123456789";
-		// var BASE62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		// // var BASE75 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.,!=-*(){}[]";
-
-		// var convert = function(src, srctable, desttable) {
-		// 	var srclen = srctable.length;
-		// 	var destlen = desttable.length;
-		// 	// first convert to base 10
-		// 	var val = 0;
-		// 	var numlen = src.length;
-		// 	for (var i = 0; i < numlen; i ++)
-		// 	{
-		// 		val = val * srclen + srctable.indexOf(src.charAt(i));
-		// 	}
-		// 	if (val < 0)
-		// 	{
-		// 		return 0;
-		// 	}
-		// 	// then covert to any base
-		// 	var r = val % destlen;
-		// 	var res = desttable.charAt(r);
-		// 	var q = Math.floor(val / destlen);
-		// 	while (q)
-		// 	{
-		// 		r = q % destlen;
-		// 		q = Math.floor(q / destlen);
-		// 		res = desttable.charAt(r) + res;
-		// 	}
-		// 	return res;
-		// };
-
-		// var encode = function(s) {
-		// 	return convert(s, BASE10, BASE62);
-		// };
-
-		// var decode = function(s) {
-		// 	return convert(s, BASE62, BASE10);
-		// };
-
 		var stateToUrl = function(s) {
 			var pieces = s.split("|");
 			var newA = [];
@@ -337,33 +283,6 @@ yattoApp.controller('CalculatorController',
 			$scope.updateRelicInfo();
 			$scope.updateWeaponInfo();
 			$scope.updateRandomInfo();
-		};
-
-		var parseOrZero = function(s, f) {
-			var i = f(s);
-			if (i == null || isNaN(i)) {
-				i = 0;
-			}
-			return i;
-		};
-
-		/** Function count the occurrences of substring in a string;
-		 * @param {String} string   Required. The string;
-		 * @param {String} subString    Required. The string to search for;
-		 * @param {Boolean} allowOverlapping    Optional. Default: false;
-		 */
-		var occurrences = function(string, subString, allowOverlapping){
-		    string+=""; subString+="";
-		    if(subString.length<=0) return string.length+1;
-
-		    var n=0, pos=0;
-		    var step=(allowOverlapping)?(1):(subString.length);
-
-		    while(true){
-		        pos=string.indexOf(subString,pos);
-		        if(pos>=0){ n++; pos+=step; } else break;
-		    }
-		    return(n);
 		};
 
 		// 9.289,4.217,1.190,10.94,3.319,0.58,18.190,11.276,15.290,26.180,19.108,5.245,25.350,13.
@@ -628,5 +547,7 @@ yattoApp.controller('CalculatorController',
 		$scope.updateWeaponInfo();
 
 		shareVariables.setVariable("artifacts", $scope.artifacts);
+
+		common();
 	}
 );

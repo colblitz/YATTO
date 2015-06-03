@@ -36,40 +36,7 @@
 					<td class="r-artifacts-col10">{{a.magnitude}}</td>
 					<td class="r-artifacts-col11">{{a.text}}</td>
 				</tr>
-
-								
-				<!-- <tr><td>Amulet of the Valrunes</td><td>50</td><td>25</td><td>0</td><td>0.7</td><td>2.0</td></tr>
-				<tr><td>Axe of Resolution</td><td>70</td><td>35</td><td>0</td><td>0.5</td><td>1.7</td></tr>
-				<tr><td>Barbarian's Mettle</td><td>70</td><td>35</td><td>10</td><td>0.4</td><td>1.5</td></tr>
-				<tr><td>Chest of Contentment</td><td>40</td><td>20</td><td>0</td><td>0</td><td>1.5</td></tr>
-				<tr><td>Crafter's Elixir</td><td>40</td><td>20</td><td>0</td><td>0.5</td><td>1.8</td></tr>
-				<tr><td>Crown Egg</td><td>40</td><td>20</td><td>0</td><td>0</td><td>1.5</td></tr>
-				<tr><td>Dark Cloak of Life</td><td>30</td><td>15</td><td>25</td><td>0.5</td><td>2.0</td></tr>
-				<tr><td>Death Seeker</td><td>30</td><td>15</td><td>25</td><td>0.8</td><td>2.5</td></tr>
-				<tr><td>Divine Chalice</td><td>30</td><td>15</td><td>0</td><td>0.7</td><td>1.7</td></tr>
-				<tr><td>Drunken Hammer</td><td>60</td><td>30</td><td>0</td><td>0.6</td><td>1.7</td></tr>
-				<tr><td>Future's Fortune</td><td>30</td><td>15</td><td>0</td><td>0.7</td><td>2.0</td></tr>
-				<tr><td>Hero's Thrust</td><td>30</td><td>15</td><td>0</td><td>0.7</td><td>1.7</td></tr>
-				<tr><td>Hunter's Ointment</td><td>120</td><td>60</td><td>10</td><td>0.4</td><td>1.5</td></tr>
-				<tr><td>Knight's Shield</td><td>60</td><td>30</td><td>0</td><td>0.7</td><td>1.5</td></tr>
-				<tr><td>Laborer's Pendant</td><td>70</td><td>35</td><td>10</td><td>0.7</td><td>1.5</td></tr>
-				<tr><td>Ogre's Gauntlet</td><td>70</td><td>35</td><td>0</td><td>0.5</td><td>1.7</td></tr>
-				<tr><td>Otherworldly Armor</td><td>70</td><td>35</td><td>10</td><td>0</td><td>2.2</td></tr>
-				<tr><td>Overseer's Lotion</td><td>70</td><td>35</td><td>10</td><td>0.4</td><td>1.5</td></tr>
-				<tr><td>Parchment of Importance</td><td>70</td><td>35</td><td>0</td><td>0.5</td><td>1.7</td></tr>
-				<tr><td>Ring of Opulence</td><td>70</td><td>35</td><td>0</td><td>0.7</td><td>1.7</td></tr>
-				<tr><td>Ring of Wondrous Charm</td><td>30</td><td>15</td><td>25</td><td>0.5</td><td>1.7</td></tr>
-				<tr><td>Sacred Scroll</td><td>70</td><td>35</td><td>10</td><td>0.4</td><td>1.5</td></tr>
-				<tr><td>Saintly Shield</td><td>70</td><td>35</td><td>10</td><td>0.3</td><td>1.5</td></tr>
-				<tr><td>Savior Shield</td><td>30</td><td>15</td><td>25</td><td>0.5</td><td>1.7</td></tr>
-				<tr><td>Tincture of the Maker</td><td>10</td><td>5</td><td>0</td><td>0.6</td><td>2.5</td></tr>
-				<tr><td>Undead Aura</td><td>30</td><td>15</td><td>0</td><td>0.7</td><td>2.0</td></tr>
-				<tr><td>Universal Fissure</td><td>120</td><td>60</td><td>0</td><td>0.5</td><td>1.7</td></tr>
-				<tr><td>Warrior's Revival</td><td>70</td><td>35</td><td>10</td><td>0</td><td>2.2</td></tr>
-				<tr><td>Worldly Illuminator</td><td>300</td><td>150</td><td>5</td><td>0.6</td><td>3.0</td> -->
 			</table>
-
-				 <!-- - cost for artifact from level x to level y -->
 
 			<h3>Formulas</h3>
 			<table id="ref-formula-table">
@@ -115,194 +82,22 @@
 						\end{align*}
 					</td>
 				</tr>
-<!-- 
- (mobs * (Math.min(1, 0.02 + 0.004 * this.l_egg) * 10 * (1 + 0.2 * this.l_chest) * (1 + c_cg) * (1 + h_cg) + (1 - Math.min(1, 0.02 + 0.004 * this.l_egg)) * (1 + 0.1 * this.l_amulet) * 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice)) + BOSS_CONSTANT * (1 + this.l_kshield)) / (mobs + 1) * Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm)) $$ -->
-				
-<!-- this.get_hero_dps = function() {
-		var dps = 0;
-		var h_ad = this.get_total_bonus(STYPE_ALL_DAMAGE);
-		for (var i in this.heroes) {
-			var level = this.heroes[i];
-			if (level == 0) {
-				continue;
-			}
-
-			var hero_dps = hero_info[i].get_base_damage(level);
-
-			var m_hero = 1 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + h_ad;
-			var m_artifact = 1 + this.a_ad;
-			var m_weapon = this.w_bh[i];
-			var m_customization = 1 + this.c_ad;
-			var m_set = this.w_sb;
-
-			hero_dps = hero_dps * m_hero * m_artifact * m_weapon * m_customization * m_set;
-			dps += hero_dps;
-		}
-		return dps;
-	};
-
-	this.tap_damage = function() {
-		var h_ad = this.get_total_bonus(STYPE_ALL_DAMAGE);
-		var h_td = this.get_total_bonus(STYPE_TAP_DAMAGE);
-		var h_pd = this.get_total_bonus(STYPE_PERCENT_DPS);
-		var h_cd = this.get_total_bonus(STYPE_CRIT_DAMAGE);
-		var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
-
-		var hero_total_dps = this.get_hero_dps();
-
-		// from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + h_ad)
-		var from_main = this.main_dmg * (1 + h_ad);
-		var from_hero = (h_pd * hero_total_dps) * (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer) * (1 + this.c_ad);
-		var total_tap = from_main + from_hero;
-
-		var crit_multiplier = this.get_crit_multiplier();
-		var crit_chance = this.get_crit_chance();
-
-		var overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier));
-		var total_tapping = total_tap * overall_crit_multiplier;
-
-		return [total_tap, total_tapping]
-	}; -->
-
-
-
-				<!-- <tr>
-					<td>Hero upgrade cost</td>
-					<td>$$ base_cost * 1.075^level, x10 for evolve $$</td>
-				</tr>
-				<tr>
-					<td>Hero skill cost</td>
-					<td>$$ 5 * upgrade cost of next level $$</td>
-				</tr>
-				<tr>
-					<td>Hero evolve cost</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>Hero damage</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>All Damage</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>Base stage hp</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>Base stage gold</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>Relics earned</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>Gold Multiplier</td>
-					<td>=</td>
-					<td>$$ \left \lfloor (\text{# owned} + 1) \cdot 1.35^{(\text{# owned} + 1)} \right \rceil  $$</td>
-				</tr>
-				<tr>
-					<td>Gold Multiplier</td>
-
-
-\text{mobs} &= 10 - l_{\text{world}} \\
-
-\text{chest chance} &= \min(1, 0.02 + 0.004 * l_{\text{egg}}) \\
-\text{chest gold} &= 10 * (1 + 0.2 * l_{\text{chest}}) * (1 + c_{cg}) * (1 + h_{cg}) \\
-
-\text{chalice chance} &= \min(1, 0.005 * l_{\text{chalice}}) \\
-\text{chalice multiplier} &= 1 - \text{chalice chance} + 10 * \text{chalice chance} \\
-\text{normal gold} &= (1 + 0.1 * l_{\text{amulet}}) * \text{chalice multiplier} \\
-
-\text{mob gold} &= \text{mobs} * \left(\text{chest chance} * \text{chest gold} + (1 - \text{chest chance}) * \text{normal gold} \right)\\
-
-\text{boss constant} &\approx 6.2961 \\
-\text{boss gold} &= \text{boss constant} * (1 + l_{\text{shield}}) \\
-
-\text{mob multiplier} &= \frac{\text{mobs} * \text{mob gold} + \text{boss gold}}{\text{mobs} + 1} \\
-\text{other multipliers} &= \left \lceil 1 + 0.05 * l_{\text{ff}} = h_{gd} \right \rceil * (1 + c_{gd}) * (1 + 0.15 * l_{\text{elixir}}) * (\frac{1}{1 - 0.02 * l_{charm}}) \\
-\text{overall multiplier} &= \text{mob multiplier} * \text{other multipliers}
-
-
-	this.c_chance = Math.min(1, 0.02 + 0.004 * this.l_egg);
-	this.n_chance = 1 - this.c_chance;
-
-	this.n_gold = 1 + 0.1 * this.l_amulet;
-	this.d_chance = Math.min(1, 0.005 * this.l_chalice);
-	this.d_multiplier = 1 - this.d_chance + 10 * this.d_chance;
-	this.m_multiplier = this.n_chance * this.n_gold * this.d_multiplier;
-	this.boss_gold = BOSS_CONSTANT * (1 + this.l_kshield);
-
-	this.other_total = (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
-
-
-this.gold_multiplier = function() {
-		var mobs = 10 - this.l_world;
-
-		var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
-		var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
-
-		var c_gold = 10 * (1 + 0.2 * this.l_chest) * (1 + this.c_cg) * (1 + h_cg);
-
-		var m_gold = mobs * (this.c_chance * c_gold + this.m_multiplier);
-		var multiplier_gold = (m_gold + this.boss_gold) / (mobs + 1);
-		var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
-
-		return multiplier_gold * multiplier_total;
-	};
-
-
-
-
-(mobs * (Math.min(1, 0.02 + 0.004 * this.l_egg) * 10 * (1 + 0.2 * this.l_chest) * (1 + c_cg) * (1 + h_cg) + (1 - Math.min(1, 0.02 + 0.004 * this.l_egg)) * (1 + 0.1 * this.l_amulet) * 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice)) + BOSS_CONSTANT * (1 + this.l_kshield)) / (mobs + 1) * Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm))
-
-
-
-
-
-					this.gold_multiplier = function() {
-		var mobs = 10 - this.l_world;
-
-		var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
-		var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
-
-		var c_gold = ;
-
-		var m_gold = ;
-		var multiplier_gold = ;
-		var multiplier_total = ;
-
-		return multiplier_gold * multiplier_total;
-	};
-
-	this.c_chance = ;
-	this.n_chance = ;
-
-	this.n_gold = ;
-	this.d_chance = Math.min(1, 0.005 * this.l_chalice);
-	this.d_multiplier = 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice);
-	this.m_multiplier = ;
-	this.boss_gold = BOSS_CONSTANT * (1 + this.l_kshield);
-
-	this.other_total = ;
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>Hero DPS</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>Total DPS</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr>
-				<tr>
-					<td>Tapping DPS</td>
-					<td>$$ 10.75 * cost to upgrade 999 $$</td>
-				</tr> -->
 			</table>
+<!--
+ (mobs * (Math.min(1, 0.02 + 0.004 * this.l_egg) * 10 * (1 + 0.2 * this.l_chest) * (1 + c_cg) * (1 + h_cg) + (1 - Math.min(1, 0.02 + 0.004 * this.l_egg)) * (1 + 0.1 * this.l_amulet) * 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice)) + BOSS_CONSTANT * (1 + this.l_kshield)) / (mobs + 1) * Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm)) $$ -->
 
+<!-- Things to add
+Hero upgrade cost
+Hero skill cost
+Hero evolve cost
+Hero damage
+All damage
+Base stage hp
+Base stage gold
+Relics earned
+Hero dps
+Total dps
+Tapping dps -->
 
 			<h4>Symbols and reference</h4>
 			<table id="ref-symbols-table">
@@ -331,60 +126,6 @@ this.gold_multiplier = function() {
 				<tr><td>\( c_{cc} \)</td><td>=</td><td>customization crit chance (critical hit) bonus</td></tr>
 				<tr><td>\( c_{tc} \)</td><td>=</td><td>customization tap damage bonus</td></tr>
 			</table>
-
-<!-- 
-			<ul> 
-				<li> \(  = \text{round}(x) \) </li>
-				<li> \( ad_0 \) = base all damage of artifact </li>
-				<li> \( ad_{pl} \) = all damage increase per level of artifact </li>
-			</ul> -->
-
-
-						<!-- <h3>Formulas</h3>
-						<ul>Formulas/Reference:
-								<li>artifact AD
-										$$ ad0 + adpl * (level - 1) $$
-								</li>
-								<li>artifact cost to level
-										$$ a *x^y $$
-								</li>
-								<li>artifact level cap
-								</li>
-								<li>cost to buy next artifact
-										$$ \left \lfloor (\text{# of artifacts owned} + 1) \cdot 1.35^{(\text{# of artifacts} + 1)} \right \rceil $$
-								</li>
-								<li>hero upgrade cost
-										$$ base_cost * 1.075^level, x10 for evolve $$
-								</li>
-								<li>hero skill cost
-										$$ 5 * upgrade cost of next level $$
-								</li>
-								<li>hero evolve cost
-										$$ 10.75 * cost to upgrade 999 $$
-								</li>
-								<li>hero damage
-								</li>
-								<li>all damage
-								</li>
-								<li>base stage hp (hp -> stage)
-								</li>
-								<li>base stage gold
-								</li>
-								<li>relics earned
-								</li>
-								<li>gold multiplier
-								</li>
-								<li>hero dps
-								</li>
-								<li>total dps
-								</li>
-								<li>tapping dps
-								</li>
-						</ul>
-
-						<ul> Symbols and reference
-								<li> \( \left \lfloor x \right \rceil \) means round </li>
-							</ul> -->
-						</div>
-					</div>
-				</div>
+		</div>
+	</div>
+</div>
