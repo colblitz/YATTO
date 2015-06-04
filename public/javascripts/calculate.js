@@ -30,6 +30,16 @@ var Artifact = function(name, ad0, adpl, levelcap, x, y, effect, desc) {
 		}
 	};
 
+	this.costToLevelTo = function(level) {
+		var c = 0;
+		var l = 1;
+		while (l != level) {
+			c += this.costToLevel(l);
+			l += 1;
+		}
+		return c;
+	};
+
 	this.getDescription = function(level) {
 		var l = Math.max(0, Math.min(level, levelcap));
 		return (l * effect).toString() + "%" + this.description;
@@ -67,6 +77,41 @@ var artifact_info = [
 	new Artifact("Warrior's Revival",        70,  35, 10, 1.0, 2.2,   -5, "hero revive time"),         // 27 revive time
 	new Artifact("Worldly Illuminator",     300, 150,  5, 0.6, 3.0, -100, "monsters per stage")        // 28 number of mobs
 ];
+
+// var l = [[28, 5],
+// [2, 10],
+// [15, 187],
+// [19, 153],
+// [18, 187],
+// [8, 104],
+// [3, 377],
+// [21, 10],
+// [24, 118],
+// [5, 245],
+// [26, 247],
+// [25, 320],
+// [27, 10],
+// [12, 10],
+// [20, 25],
+// [13, 250],
+// [23, 25],
+// [7, 25],
+// [1, 207],
+// [10, 96],
+// [6, 25],
+// [4, 250],
+// [14, 10],
+// [22, 10],
+// [11, 368],
+// [9, 380],
+// [17, 10],
+// [0, 95],
+// [16, 10]];
+
+// for (var i in l) {
+// 	console.log(artifact_info[l[i][0]].costToLevelTo(l[i][1]));
+// }
+
 
 var numSkillTypes = 9;
 var STYPE_HERO_DPS     = 0;
