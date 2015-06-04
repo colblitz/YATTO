@@ -72,7 +72,7 @@ yattoApp.controller('SequencerController',
 			}
 		};
 
-		$scope.getList = function(reset) {
+		$scope.getList = function(reset, slist) {
 			var steps = [];
 			var currentSeed = $scope.seed;
 			var list = getOrderList().filter(function(x) {
@@ -82,6 +82,9 @@ yattoApp.controller('SequencerController',
 			var salvages = [];
 			if (!reset && typeof $scope.steps !== "undefined" && $scope.steps != null) {
 				salvages = $scope.steps.map(function(s) { return s.salvage; });
+			}
+			if (slist != null) {
+				salvages = slist;
 			}
 
 			while (list.length > 0) {
@@ -106,7 +109,28 @@ yattoApp.controller('SequencerController',
 					// var next = list.splice(index, 1)[0];
 					var next = list[index];
 					if (salvages[steps.length]) {
-						steps.push($scope.steps[steps.length]);
+
+					// 	console.log("at point of salvage");
+					// 	console.log(steps.length);
+					// 	console.log($scope.steps[steps.length]);
+					// 	console.log("vs");
+					// 	console.log({
+					// 	index: next,
+					// 	name: artifact_info[next].name,
+					// 	salvage: false
+					// });
+					// 	console.log(steps[steps.length-1]);
+					// 	console.log("----------------");
+					// 	console.log(artifact_info[next].name);
+					// 	console.log($scope.steps);
+					// 	console.log(steps);
+
+					// 	steps.push($scope.steps[steps.length]);
+						steps.push({
+							index: next,
+							name: artifact_info[next].name,
+							salvage: true
+						});
 						currentSeed = $scope.unityRandom[currentSeed].nextSeed;
 						continue;
 					} else {
@@ -217,10 +241,10 @@ yattoApp.controller('SequencerController',
 		};
 
 		$scope.stateChanged = function(reset) {
-			$scope.getList(reset);
+			$scope.getList(reset, null);
 		};
 
 		$scope.initialize();
-		$scope.getList(true);
+		$scope.getList(true, null);
 	}
 );
