@@ -1,25 +1,5 @@
 yattoApp.controller('SequencerController',
 	function($scope, shareVariables, localStorageService) {
-
-		// var processData = function(data) {
-		// 	$scope.unityRandom = [];
-		// 	for (var i in data) {
-		// 		$scope.unityRandom.push({
-		// 			nextSeed: parseInt(data[i][1]),
-		// 			values: data[i].slice(2).map(Number)
-		// 		});
-		// 	}
-		// };
-
-		// $.ajax({
-		// 	url: "../../artifact_order_public - Random.csv",
-		// 	async: false,
-		// 	dataType: "text",
-		// 	success: function(data) {
-		// 		processData($.csv2Array(data));
-		// 	}
-		// });
-
 		var getOrderList = function() {
 			return [
 				13, // Knight's Shield
@@ -69,18 +49,6 @@ yattoApp.controller('SequencerController',
 			i += 1;
 		}
 
-		// console.log(salvageCosts);
-
-		// // TODO: make this a lookup
-		// var salvageCost = function(i) {
-		// 	while (i < 30) {
-		// 		var aCost = costToBuy(i);
-		// 		var nCost = costToBuy(i+1);
-		// 		var a = (aCost + nCost) * 1;
-		// 		salvageCosts[i] = Math.round(Math.pow(5, Math.log(a) / Math.log(10)) + 35);
-		// 	}
-		// };
-
 		var setDefaults = function() {
 			$scope.s_artifacts = [];
 			$scope.w_steps = [];
@@ -110,15 +78,6 @@ yattoApp.controller('SequencerController',
 				$scope.s_artifacts.push(artifact);
 			}
 		};
-
-		// var start = new Date();
-		// var a = possibleSalvages(0, 1000);
-		// var end = new Date();
-		// console.log("done: " + a.length);
-		// console.log("took: " + (end - start));
-		// for (var k in a) {
-		// 	console.log(k);
-		// }
 
  //           10   11     12     13     14    14    14     15    15
 		// var slist = [false, false, false, true, true, false, true, false];
@@ -198,7 +157,6 @@ yattoApp.controller('SequencerController',
 				}
 			}
 
-			// console.log(steps.map(function(s) { return s.index; }));
 			return steps;
 		};
 
@@ -280,47 +238,6 @@ yattoApp.controller('SequencerController',
 		$scope.stop = function() {
 			clearInterval($scope.timer);
 		};
-
-		// var possibleSalvages = function(owned, cost) {
-		// 	console.log("----------------------------------------------------------------------------");
-		// 	var possible = {};
-		// 	possible[[]] = true;
-		// 	var added = [[]];
-		// 	var done = false;
-		// 	while (!done) {
-		// 		if (added.length == 0) {
-		// 			break;
-		// 		}
-
-		// 		var seed = added.slice();
-		// 		added = [];
-
-
-		// 		for (var s in seed) {
-		// 			var t1 = seed[s].slice();
-		// 			var t2 = seed[s].slice();
-		// 			t1.push(true);
-		// 			if (getCostOfSalvages(owned, t1) < cost) {
-		// 				t2.push(false);
-		// 				added.push(t1);
-		// 				added.push(t2);
-		// 			}
-		// 		}
-		// 		if (added.length == 0) {
-		// 			done = true;
-		// 		}
-
-		// 		for (var a in added) {
-		// 			if (added[a][added[a].length - 1]) {
-		// 				possible[added[a]] = true;
-		// 			}
-		// 		}
-
-		// 		console.log(Object.keys(possible).length);
-		// 	}
-		// 	return possible;
-		// };
-
 
 		$scope.importFromString = function(state) {
 			var t = state.split("|");
@@ -443,7 +360,6 @@ yattoApp.controller('SequencerController',
 				}
 			}
 			$scope.current_weapons = [];
-			console.log(weapons);
 			for (var i in weapons) {
 				var index = parseInt(i);
 				$scope.current_weapons.push({
@@ -455,11 +371,6 @@ yattoApp.controller('SequencerController',
 
 			$scope.current_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.n; }));
 			$scope.after_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
-
-
-			// for (var i in $scope.r_artifacts) {
-			// 	$scope.calcArtifacts(i);
-			// }
 		};
 
 		$scope.stateChanged = function(reset, stopSearch, skip) {
@@ -474,8 +385,6 @@ yattoApp.controller('SequencerController',
 
 		$scope.initialize();
 		$scope.stateChanged(true);
-
-
 
 		$scope.weaponConfirm = function() {
 			$scope.w_confirm = true;
@@ -497,59 +406,22 @@ yattoApp.controller('SequencerController',
 			$scope.columns.push($scope.w_steps.slice(itemsPerColumn, itemsPerColumn*2));
 			$scope.columns.push($scope.w_steps.slice(itemsPerColumn*2, itemsPerColumn*3));
 			$scope.columns.push($scope.w_steps.slice(itemsPerColumn*3));
-
-			console.log($scope.columns);
-
-			// var a = $scope.w_steps.slice(0, itemsPerColumn);
-
-
-
-			// $scope.columns.push({
-			// 	steps: a
-			// });
-			// a = $scope.w_steps.slice(itemsPerColumn, itemsPerColumn);
-			// $scope.columns.push({
-			// 	steps: a
-			// });
-			// a = $scope.w_steps.slice(itemsPerColumn*2, itemsPerColumn);
-			// $scope.columns.push({
-			// 	steps: a
-			// });
-			// a = $scope.w_steps.slice(itemsPerColumn*3, itemsPerColumn);
-			// $scope.columns.push({
-			// 	steps: a
-			// });
-
-			// for (var i = 0; i < $scope.w_steps.length; i += itemsPerColumn) {
-			// 	var col = {
-			// 		start: i,
-			// 		end: Math.min(i + itemsPerColumn, $scope.w_steps.length)
-			// 	};
-			// 	$scope.columns.push(col);
-			// }
 		};
 
 		$scope.weaponChanged = function() {
 			var currentSeed = $scope.weaponSeed;
-			// console.log($scope.weaponSeed);
-			// console.log(currentSeed);
 			for (var i in $scope.current_weapons) {
 				$scope.current_weapons[i].a = $scope.current_weapons[i].n;
 			}
 
 			$scope.w_steps =[];
 			for (var i = 0; i < $scope.weaponNum; i++) {
-				// console.log(i);
 				if (currentSeed == 0) {
 					console.log("gg");
 				}
-				// console.log("current seed: " + currentSeed);
 				var random = new Random(currentSeed);
 				var nextSeed = random.next(1, 2147483647);
 				var weapon = random.next(1, 34);
-
-				// console.log("next seed: " + nextSeed);
-				// console.log("weapon: " + weapon);
 
 				$scope.w_steps.push({
 					index: i + 1,
@@ -563,65 +435,9 @@ yattoApp.controller('SequencerController',
 			$scope.current_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.n; }));
 			$scope.after_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
 
-
 			calculateColumns();
 
 		};
-
-
-
-// | slice:column.start:column.end
-
-// <ul ng-repeat="column in columns" class="small-12 medium-4 columns">
-//       <li ng-repeat="skill in skills | slice:column.start:column.end">
-//         {{ skill }}
-//       </li>
-//     </ul>
-//   </body>
-
-
-//     $scope.columns = [];
-//   $scope.columnCount = 2;
-
-//   function calculateColumns() {
-//     var itemsPerColumn = Math.ceil($scope.skills.length / $scope.columnCount);
-//     for (var i=0; i<$scope.skills.length; i += itemsPerColumn) {
-//       var col = {start:i, end: Math.min(i + itemsPerColumn, $scope.skills.length) };
-//        $scope.columns.push(col);
-//     }
-//   }
-
-//   calculateColumns();
-
-// var string = "";
-// string += "1911545348";
-// string += ",";
-// string += random.next(1, 2147483647).toString();
-// string += ",";
-// string += random.next(1, 34).toString();
-// console.log(string);
-
-
-
-// private HeroID GetHeroToWeaponUpgrade()
-// {
-//     if (this.heroSeed == 0)
-//     {
-//         this.heroSeed = Random.Range(1, 0x7fffffff);
-//     }
-//     Random random = new Random((int) this.heroSeed);
-//     this.heroSeed = random.Next(1, 0x7fffffff);
-//     return (HeroID) random.Next(1, 0x22);
-// }
-
-
-
-			// $scope.steps = steps;
-			// return steps.map(function(s) { return s.index; });
-
-
-
-
 	}
 );
 

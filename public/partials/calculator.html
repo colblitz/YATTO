@@ -1,8 +1,6 @@
 <div id="calculator-container">
-
 	<div class="row">
 		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
-			<!-- <p>Hi! This is YATTO. This is a web-app made to help you optimize your relic spending and various other things. To use this, enter in your artifact, hero level, weapon, and customization values below, then enter in some options under "Efficiency Calculator" and "Methods," then hit "Calculate."</p> -->
 			<div class="row">
 				<div id="options-box" class="panel col-md-12">
 					<div class="row">
@@ -22,17 +20,6 @@
 							<div id="options-berserker" class="small-form-item">
 								Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged(true)"/>
 							</div>
-
-
-							<!-- <div id="options-greedy" ng-init="greedy=1">
-								<p>Calculation method:</p>
-								<div class="small-form-item">
-									<label><input type="radio" ng-model="greedy" value="1">Greedy</label>
-								</div>
-								<div class="small-form-item">
-									<label><input type="radio" ng-model="greedy" value="0" disabled="true">Dynamic Programming (in progress!)</label>
-								</div>
-							</div> -->
 
 							<button class="btn btn-primary" id="calculate-button" ng-click="calculate()">Calculate</button>
 							<span us-spinner="{radius:4, width:3, length: 5}" spinner-key="spinner"></span>
@@ -70,12 +57,6 @@
 									<label><input type="checkbox" ng-model="methods[$index].value" ng-change="stateChanged(true)"/> {{m.name}}</label>
 								</div>
 
-
-
-
-
-
-
 								<div id="stats-relic-box">
 									<div class="small-form-item">
 										<label>Stage:</label>
@@ -111,17 +92,6 @@
 									</div>
 								</div>
 
-
-
-
-
-
-
-
-
-
-
-
 							</div>
 						</div>
 
@@ -136,10 +106,6 @@
 							<button class="btn btn-success thinbtn" ng-click="storeToCookies()">Save cookies</button>
 							<button class="btn btn-success thinbtn" ng-click="readFromCookies()">Load from cookies</button>
 							<button class="btn btn-danger thinbtn" ng-click="clearAllCookies()">Clear cookies</button>
-
-
-
-
 
 							<div id="stats-weapons-box">
 								<div class="small-form-item">
@@ -164,37 +130,19 @@
 								</div>
 							</div>
 
-
-
-
 						</div> <!-- options subbox 4 -->
 					</div> <!-- row -->
 
 					<div class="row" id="stats-row">
 						<div id="stats-subbox-1" class="options-block col-md-4">
-
-
-
-								<!-- <div class="small-form-item">
-									<label>Tap damage:</label>
-									<input type="number" class="form-control number-input right-input random-input" ng-model="tap_damage" readonly/>
-								</div> -->
-
 						</div>
 						<div id="stats-subbox-2" class="options-block col-md-4">
-
 						</div>
 						<div id="stats-subbox-3" class="options-block col-md-4">
-
 						</div>
 					</div>
 
 					<div class="row" id="state-row">
-						<!-- <div class="col-md-3 state-buttons-block">
-							<button class="btn btn-info" id="load-state-button" ng-click="importFromString(state)">Load from state string</button>
-							<button class="btn btn-info" id="update-state-button" ng-click="generateStateString()">Generate state string</button>
-						</div> -->
-
 						<div class="col-md-12 url-block">
 							<textarea display="none" type="text" rows="4" class="form-control text-input" id="state-input" ng-model="state"/>
 							<textarea type="text" rows="3" class="form-control text-input" id="url-input" ng-model="url" readonly/>

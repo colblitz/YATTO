@@ -215,9 +215,7 @@ yattoApp.controller('CalculatorController',
 			var stageRelics = Math.pow(Math.floor($scope.r_cstage/15) - 5, 1.7);
 
 			heroRelics = Math.round(heroRelics * uaMultiplier);
-			// if ((uaMultiplier - 1) > 0.001) {
-			// 	heroRelics += 1;
-			// }
+
 			stageRelics = Math.ceil(stageRelics * uaMultiplier);
 			stageRelics = isNaN(stageRelics) ? 0 : stageRelics;
 
@@ -226,12 +224,7 @@ yattoApp.controller('CalculatorController',
 
 			$scope.r_nextbp = (Math.floor($scope.r_cstage / 15) + 1) * 15;
 			$scope.r_reward = Math.round(2 * (stageRelics + heroRelics));
-			// if ($scope.r_cstage < 90) {
-			// 	$scope.r_reward = 0;
-			// 	$scope.r_nextbp = 90;
-			// } else {
-			// 	$scope.r_reward = Math.round(2 * (stageRelics + heroRelics));
-			// }
+
 			stageRelics = Math.pow(Math.floor($scope.r_nextbp/15) - 5, 1.7);
 			stageRelics = Math.ceil(stageRelics * uaMultiplier);
 			stageRelics = isNaN(stageRelics) ? 0 : stageRelics;

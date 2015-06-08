@@ -78,41 +78,6 @@ var artifact_info = [
 	new Artifact("Worldly Illuminator",     300, 150,  5, 0.6, 3.0, -100, "monsters per stage")        // 28 number of mobs
 ];
 
-// var l = [[28, 5],
-// [2, 10],
-// [15, 187],
-// [19, 153],
-// [18, 187],
-// [8, 104],
-// [3, 377],
-// [21, 10],
-// [24, 118],
-// [5, 245],
-// [26, 247],
-// [25, 320],
-// [27, 10],
-// [12, 10],
-// [20, 25],
-// [13, 250],
-// [23, 25],
-// [7, 25],
-// [1, 207],
-// [10, 96],
-// [6, 25],
-// [4, 250],
-// [14, 10],
-// [22, 10],
-// [11, 368],
-// [9, 380],
-// [17, 10],
-// [0, 95],
-// [16, 10]];
-
-// for (var i in l) {
-// 	console.log(artifact_info[l[i][0]].costToLevelTo(l[i][1]));
-// }
-
-
 var numSkillTypes = 9;
 var STYPE_HERO_DPS     = 0;
 var STYPE_ALL_DAMAGE   = 1;
@@ -208,19 +173,6 @@ var Hero = function(name, id, base_cost, skills) {
 	};
 
 	this.get_base_damage = function(level) {
-		// source: https://github.com/oLaudix/oLaudix.github.io/blob/master/TTcalc.html
-		// if (level >= 1001) {
-		// 	var n1 = Math.pow(0.904, level - 1001) * Math.pow(0.715, this.id + 30) * 0.1;
-		// 	var x = this.get_upgrade_cost(level - 1);
-		// 	var y = Math.pow(1.075, level - 1000);
-		// 	return (x * n1 * (y - 1) / 1.075) - n1;
-		// } else {
-		// 	var n1 = Math.pow(0.904, level - 1) * Math.pow(1 - (0.019 * Math.min(this.id, 15)), this.id);
-		// 	var x = this.get_upgrade_cost(level - 1);
-		// 	var y = (Math.pow(1.075, level) - 1);
-		// 	return x * n1 * y / 0.0075;
-		// }
-
 		var n, m;
 		var c = this.get_upgrade_cost(level - 1);
 		if (level >= 1001) {
@@ -335,7 +287,6 @@ var hero_info = [
 		[20.00, STYPE_HERO_DPS], [0.20, STYPE_TAP_DAMAGE], [0.01, STYPE_PERCENT_DPS], [0.25, STYPE_GOLD_DROPPED],
 		[0.20, STYPE_ALL_DAMAGE], [0.30, STYPE_ALL_DAMAGE], [0.40, STYPE_ALL_DAMAGE]])];
 
-// console.log("cost: " + hero_info[0].get_upgrade_cost(9729));
 
 var TOTAL_STYPE_GOLD_DROPPED = 0;
 for (var h in hero_info) {
@@ -356,20 +307,6 @@ var next_ff_level = function(ff, c_gd) {
 	}
 	return new_level;
 };
-
-// console.log("total gold dropped: " + TOTAL_STYPE_GOLD_DROPPED);
-// Hero	Old cost/DPS	New cost/DPS
-// Pixie the Rebel Fairy	3.76E+101 / 4.57E+115	3.76E+116 / 1.14E+111
-// Jackalope the Fireballer	5.94E+95 / 4.56E+141	4.14E+136 / 9.01E+130
-// Dark Lord, Punisher of All	4.14E+121 / 3.52E+135	4.56E+156 / 7.1E+150
-
-// console.log("Pixie: " + hero_info[30].get_base_damage(1));
-// console.log("Jack: " + hero_info[31].get_base_damage(1));
-// console.log("DL: " + hero_info[32].get_base_damage(1));
-
-// calculate.js:275 Pixie: 1.1446563997839293e+113
-// calculate.js:276 Jack: 9.011429279256408e+132
-// calculate.js:277 DL: 7.096827058475263e+152
 
 var all_damage = function(artifacts) {
 	var total_ad = 0;
@@ -394,10 +331,6 @@ var get_hero_weapon_bonuses = function(weapons) {
 
 var number_of_sets = function(weapons) {
 	return Math.min.apply(null, weapons);
-	// if (weapons.indexOf(0) > -1) {
-	// 	return 0;
-	// }
-	// return 1 + number_of_sets(weapons.map(function(n) { return n - 1; }));
 };
 
 var set_bonus = function(weapons) {
@@ -920,134 +853,6 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 	};
 }
 
-// var a = [58, 190, 10, 307, 209, 245, 25, 25, 118, 279, 93, 267, 10, 225, 10, 280, 10, 10, 190, 108, 25, 10, 10, 25, 88, 267, 177, 10, 5];
-// var w = [10, 8, 7, 5, 6, 8, 6, 8, 10, 8, 10, 10, 11, 2, 5, 3, 3, 5, 7, 5, 8, 6, 4, 4, 3, 9, 5, 6, 4, 9, 3, 12, 5];
-// var c = [0.8, 0.81, 0.66, 1.67, 0.11, 0.44];
-// var l = [1, 101, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 101, 1, 0, 0, 0, 0, 0, 0];
-// var g = new GameState(a, w, l, c);
-// g.get_all_skills();
-// var base = base_stage_gold(404);
-// var m1 = g.multiplier1();
-// var m2 = g.multiplier2();
-// console.log("1: " + base * m1);
-// console.log("2: " + base * m2);
-
-
-var test = function(a, w, c, l, et, eh) {
-	var g = new GameState(a, w, l, c);
-	g.get_all_skills();
-	var tap = g.tap_damage();
-	var dps = parseFloat(g.get_hero_dps().toPrecision(4));
-	var dmg = parseFloat(tap[0].toPrecision(4));
-
-	console.log("----------------------------------------");
-	console.log("ad: " + g.a_ad);
-	console.log("expected hero damage: " + eh);
-	console.log("         hero damage: " + dps);
-	console.log("expected tap  damage: " + et);
-	console.log("         tap  damage: " + dmg);
-};
-
-
-// TESTING STUFF
-var a = [58, 150, 10, 265, 188, 245, 25, 25, 118, 262, 93, 250, 10, 225, 10, 220, 10, 10, 150, 108, 25, 10, 10, 25, 83, 255, 165, 10, 5];
-var w = [10, 7, 6, 5, 5, 7, 5, 8, 8, 8, 7, 9, 11, 2, 3, 3, 3, 4, 6, 5, 6, 5, 3, 3, 3, 7, 5, 6, 4, 7, 2, 11, 5];
-var c = [0.80, 0.81, 0.66, 1.67, 0.095, 0.44];
-
-var l;
-var g;
-// 2.47e121 tap damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 801, 1, 0, 0];
-// test(a, w, c, l, "2.47e121", null);
-
-// 1.08e129 tap damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 301, 0, 0];
-// test(a, w, c, l, "1.08e129", null);
-
-// 6.79e132 tap damage, 5.47e128 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 501, 0, 0];
-// test(a, w, c, l, "6.79e132", "5.47e128");
-
-// 7.97e141 tap damage, 6.42e137 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 701, 1, 0];
-// test(a, w, c, l, "7.97e141", "6.42e137");
-
-// 9.27e146 tap damage, 6.24e142 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 801, 201, 0];
-// test(a, w, c, l, "9.27e146", "6.24e142");
-
-// 7.34e148 tap damage, 4.94e144 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 901, 301, 0];
-// test(a, w, c, l, "7.34e148", "4.94e144");
-
-// 6.02e150 tap damage, 4.05e146 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 401, 0];
-// test(a, w, c, l, "6.02e150", "4.05e146");
-
-// 8.38e163 tap damage, 5.34e159 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 601, 33];
-// test(a, w, c, l, "8.38e163", "5.34e159");
-
-// 6.48e167 tap damage, 3.72e163 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 901, 233];
-// test(a, w, c, l, "6.48e167", "3.72e163");
-
-// 3.16e171 tap damage, 1.81e167 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 427];
-// test(a, w, c, l, "3.16e171", "1.81e167");
-
-// 5.73e176 tap damage, 3.29e172 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 704];
-// test(a, w, c, l, "5.73e176", "3.29e172");
-
-// 3.34e180 tap damage, 1.91e176 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 902];
-// test(a, w, c, l, "3.34e180", "1.91e176");
-
-// 3.18e192 tap damage, 1.83e188 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1080];
-// test(a, w, c, l, "3.18e192", "1.83e188");
-
-// 3.97e198 tap damage, 1.14e194 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1385];
-// test(a, w, c, l, "3.97e198", "1.14e194");
-
-// 8.49e201 tap damage, 4.87e197 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1576];
-// test(a, w, c, l, "8.49e201", "4.87e197");
-
-// 1.48e204 tap damage, 8.46e199 hero damage
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1694];
-// test(a, w, c, l, "1.48e204", "8.46e199");
-
-a = [500, 500, 10, 500, 500, 500, 25, 25, 500, 500, 500, 500, 10, 500, 10, 500, 10, 10, 500, 500, 25, 10, 10, 25, 500, 500, 500, 10, 5];
-// var g = new GameState(a, w, l, c);
-// g.get_all_skills();
-// console.log("gold multiplier: " + g.gold_multiplier());
-
-
-
-
-
-a = [58, 190, 10, 387, 257, 245, 25, 25, 118, 348, 94, 329, 10, 252, 10, 290, 10, 10, 290, 132, 25, 10, 10, 25, 103, 363, 222, 10, 5];
-w = [12, 11, 12, 7, 7, 9, 9, 9, 12, 15, 14, 15, 12, 4, 5, 10, 5, 7, 9, 8, 9, 7, 9, 6, 3, 11, 8, 9, 5, 12, 6, 14, 8];
-c = [0.80, 0.81, 0.66, 1.67, 0.11, 0.44];
-  // taked conte horne mila  terra inq   charl jorda jukka milo  macel gertr twitt maste elpha poppy skulp sterl orba  remus mikey peter teeny dezni hamle eisto flavi chest mohac jaqul pixie jacka darkl
-l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,    1,    1,    1,    1,    1,    1,    1,  201,  401,    1,    0,    0,    0,    0];
-// test(a, w, c, l, "6.7181e86", "1.1933e83");
-
-
-
-  // taked conte horne mila  terra inq   charl jorda jukka milo  macel gertr twitt maste elpha poppy skulp sterl orba  remus mikey peter teeny dezni hamle eisto flavi chest mohac jaqul pixie jacka darkl
-l = [   1,    1,    1,    1,    1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0];
-// test(a, w, c, l, "", "1.73B");
-
-  // taked conte horne mila  terra inq   charl jorda jukka milo  macel gertr twitt maste elpha poppy skulp sterl orba  remus mikey peter teeny dezni hamle eisto flavi chest mohac jaqul pixie jacka darkl
-l = [   1,  101,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0];
-// test(a, w, c, l, "432.37cc", "803.71bb");
-
-
-
 var METHOD_GOLD = 0;
 var METHOD_ALL_DAMAGE = 1;
 var METHOD_TAP_DAMAGE = 2;
@@ -1089,7 +894,6 @@ var get_value_memoize = function(a, p, mo) {
 	var w = p.w;
 	var l = p.l;
 	var c = p.c;
-	// console.log("get value memoize: " + w + " " + l + " " + c);
 	var m = mo;
 	if (p.s && m == METHOD_TAP_DAMAGE) {
 		m = METHOD_TAP_DAMAGE_WITH_ACTIVES;
@@ -1213,13 +1017,6 @@ var get_best = function(params, method) {
 		console.log("best option: " + best_option.cost);
 		console.log(params.n);
 		if (best_option.cost > relics_left && params.n == 0) {
-			console.log("laksjdlfjalsjdlfkjalksjdlfk");
-			// if (method == METHOD_GOLD) {
-			// 	console.log("breaking with best option");
-			// 	console.log(best_option);
-			// 	console.log(relics_left);
-			// 	console.log(nsteps);
-			// }
 			break;
 		}
 		relics_left -= best_option.cost;

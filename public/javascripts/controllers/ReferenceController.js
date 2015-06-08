@@ -2,9 +2,6 @@ yattoApp.controller('ReferenceController',
 	function($scope, shareVariables, localStorageService) {
 		MathJax.Hub.Configured();
 		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-		console.log("lakjsldjflkajsdf");
-		console.log(shareVariables.getVariable("artifacts"));
-
 
 		var setDefaults = function() {
 			$scope.r_artifacts = [];
