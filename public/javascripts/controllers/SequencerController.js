@@ -206,7 +206,7 @@ yattoApp.controller('SequencerController',
 				$scope.salvageint += 1;
 				var tryList = intToSalvage($scope.salvageint);
 				var cost = getCostOfSalvages(getOwned(), tryList);
-				if (cost < $scope.maxDiamonds) {
+				if ($scope.maxDiamonds == 0 || cost < $scope.maxDiamonds) {
 					var a = $scope.getList(false, tryList);
 					var f = a.filter(function(step) { return !step.salvage; }).map(function(step) { return step.index; });
 					// console.log(f);
