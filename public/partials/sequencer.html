@@ -14,7 +14,9 @@
 					<div class="small-form-item">
 						Max diamonds: <input type="number" class="form-control number-input right-input" ng-model="maxDiamonds" min="0" ng-change="stateChanged(false, true, true)"/>
 					</div>
-					<span>Sequences tried: {{salvageint}}</span>
+					<div class="small-form-item">
+						Sequences tried: <input type="number" class="form-control number-input right-input" ng-model="salvageint" disabled="true"/>
+					</div>
 					<button class="btn btn-primary" id="" ng-click="start()">Start</button>
 					<button class="btn btn-primary" id="" ng-click="stop()">Stop</button>
 					<button class="btn btn-primary" id="" ng-click="resetSearch()">Reset</button>
