@@ -3,6 +3,7 @@
 		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
 			<h3>Artifact information</h3>
 			<button class="btn btn-primary" id="r-reset-button" ng-click="initialize()">Reset Artifact Levels</button>
+			<p>To see what \(ad_0\), \(ad_{pl}\), x, and y are used for, check the Formulas page</p>
 			<table id="ref-artifact-table">
 				<tr>
 					<th>Artifact</th>
@@ -38,93 +39,38 @@
 				</tr>
 			</table>
 
-			<h3>Formulas</h3>
-			<table id="ref-formula-table">
+			<h3>Hero information</h3>
+			<p>Check out the <a href="https://docs.google.com/spreadsheets/d/1NPyvhPFAKtRwpbxRXEJNaja-LJV09YiKkt3xA09ZH_w/edit#gid=1962938097">Everything Spreadsheet</a> for a Google spreadsheet version</p>
+			<table id="ref-heroes-table">
 				<tr>
-					<th>Value</th>
-					<th></th>
-					<th>Formula</th>
+					<th>Hero</th>
+					<th>Cost</th>
+					<th colspan="2">(%) Lv 10 Skill</th>
+					<th colspan="2">(%) Lv 25 Skill</th>
+					<th colspan="2">(%) Lv 50 Skill</th>
+					<th colspan="2">(%) Lv 100 Skill</th>
+					<th colspan="2">(%) Lv 200 Skill</th>
+					<th colspan="2">(%) Lv 400 Skill</th>
+					<th colspan="2">(%) Lv 800 Skill</th>
 				</tr>
-				<tr>
-					<td>Artifact AD</td>
-					<td>=</td>
-					<td>$$ ad_0 + ad_{pl} \cdot (\text{level} - 1) $$</td>
+				<tr ng-repeat="h in r_heroes track by $index">
+					<td class="r-heroes-col00"><b>{{h.name}}</b></td>
+					<td class="r-heroes-col01">{{h.cost}}</td>
+					<td class="r-heroes-col02 {{h.skills[0].typeclass}}">{{h.skills[0].magnitude}}</td>
+					<td class="r-heroes-col03 {{h.skills[0].typeclass}}">{{h.skills[0].type}}</td>
+					<td class="r-heroes-col04 {{h.skills[1].typeclass}}">{{h.skills[1].magnitude}}</td>
+					<td class="r-heroes-col05 {{h.skills[1].typeclass}}">{{h.skills[1].type}}</td>
+					<td class="r-heroes-col06 {{h.skills[2].typeclass}}">{{h.skills[2].magnitude}}</td>
+					<td class="r-heroes-col07 {{h.skills[2].typeclass}}">{{h.skills[2].type}}</td>
+					<td class="r-heroes-col08 {{h.skills[3].typeclass}}">{{h.skills[3].magnitude}}</td>
+					<td class="r-heroes-col09 {{h.skills[3].typeclass}}">{{h.skills[3].type}}</td>
+					<td class="r-heroes-col10 {{h.skills[4].typeclass}}">{{h.skills[4].magnitude}}</td>
+					<td class="r-heroes-col11 {{h.skills[4].typeclass}}">{{h.skills[4].type}}</td>
+					<td class="r-heroes-col12 {{h.skills[5].typeclass}}">{{h.skills[5].magnitude}}</td>
+					<td class="r-heroes-col13 {{h.skills[5].typeclass}}">{{h.skills[5].type}}</td>
+					<td class="r-heroes-col14 {{h.skills[6].typeclass}}">{{h.skills[6].magnitude}}</td>
+					<td class="r-heroes-col15 {{h.skills[6].typeclass}}">{{h.skills[6].type}}</td>
 				</tr>
-				<tr>
-					<td>Artifact cost to level</td>
-					<td>=</td>
-					<td>$$ x \cdot \text{level}^y $$</td>
-				</tr>
-				<tr>
-					<td>Cost to buy next artifact</td>
-					<td>=</td>
-					<td>$$ \left \lfloor (\text{# owned} + 1) \cdot 1.35^{(\text{# owned} + 1)} \right \rceil  $$</td>
-				</tr>
-				<tr>
-					<td>Gold Multiplier</td>
-					<td>=</td>
-					<td>
-						\begin{align*}
-							\text{mobs} &= 10 - l_{\text{world}} \\
-							\\
-							\text{chalice chance} &= \min(1, 0.005 \cdot l_{\text{chalice}}) \\
-							\text{chalice multiplier} &= 1 - \text{chalice chance} + 10 \cdot \text{chalice chance} \\
-							\text{normal gold} &= (1 + 0.1 \cdot l_{\text{amulet}}) \cdot \text{chalice multiplier} \\
-							\\
-							\text{chest chance} &= \min(1, 0.02 + 0.004 \cdot l_{\text{egg}}) \\
-							\text{chest gold} &= 10 \cdot (1 + 0.2 \cdot l_{\text{chest}}) \cdot (1 + c_{cg}) \cdot (1 + h_{cg}) \\
-							\text{mob gold} &= \text{chest chance} \cdot \text{chest gold} + (1 - \text{chest chance}) \cdot \text{normal gold}\\
-							\text{boss gold} &\approx 6.2961 \cdot (1 + l_{\text{shield}}) \\
-							\\
-							\text{mob multiplier} &= \frac{\text{mobs} \cdot \text{mob gold} + \text{boss gold}}{\text{mobs} + 1} \\
-							\text{other multipliers} &= \left \lceil 1 + 0.05 \cdot l_{\text{ff}} + h_{gd} + c_{gd} \right \rceil \cdot (1 + 0.15 \cdot l_{\text{elixir}}) \cdot \left(\frac{1}{1 - 0.02 \cdot l_{charm}}\right) \\
-							\text{overall multiplier} &= \text{mob multiplier} \cdot \text{other multipliers}
-						\end{align*}
-					</td>
-				</tr>
-			</table>
-<!--
- (mobs * (Math.min(1, 0.02 + 0.004 * this.l_egg) * 10 * (1 + 0.2 * this.l_chest) * (1 + c_cg) * (1 + h_cg) + (1 - Math.min(1, 0.02 + 0.004 * this.l_egg)) * (1 + 0.1 * this.l_amulet) * 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice)) + BOSS_CONSTANT * (1 + this.l_kshield)) / (mobs + 1) * Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm)) $$ -->
-
-<!-- Things to add
-Hero upgrade cost
-Hero skill cost
-Hero evolve cost
-Hero damage
-All damage
-Base stage hp
-Base stage gold
-Relics earned
-Hero dps
-Total dps
-Tapping dps -->
-
-			<h4>Symbols and reference</h4>
-			<table id="ref-symbols-table">
-				<tr>
-					<th>Symbol</th>
-					<th></th>
-					<th>Explanation</th>
-				</tr>
-				<tr><td>\( \left \lfloor x \right \rceil \)</td><td>=</td><td>round(x)</td></tr>
-				<tr><td>\( \left \lceil x \right \rceil \)</td><td>=</td><td>ceil(x) or roundup(x)</td></tr>
-				<tr><td>\( l_{\text{name}} \)</td><td>=</td><td>level of [name]</td></tr>
-				<tr><td>\( ad_0 \)</td><td>=</td><td>artifact base all damage</td></tr>
-				<tr><td>\( ad_{pl} \)</td><td>=</td><td>artifact all damage increase per level</td></tr>
-				<tr><td>\( h_{hd} \)</td><td>=</td><td>hero damage bonus (individual hero)</td></tr>
-				<tr><td>\( h_{ad} \)</td><td>=</td><td>hero all damage bonus</td></tr>
-				<tr><td>\( h_{cd} \)</td><td>=</td><td>hero crit damage bonus</td></tr>
-				<tr><td>\( h_{td} \)</td><td>=</td><td>hero tap damage bonus</td></tr>
-				<tr><td>\( h_{pd} \)</td><td>=</td><td>hero percent dps bonus</td></tr>
-				<tr><td>\( h_{bd} \)</td><td>=</td><td>hero boss damage bonus</td></tr>
-				<tr><td>\( h_{cg} \)</td><td>=</td><td>hero chest gold bonus</td></tr>
-				<tr><td>\( h_{gd} \)</td><td>=</td><td>hero gold dropped bonus</td></tr>
-				<tr><td>\( c_{ad} \)</td><td>=</td><td>customization all damage bonus</td></tr>
-				<tr><td>\( c_{cd} \)</td><td>=</td><td>customization crit damage bonus</td></tr>
-				<tr><td>\( c_{gd} \)</td><td>=</td><td>customization gold dropped bonus</td></tr>
-				<tr><td>\( c_{cg} \)</td><td>=</td><td>customization chest gold bonus</td></tr>
-				<tr><td>\( c_{cc} \)</td><td>=</td><td>customization crit chance (critical hit) bonus</td></tr>
-				<tr><td>\( c_{tc} \)</td><td>=</td><td>customization tap damage bonus</td></tr>
 			</table>
 		</div>
 	</div>

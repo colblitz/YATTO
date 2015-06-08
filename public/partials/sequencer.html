@@ -1,41 +1,132 @@
 <div id="reference-container">
 	<div class="row">
 		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
-			<h3>Stuff</h3>
+			<h3>Artifact Sequencer</h3>
 
-			Artifact Seed: <input type="number" class="form-control number-input right-input" ng-model="seed" min="0" ng-change="stateChanged(true)"/>
+			<div class="row">
+				<div class="col-md-8">
+					<p>Blue Bottle master cleanse PBRB, ennui chia chambray kale chips hoodie distillery meditation cray. Skateboard banjo asymmetrical, Austin semiotics chambray before they sold out. Raw denim Williamsburg slow-carb, Blue Bottle pickled Wes Anderson ethical meh Vice asymmetrical cred hella occupy. Umami 90's aesthetic literally DIY, bespoke asymmetrical squid Austin quinoa migas freegan. Quinoa tousled Thundercats semiotics, fap keffiyeh Williamsburg 90's lomo +1 jean shorts roof party. Tote bag DIY bitters pork belly single-origin coffee organic, street art distillery chillwave Shoreditch ennui pug tattooed. Schlitz Pitchfork shabby chic, health goth Portland pug messenger bag selvage American Apparel photo booth.</p>
+				</div>
+				<div class="col-md-4">
+					<div class="small-form-item">
+						Artifact Seed: <input type="number" class="form-control number-input right-input" ng-model="seed" min="0" ng-change="stateChanged(true, true)"/>
+					</div>
+					<div class="small-form-item">
+						Max diamonds: <input type="number" class="form-control number-input right-input" ng-model="maxDiamonds" min="0" ng-change="stateChanged(false, true, true)"/>
+					</div>
+					<span>Sequences tried: {{salvageint}}</span>
+					<button class="btn btn-primary" id="" ng-click="start()">Start</button>
+					<button class="btn btn-primary" id="" ng-click="stop()">Stop</button>
+					<button class="btn btn-primary" id="" ng-click="resetSearch()">Reset</button>
+					<span><h4>{{salvageError}}<h4></span>
+				</div>
+			</div>
 
-			<table id="ref-artifact-table">
-				<tr>
-					<th>Artifact</th>
-					<th>Priority</th>
-					<th>Owned</th>
-				</tr>
-				<tr ng-repeat="a in s_artifacts track by $index">
-					<td class="s-artifacts-col00">{{a.name}}</td>
-					<td class="s-artifacts-col01">
-						<input type="number" class="form-control number-input artifact-input" ng-model="a.priority" min="0" max="100"/>
-					</td>
-					<td class="s-artifacts-col02">
-						<input type="checkbox" ng-model="a.owned" ng-change="stateChanged(true)"/>
-					</td>
-				</tr>
-			</table>
 
-			<table>
-				<tr>
-					<th class="s-steps-colh0 colh"></th>
-					<th class="s-steps-colh1 colh">Artifact</th>
-					<th class="s-steps-colh2 colh"></th>
-				</tr>
-				<tr ng-repeat="s in steps track by $index" class="step-row">
-					<td class="s-steps-col0"><span class="checkmark" ng-click=""><i class="fa fa-check"></i></span></td>
-					<td class="s-steps-col1">{{s.name}}</td>
-					<td class="s-steps-col2">
-						<input type="checkbox" ng-model="s.salvage" ng-change="stateChanged(false)"/>
-					</td>
-				</tr>
-			</table>
+			<div class="col-md-4">
+				<table id="seq-artifact-table">
+					<tr>
+						<th>Artifact</th>
+						<th>Priority</th>
+						<th>Owned</th>
+					</tr>
+					<tr ng-repeat="a in s_artifacts track by $index">
+						<td class="s-artifacts-col00">{{a.name}}</td>
+						<td class="s-artifacts-col01">
+							<input type="number" class="form-control number-input artifact-input" ng-model="a.priority" min="0" max="100" ng-class="{'artifact-owned': a.owned}" ng-change="resetSearch()"/>
+						</td>
+						<td class="s-artifacts-col02">
+							<input type="checkbox" ng-model="a.owned" ng-change="stateChanged(true, true)"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="col-md-4">
+				<span>Cost of salvages: {{cost_manual}}</span>
+				<table id="seq-manual-table">
+					<tr>
+						<th class="s-steps-colh0 colh"></th>
+						<th class="s-steps-colh0 colh">Artifact</th>
+						<th class="s-steps-colh1 colh">Salvage?</th>
+					</tr>
+					<tr ng-repeat="s in steps track by $index" class="step-row">
+						<td class="s-steps-col0">{{s.n}}</td>
+						<td class="s-steps-col0">{{s.name}}</td>
+						<td class="s-steps-col1">
+							<input type="checkbox" ng-model="s.salvage" ng-change="stateChanged(false, false)"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="col-md-4">
+				<span>Cost of salvages: {{cost_auto}}</span>
+				<table id="seq-automatic-table">
+					<tr>
+						<th class="s-steps-colh1 colh"></th>
+						<th class="s-steps-colh1 colh">Artifact</th>
+						<th class="s-steps-colh2 colh">Salvage?</th>
+					</tr>
+					<tr ng-repeat="s in best_steps track by $index" class="step-row">
+						<td class="s-steps-col1">{{s.n}}</td>
+						<td class="s-steps-col1">{{s.name}}</td>
+						<td class="s-steps-col2">
+							<input type="checkbox" ng-model="s.salvage" disabled="true"/>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+		</div>
+	</div>
+	<div class="row">
+		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
+			<div class="row">
+				<h3>Weapon sequence</h3>
+				<div class="col-md-4">
+					<div class="large-form-item">
+						Weapon Seed: <input type="number" class="form-control number-input s-weapon-input right-input" ng-model="weaponSeed" min="0" ng-change="weaponChanged()"/>
+					</div>
+					<div class="large-form-item">
+						Num to calculate: <input type="number" class="form-control number-input right-input" ng-model="weaponNum" min="0" ng-change="weaponChanged()"/>
+					</div>
+					<button class="btn btn-primary wbtn" id="" ng-click="weaponConfirm()">Get Weapon Sequence</button>
+				</div>
+
+				<div class="col-md-4">
+					<h4 ng-show="w_confirm">Are you sure blah blah blah?</h4>
+					<button class="btn btn-primary" id="" ng-click="getWeapons()" ng-show="w_confirm">Yes I'm Sure</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-4">
+					<table id="seq-currentw-table" ng-show="showWeapons">
+						<tr>
+							<th class="s-current-colh1 colh"></th>
+							<th class="s-current-colh2 colh">Current</th>
+							<th class="s-current-colh3 colh">After</th>
+						</tr>
+						<tr ng-repeat="s in current_weapons track by $index" class="step-row">
+							<td class="s-current-col1">{{s.name}}</td>
+							<td class="s-current-col2" ng-class="{'weapon-min': s.n==current_min}">{{s.n}}</td>
+							<td class="s-current-col2" ng-class="{'weapon-min': s.a==after_min}">{{s.a}}</td>
+						</tr>
+					</table>
+				</div>
+				<div class="col-md-2" ng-repeat="co in c">
+					<table id="seq-weapon-table" ng-show="showWeapons">
+						<tr>
+							<th class="s-weapons-colh1 colh"></th>
+							<th class="s-weapons-colh2 colh">Weapon</th>
+						</tr>
+						<tr ng-repeat="s in columns[co] track by $index" class="step-row">
+							<td class="s-weapons-col1">{{s.index}}</td>
+							<td class="s-weapons-col2">{{s.weapon}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

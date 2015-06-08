@@ -209,17 +209,28 @@ var Hero = function(name, id, base_cost, skills) {
 
 	this.get_base_damage = function(level) {
 		// source: https://github.com/oLaudix/oLaudix.github.io/blob/master/TTcalc.html
+		// if (level >= 1001) {
+		// 	var n1 = Math.pow(0.904, level - 1001) * Math.pow(0.715, this.id + 30) * 0.1;
+		// 	var x = this.get_upgrade_cost(level - 1);
+		// 	var y = Math.pow(1.075, level - 1000);
+		// 	return (x * n1 * (y - 1) / 1.075) - n1;
+		// } else {
+		// 	var n1 = Math.pow(0.904, level - 1) * Math.pow(1 - (0.019 * Math.min(this.id, 15)), this.id);
+		// 	var x = this.get_upgrade_cost(level - 1);
+		// 	var y = (Math.pow(1.075, level) - 1);
+		// 	return x * n1 * y / 0.0075;
+		// }
+
+		var n, m;
+		var c = this.get_upgrade_cost(level - 1);
 		if (level >= 1001) {
-			var n1 = Math.pow(0.904, level - 1001) * Math.pow(0.715, this.id + 30) * 0.1;
-			var x = this.get_upgrade_cost(level - 1);
-			var y = Math.pow(1.075, level - 1000);
-			return (x * n1 * (y - 1) / 1.075) - n1;
+			n = Math.max(Math.pow(0.904, level - 1001) * Math.pow(0.715, this.id + 33), 1e-308);
+			m = Math.pow(1.075, level - 1000) - 1;
 		} else {
-			var n1 = Math.pow(0.904, level - 1) * Math.pow(1 - (0.019 * Math.min(this.id, 15)), this.id);
-			var x = this.get_upgrade_cost(level - 1);
-			var y = (Math.pow(1.075, level) - 1);
-			return x * n1 * y / 0.0075;
+			n = Math.max(Math.pow(0.904, level - 1) * Math.pow(1 - (0.019 * Math.min(this.id, 15)), this.id), 1e-308);
+			m = Math.pow(1.075, level) - 1;
 		}
+		return (n * c * m) / 0.75;
 	};
 }
 
@@ -382,10 +393,11 @@ var get_hero_weapon_bonuses = function(weapons) {
 };
 
 var number_of_sets = function(weapons) {
-	if (weapons.indexOf(0) > -1) {
-		return 0;
-	}
-	return 1 + number_of_sets(weapons.map(function(n) { return n - 1; }));
+	return Math.min.apply(null, weapons);
+	// if (weapons.indexOf(0) > -1) {
+	// 	return 0;
+	// }
+	// return 1 + number_of_sets(weapons.map(function(n) { return n - 1; }));
 };
 
 var set_bonus = function(weapons) {
@@ -456,22 +468,26 @@ var sumArray = function(array) {
 	return array.reduce(function(a, b) { return a + b; });
 };
 
-var GameState = function(artifacts, weapons, levels, customizations) {
+var BASE_CRIT_CHANCE = 0.02;
+var BASE_CHEST_CHANCE = 0.02;
+var GameState = function(artifacts, weapons, levels, customizations, others) {
 	this.artifacts = artifacts.slice();
 	this.a_ad = 0.01 * all_damage(this.artifacts);
-	this.l_amulet = artifacts[0];
-	this.l_chest = artifacts[3];
-	this.l_elixir = artifacts[4];
-	this.l_egg = artifacts[5];
-	this.l_dseeker = artifacts[7];
-	this.l_chalice = artifacts[8];
-	this.l_hammer = artifacts[9];
-	this.l_fortune = artifacts[10];
-	this.l_hthrust = artifacts[11];
-	this.l_kshield = artifacts[13];
-	this.l_charm = artifacts[20];
-	this.l_ua = artifacts[25];
-	this.l_world = artifacts[28];
+	this.l_amulet    = artifacts[0];
+	this.l_axe       = artifacts[1];
+	this.l_chest     = artifacts[3];
+	this.l_elixir    = artifacts[4];
+	this.l_egg       = artifacts[5];
+	this.l_dseeker   = artifacts[7];
+	this.l_chalice   = artifacts[8];
+	this.l_hammer    = artifacts[9];
+	this.l_fortune   = artifacts[10];
+	this.l_hthrust   = artifacts[11];
+	this.l_kshield   = artifacts[13];
+	this.l_parchment = artifacts[18];
+	this.l_charm     = artifacts[20];
+	this.l_ua        = artifacts[25];
+	this.l_world     = artifacts[28];
 	this.main_dmg = 600 * Math.pow(1.05, 600);
 
 	this.weapons = weapons.slice();
@@ -486,7 +502,9 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 	this.c_cc = customizations[4];
 	this.c_td = customizations[5];
 
-	this.c_chance = Math.min(1, 0.02 + 0.004 * this.l_egg);
+	this.others = others ? others : {};
+
+	this.c_chance = Math.min(1, BASE_CHEST_CHANCE + 0.004 * this.l_egg);
 	this.n_chance = 1 - this.c_chance;
 
 	this.n_gold = 1 + 0.1 * this.l_amulet;
@@ -595,7 +613,7 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 
 	this.get_crit_chance = function() {
 		var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
-		return 0.01 + 0.02 * this.l_dseeker + this.c_cc + h_cc;
+		return Math.min(1, BASE_CRIT_CHANCE + 0.02 * this.l_dseeker + this.c_cc + h_cc);
 	};
 
 	this.get_hero_dps = function() {
@@ -608,14 +626,13 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 			}
 
 			var hero_dps = hero_info[i].get_base_damage(level);
-
 			var m_hero = 1 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + h_ad;
 			var m_artifact = 1 + this.a_ad;
-			var m_weapon = this.w_bh[i];
 			var m_customization = 1 + this.c_ad;
+			var m_weapon = this.w_bh[i];
 			var m_set = this.w_sb;
 
-			hero_dps = hero_dps * m_hero * m_artifact * m_weapon * m_customization * m_set;
+			hero_dps = hero_dps * m_hero * m_artifact * m_customization * m_weapon * m_set;
 			dps += hero_dps;
 		}
 		return dps;
@@ -641,7 +658,18 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 		var overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier));
 		var total_tapping = total_tap * overall_crit_multiplier;
 
-		return [total_tap, total_tapping]
+		var a_crit_uptime = this.l_parchment > 0 ? Math.min((30 + 3 * this.l_parchment) / 900, 1) : 0;
+		var a_crit_bonus = this.others.cs > 0 ? (0.17 + (this.others.cs - 1) * 0.03) : 0;
+
+		var a_crit_chance = Math.min(1, crit_chance + a_crit_uptime * a_crit_bonus);
+		var a_overall_crit_multiplier = ((1 - a_crit_chance) + (a_crit_chance * 0.65 * crit_multiplier));
+
+		var a_tap_uptime = this.l_axe > 0 ? Math.min((30 + 3 * this.l_axe) / 1800, 1) : 0;
+		var a_tap_bonus = this.others.br > 0 ? (0.70 + (this.others.br - 1) * 0.3) : 1;
+
+		var a_total_tapping = total_tap * a_overall_crit_multiplier * (1 + a_tap_uptime * a_tap_bonus);
+
+		return [total_tap, total_tapping, a_total_tapping];
 	};
 
 	this.level_heroes = function() {
@@ -905,6 +933,21 @@ var GameState = function(artifacts, weapons, levels, customizations) {
 // console.log("2: " + base * m2);
 
 
+var test = function(a, w, c, l, et, eh) {
+	var g = new GameState(a, w, l, c);
+	g.get_all_skills();
+	var tap = g.tap_damage();
+	var dps = parseFloat(g.get_hero_dps().toPrecision(4));
+	var dmg = parseFloat(tap[0].toPrecision(4));
+
+	console.log("----------------------------------------");
+	console.log("ad: " + g.a_ad);
+	console.log("expected hero damage: " + eh);
+	console.log("         hero damage: " + dps);
+	console.log("expected tap  damage: " + et);
+	console.log("         tap  damage: " + dmg);
+};
+
 
 // TESTING STUFF
 var a = [58, 150, 10, 265, 188, 245, 25, 25, 118, 262, 93, 250, 10, 225, 10, 220, 10, 10, 150, 108, 25, 10, 10, 25, 83, 255, 165, 10, 5];
@@ -912,59 +955,98 @@ var w = [10, 7, 6, 5, 5, 7, 5, 8, 8, 8, 7, 9, 11, 2, 3, 3, 3, 4, 6, 5, 6, 5, 3, 
 var c = [0.80, 0.81, 0.66, 1.67, 0.095, 0.44];
 
 var l;
+var g;
 // 2.47e121 tap damage
-
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 801, 1, 0, 0];
+// test(a, w, c, l, "2.47e121", null);
 
 // 1.08e129 tap damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 301, 0, 0];
+// test(a, w, c, l, "1.08e129", null);
 
 // 6.79e132 tap damage, 5.47e128 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 501, 0, 0];
+// test(a, w, c, l, "6.79e132", "5.47e128");
 
 // 7.97e141 tap damage, 6.42e137 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 701, 1, 0];
+// test(a, w, c, l, "7.97e141", "6.42e137");
 
 // 9.27e146 tap damage, 6.24e142 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 801, 201, 0];
+// test(a, w, c, l, "9.27e146", "6.24e142");
 
 // 7.34e148 tap damage, 4.94e144 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 901, 301, 0];
+// test(a, w, c, l, "7.34e148", "4.94e144");
 
 // 6.02e150 tap damage, 4.05e146 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 401, 0];
+// test(a, w, c, l, "6.02e150", "4.05e146");
 
 // 8.38e163 tap damage, 5.34e159 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 601, 33];
+// test(a, w, c, l, "8.38e163", "5.34e159");
 
 // 6.48e167 tap damage, 3.72e163 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 901, 233];
+// test(a, w, c, l, "6.48e167", "3.72e163");
 
 // 3.16e171 tap damage, 1.81e167 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 427];
+// test(a, w, c, l, "3.16e171", "1.81e167");
 
 // 5.73e176 tap damage, 3.29e172 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 704];
+// test(a, w, c, l, "5.73e176", "3.29e172");
 
 // 3.34e180 tap damage, 1.91e176 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 902];
+// test(a, w, c, l, "3.34e180", "1.91e176");
 
 // 3.18e192 tap damage, 1.83e188 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1080];
+// test(a, w, c, l, "3.18e192", "1.83e188");
 
 // 3.97e198 tap damage, 1.14e194 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1385];
+// test(a, w, c, l, "3.97e198", "1.14e194");
 
 // 8.49e201 tap damage, 4.87e197 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1576];
+// test(a, w, c, l, "8.49e201", "4.87e197");
 
 // 1.48e204 tap damage, 8.46e199 hero damage
 l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1694];
+// test(a, w, c, l, "1.48e204", "8.46e199");
 
 a = [500, 500, 10, 500, 500, 500, 25, 25, 500, 500, 500, 500, 10, 500, 10, 500, 10, 10, 500, 500, 25, 10, 10, 25, 500, 500, 500, 10, 5];
 // var g = new GameState(a, w, l, c);
 // g.get_all_skills();
 // console.log("gold multiplier: " + g.gold_multiplier());
+
+
+
+
+
+a = [58, 190, 10, 387, 257, 245, 25, 25, 118, 348, 94, 329, 10, 252, 10, 290, 10, 10, 290, 132, 25, 10, 10, 25, 103, 363, 222, 10, 5];
+w = [12, 11, 12, 7, 7, 9, 9, 9, 12, 15, 14, 15, 12, 4, 5, 10, 5, 7, 9, 8, 9, 7, 9, 6, 3, 11, 8, 9, 5, 12, 6, 14, 8];
+c = [0.80, 0.81, 0.66, 1.67, 0.11, 0.44];
+  // taked conte horne mila  terra inq   charl jorda jukka milo  macel gertr twitt maste elpha poppy skulp sterl orba  remus mikey peter teeny dezni hamle eisto flavi chest mohac jaqul pixie jacka darkl
+l = [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000,    1,    1,    1,    1,    1,    1,    1,  201,  401,    1,    0,    0,    0,    0];
+// test(a, w, c, l, "6.7181e86", "1.1933e83");
+
+
+
+  // taked conte horne mila  terra inq   charl jorda jukka milo  macel gertr twitt maste elpha poppy skulp sterl orba  remus mikey peter teeny dezni hamle eisto flavi chest mohac jaqul pixie jacka darkl
+l = [   1,    1,    1,    1,    1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0];
+// test(a, w, c, l, "", "1.73B");
+
+  // taked conte horne mila  terra inq   charl jorda jukka milo  macel gertr twitt maste elpha poppy skulp sterl orba  remus mikey peter teeny dezni hamle eisto flavi chest mohac jaqul pixie jacka darkl
+l = [   1,  101,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    1,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0];
+// test(a, w, c, l, "432.37cc", "803.71bb");
+
+
 
 var METHOD_GOLD = 0;
 var METHOD_ALL_DAMAGE = 1;
@@ -972,6 +1054,9 @@ var METHOD_TAP_DAMAGE = 2;
 var METHOD_DMG_EQUIVALENT = 3;
 var METHOD_RELICS_PS = 4;
 var METHOD_STAGE_PS = 5;
+
+var METHOD_TAP_DAMAGE_WITH_ACTIVES = 6;
+var METHOD_DMG_EQUIVALENT_WITH_ACTIVES = 7;
 
 var get_value = function(game_state, method) {
 	switch (method) {
@@ -987,6 +1072,10 @@ var get_value = function(game_state, method) {
 			return game_state.relics_per_second()[2];
 		case METHOD_STAGE_PS:
 			return game_state.relics_per_second().slice(0, 2);
+		case METHOD_TAP_DAMAGE_WITH_ACTIVES:
+			return game_state.tap_damage()[2];
+		case METHOD_DMG_EQUIVALENT_WITH_ACTIVES:
+			return [game_state.gold_multiplier(), game_state.tap_damage()[2]];
 	}
 };
 
@@ -996,15 +1085,28 @@ var hashArray = function(array) {
 };
 
 var memoize = {};
-var get_value_memoize = function(a, w, l, c, m) {
+var get_value_memoize = function(a, p, mo) {
+	var w = p.w;
+	var l = p.l;
+	var c = p.c;
+	// console.log("get value memoize: " + w + " " + l + " " + c);
+	var m = mo;
+	if (p.s && m == METHOD_TAP_DAMAGE) {
+		m = METHOD_TAP_DAMAGE_WITH_ACTIVES;
+	} else if (p.s && m == METHOD_DMG_EQUIVALENT) {
+		m = METHOD_DMG_EQUIVALENT_WITH_ACTIVES;
+	}
+
+	console.log(m);
 	var aHash = m + hashArray(a);
 	if (aHash in memoize) {
 		return memoize[aHash];
 	} else {
-		var g = new GameState(a, w, l, c);
+		var g = new GameState(a, w, l, c, { cs: p.t, br: p.z });
 		// if rps or sps, will reset anyways
 		g.get_all_skills();
 		var base = get_value(g, m);
+		console.log(base);
 		memoize[aHash] = base;
 		return base;
 	}
@@ -1022,15 +1124,19 @@ var get_max = function(array, custom) {
 	return max;
 };
 
-var get_best = function(artifacts, weapons, levels, customizations, relics, nsteps, method) {
-	var relics_left = relics;
-	var current_artifacts = artifacts.slice();
+// artifacts, weapons, levels, customizations, relics, nsteps, method
+var get_best = function(params, method) {
+	console.log("getting best: " + params);
+	var relics_left = params.r;
+	console.log("relics: " + relics_left);
+	var current_artifacts = params.a.slice();
 	var steps = [];
 	var cumulative = 0;
 
-	while (relics_left > 0 || steps.length < nsteps) {
+	while (relics_left > 0 || steps.length < params.n) {
+		console.log("lkajsdf");
 		var options = [];
-		var base = get_value_memoize(current_artifacts, weapons, levels, customizations, method);
+		var base = get_value_memoize(current_artifacts, params, method);
 
 		for (var i in current_artifacts) {
 			var level = current_artifacts[i];
@@ -1044,7 +1150,7 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 			// Future's Fortune for gold
 			if (method == METHOD_GOLD && i == 10) {
 				relic_cost = 0;
-				var level_to = next_ff_level(current_artifacts[i], customizations[2]);
+				var level_to = next_ff_level(current_artifacts[i], params.c[2]);
 				artifacts_copy[i] = level_to;
 				while (level_to > level) {
 					level_to -= 1;
@@ -1052,11 +1158,11 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				}
 			}
 
-			var new_value = get_value_memoize(artifacts_copy, weapons, levels, customizations, method);
+			var new_value = get_value_memoize(artifacts_copy, params, method);
 			var e;
 			if (method == METHOD_STAGE_PS) {
 				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
-			} else if (method == METHOD_DMG_EQUIVALENT) {
+			} else if (method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) {
 				// https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/
 				var gold_ratio = new_value[0] / base[0];
 				var tdmg_ratio = new_value[1] / base[1];
@@ -1068,6 +1174,8 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				var eq_tdmg = (gold_dmg_equivalent - 1) * base[1] + new_value[1];
 				e = (eq_tdmg - base[1]) / relic_cost;
 			} else {
+				console.log("diff: " + (new_value - base));
+				console.log("cost: " + relic_cost);
 				e = (new_value - base) / relic_cost;
 			}
 
@@ -1079,6 +1187,11 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 				cost: relic_cost,
 				cumulative: cumulative + relic_cost
 			});
+		}
+
+		console.log("options: ");
+		for (var o in options) {
+			console.log(options[o]);
 		}
 
 		// pick best option
@@ -1095,7 +1208,12 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 			}
 		});
 
-		if (best_option.cost > relics_left && nsteps == 0) {
+		console.log("best option: " + best_option);
+		console.log("best option: " + relics_left);
+		console.log("best option: " + best_option.cost);
+		console.log(params.n);
+		if (best_option.cost > relics_left && params.n == 0) {
+			console.log("laksjdlfjalsjdlfkjalksjdlfk");
 			// if (method == METHOD_GOLD) {
 			// 	console.log("breaking with best option");
 			// 	console.log(best_option);
@@ -1110,18 +1228,21 @@ var get_best = function(artifacts, weapons, levels, customizations, relics, nste
 		delete best_option.efficiency;
 		steps.push(best_option);
 	}
+
+	console.log(steps);
+
 	return steps;
 };
 
-var get_steps = function(artifacts, weapons, levels, customizations, methods, relics, nsteps, greedy) {
+var get_steps = function(params) {
 	// reset cache
 	memoize = {};
 	var response = {};
-	for (var mi in methods) {
-		var m = methods[mi];
+	for (var mi in params.m) {
+		var m = params.m[mi];
 		var steps = [];
-		if (greedy == 1) {
-			steps = get_best(artifacts, weapons, levels, customizations, relics, nsteps, m);
+		if (params.g == 1) {
+			steps = get_best(params, m);
 		} else {
 			// TODO: shouldn't get here yet
 			// steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];

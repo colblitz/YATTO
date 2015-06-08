@@ -27,7 +27,7 @@ yattoApp.controller('CalculatorController',
 
 		$scope.steps = [];
 		$scope.summary_steps = [];
-		$("#step-tabs").tabs();
+		//$("#step-tabs").tabs();
 
 		$scope.stepmessage = "Click calculate to get steps!";
 
@@ -62,16 +62,36 @@ yattoApp.controller('CalculatorController',
 				{name: "Tap Damage",      index: 5, value: 0, step: 0.01}];
 
 			$scope.methods = [
-				{name: "Gold",          index: 0, value: true, tabname: "Gold"},
-				{name: "All Damage",    index: 1, value: true, tabname: "ADmg"},
-				{name: "Tap Damage",    index: 2, value: true,  tabname: "TDmg"},
-				{name: "Damage Equivalent",    index: 3, value: true,  tabname: "DmgE"},
-				{name: "Relics/second (experimental!)", index: 4, value: false, tabname: " R/s "},
-				{name: "Stages/second (experimental!)", index: 5, value: false, tabname: " S/s "}];
+				{name: "Gold",              index: 0, value: true, tabname: "Gold"},
+				{name: "All Damage",        index: 1, value: true, tabname: "ADmg"},
+				{name: "Tap Damage",        index: 2, value: true,  tabname: "TDmg"},
+				{name: "Dmg Equivalent", index: 3, value: true,  tabname: "DmgE"},
+				{name: "Relics/second",     index: 4, value: false, tabname: " R/s "},
+				{name: "Stages/second",     index: 5, value: false, tabname: " S/s "}];
+
+			$scope.methods[0]["tooltip"] = "Calculates gold multiplier";
+			$scope.methods[1]["tooltip"] = "Calculates all damage value";
+			$scope.methods[2]["tooltip"] = "Calculates tap damage with crits";
+			$scope.methods[3]["tooltip"] = "Calculates mix of gold and tap damage";
+			$scope.methods[4]["tooltip"] = "Calculates relics per second";
+			$scope.methods[5]["tooltip"] = "Calculates stages per second blah blah this is going to be a long ass explanation because I'll need to explain stages and tie breaking";
+
+			$scope.tabs = [
+				true,
+				false,
+				false,
+				false,
+				false,
+				false
+			];
+			$scope.activetab = 0;
 
 			$scope.relics = 0;
 			$scope.nsteps = 0;
 			$scope.greedy = 1;
+			$scope.active = false;
+			$scope.critss = 0;
+			$scope.zerker = 0;
 
 			$scope.w_chiprob = 0;
 			$scope.w_totalwp = 0;
@@ -82,12 +102,16 @@ yattoApp.controller('CalculatorController',
 			$scope.r_cstage = 0;
 			$scope.r_undead = 0;
 			$scope.r_levels = 0;
-			$scope.r_nextbp = 0;
+			$scope.r_hbonus = 0;
+			$scope.r_sbonus = 0;
 			$scope.r_reward = 0;
+			$scope.r_nextbp = 0;
 			$scope.r_atnext = 0;
 
 			$scope.all_damage = 0;
+			$scope.dps_damage = 0;
 			$scope.tap_damage = 0;
+			$scope.twc_damage = 0;
 
 			$scope.autocookies = 'On';
 			$scope.generateStateString();
@@ -136,6 +160,21 @@ yattoApp.controller('CalculatorController',
 			return (typeof cookie !== "undefined" && cookie != null);
 		};
 
+		$scope.setActiveTab = function() {
+			if ($scope.steps.length > 0) {
+				for (var m in $scope.methods) {
+					var i = $scope.methods[m].index;
+					if (i in $scope.steps && $scope.steps[i] != null) {
+						$scope.tabs[i] = true;
+						$scope.activetab = i;
+						break;
+					} else {
+						$scope.tabs[i] = false;
+					}
+				}
+			}
+		}
+
 		$scope.readFromCookies = function() {
 			var cookie_state = localStorageService.get('state');
 			var cookie_steps = localStorageService.get('steps');
@@ -147,6 +186,7 @@ yattoApp.controller('CalculatorController',
 			if (hasCookie(cookie_summs)) { $scope.summary_steps = cookie_summs; }
 			if (hasCookie(cookie_autoc)) { $scope.autocookies = cookie_autoc; }
 
+			$scope.setActiveTab();
 			$scope.importFromString($scope.state, true);
 		};
 
@@ -174,18 +214,27 @@ yattoApp.controller('CalculatorController',
 			var heroRelics = $scope.r_levels / 1000;
 			var stageRelics = Math.pow(Math.floor($scope.r_cstage/15) - 5, 1.7);
 
-			heroRelics = Math.ceil(heroRelics * uaMultiplier);
+			heroRelics = Math.round(heroRelics * uaMultiplier);
+			// if ((uaMultiplier - 1) > 0.001) {
+			// 	heroRelics += 1;
+			// }
 			stageRelics = Math.ceil(stageRelics * uaMultiplier);
+			stageRelics = isNaN(stageRelics) ? 0 : stageRelics;
+
+			$scope.r_hbonus = heroRelics;
+			$scope.r_sbonus = stageRelics;
 
 			$scope.r_nextbp = (Math.floor($scope.r_cstage / 15) + 1) * 15;
-			if ($scope.r_cstage < 90) {
-				$scope.r_reward = 0;
-				$scope.r_nextbp = 90;
-			} else {
-				$scope.r_reward = Math.round(2 * (stageRelics + heroRelics));
-			}
+			$scope.r_reward = Math.round(2 * (stageRelics + heroRelics));
+			// if ($scope.r_cstage < 90) {
+			// 	$scope.r_reward = 0;
+			// 	$scope.r_nextbp = 90;
+			// } else {
+			// 	$scope.r_reward = Math.round(2 * (stageRelics + heroRelics));
+			// }
 			stageRelics = Math.pow(Math.floor($scope.r_nextbp/15) - 5, 1.7);
 			stageRelics = Math.ceil(stageRelics * uaMultiplier);
+			stageRelics = isNaN(stageRelics) ? 0 : stageRelics;
 			$scope.r_atnext = Math.round(2 * (stageRelics + heroRelics));
 		};
 
@@ -221,11 +270,15 @@ yattoApp.controller('CalculatorController',
 			}
 		};
 
-		$scope.updateRandomInfo = function() {
+		$scope.updateStatsInfo = function() {
 			var g = getGameState();
-			$scope.all_damage = g.a_ad * 100;
 			g.get_all_skills();
-			$scope.tap_damage = parseFloat(g.tap_damage()[0].toPrecision(4));
+			var tap = g.tap_damage();
+			$scope.all_damage = g.a_ad * 100;
+			$scope.dps_damage = parseFloat(g.get_hero_dps().toPrecision(4));
+			$scope.tap_damage = parseFloat(tap[0].toPrecision(4));
+			$scope.twc_damage = parseFloat(tap[1].toPrecision(4));
+			$scope.twa_damage = parseFloat(tap[2].toPrecision(4));
 		};
 
 		var stateToUrl = function(s) {
@@ -261,7 +314,10 @@ yattoApp.controller('CalculatorController',
 				$scope.w_getting,
 				$scope.r_cstage,
 				$scope.r_undead,
-				$scope.r_levels].join("|");
+				$scope.r_levels,
+				$scope.active ? 1 : 0,
+				$scope.critss,
+				$scope.zerker].join("|");
 			// console.log(stateToUrl($scope.state));
 			// console.log(LZString.compressToEncodedURIComponent(stateToUrl($scope.state)));
 			// console.log(LZString.compressToEncodedURIComponent($scope.state));
@@ -273,6 +329,7 @@ yattoApp.controller('CalculatorController',
 			$scope.generateStateString();
 
 			shareVariables.setVariable("artifacts", $scope.artifacts);
+			shareVariables.setVariable("weapons", getWeapons());
 
 			// store state to cookies
 			if (cookies) {
@@ -282,7 +339,7 @@ yattoApp.controller('CalculatorController',
 			// recalculate things
 			$scope.updateRelicInfo();
 			$scope.updateWeaponInfo();
-			$scope.updateRandomInfo();
+			$scope.updateStatsInfo();
 		};
 
 		// 9.289,4.217,1.190,10.94,3.319,0.58,18.190,11.276,15.290,26.180,19.108,5.245,25.350,13.
@@ -294,8 +351,7 @@ yattoApp.controller('CalculatorController',
 			var t = state.split("|");
 
 			// state verification
-			if (occurrences(state, "|", false) != 10 ||
-				  occurrences(t[0], ",", false) != 28 ||
+			if (occurrences(t[0], ",", false) != 28 ||
 				  occurrences(t[0], ".", false) != 29 ||
 				  occurrences(t[1], ",", false) != 32 ||
 				  occurrences(t[1], ".", false) != 33 ||
@@ -339,6 +395,9 @@ yattoApp.controller('CalculatorController',
 			$scope.r_cstage  = parseOrZero(t[8], parseInt);
 			$scope.r_undead  = parseOrZero(t[9], parseInt);
 			$scope.r_levels  = parseOrZero(t[10], parseInt);
+			$scope.active    = parseOrZero(t[11], parseInt) == 1 ? true : false;
+			$scope.critss    = parseOrZero(t[12], parseInt);
+			$scope.zerker    = parseOrZero(t[13], parseInt);
 
 			$scope.stateChanged(cookies);
 		};
@@ -348,7 +407,8 @@ yattoApp.controller('CalculatorController',
 				transformScopeArray($scope.artifacts),
 				getWeapons(),
 				getLevels(),
-				transformScopeArray($scope.customizations));
+				transformScopeArray($scope.customizations),
+				{ cs: $scope.critss, br: $scope.zerker });
 		};
 
 		$scope.artifactCheck = function(i, ai) {
@@ -435,12 +495,29 @@ yattoApp.controller('CalculatorController',
 
 			var response;
 			$timeout(function() {
-				response = get_steps(artifacts, weapons, levels, customizations, methods, $scope.relics, $scope.nsteps, $scope.greedy);
+				response = get_steps({
+					a: artifacts,
+					w: weapons,
+					l: levels,
+					c: customizations,
+					m: methods,
+					r: $scope.relics,
+					n: $scope.nsteps,
+					g: $scope.greedy,
+					s: $scope.active,
+					t: $scope.critss,
+					z: $scope.zerker});
 
 				$scope.$apply(function() {
+					$scope.steps = [];
+					$scope.summary_steps = [];
 					for (var m in response) {
 						$scope.steps[m] = response[m]["steps"];
 						$scope.summary_steps[m] = sortByArtifactOrder(response[m]["summary"]);
+					}
+
+					if (!($scope.activetab in $scope.steps && $scope.steps[$scope.activetab] != null)) {
+						$scope.setActiveTab();
 					}
 
 					$scope.updateCookies();
@@ -547,7 +624,6 @@ yattoApp.controller('CalculatorController',
 		$scope.updateWeaponInfo();
 
 		shareVariables.setVariable("artifacts", $scope.artifacts);
-
-		common();
+		shareVariables.setVariable("weapons", getWeapons());
 	}
 );

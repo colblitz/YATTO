@@ -9,13 +9,22 @@
 						<div id="options-subbox-1" class="options-block col-md-4">
 							<h3>Efficiency Calculator:</h3>
 							<div id="options-relics" class="small-form-item">
-								Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" ng-change="stateChanged()"/>
+								Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" ng-change="stateChanged(true)"/>
 							</div>
 							<div id="options-nsteps" class="small-form-item">
-								Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()"/>
+								Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged(true)"/>
 							</div>
-							<br>
-							<div id="options-greedy" ng-init="greedy=1">
+							<label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged(true)"/> Incorporate actives for steps (Crit, BR)</label>
+
+							<div id="options-critical" class="small-form-item">
+								Critical Strike Level: <input type="number" class="form-control number-input right-input" ng-model="critss" min="0" ng-change="stateChanged(true)"/>
+							</div>
+							<div id="options-berserker" class="small-form-item">
+								Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged(true)"/>
+							</div>
+
+
+							<!-- <div id="options-greedy" ng-init="greedy=1">
 								<p>Calculation method:</p>
 								<div class="small-form-item">
 									<label><input type="radio" ng-model="greedy" value="1">Greedy</label>
@@ -23,56 +32,96 @@
 								<div class="small-form-item">
 									<label><input type="radio" ng-model="greedy" value="0" disabled="true">Dynamic Programming (in progress!)</label>
 								</div>
-							</div>
+							</div> -->
 
 							<button class="btn btn-primary" id="calculate-button" ng-click="calculate()">Calculate</button>
 							<span us-spinner="{radius:4, width:3, length: 5}" spinner-key="spinner"></span>
 
-							<div id="random-info-box">
+							<div id="stats-stats-box">
 								<div class="small-form-item">
 									<label>All damage:</label>
 									<input type="number" class="form-control number-input right-input random-input" ng-model="all_damage" readonly/>
 								</div>
-								<!-- <div class="small-form-item">
-									<label>Tap damage:</label>
+								<div class="small-form-item">
+									<label>Hero DPS:</label>
+									<input type="number" class="form-control number-input right-input random-input" ng-model="dps_damage" readonly/>
+								</div>
+								<div class="small-form-item">
+									<label>Tap damage (TD):</label>
 									<input type="number" class="form-control number-input right-input random-input" ng-model="tap_damage" readonly/>
-								</div> -->
+								</div>
+								<div class="small-form-item">
+									<label>Avg. TD with crits (TDC):</label>
+									<input type="number" class="form-control number-input right-input random-input" ng-model="twc_damage" readonly/>
+								</div>
+								<div class="small-form-item">
+									<label>Avg. TDC with actives:</label>
+									<input type="number" class="form-control number-input right-input random-input" ng-model="twa_damage" readonly/>
+								</div>
 							</div>
+
 						</div>
 
 						<div id="options-subbox-2" class="options-block col-md-4">
 							<div id="options-methods">
 								<h3>Methods:</h3>
-								<div ng-repeat="m in methods" class="method-options small-form-item">
-									<label><input type="checkbox" ng-model="methods[$index].value" ng-change="stateChanged()"/> {{m.name}}</label>
+								<div id="method-note">Hover over names (or tab names) to get descriptions</div>
+								<div ng-repeat="m in methods" class="method-options small-form-item" tooltip="{{m.tooltip}}" tooltip-popup-delay="1000">
+									<label><input type="checkbox" ng-model="methods[$index].value" ng-change="stateChanged(true)"/> {{m.name}}</label>
 								</div>
-							</div>
 
-							<div id="stage-relic-box">
-								<div class="small-form-item">
-									<label>Stage:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="r_cstage" ng-change="stateChanged()"/>
+
+
+
+
+
+
+								<div id="stats-relic-box">
+									<div class="small-form-item">
+										<label>Stage:</label>
+										<input type="number" class="form-control number-input right-input" ng-model="r_cstage" ng-change="stateChanged(true)"/>
+									</div>
+									<div class="small-form-item">
+										<label>UA Level:</label>
+										<input type="number" class="form-control number-input right-input" ng-model="r_undead" ng-change="stateChanged()"/>
+									</div>
+									<div class="small-form-item">
+										<label>Total hero levels:</label>
+										<input type="number" class="form-control number-input right-input" ng-model="r_levels" ng-change="stateChanged()"/>
+									</div>
+									<div class="small-form-item">
+										<label>Hero levels bonus:</label>
+										<input type="number" class="form-control number-input right-input" ng-model="r_hbonus" readonly/>
+									</div>
+									<div class="small-form-item">
+										<label>Stage completion bonus:</label>
+										<input type="number" class="form-control number-input right-input" ng-model="r_sbonus" readonly/>
+									</div>
+									<div class="small-form-item">
+										<label>Relics:</label>
+										<input type="number" class="form-control number-input right-input" ng-model="r_reward" readonly/>
+									</div>
+									<div class="small-form-item">
+										<label>Next breakpoint:</label>
+										<input type="number" class="form-control number-input right-input" ng-model="r_nextbp" readonly/>
+									</div>
+									<div class="small-form-item">
+										<label>Relics at next breakpoint:</label>
+										<input type="number" class="form-control number-input right-input" ng-model="r_atnext" readonly/>
+									</div>
 								</div>
-								<div class="small-form-item">
-									<label>UA Level:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="r_undead" ng-change="stateChanged()"/>
-								</div>
-								<div class="small-form-item">
-									<label>Total hero levels:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="r_levels" ng-change="stateChanged()"/>
-								</div>
-								<div class="small-form-item">
-									<label>Next breakpoint:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="r_nextbp" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>Relics:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="r_reward" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>Relics at next breakpoint:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="r_atnext" readonly/>
-								</div>
+
+
+
+
+
+
+
+
+
+
+
+
 							</div>
 						</div>
 
@@ -80,15 +129,19 @@
 							<h3>Other Stuff:</h3>
 							Automatically save cookies:</br>
 							<div class="btn-group">
-								<label class="btn btn-primary cookiebtn" ng-model="autocookies" btn-radio="'On'" ng-change="updateCookies()">On</label>
-								<label class="btn btn-primary cookiebtn" ng-model="autocookies" btn-radio="'Off'" ng-change="updateCookies()">Off</label>
+								<label class="btn btn-primary cookiebtn thinbtn" ng-model="autocookies" btn-radio="'On'" ng-change="updateCookies()">On</label>
+								<label class="btn btn-primary cookiebtn thinbtn" ng-model="autocookies" btn-radio="'Off'" ng-change="updateCookies()">Off</label>
 							</div>
 
-							<button class="btn btn-success" ng-click="storeToCookies()">Save cookies</button>
-							<button class="btn btn-success" ng-click="readFromCookies()">Load from cookies</button>
-							<button class="btn btn-danger" ng-click="clearAllCookies()">Clear cookies</button>
+							<button class="btn btn-success thinbtn" ng-click="storeToCookies()">Save cookies</button>
+							<button class="btn btn-success thinbtn" ng-click="readFromCookies()">Load from cookies</button>
+							<button class="btn btn-danger thinbtn" ng-click="clearAllCookies()">Clear cookies</button>
 
-							<div id="weapons-info">
+
+
+
+
+							<div id="stats-weapons-box">
 								<div class="small-form-item">
 									<label id="chi">\(\chi^2\)</label>&nbsp;<label>Probability:</label>
 									<input type="number" class="form-control number-input right-input" ng-model="w_chiprob" readonly/>
@@ -110,17 +163,41 @@
 									<input type="number" class="form-control number-input right-input" ng-model="w_probset" readonly/>
 								</div>
 							</div>
+
+
+
+
 						</div> <!-- options subbox 4 -->
 					</div> <!-- row -->
+
+					<div class="row" id="stats-row">
+						<div id="stats-subbox-1" class="options-block col-md-4">
+
+
+
+								<!-- <div class="small-form-item">
+									<label>Tap damage:</label>
+									<input type="number" class="form-control number-input right-input random-input" ng-model="tap_damage" readonly/>
+								</div> -->
+
+						</div>
+						<div id="stats-subbox-2" class="options-block col-md-4">
+
+						</div>
+						<div id="stats-subbox-3" class="options-block col-md-4">
+
+						</div>
+					</div>
+
 					<div class="row" id="state-row">
-						<div class="col-xs-3 state-buttons">
+						<!-- <div class="col-md-3 state-buttons-block">
 							<button class="btn btn-info" id="load-state-button" ng-click="importFromString(state)">Load from state string</button>
 							<button class="btn btn-info" id="update-state-button" ng-click="generateStateString()">Generate state string</button>
-						</div>
+						</div> -->
 
-						<div class="col-xs-8">
-							<textarea type="text" rows="4" class="form-control text-input" id="state-input" ng-model="state"/>
-							<textarea type="text" rows="5" class="form-control text-input" id="url-input" ng-model="url" readonly/>
+						<div class="col-md-12 url-block">
+							<textarea display="none" type="text" rows="4" class="form-control text-input" id="state-input" ng-model="state"/>
+							<textarea type="text" rows="3" class="form-control text-input" id="url-input" ng-model="url" readonly/>
 						</div>
 					</div>
 				</div> <!--options-box-->
@@ -169,7 +246,7 @@
 								<button id="reset-steps" class="btn btn-primary" ng-click="resetSteps()">Reset steps</button>
 							</div>
 							<tabset>
-								<tab ng-repeat="method in methods" heading="{{method.tabname}}" disabled="!method.value">
+								<tab ng-repeat="method in methods" heading="{{method.tabname}}" disabled="!method.value" active="tabs[method.index]" tooltip="{{method.tooltip}}" tooltip-popup-delay="1000">
 									<h3 ng-if="steps[method.index] == null">{{stepmessage}}</h3>
 									<div id="summary-list" class="list">
 										<h3 ng-if="summary_steps[method.index].length > 0" class="animate-if">Summary:</h3>

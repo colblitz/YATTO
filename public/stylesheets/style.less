@@ -54,7 +54,11 @@ body {
 .navlink {
   padding: 8px;
   padding-top: 10px;
-  color: #158CBA;
+}
+
+.navlink>a {
+  font-size: 15px;
+  color: #34A5D1;
 }
 
 .navlink>a:hover {
@@ -88,7 +92,7 @@ body {
 }
 
 .number-input {
-  width: 80px;
+  width: 85px;
   display: inline-block;
   //margin-right: 10px;
   height: auto;
@@ -105,6 +109,10 @@ body {
 
 .weapon-input {
   width: 48px;
+}
+
+.s-weapon-input {
+  width: 200px;
 }
 
 .random-input {
@@ -128,6 +136,8 @@ body {
   margin-right: 10px;
 }
 
+.artifact-owned,
+.weapon-min,
 .at-cap {
   background: #E0FFEA;
 }
@@ -141,6 +151,11 @@ body {
   height: 25px;
 }
 
+.large-form-item {
+  width: 300px;
+  height: 25px;
+}
+
 #options-methods {
   width: 250px;
 }
@@ -151,21 +166,18 @@ body {
 }
 
 .method-options {
-  //margin-right: -125px;
   display: inline-block;
+  width: 125px;
 }
 
 .input-label {
   display: inline-block;
 }
 
-#calc-method-form {
-}
-
 .options-block {
   padding: 30px;
-  padding-bottom: 5px;
-  padding-top: 15px;
+  padding-bottom: 10px;
+  padding-top: 10px;
 
   h3 {
     margin-top: 10px;
@@ -183,6 +195,15 @@ body {
 
 .cookiebtn {
   width: 125px;
+}
+
+.wbtn {
+  width: 300px;
+}
+
+.thinbtn {
+  // height: 30px;
+  // padding: 5px;
 }
 
 .btn:hover {
@@ -239,6 +260,10 @@ body {
   padding-right: 0;
 }
 
+#weapons-list .form-item:nth-child(5n+1) {
+  margin-bottom: 15px;
+}
+
 #artifact-weapon-col {
   padding-left: 0;
   padding-right: 0;
@@ -267,6 +292,11 @@ body {
 }
 
 .steps-colh2, .steps-colh3, .steps-colh4, .ssteps-colh2, .ssteps-colh3 {
+  text-align: right;
+}
+
+.s-current-col2,
+.s-weapons-col1 {
   text-align: right;
 }
 
@@ -299,19 +329,21 @@ tr:first-child:hover {
   opacity: 1;
 }
 
-#stage-relic-box {
-  margin-top: 20px;
-}
-
 #state-row {
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 
-.state-buttons {
-  margin-left: 15px;
+.state-buttons-block {
+  padding-left: 30px;
+}
+
+.url-block {
+  padding-right: 30px;
 }
 
 #state-input {
+  display: none;
   margin-top: 6px;
   margin-bottom: 10px;
   margin-right: 15px;
@@ -319,6 +351,7 @@ tr:first-child:hover {
 
 #url-input {
   margin-bottom: 5px;
+  resize: none;
 }
 
 #state-label {
@@ -345,14 +378,112 @@ tr:first-child:hover {
   text-align: center;
 }
 
-#weapons-info {
-  margin-top: 30px;
+#ref-formula-table td {
+  padding: 15px;
 }
 
-#random-info-box {
-  margin-top: 30px;
+
+
+#ref-heroes-table {
+  border-collapse: collapse;
+}
+
+#ref-heroes-table th,
+#ref-heroes-table td {
+  border: 1px solid black;
+}
+
+#ref-heroes-table td {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  font-size: 10px;
+}
+
+#ref-heroes-table tr td:nth-child(2n+3) {
+  text-align: right;
+}
+
+#seq-weapon-table tr,
+#seq-weapon-table td,
+#seq-weapon-table th {
+  padding: 0px 0px 0px 8px;
 }
 
 #r-reset-button {
   margin-bottom: 10px;
+}
+
+#calculate-button {
+  margin-top: 20px;
+}
+
+#method-note {
+  margin-bottom: 12px;
+}
+
+#actives-label {
+  margin-top: 12px;
+}
+
+#stats-stats-box {
+  margin-top: 25px;
+}
+
+#stats-relic-box {
+  margin-top: 25px;
+}
+
+#stats-weapons-box {
+  margin-top: 40px;
+}
+
+#stats-row {
+  display: none;
+}
+
+
+  // "skill-dps",
+  //       "skill-ad",
+  //       "skill-cd",
+  //       "skill-td",
+  //       "skill-pd",
+  //       "skill-cg",
+  //       "skill-gd",
+  //       "skill-bd",
+  //       "skill-cc"
+
+.skill-dps {
+  background-color: #CFE2F3;
+}
+
+.skill-ad {
+  background-color: #D9D2E9;
+}
+
+.skill-cd {
+  background-color: #94DFD9;
+}
+
+.skill-td {
+  background-color: #F4CCCC;
+}
+
+.skill-pd {
+  background-color: #EBACC8;
+}
+
+.skill-cg {
+  background-color: #EBD699;
+}
+
+.skill-gd {
+  background-color: #FFF2CC;
+}
+
+.skill-bd {
+  background-color: #F3CDB1;
+}
+
+.skill-cc {
+  background-color: #D9EAD3;
 }

@@ -32,6 +32,47 @@ yattoApp.controller('ReferenceController',
 				};
 				$scope.r_artifacts.push(artifact);
 			}
+
+			$scope.r_heroes = [];
+			var skill_types = [
+				"Hero DPS",
+				"All damage",
+				"Crit damage",
+				"Tap damage",
+				"Percent DPS",
+				"Chest Gold",
+				"Gold Dropped",
+				"Boss Damage",
+				"Crit Chance"
+			];
+
+			var typeclasses = [
+				"skill-dps",
+				"skill-ad",
+				"skill-cd",
+				"skill-td",
+				"skill-pd",
+				"skill-cg",
+				"skill-gd",
+				"skill-bd",
+				"skill-cc"
+			];
+
+			for (var h in hero_info) {
+				var h = hero_info[h];
+				var hero = {
+					name: h.name,
+					cost: h.base_cost.toPrecision(4),
+					skills: h.skills.map(function(s) {
+						return {
+							magnitude: s[0] * 100 > 1 ? Math.round(s[0] * 100) : s[0] * 100,
+							type: skill_types[s[1]],
+							typeclass: typeclasses[s[1]]
+						};
+					})
+				};
+				$scope.r_heroes.push(hero);
+			}
 		};
 
 		var getMagnitude = function(a) {
@@ -74,8 +115,7 @@ yattoApp.controller('ReferenceController',
 			var t = state.split("|");
 
 			// state verification
-			if (occurrences(state, "|", false) != 10 ||
-					occurrences(t[0], ",", false) != 28 ||
+			if (occurrences(t[0], ",", false) != 28 ||
 					occurrences(t[0], ".", false) != 29 ||
 					occurrences(t[1], ",", false) != 32 ||
 					occurrences(t[1], ".", false) != 33 ||

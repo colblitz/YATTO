@@ -1,0 +1,205 @@
+<div id="formulas-container">
+	<div class="row">
+		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
+			<h3>Formulas</h3>
+			<p>For values of variables for particular artifacts/heroes, check the Reference page</p>
+			<table id="ref-formula-table">
+				<tr>
+					<th>Value</th>
+					<th></th>
+					<th>Formula</th>
+				</tr>
+				<tr>
+					<td>Artifact AD</td>
+					<td>=</td>
+					<td>\( ad_0 + ad_{pl} \cdot (\text{level} - 1) \)</td>
+				</tr>
+				<tr>
+					<td>Artifact cost to level</td>
+					<td>=</td>
+					<td>\( x \cdot \text{level}^y \)</td>
+				</tr>
+				<tr>
+					<td>Cost to buy next artifact</td>
+					<td>=</td>
+					<td>\( \left \lfloor (\text{# owned} + 1) \cdot 1.35^{(\text{# owned} + 1)} \right \rceil \)</td>
+				</tr>
+				<tr>
+					<td>Cost to salvage artifact</td>
+					<td>=</td>
+					<td>
+						\begin{align*}
+							x &= \text{relics spent on artifact (including cost to buy)} + \text{cost to buy next artifact} \\
+							\text{cost} &= \left \lfloor 5^{\log_{10}(x)} + 35 \right \rceil
+						\end{align*}
+					</td>
+				</tr>
+				<tr>
+					<td>Cost to level hero</td>
+					<td>=</td>
+					<td>\( \left \lceil \text{hero base cost} \cdot 1.075^{\text{level}} \cdot (1 - 0.02 \cdot l_{\text{RoWC}}) \right \rceil \)</td>
+				</tr>
+				<tr>
+					<td>Cost to level evolved hero</td>
+					<td>=</td>
+					<td>\( \left \lceil \text{hero base cost} \cdot 10 \cdot 1.075^{\text{level}} \cdot (1 - 0.02 \cdot l_{\text{RoWC}}) \right \rceil \)</td>
+				</tr>
+				<tr>
+					<td>Cost to buy skill</td>
+					<td>=</td>
+					<td>\( 5 \:(0.5 \text{ if evolved}) \cdot \text{ cost of the next level} \)</td>
+				</tr>
+				<tr>
+					<td>Cost to evolve hero</td>
+					<td>=</td>
+					<td>\( 10.75 \cdot \text{cost to level to 1000} \)</td>
+				</tr>
+
+				<tr>
+					<td>Stage HP</td>
+					<td>=</td>
+					<td>\( 18.5 \cdot 1.57^{\min(\text{stage}, 156)} \cdot 1.17^{\max(0, \text{stage}-156)} \)</td>
+				</tr>
+				<tr>
+					<td>Boss/Miniboss HP</td>
+					<td>=</td>
+					<td>\( [2, 4, 6, 7, 10] \cdot \text{stage hp for stages ending in } [1 \text{ or } 6, \: 2 \text{ or } 7, \: 3 \text{ or } 8, \: 4 \text{ or } 9, \: 5 \text{ or } 0] \)</td>
+				</tr>
+				<tr>
+					<td>Base Stage Gold</td>
+					<td>=</td>
+					<td>\( \text{stage hp} \cdot (0.02 + (0.00045 \cdot \min(\text{stage}, 150))) \)</td>
+				</tr>
+				<tr>
+					<td>Relics from Stage</td>
+					<td>=</td>
+					<td>\( ( \left \lfloor \text{stage} / 15 \right \rfloor - 5)^{1.7} \cdot (1 + 0.05 \cdot l_{\text{UA}} ) \)</td>
+				</tr>
+				<tr>
+					<td>Skill cooldown refresh cost</td>
+					<td>=</td>
+					<td>\( \left \lfloor 20 \cdot \log_{10}(\text{sum of cooldowns in seconds} / 60) \right \rfloor \)</td>
+				</tr>
+				<tr>
+					<td>Offline Gold</td>
+					<td>=</td>
+					<td>
+						\begin{align*}
+							\text{normal gold} &= \text{stage base gold} \cdot (1 + 0.1 \cdot l_{\text{amulet}})\\
+							\text{offline gold} &= \frac{\text{normal gold} \cdot \min(\text{time}, 3 \text{ days}) \cdot (1 + 0.5 \cdot l_{\text{chalice}})}{\frac{\text{stage base HP}}{\text{total hero DPS}} + 0.5} \\
+						\end{align*}
+					</td>
+				</tr>
+				<tr>
+					<td>Make it Rain</td>
+					<td>=</td>
+					<td>\( 5000 \cdot \text{stage base gold}\)</td>
+				</tr>
+				<tr>
+					<td>Hero Base DPS</td>
+					<td>=</td>
+					<td>
+						\begin{align*}
+							n &= \max(0.904^{\text{level} - 1} \cdot (1 - 0.019 \cdot \min(\text{hero id}, 15))^{\text{hero id}}, 10^{-308}) \\
+							m &= 1.075^{\text{level}} - 1 \\
+							\text{dps} &= \frac{n \cdot m \cdot \text{cost to level to current level}}{0.75}
+						\end{align*}
+					</td>
+				</tr>
+				<tr>
+					<td>Hero Base DPS (evolved)</td>
+					<td>=</td>
+					<td>
+						\begin{align*}
+							n &= \max(0.904^{\text{level} - 1001} \cdot 0.715^{\text{hero id} + 33}, 10^{-308}) \\
+							m &= 1.075^{\text{level} - 1000} - 1 \\
+							\text{dps} &= \frac{n \cdot m \cdot \text{cost to level to current level}}{0.75}
+						\end{align*}
+					</td>
+				</tr>
+				<tr>
+					<td>Main Hero damage (????)</td>
+					<td>=</td>
+					<td>\( \text{level} \cdot 1.05^{\text{level}} \cdot (1 + h_{ad}) \)</td>
+				</tr>
+				<tr>
+					<td>Hero DPS</td>
+					<td>=</td>
+					<td>\( \text{hero base dps} \cdot (1 + h_{hd} + h_{ad}) \cdot (1 + a_{ad}) \cdot (1 + c_{ad}) \cdot (1 + 0.5 \cdot \text{num weapons}) \cdot (\text{set bonus}) \)</td>
+				</tr>
+				<tr>
+					<td>Crit Multiplier</td>
+					<td>=</td>
+					<td>\( (10 + h_{cd}) \cdot (1 + 0.2 \cdot l_{ht}) \cdot (1 + c_{cd}) \)</td>
+				</tr>
+				<tr>
+					<td>Tap Damage</td>
+					<td>=</td>
+					<td>
+						\begin{align*}
+							\text{hero damage} &= \text{total hero dps} \cdot (h_{pd}) \cdot (1 + h_{td} + c_{td}) \cdot (1 + a_{ad}) \cdot (1 + 0.02 \cdot l_{\text{hammer}}) \cdot (1 + c_{ad}) \\
+							\text{tap damage} &= \text{main hero damage} + \text{hero damage} \\
+							\\
+							\text{crit multiplier} &= (10 + h_{cd}) \cdot (1 + 0.2 \cdot l_{ht}) \cdot (1 + c_{cd})\\
+							\text{crit chance} &= \min(1, 0.02 + 0.02 \cdot l_{ds} + c_{cc} + h_{cc});\\
+							\text{overall crit multiplier} &= (1 - \text{crit chance}) + (\text{crit chance} \cdot 0.65 \cdot \text{crit multiplier})\\
+							\text{tapping damage} &= \text{tap damage} \cdot \text{overall crit multiplier}
+						\end{align*}
+					</td>
+				</tr>
+				<tr>
+					<td>Gold Multiplier</td>
+					<td>=</td>
+					<td>
+						\begin{align*}
+							\text{mobs} &= 10 - l_{\text{world}} \\
+							\\
+							\text{chalice chance} &= \min(1, 0.005 \cdot l_{\text{chalice}}) \\
+							\text{chalice multiplier} &= 1 - \text{chalice chance} + 10 \cdot \text{chalice chance} \\
+							\text{normal gold} &= (1 + 0.1 \cdot l_{\text{amulet}}) \cdot \text{chalice multiplier} \\
+							\\
+							\text{chest chance} &= \min(1, 0.02 + 0.004 \cdot l_{\text{egg}}) \\
+							\text{chest gold} &= 10 \cdot (1 + 0.2 \cdot l_{\text{chest}}) \cdot (1 + c_{cg}) \cdot (1 + h_{cg}) \\
+							\text{mob gold} &= \text{chest chance} \cdot \text{chest gold} + (1 - \text{chest chance}) \cdot \text{normal gold}\\
+							\text{boss gold} &\approx 6.2961 \cdot (1 + l_{\text{shield}}) \\
+							\\
+							\text{mob multiplier} &= \frac{\text{mobs} \cdot \text{mob gold} + \text{boss gold}}{\text{mobs} + 1} \\
+							\text{other multipliers} &= \left \lceil 1 + 0.05 \cdot l_{\text{ff}} + h_{gd} + c_{gd} \right \rceil \cdot (1 + 0.15 \cdot l_{\text{elixir}}) \cdot \left(\frac{1}{1 - 0.02 \cdot l_{charm}}\right) \\
+							\text{overall multiplier} &= \text{mob multiplier} \cdot \text{other multipliers}
+						\end{align*}
+					</td>
+				</tr>
+			</table>
+<!--
+ (mobs * (Math.min(1, 0.02 + 0.004 * this.l_egg) * 10 * (1 + 0.2 * this.l_chest) * (1 + c_cg) * (1 + h_cg) + (1 - Math.min(1, 0.02 + 0.004 * this.l_egg)) * (1 + 0.1 * this.l_amulet) * 1 - Math.min(1, 0.005 * this.l_chalice) + 10 * Math.min(1, 0.005 * this.l_chalice)) + BOSS_CONSTANT * (1 + this.l_kshield)) / (mobs + 1) * Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm)) $$ -->
+
+			<h4>Symbols and reference</h4>
+			<table id="ref-symbols-table">
+				<tr>
+					<th>Symbol</th>
+					<th></th>
+					<th>Explanation</th>
+				</tr>
+				<tr><td>\( \left \lfloor x \right \rceil \)</td><td>=</td><td>round(x)</td></tr>
+				<tr><td>\( \left \lceil x \right \rceil \)</td><td>=</td><td>ceil(x) or roundup(x)</td></tr>
+				<tr><td>\( l_{\text{name}} \)</td><td>=</td><td>level of [name]</td></tr>
+				<tr><td>\( ad_0 \)</td><td>=</td><td>artifact base all damage</td></tr>
+				<tr><td>\( ad_{pl} \)</td><td>=</td><td>artifact all damage increase per level</td></tr>
+				<tr><td>\( h_{hd} \)</td><td>=</td><td>hero damage bonus (individual hero)</td></tr>
+				<tr><td>\( h_{ad} \)</td><td>=</td><td>hero all damage bonus</td></tr>
+				<tr><td>\( h_{cd} \)</td><td>=</td><td>hero crit damage bonus</td></tr>
+				<tr><td>\( h_{td} \)</td><td>=</td><td>hero tap damage bonus</td></tr>
+				<tr><td>\( h_{pd} \)</td><td>=</td><td>hero percent dps bonus</td></tr>
+				<tr><td>\( h_{bd} \)</td><td>=</td><td>hero boss damage bonus</td></tr>
+				<tr><td>\( h_{cg} \)</td><td>=</td><td>hero chest gold bonus</td></tr>
+				<tr><td>\( h_{gd} \)</td><td>=</td><td>hero gold dropped bonus</td></tr>
+				<tr><td>\( c_{ad} \)</td><td>=</td><td>customization all damage bonus</td></tr>
+				<tr><td>\( c_{cd} \)</td><td>=</td><td>customization crit damage bonus</td></tr>
+				<tr><td>\( c_{gd} \)</td><td>=</td><td>customization gold dropped bonus</td></tr>
+				<tr><td>\( c_{cg} \)</td><td>=</td><td>customization chest gold bonus</td></tr>
+				<tr><td>\( c_{cc} \)</td><td>=</td><td>customization crit chance (critical hit) bonus</td></tr>
+				<tr><td>\( c_{tc} \)</td><td>=</td><td>customization tap damage bonus</td></tr>
+			</table>
+		</div>
+	</div>
+</div>
