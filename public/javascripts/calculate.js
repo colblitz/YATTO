@@ -664,6 +664,26 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 
 	this.evolve_heroes = function() {
 		var heroes_after = this.heroes.slice();
+
+		// level your last hero as much as possible
+		var owned = heroes_after.filter(function(h) { return h != 0; });
+		var last_owned = owned.length - 1;
+		var level_last = heroes_after[last_owned];
+
+		// TODO: javascript is stupid
+		if (last_owned != -1) {
+			for (var i in [100, 10, 1]) {
+				var k = Math.pow(10, (2 - i));
+				var cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+				while (cost < this.current_gold) {
+					heroes_after[last_owned] += k;
+					level_last = heroes_after[last_owned];
+					this.current_gold -= cost;
+					cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+				}
+			}
+		}
+
 		for (var i in heroes_after) {
 			var level = heroes_after[i];
 			if (level == 1000 && hero_info[i].evolve_cost < this.current_gold) {
@@ -762,6 +782,7 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			// ohko things if we can
 			var ohko_stage = health_to_stage(tap);
 			if (ohko_stage > this.current_stage) {
+				console.log(this.current_stage + "ohko");
 				this.current_gold += this.gold_between_stages(this.current_stage, ohko_stage + 1);
 				this.level_heroes();
 				this.time += 4.5 * (ohko_stage - this.current_stage);
@@ -772,6 +793,7 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			// cannot ohko anymore, start tapping
 			var ohko_tapping_stage = health_to_stage(tapping);
 			if (ohko_tapping_stage > this.current_stage) {
+				console.log(this.current_stage + "tapping");
 				this.current_gold += this.gold_between_stages(this.current_stage, ohko_tapping_stage + 1);
 				this.level_heroes();
 				// TODO: check this, tapping ohko slightly slower than sc ohko?
@@ -785,6 +807,7 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			var five_seconds = tapping * TAPS_PER_SECOND * 5;
 			var next_boss = next_boss_stage(this.current_stage);
 			if (five_seconds > stage_hp(next_boss) * 10) {
+				console.log(this.current_stage + "5 taps/boss");
 				this.current_gold += this.gold_between_stages(this.current_stage, next_boss + 1);
 				this.level_heroes();
 				var dps = tapping * TAPS_PER_SECOND;
@@ -794,9 +817,13 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			}
 
 			if (end_game) {
+				console.log(this.current_stage + " is end game");
 				var oneohfive_seconds = tapping * TAPS_PER_SECOND * 105;
 				var next_boss = next_boss_stage(this.current_stage);
+				console.log(oneohfive_seconds);
+				console.log(stage_hp(next_boss) * 10);
 				if (oneohfive_seconds > stage_hp(next_boss) * 10) {
+					console.log(this.current_stage + " 105 seconds");
 					this.current_gold += this.gold_between_stages(this.current_stage, next_boss + 1);
 					this.level_heroes();
 					var dps = tapping * TAPS_PER_SECOND;
@@ -811,6 +838,7 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			}
 
 			// cannot kill boss in 5 seconds, see if we want to grind
+
 			var owned_heroes = this.heroes.filter(function(h) { return h != 0; });
 			var next_hero = owned_heroes.length;
 			var grind_target = 0;
@@ -824,12 +852,17 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 				grind_target = hero_info[next_hero].base_cost;
 				grind = "hero";
 			}
+			console.log("grind for " + grind);
 
 			var gold_needed = grind_target - this.current_gold;
+			console.log("gold needed: " + gold_needed);
 			// check if we can already get whatever we were grinding for
 			if (gold_needed < 0) {
 				if (grind == "evolve") {
+					console.log("evolve");
+					console.log(this.heroes);
 					this.evolve_heroes();
+					console.log(this.heroes);
 				}
 				if (grind == "hero") {
 					this.level_heroes();
@@ -840,12 +873,18 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			// otherwise, how long do we want to grind for
 			// TODO: make grind a user variable
 			var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
+			console.log("base: " + base_stage_gold(this.current_stage));
+			console.log("mult: " + this.mob_multiplier());
+			console.log(mob_gold);
+			console.log(200 * mob_gold);
 			if (gold_needed < 200 * mob_gold) {
+				console.log("can grind, let's grind");
 				var num_mobs = grind_target / mob_gold;
 				var mob_hp = stage_hp(this.current_stage);
 				this.current_gold += num_mobs * mob_gold;
 				this.time += (mob_hp / (tapping * TAPS_PER_SECOND) + 4.5/6.0) * num_mobs;
 			} else {
+				console.log("set end game");
 				end_game = true;
 			}
 		} // end while
@@ -906,10 +945,12 @@ var get_value_memoize = function(a, p, mo) {
 	if (aHash in memoize) {
 		return memoize[aHash];
 	} else {
+		console.log("new game state");
 		var g = new GameState(a, w, l, c, { cs: p.t, br: p.z });
 		// if rps or sps, will reset anyways
 		g.get_all_skills();
 		var base = get_value(g, m);
+		console.log("got value");
 		console.log(base);
 		memoize[aHash] = base;
 		return base;
@@ -962,13 +1003,29 @@ var get_best = function(params, method) {
 				}
 			}
 
+			// Future's Fortune for dmg_equivalent
+			var ff_dmg_eq_gold;
+			var ff_dmg_eq_levels;
+			if ((method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) && i == 10) {
+				var level_to = next_ff_level(current_artifacts[i], params.c[2]);
+				var ff_gold_artifacts_copy = current_artifacts.slice();
+				ff_gold_artifacts_copy[i] = level_to;
+				ff_dmg_eq_levels = level_to - current_artifacts[i];
+				ff_dmg_eq_gold = get_value_memoize(ff_gold_artifacts_copy, params, METHOD_GOLD);
+			}
+
+			console.log("getting value for: " + artifact_info[i].name);
 			var new_value = get_value_memoize(artifacts_copy, params, method);
+			console.log("got value");
 			var e;
 			if (method == METHOD_STAGE_PS) {
 				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
 			} else if (method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) {
 				// https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/
 				var gold_ratio = new_value[0] / base[0];
+				if (i == 10) {
+					gold_ratio = 1 + ((ff_dmg_eq_gold - base[0]) / ff_dmg_eq_levels) / base[0];
+				}
 				var tdmg_ratio = new_value[1] / base[1];
 				var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_ratio) / Math.log(1.075));
 				// var total_change = tdmg_ratio * gold_dmg_equivalent;
@@ -1020,6 +1077,7 @@ var get_best = function(params, method) {
 			break;
 		}
 		relics_left -= best_option.cost;
+		console.log("relics left: " + relics_left);
 		cumulative += best_option.cost;
 		current_artifacts[best_option.index] = best_option.level;
 		delete best_option.efficiency;
