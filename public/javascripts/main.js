@@ -52,9 +52,18 @@ yattoApp.config(['$routeProvider', '$locationProvider',
 	}
 ]);
 
-// yattoApp.controller('MainController', function($scope, localStorageService) {
-// 	$scope.isCollapsed = false;
-// });
+yattoApp.controller('MainController', function(localStorageService) {
+	var mc = this;
+
+	mc.isCollapsed = false;
+	var toggled = localStorageService.get('toggle');
+	if (typeof toggled !== "undefined" && toggled != null) { mc.isCollapsed = toggled; }
+
+	mc.toggle = function() {
+		mc.isCollapsed = !mc.isCollapsed;
+		localStorageService.set('toggle', mc.isCollapsed);
+	};
+});
 
 yattoApp.controller('FaqController', function($scope) {
 	MathJax.Hub.Configured();
