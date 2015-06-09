@@ -56,7 +56,7 @@ yattoApp.controller('SequencerController',
 			$scope.list = [];
 			$scope.seed = 0;
 			$scope.salvageint = 0;
-			$scope.maxDiamonds = 1000;
+			$scope.maxDiamonds = 0;
 			$scope.timer = null;
 			$scope.salvageError = "";
 			$scope.cost_manual = 0;
