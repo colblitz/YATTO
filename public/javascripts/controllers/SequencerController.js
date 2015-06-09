@@ -433,7 +433,6 @@ yattoApp.controller('SequencerController',
 					weapon: heroToName[weapon],
 					typeclass: cssclass
 				});
-				$scope.current_weapons[weapon-1].a += 1;
 				currentSeed = nextSeed;
 			}
 
