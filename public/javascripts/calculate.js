@@ -978,7 +978,9 @@ var get_best = function(params, method) {
 	var steps = [];
 	var cumulative = 0;
 
-	while (relics_left > 0 || steps.length < params.n) {
+	var stepLimit = params.n == 0 ? 200 : params.n
+
+	while (relics_left > 0 && steps.length < stepLimit) {
 		console.log("lkajsdf");
 		var options = [];
 		var base = get_value_memoize(current_artifacts, params, method);

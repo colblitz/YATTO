@@ -189,6 +189,13 @@ yattoApp.controller('SequencerController',
 			return sl;
 		};
 
+		$scope.reset = function() {
+			for (var s in $scope.s_artifacts) {
+				$scope.s_artifacts[s].priority = 0;
+			}
+			$scope.resetSearch();
+		}
+
 		$scope.resetSearch = function() {
 			console.log("resetting");
 			clearInterval($scope.timer);
@@ -423,10 +430,15 @@ yattoApp.controller('SequencerController',
 				var nextSeed = random.next(1, 2147483647);
 				var weapon = random.next(1, 34);
 
+				var before = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
+				$scope.current_weapons[weapon-1].a += 1;
+				var after = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
+				var cssclass = before == after ? (weapon == 33 ? "darklord" : "") : "newset";
 				$scope.w_steps.push({
 					index: i + 1,
 					seed: currentSeed,
-					weapon: heroToName[weapon]
+					weapon: heroToName[weapon],
+					typeclass: cssclass
 				});
 				$scope.current_weapons[weapon-1].a += 1;
 				currentSeed = nextSeed;
