@@ -18,7 +18,7 @@
 					<div class="small-form-item">
 						Sequences tried: <input type="number" class="form-control number-input right-input" ng-model="salvageint" disabled="true"/>
 					</div>
-					<button class="btn btn-primary" id="" ng-click="start()">Start</button>
+					<button class="btn btn-primary" id="" ng-click="start()" ng-disabled="running">Start</button>
 					<button class="btn btn-primary" id="" ng-click="stop()">Stop</button>
 					<button class="btn btn-primary" id="" ng-click="reset()">Reset</button>
 					<span><h4>{{salvageError}}<h4></span>

@@ -202,14 +202,15 @@ yattoApp.controller('SequencerController',
 			$scope.salvageError = "";
 			$scope.best_steps = null;
 			$scope.best_score = 0;
+			$scope.running = false;
 		};
 
 		$scope.best_steps = [];
 		$scope.best_score = 0;
+		$scope.running = false;
 
 		var startSearching = function() {
 			$scope.$apply(function() {
-				$scope.salvageint += 1;
 				var tryList = intToSalvage($scope.salvageint);
 				var cost = getCostOfSalvages(getOwned(), tryList);
 				if ($scope.maxDiamonds == 0 || cost < $scope.maxDiamonds) {
@@ -222,6 +223,7 @@ yattoApp.controller('SequencerController',
 						$scope.cost_auto = cost;
 					}
 				}
+				$scope.salvageint += 1;
 			});
 		};
 
@@ -232,11 +234,13 @@ yattoApp.controller('SequencerController',
 				$scope.salvageError = "Need to set priorities!";
 			} else {
 				$scope.timer = setInterval(startSearching, 0);
+				$scope.running = true;
 			}
 		};
 
 		$scope.stop = function() {
 			clearInterval($scope.timer);
+			$scope.running = false;
 		};
 
 		$scope.importFromString = function(state) {
