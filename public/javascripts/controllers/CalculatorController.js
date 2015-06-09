@@ -27,7 +27,6 @@ yattoApp.controller('CalculatorController',
 
 		$scope.steps = [];
 		$scope.summary_steps = [];
-		//$("#step-tabs").tabs();
 
 		$scope.stepmessage = "Click calculate to get steps!";
 
@@ -311,9 +310,6 @@ yattoApp.controller('CalculatorController',
 				$scope.active ? 1 : 0,
 				$scope.critss,
 				$scope.zerker].join("|");
-			// console.log(stateToUrl($scope.state));
-			// console.log(LZString.compressToEncodedURIComponent(stateToUrl($scope.state)));
-			// console.log(LZString.compressToEncodedURIComponent($scope.state));
 			$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($scope.state);
 		};
 
@@ -431,15 +427,7 @@ yattoApp.controller('CalculatorController',
 
 		$scope.customizationCheck = function(i, ai) {
 			$scope.stateChanged(true);
-			// $scope.generateStateString();
 		};
-
-		// // testing stuff
-		// var g = new GameState(transformScopeArray($scope.artifacts),
-		// 	getWeapons(), getLevels(), transformScopeArray($scope.customizations));
-		// // console.log(g.next_ff_level());
-		// // g.get_all_skills();
-		// console.log(g.gold_multiplier());
 
 		var sortByArtifactOrder = function(s) {
 			var indexToSStep = {};

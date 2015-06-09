@@ -103,7 +103,6 @@ yattoApp.controller('SequencerController',
 
 
 		$scope.getList = function(reset, slist) {
-			// console.log("getting list");
 			var steps = [];
 			var currentSeed = $scope.seed;
 			var list = getOrderList().filter(function(x) {
@@ -216,18 +215,12 @@ yattoApp.controller('SequencerController',
 				if ($scope.maxDiamonds == 0 || cost < $scope.maxDiamonds) {
 					var a = $scope.getList(false, tryList);
 					var f = a.filter(function(step) { return !step.salvage; }).map(function(step) { return step.index; });
-					// console.log(f);
-					// console.log("a: " + a);
 					var newScore = scoreAList(f);
-					// console.log("newScore: " + newScore);
 					if (newScore > $scope.best_score) {
-						console.log("  --------- new best score: " + newScore);
 						$scope.best_score = newScore;
 						$scope.best_steps = a;
 						$scope.cost_auto = cost;
 					}
-				} else {
-					console.log("too much");
 				}
 			});
 		};

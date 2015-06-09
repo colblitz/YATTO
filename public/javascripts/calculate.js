@@ -782,7 +782,6 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			// ohko things if we can
 			var ohko_stage = health_to_stage(tap);
 			if (ohko_stage > this.current_stage) {
-				console.log(this.current_stage + "ohko");
 				this.current_gold += this.gold_between_stages(this.current_stage, ohko_stage + 1);
 				this.level_heroes();
 				this.time += 4.5 * (ohko_stage - this.current_stage);
@@ -793,7 +792,6 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			// cannot ohko anymore, start tapping
 			var ohko_tapping_stage = health_to_stage(tapping);
 			if (ohko_tapping_stage > this.current_stage) {
-				console.log(this.current_stage + "tapping");
 				this.current_gold += this.gold_between_stages(this.current_stage, ohko_tapping_stage + 1);
 				this.level_heroes();
 				// TODO: check this, tapping ohko slightly slower than sc ohko?
@@ -807,7 +805,6 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			var five_seconds = tapping * TAPS_PER_SECOND * 5;
 			var next_boss = next_boss_stage(this.current_stage);
 			if (five_seconds > stage_hp(next_boss) * 10) {
-				console.log(this.current_stage + "5 taps/boss");
 				this.current_gold += this.gold_between_stages(this.current_stage, next_boss + 1);
 				this.level_heroes();
 				var dps = tapping * TAPS_PER_SECOND;
@@ -817,13 +814,9 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			}
 
 			if (end_game) {
-				console.log(this.current_stage + " is end game");
 				var oneohfive_seconds = tapping * TAPS_PER_SECOND * 105;
 				var next_boss = next_boss_stage(this.current_stage);
-				console.log(oneohfive_seconds);
-				console.log(stage_hp(next_boss) * 10);
 				if (oneohfive_seconds > stage_hp(next_boss) * 10) {
-					console.log(this.current_stage + " 105 seconds");
 					this.current_gold += this.gold_between_stages(this.current_stage, next_boss + 1);
 					this.level_heroes();
 					var dps = tapping * TAPS_PER_SECOND;
@@ -852,17 +845,12 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 				grind_target = hero_info[next_hero].base_cost;
 				grind = "hero";
 			}
-			console.log("grind for " + grind);
 
 			var gold_needed = grind_target - this.current_gold;
-			console.log("gold needed: " + gold_needed);
 			// check if we can already get whatever we were grinding for
 			if (gold_needed < 0) {
 				if (grind == "evolve") {
-					console.log("evolve");
-					console.log(this.heroes);
 					this.evolve_heroes();
-					console.log(this.heroes);
 				}
 				if (grind == "hero") {
 					this.level_heroes();
@@ -873,18 +861,12 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 			// otherwise, how long do we want to grind for
 			// TODO: make grind a user variable
 			var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
-			console.log("base: " + base_stage_gold(this.current_stage));
-			console.log("mult: " + this.mob_multiplier());
-			console.log(mob_gold);
-			console.log(200 * mob_gold);
 			if (gold_needed < 200 * mob_gold) {
-				console.log("can grind, let's grind");
 				var num_mobs = grind_target / mob_gold;
 				var mob_hp = stage_hp(this.current_stage);
 				this.current_gold += num_mobs * mob_gold;
 				this.time += (mob_hp / (tapping * TAPS_PER_SECOND) + 4.5/6.0) * num_mobs;
 			} else {
-				console.log("set end game");
 				end_game = true;
 			}
 		} // end while
@@ -940,18 +922,14 @@ var get_value_memoize = function(a, p, mo) {
 		m = METHOD_DMG_EQUIVALENT_WITH_ACTIVES;
 	}
 
-	console.log(m);
 	var aHash = m + hashArray(a);
 	if (aHash in memoize) {
 		return memoize[aHash];
 	} else {
-		console.log("new game state");
 		var g = new GameState(a, w, l, c, { cs: p.t, br: p.z });
 		// if rps or sps, will reset anyways
 		g.get_all_skills();
 		var base = get_value(g, m);
-		console.log("got value");
-		console.log(base);
 		memoize[aHash] = base;
 		return base;
 	}
@@ -971,9 +949,7 @@ var get_max = function(array, custom) {
 
 // artifacts, weapons, levels, customizations, relics, nsteps, method
 var get_best = function(params, method) {
-	console.log("getting best: " + params);
 	var relics_left = params.r;
-	console.log("relics: " + relics_left);
 	var current_artifacts = params.a.slice();
 	var steps = [];
 	var cumulative = 0;
@@ -981,7 +957,6 @@ var get_best = function(params, method) {
 	var stepLimit = params.n == 0 ? 200 : params.n
 
 	while (relics_left > 0 && steps.length < stepLimit) {
-		console.log("lkajsdf");
 		var options = [];
 		var base = get_value_memoize(current_artifacts, params, method);
 
@@ -1016,9 +991,7 @@ var get_best = function(params, method) {
 				ff_dmg_eq_gold = get_value_memoize(ff_gold_artifacts_copy, params, METHOD_GOLD);
 			}
 
-			console.log("getting value for: " + artifact_info[i].name);
 			var new_value = get_value_memoize(artifacts_copy, params, method);
-			console.log("got value");
 			var e;
 			if (method == METHOD_STAGE_PS) {
 				e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
@@ -1037,8 +1010,6 @@ var get_best = function(params, method) {
 				var eq_tdmg = (gold_dmg_equivalent - 1) * base[1] + new_value[1];
 				e = (eq_tdmg - base[1]) / relic_cost;
 			} else {
-				console.log("diff: " + (new_value - base));
-				console.log("cost: " + relic_cost);
 				e = (new_value - base) / relic_cost;
 			}
 
@@ -1050,11 +1021,6 @@ var get_best = function(params, method) {
 				cost: relic_cost,
 				cumulative: cumulative + relic_cost
 			});
-		}
-
-		console.log("options: ");
-		for (var o in options) {
-			console.log(options[o]);
 		}
 
 		// pick best option
@@ -1071,23 +1037,15 @@ var get_best = function(params, method) {
 			}
 		});
 
-		console.log("best option: " + best_option);
-		console.log("best option: " + relics_left);
-		console.log("best option: " + best_option.cost);
-		console.log(params.n);
 		if (best_option.cost > relics_left && params.n == 0) {
 			break;
 		}
 		relics_left -= best_option.cost;
-		console.log("relics left: " + relics_left);
 		cumulative += best_option.cost;
 		current_artifacts[best_option.index] = best_option.level;
 		delete best_option.efficiency;
 		steps.push(best_option);
 	}
-
-	console.log(steps);
-
 	return steps;
 };
 
