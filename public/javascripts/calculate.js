@@ -949,7 +949,7 @@ var get_max = function(array, custom) {
 
 // artifacts, weapons, levels, customizations, relics, nsteps, method
 var get_best = function(params, method) {
-	var relics_left = params.r;
+	var relics_left = params.r == 0 ? 1000000000 : params.r;
 	var current_artifacts = params.a.slice();
 	var steps = [];
 	var cumulative = 0;
