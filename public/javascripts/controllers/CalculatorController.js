@@ -595,7 +595,36 @@ yattoApp.controller('CalculatorController',
 		$scope.filechanged = function() {
 			// console.log("savefile: " + savefile);
 			console.log("here");
-			console.log("changed: " + $scope.savefile);
+			// console.log("changed: " + $scope.savefile);
+			var b = $scope.savefile.indexOf("playerInfoSaveString");
+			var e = $scope.savefile.indexOf("lastUsedTexture");
+			console.log("index of playerInfoSaveString: " + b);
+			console.log("index of lastUsedTexture: " + e);
+			var s = $scope.savefile.substring(b + 22, e-2);
+			// http://pastebin.com/Fz0pz0BV
+			var j = JSON.parse(JSON.parse(s));
+
+			var artifactLevels = j.artifactLevels;
+			var customizations = j.unlockedPlayerCustomizations;
+			var relics = j.playerRelics;
+			var diamonds = j.playerDiamonds;
+			var artifactSeed = j.nextArtifactSeed;
+			var weaponSeed = j.heroSave.heroWeaponSeed;
+			var weapons = j.heroSave.heroWeaponUpgrades;
+			var levels = j.heroSave.heroLevels;
+
+			console.log(artifactLevels);
+			console.log(customizations);
+			console.log(relics);
+			console.log(diamonds);
+			console.log(artifactSeed);
+			console.log(weaponSeed);
+			console.log(weapons);
+			console.log(levels);
+
+
+			// console.log(jj.artifactLevels);
+			// console.log($scope.savefile.substring())
 			// $scope.$apply(function(scope) {
 			// 	var saveFile = element.files[0];
 			// 	var reader = new FileReader();

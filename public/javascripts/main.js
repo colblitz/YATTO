@@ -65,7 +65,12 @@ yattoApp.directive("fileread", [function () {
 						scope.fileread = loadEvent.target.result;
 					});
 				}
-				reader.readAsText(changeEvent.target.files[0]);
+				console.log("lakjsldkjflakjsldf");
+				if (changeEvent.target.files[0].name.split(".").pop() == "adat") {
+					reader.readAsText(changeEvent.target.files[0]);
+				} else {
+					// TODO: display error
+				}
 			});
 		}
 	}
@@ -73,15 +78,31 @@ yattoApp.directive("fileread", [function () {
 
 yattoApp.directive('reddit', function() {
 	return {
-    restrict: 'E',
-    transclude: true,
-    scope: { user : '@' },
-    controller: function($scope) {},
-    template: '<a href="http://www.reddit.com/user/{{user}}">/u/{{user}}</a>'
-  };
+		restrict: 'E',
+		transclude: true,
+		scope: { user : '@' },
+		controller: function($scope) {},
+		template: '<a href="http://www.reddit.com/user/{{user}}">/u/{{user}}</a>'
+	};
 });
 
-yattoApp.controller('MainController', function(localStorageService) {
+yattoApp.controller('ModalController', function ($scope, $modalInstance, username, password) {
+	$scope.username = username;
+	$scope.password = "";
+
+	$scope.verify = function() {
+		console.log("u: " + $scope.username);
+		console.log("p: " + $scope.password);
+		// TODO: do stuff - verify - get state
+		$modalInstance.close({username: $scope.username, password: $scope.password});
+	}
+
+	$scope.cancel = function () {
+		$modalInstance.dismiss('cancel');
+	};
+});
+
+yattoApp.controller('MainController', function($scope, $modal, localStorageService) {
 	var mc = this;
 
 	mc.isCollapsed = false;
@@ -91,6 +112,33 @@ yattoApp.controller('MainController', function(localStorageService) {
 	mc.toggle = function() {
 		mc.isCollapsed = !mc.isCollapsed;
 		localStorageService.set('toggle', mc.isCollapsed);
+	};
+
+	$scope.username = "";
+	$scope.password = "";
+
+	$scope.login = function() {
+		console.log("here in login");
+
+		var modalInstance = $modal.open({
+			templateUrl: 'loginModal.html',
+			controller: 'ModalController',
+			size: 'sm',
+			resolve: {
+				username: function() {
+					return $scope.username;
+				},
+				password: function() {
+					return $scope.password;
+				}
+			}
+		});
+
+		modalInstance.result.then(function (info) {
+			console.log("main: " + info.username + " " + info.password);
+		}, function () {
+			$log.info('Modal dismissed at: ' + new Date());
+		});
 	};
 });
 
