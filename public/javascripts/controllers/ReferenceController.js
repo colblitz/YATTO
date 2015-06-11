@@ -95,10 +95,10 @@ yattoApp.controller('ReferenceController',
 		$scope.calcArtifacts = function(i) {
 			var a = $scope.r_artifacts[i];
 			if (a.current != 0) {
-				a.cost = Math.ceil(a.costf(a.current));
+				a.cost = Math.ceil(a.costf(a.current+1));
 				a.cumulative = 0;
 				for (var l = a.current; l < a.desired; l++) {
-					a.cumulative += Math.ceil(a.costf(l));
+					a.cumulative += Math.ceil(a.costf(l+1));
 				}
 			} else {
 				a.cost = 0;

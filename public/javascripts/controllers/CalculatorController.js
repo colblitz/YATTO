@@ -592,6 +592,20 @@ yattoApp.controller('CalculatorController',
 			$scope.stateChanged(true);
 		};
 
+		$scope.filechanged = function() {
+			// console.log("savefile: " + savefile);
+			console.log("here");
+			console.log("changed: " + $scope.savefile);
+			// $scope.$apply(function(scope) {
+			// 	var saveFile = element.files[0];
+			// 	var reader = new FileReader();
+			// 	reader.onload = function(e) {
+			// 		console.log(e);
+			// 	};
+			// 	reader.readAsDataURL(saveFile);
+			// });
+		};
+
 		// initialize
 		setDefaults();
 		$scope.readFromCookies();
