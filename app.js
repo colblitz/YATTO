@@ -1,13 +1,26 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+// Get stuff
+var express        = require('express');
+var path           = require('path');
+var favicon        = require('serve-favicon');
+var logger         = require('morgan');
+var cookieParser   = require('cookie-parser');
+var bodyParser     = require('body-parser');
+var mongoose       = require('mongoose');
+var passport       = require('passport');
+var LocalStrategy  = require('passport-local').Strategy;
+var expressSession = require('express-session');
+var MongoStore = require('connect-mongo')(expressSession);
+
+var User  = require('./models/user');
+var State = require('./models/state');
+
+// Configuration
+mongoose.connect('mongodb://localhost/yatto');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+// var users = require('./routes/users');
 
+// Set up express app
 var app = express();
 
 // view engine setup
@@ -20,11 +33,43 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(expressSession({
+  secret: 'what is this secret',
+  resave: false,
+  saveUninitialized: false,
+  maxAge: new Date(Date.now() + 3600000),
+  store: new MongoStore(
+    {mongooseConnection:mongoose.connection},
+    function(err){
+      console.log(err || 'connect-mongodb setup ok');
+    })
+}));
 app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.json()); // ?
+// app.use(express.urlencoded()); // ?
+
+// configure passport
+app.use(expressSession({secret: 'mySecretKey'}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+// passport.serializeUser(function(user, done) {
+//   done(null, user._id);
+// });
+
+// passport.deserializeUser(function(id, done) {
+//   User.findById(id, function(err, user) {
+//     done(err, user);
+//   });
+// });
 
 app.use('/', routes);
-app.use('/users', users);
+// app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
