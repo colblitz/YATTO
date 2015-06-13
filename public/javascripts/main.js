@@ -86,13 +86,52 @@ yattoApp.directive('reddit', function() {
 	};
 });
 
-yattoApp.controller('ModalController', function ($scope, $modalInstance, username, password) {
+yattoApp.controller('ModalController', function ($scope, $http, $modalInstance, username, password) {
 	$scope.username = username;
 	$scope.password = "";
 
-	$scope.verify = function() {
+	$scope.login = function() {
+		console.log("modal login");
 		console.log("u: " + $scope.username);
 		console.log("p: " + $scope.password);
+
+		// do login
+		$http({
+    	method: "POST",
+    	url: "login",
+    	data: {
+    		"username": $scope.username,
+    		"password": $scope.password
+    	}
+   	}).success(function(data, status, headers, config) {
+    	console.log("yay stuff: " + data.content);
+    }).error(function(data, status, headers, config) {
+   		console.log("boo error: " + data.err);
+    });
+
+		// TODO: do stuff - verify - get state
+		$modalInstance.close({username: $scope.username, password: $scope.password});
+	}
+
+	$scope.register = function() {
+		console.log("modal register");
+		console.log("u: " + $scope.username);
+		console.log("p: " + $scope.password);
+
+		// do register
+		$http({
+    	method: "POST",
+    	url: "register",
+    	data: {
+    		"username": $scope.username,
+    		"password": $scope.password
+    	}
+   	}).success(function(data, status, headers, config) {
+    	console.log("yay register worked: " + data.content);
+    }).error(function(data, status, headers, config) {
+   		console.log("boo register error: " + data.err);
+    });
+
 		// TODO: do stuff - verify - get state
 		$modalInstance.close({username: $scope.username, password: $scope.password});
 	}
@@ -102,7 +141,7 @@ yattoApp.controller('ModalController', function ($scope, $modalInstance, usernam
 	};
 });
 
-yattoApp.controller('MainController', function($scope, $modal, localStorageService) {
+yattoApp.controller('MainController', function($scope, $http, $modal, localStorageService) {
 	var mc = this;
 
 	mc.isCollapsed = false;
@@ -118,7 +157,17 @@ yattoApp.controller('MainController', function($scope, $modal, localStorageServi
 	$scope.password = "";
 
 	$scope.login = function() {
-		console.log("here in login");
+		console.log("about to open login modal");
+
+		// $http({
+  //   	method: "GET",
+  //   	url: "test"
+  //  	}).success(function(data, status, headers, config) {
+  //   	console.log("yay test stuff: " + data.content);
+  //   }).error(function(data, status, headers, config) {
+  //  		console.log("boo teset error: " + data.content);
+  //   });
+  //   console.log("lkasjdf");
 
 		var modalInstance = $modal.open({
 			templateUrl: 'loginModal.html',
@@ -135,7 +184,7 @@ yattoApp.controller('MainController', function($scope, $modal, localStorageServi
 		});
 
 		modalInstance.result.then(function (info) {
-			console.log("main: " + info.username + " " + info.password);
+			console.log("result from modal: " + info.username + " " + info.password);
 		}, function () {
 			$log.info('Modal dismissed at: ' + new Date());
 		});
