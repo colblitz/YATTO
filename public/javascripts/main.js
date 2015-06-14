@@ -86,6 +86,10 @@ yattoApp.directive('reddit', function() {
 	};
 });
 
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+
 yattoApp.controller('ModalController', function ($scope, $http, $modalInstance, username, password) {
 	$scope.username = username;
 	$scope.password = "";
@@ -97,20 +101,23 @@ yattoApp.controller('ModalController', function ($scope, $http, $modalInstance, 
 
 		// do login
 		$http({
-    	method: "POST",
-    	url: "login",
-    	data: {
-    		"username": $scope.username,
-    		"password": $scope.password
-    	}
-   	}).success(function(data, status, headers, config) {
-    	console.log("yay stuff: " + data.content);
-    }).error(function(data, status, headers, config) {
-   		console.log("boo error: " + data.err);
-    });
-
-		// TODO: do stuff - verify - get state
-		$modalInstance.close({username: $scope.username, password: $scope.password});
+			method: "POST",
+			url: "login",
+			data: {
+				"username": $scope.username,
+				"password": $scope.password
+			}
+		}).success(function(data, status, headers, config) {
+			console.log("yay stuff: " + data.content);
+			//$modalInstance.close({username: $scope.username, password: $scope.password});
+		}).error(function(data, status, headers, config) {
+			// console.log("boo error");
+			// console.log(data.err);
+			// console.log(status);
+			// console.log(headers);
+			// console.log(config);
+			$scope.message = data.err;
+		});
 	}
 
 	$scope.register = function() {
@@ -120,26 +127,29 @@ yattoApp.controller('ModalController', function ($scope, $http, $modalInstance, 
 
 		// do register
 		$http({
-    	method: "POST",
-    	url: "register",
-    	data: {
-    		"username": $scope.username,
-    		"password": $scope.password
-    	}
-   	}).success(function(data, status, headers, config) {
-    	console.log("yay register worked: " + data.content);
-    }).error(function(data, status, headers, config) {
-   		console.log("boo register error: " + data.err);
-    });
-
-		// TODO: do stuff - verify - get state
-		$modalInstance.close({username: $scope.username, password: $scope.password});
+			method: "POST",
+			url: "register",
+			data: {
+				"username": $scope.username,
+				"password": $scope.password
+			}
+		}).success(function(data, status, headers, config) {
+			console.log("yay register worked: " + data.content);
+			$modalInstance.close({username: $scope.username, password: $scope.password});
+		}).error(function(data, status, headers, config) {
+			console.log("boo register error: " + data.err);
+			$scope.message = data.err;
+		});
 	}
 
 	$scope.cancel = function () {
 		$modalInstance.dismiss('cancel');
 	};
 });
+
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
 
 yattoApp.controller('MainController', function($scope, $http, $modal, localStorageService) {
 	var mc = this;
@@ -156,18 +166,27 @@ yattoApp.controller('MainController', function($scope, $http, $modal, localStora
 	$scope.username = "";
 	$scope.password = "";
 
+	$scope.test = function() {
+		console.log("testing");
+		$http({
+			method: "GET",
+			url: "test"
+		}).success(function(data, status, headers, config) {
+			console.log("yay test stuff: " + data.content);
+		}).error(function(data, status, headers, config) {
+			console.log("boo teset error: " + data.content);
+		});
+		console.log("done testing");
+		// console.log("lkasjdf");
+
+		console.log("logged in user: " + $scope.logged_in_user.username);
+		console.log("logged in user: " + $scope.logged_in_user.toString());
+	}
+
 	$scope.login = function() {
 		console.log("about to open login modal");
 
-		// $http({
-  //   	method: "GET",
-  //   	url: "test"
-  //  	}).success(function(data, status, headers, config) {
-  //   	console.log("yay test stuff: " + data.content);
-  //   }).error(function(data, status, headers, config) {
-  //  		console.log("boo teset error: " + data.content);
-  //   });
-  //   console.log("lkasjdf");
+		//
 
 		var modalInstance = $modal.open({
 			templateUrl: 'loginModal.html',
@@ -186,10 +205,14 @@ yattoApp.controller('MainController', function($scope, $http, $modal, localStora
 		modalInstance.result.then(function (info) {
 			console.log("result from modal: " + info.username + " " + info.password);
 		}, function () {
-			$log.info('Modal dismissed at: ' + new Date());
+			console.log('Modal dismissed at: ' + new Date());
 		});
 	};
 });
+
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
 
 yattoApp.controller('FaqController', function($scope) {
 	MathJax.Hub.Configured();

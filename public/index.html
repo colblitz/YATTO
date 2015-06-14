@@ -42,29 +42,32 @@
 
 	</head>
 	<body ng-app="yattoApp">
-		<div id="everything-container" class="container-fluid" ng-controller="MainController as mc">
+		<div id="everything-container" class="container-fluid" ng-controller="MainController as mc" ng-init="logged_in_user = {req:user}">
 			<div class="row">
 				<div id="header" class="col-lg-8 col-lg-offset-2 col-md-12 col-xs-12"></div>
 			</div>
 
 			<script type="text/ng-template" id="loginModal.html">
-        <div class="modal-header">
-          <h3 class="modal-title">Login!</h3>
-        </div>
-        <div class="modal-body">
-        	<div class="small-form-item">
-						Username: <input type="text" class="form-control right-input" ng-model="username"/>
+				<div class="modal-header">
+					<h3 class="modal-title">Login!</h3>
+				</div>
+				<div class="modal-body">
+					<div class="modal-form-item">
+						<span class="modal-form-label">Username:</span>
+						<input type="text" class="form-control right-input modal-input" ng-model="username"/>
 					</div>
-					<div class="small-form-item">
-						Password: <input type="password" class="form-control right-input" ng-model="password"/>
+					<div class="modal-form-item">
+						<span class="modal-form-label">Password:</span>
+						<input type="password" class="form-control right-input modal-input" ng-model="password"/>
 					</div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" ng-click="login()">Login</button>
-          <button class="btn btn-primary" ng-click="register()">Register</button>
-          <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
-        </div>
-	    </script>
+					<span class="modal-message">{{message}}</span>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-primary" ng-click="login()">Login</button>
+					<button class="btn btn-primary" ng-click="register()">Register</button>
+					<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+				</div>
+			</script>
 
 			<div class="row" id="navrow">
 				<span class="col-md-1 col-md-offset-1 navlink"><a href="#calculator"><i class="fa"></i>Calculator</a></span>
@@ -73,6 +76,7 @@
 				<span class="col-md-1 navlink" ><a href="#formulas"><i class="fa"></i>Formulas</a></span>
 				<span class="col-md-1 navlink" ><a href="#sequencer"><i class="fa"></i>Sequencer</a></span>
 				<span class="col-md-1 navlink navlogin" ><a href="" ng-click="login()"><i class="fa"></i>Login</a></span>
+				<span class="col-md-1 navlink navlogin" ><a href="" ng-click="test()"><i class="fa"></i>Test</a></span>
 			</div>
 			<div class="row">
 				<div id="banner" class="col-md-10 col-md-offset-1 col-xs-12" collapse="mc.isCollapsed">
