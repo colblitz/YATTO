@@ -103,16 +103,19 @@
 								<label class="btn btn-primary cookiebtn" ng-model="autocookies" btn-radio="'Off'" ng-change="updateCookies()">Off</label>
 							</div>
 
-							<button class="btn btn-success thinbtn" ng-click="storeToCookies()">Save cookies</button>
-							<button class="btn btn-success thinbtn" ng-click="readFromCookies()">Load from cookies</button>
-							<button class="btn btn-danger thinbtn" ng-click="clearAllCookies()">Clear cookies</button>
-							<input type="file" fileread="savefile"/>
-							<button class="btn btn-danger thinbtn" ng-click="filechanged()">Load info from file</button>
+							<button class="btn btn-success" ng-click="storeToCookies()">Save cookies</button>
+							<button class="btn btn-success" ng-click="readFromCookies()">Load from cookies</button>
+							<button class="btn btn-danger" ng-click="clearAllCookies()">Clear cookies</button>
+							<button class="btn btn-success" id="savebutton" ng-click="" ng-disabled="!$root.loggedIn">Save to account</button>
+<!--
+							{{$root.loggedIn}} -->
+							<button class="btn btn-primary" ng-click="filechanged()">Load info from file</button>
+							<input class="file-input" type="file" fileread="savefile"/>
 							<!-- {{savefile}} -->
 							<!-- <input ng-model="savefile" ng-change="file_changed(this)" type="file"/> -->
 							<!-- http://stackoverflow.com/questions/16631702/file-pick-with-angular-js -->
 
-							<div id="stats-weapons-box">
+							<!-- <div id="stats-weapons-box">
 								<div class="small-form-item">
 									<label id="chi">\(\chi^2\)</label>&nbsp;<label>Probability:</label>
 									<input type="number" class="form-control number-input right-input" ng-model="w_chiprob" readonly/>
@@ -133,7 +136,7 @@
 									<label>Probability to get next set:</label>
 									<input type="number" class="form-control number-input right-input" ng-model="w_probset" readonly/>
 								</div>
-							</div>
+							</div> -->
 
 						</div> <!-- options subbox 4 -->
 					</div> <!-- row -->

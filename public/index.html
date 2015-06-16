@@ -75,8 +75,8 @@
 				<span class="col-md-1 navlink" ><a href="#reference"><i class="fa"></i>Reference</a></span>
 				<span class="col-md-1 navlink" ><a href="#formulas"><i class="fa"></i>Formulas</a></span>
 				<span class="col-md-1 navlink" ><a href="#sequencer"><i class="fa"></i>Sequencer</a></span>
-				<span class="col-md-1 navlink navlogin" ><a href="" ng-click="login()"><i class="fa"></i>Login</a></span>
-				<span class="col-md-1 navlink navlogin" ><a href="" ng-click="test()"><i class="fa"></i>Test</a></span>
+				<span class="col-md-1 navlink navlogin" ><a href="" ng-click="login()"><i class="fa"></i>{{loginText}}</a></span>
+				<!-- <span class="col-md-1 navlink navlogin" ><a href="" ng-click="test()"><i class="fa"></i>Test</a></span> -->
 			</div>
 			<div class="row">
 				<div id="banner" class="col-md-10 col-md-offset-1 col-xs-12" collapse="mc.isCollapsed">
@@ -90,7 +90,7 @@
 						<li>Also, a few people have mentioned having some issues with cookies, so I made a change to not automatically store to cookies if you open up a url with state. Keep your state/url somewhere safe and let me know if there are any issues.</li>
 						<li>If you have artifacts at really low levels (compared to your other artifacts), relics/second and stages/second can be really slow and cause the whole thing to freeze up. I'm still working on this, so just fyi for now.</li>
 					</ul> -->
-					<b>Update(6/9/2015):</b> Yatto 2.0.0 is here! (<a href="http://redd.it/3962ct">reddit post</a>)
+					<!-- <b>Update(6/9/2015):</b> Yatto 2.0.0 is here! (<a href="http://redd.it/3962ct">reddit post</a>)
 					<ul>
 						<li>Artifact sequencer and weapon sequencer has been added.</li>
 						<li>The reference page has been split into a reference page, with information about artifact and hero constants, and a formulas page, which has had a lot of formulas added to it.</li>
@@ -100,6 +100,12 @@
 						<li>A bunch of other small things that I don't remember/forgot to keep track of.</li>
 						<li>Again, if you have artifacts at really low levels (compared to your other artifacts), relics/second and stages/second can be really slow and cause the whole thing to freeze up. I'm still working on this, so just fyi for now.</li>
 						<li>Things have been changed so that if you have both a relic limit and a step limit it will quit once either of them has been reached (originally it would keep going until both limits are reached). A step limit of 0 indicates a default of 200 steps.</li>
+					</ul> -->
+					<b>Update(6/9/2015):</b> Yatto 3.0.0 is here! (<a href="http://redd.it/3962ct">reddit post</a>)
+					<ul>
+						<li>Yatto has a backend! aka, save your progress to an account! I'm not sure if this will eventually replace cookies (eh....), but I'm sure a lot of you will find it useful, especially for sharing. For now you can see anyone's stats by going to yatto.me/#/calculator?user=[username], but I might add a "keep me private" option if people want it (or you could just not share your username....)</li>
+						<li>Upload your stats with your .adat file</li>
+						<li>The weapon sequencer has been reworked a bit</li>
 					</ul>
 				</div>
 				<div id="expander" class="col-md-10 col-md-offset-1 col-xs-12" ng-click="mc.toggle()">

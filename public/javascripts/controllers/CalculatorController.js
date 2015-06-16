@@ -3,6 +3,13 @@ yattoApp.controller('CalculatorController',
 		MathJax.Hub.Configured();
   		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
+  	console.log("calculator");
+  	// $scope.loggedIn = function() {
+  	// 	console.log("alkjsldkjfasdF");
+   //    return shareVariables.getVariable("loggedIn");
+   //  };
+   	console.log($rootScope.loggedIn);
+
 		$scope.sortableOptions = {
 			'ui-floating': false,
 			'axis': 'y',

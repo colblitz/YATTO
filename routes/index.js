@@ -26,6 +26,15 @@ module.exports = function(passport) {
 		sendSuccess(res, "fuck");
 	});
 
+	router.post('/check', function(req, res) {
+		if (req.user != null) {
+			console.log("sending back user");
+			sendSuccess(res, req.user);
+			return;
+		}
+		sendSuccess(res, null);
+	});
+
 	router.post('/register', function(req, res, next) {
 		passport.authenticate('register', function(err, user, info) {
 			if (err) { sendErrResponse(res, err); return; }
@@ -44,9 +53,18 @@ module.exports = function(passport) {
 			if (!user) { sendErrResponse(res, info); return; }
 			req.logIn(user, function(err) {
 				if (err) { sendErrResponse(res, err); }
-				sendSuccess(res, user);
+				console.log("sending back user:");
+				console.log(user);
+				sendSuccess(res, { username: user.username, state: user.state });
 			});
 		})(req, res, next);
+	});
+
+	router.post('/logout', function(req, res, next) {
+		if (req.isAuthenticated()) {
+			req.logOut();
+		}
+		sendSuccess(res, null);
 	});
 
 	return router;

@@ -49,7 +49,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 passport.serializeUser(function(user, done) {
-	console.log('serializing user: ');console.log(user);
+	console.log('serializing user: ');
+	console.log(user);
 	done(null, user._id);
 });
 

@@ -90,7 +90,7 @@ yattoApp.directive('reddit', function() {
 // --------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------
 
-yattoApp.controller('ModalController', function ($scope, $http, $modalInstance, username, password) {
+yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $modalInstance, username, password) {
 	$scope.username = username;
 	$scope.password = "";
 
@@ -109,7 +109,15 @@ yattoApp.controller('ModalController', function ($scope, $http, $modalInstance, 
 			}
 		}).success(function(data, status, headers, config) {
 			console.log("yay stuff: " + data.content);
-			//$modalInstance.close({username: $scope.username, password: $scope.password});
+			var user = data.content;
+			$scope.username = user.username;
+			// $scope.loginText = "Logout (" + user.username + ")";
+			$rootScope.loggedIn = true;
+
+			console.log(user.username);
+			console.log(user.state);
+			console.log("yay user2: " + data.user);
+			$modalInstance.close({username: user.username, state: user.password});
 		}).error(function(data, status, headers, config) {
 			// console.log("boo error");
 			// console.log(data.err);
@@ -151,7 +159,38 @@ yattoApp.controller('ModalController', function ($scope, $http, $modalInstance, 
 // --------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------
 
-yattoApp.controller('MainController', function($scope, $http, $modal, localStorageService) {
+yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal, localStorageService, shareVariables) {
+	console.log("main controller");
+	$scope.loginText = "Login";
+	$rootScope.loggedIn = false;
+	shareVariables.setVariable("loggedIn", false);
+
+	$http({
+		method: "POST",
+		url: "check",
+		// data: {
+		// 	"username": $scope.username,
+		// 	"password": $scope.password
+		// }
+	}).success(function(data, status, headers, config) {
+		console.log("yay check succeeded");
+		console.log(data.content);
+		var user = data.content;
+		if (user != null) {
+			$scope.username = user.username;
+			$scope.loginText = "Logout (" + user.username + ")";
+			$rootScope.loggedIn = true;
+			shareVariables.setVariable("loggedIn", true);
+		}
+		// console.log(status);
+		// console.log(headers);
+		// console.log(config);
+	}).error(function(data, status, headers, config) {
+		console.log("boo check error: " + data.err);
+		// $scope.message = data.err;
+	});
+
+
 	var mc = this;
 
 	mc.isCollapsed = false;
@@ -186,27 +225,47 @@ yattoApp.controller('MainController', function($scope, $http, $modal, localStora
 	$scope.login = function() {
 		console.log("about to open login modal");
 
-		//
-
-		var modalInstance = $modal.open({
-			templateUrl: 'loginModal.html',
-			controller: 'ModalController',
-			size: 'sm',
-			resolve: {
-				username: function() {
-					return $scope.username;
-				},
-				password: function() {
-					return $scope.password;
+		if ($rootScope.loggedIn) {
+			$http({
+				method: "POST",
+				url: "logout"
+			}).success(function(data, status, headers, config) {
+				console.log("logout done");
+				$scope.username = null;
+				$scope.loginText = "Login";
+				$rootScope.loggedIn = false;
+			}).error(function(data, status, headers, config) {
+				console.log("logout error: " + data.err);
+			});
+		} else {
+			var modalInstance = $modal.open({
+				templateUrl: 'loginModal.html',
+				controller: 'ModalController',
+				size: 'sm',
+				resolve: {
+					username: function() {
+						return $scope.username;
+					},
+					password: function() {
+						return $scope.password;
+					}
 				}
-			}
-		});
+			});
 
-		modalInstance.result.then(function (info) {
-			console.log("result from modal: " + info.username + " " + info.password);
-		}, function () {
-			console.log('Modal dismissed at: ' + new Date());
-		});
+			modalInstance.result.then(function (info) {
+				console.log("result from modal: " + info.username + " " + info.password);
+				$scope.username = info.username;
+				$scope.state = info.state;
+
+				if (info.username) {
+					console.log("yay stuff after modal: " + info);
+					$scope.username = info.username;
+					$scope.loginText = "Logout (" + info.username + ")";
+				}
+			}, function () {
+				console.log('Modal dismissed at: ' + new Date());
+			});
+		}
 	};
 });
 
