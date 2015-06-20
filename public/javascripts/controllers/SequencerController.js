@@ -1,5 +1,17 @@
+yattoApp.controller('WeaponModalController', function ($scope, $modalInstance) {
+	$scope.alreadySure = false;
+
+	$scope.isSure = function() {
+		$modalInstance.close({alreadySure: $scope.alreadySure});
+	}
+
+	$scope.justKidding = function() {
+		$modalInstance.dismiss('cancel');
+	}
+});
+
 yattoApp.controller('SequencerController',
-	function($scope, shareVariables, localStorageService) {
+	function($scope, $rootScope, $modal, shareVariables, localStorageService) {
 		var getOrderList = function() {
 			return [
 				13, // Knight's Shield
@@ -61,6 +73,7 @@ yattoApp.controller('SequencerController',
 			$scope.salvageError = "";
 			$scope.cost_manual = 0;
 			$scope.cost_auto = 0;
+			$scope.weaponNum = 100;
 			$scope.w_confirm = false;
 			$scope.showWeapons = false;
 			$scope.current_weapons = [];
@@ -110,7 +123,7 @@ yattoApp.controller('SequencerController',
 			});
 
 			var salvages = [];
-			if (!reset && typeof $scope.steps !== "undefined" && $scope.steps != null) {
+			if (!reset && isNonNull($scope.steps)) {
 				salvages = $scope.steps.map(function(s) { return s.salvage; });
 			}
 			if (slist != null) {
@@ -269,32 +282,39 @@ yattoApp.controller('SequencerController',
 					value: avalue
 				});
 			});
-			return artifacts;
-		};
-
-
-		$scope.importWFromString = function(state) {
-			var t = state.split("|");
-
-			// state verification
-			if (occurrences(t[0], ",", false) != 28 ||
-					occurrences(t[0], ".", false) != 29 ||
-					occurrences(t[1], ",", false) != 32 ||
-					occurrences(t[1], ".", false) != 33 ||
-					occurrences(t[2], ",", false) != 5  ||
-					occurrences(t[3], ",", false) != 5) {
-				console.log("bad state:");
-				console.log(state);
-				return [];
-			}
 
 			var weapons = [];
 			t[1].split(",").forEach(function(h, i, array) {
 				var v = h.split(".");
 				weapons.push(parseOrZero(v[1], parseInt));
 			});
-			return weapons;
+
+			return [artifacts, weapons];
 		};
+
+
+		// $scope.importWFromString = function(state) {
+		// 	var t = state.split("|");
+
+		// 	// state verification
+		// 	if (occurrences(t[0], ",", false) != 28 ||
+		// 			occurrences(t[0], ".", false) != 29 ||
+		// 			occurrences(t[1], ",", false) != 32 ||
+		// 			occurrences(t[1], ".", false) != 33 ||
+		// 			occurrences(t[2], ",", false) != 5  ||
+		// 			occurrences(t[3], ",", false) != 5) {
+		// 		console.log("bad state:");
+		// 		console.log(state);
+		// 		return [];
+		// 	}
+
+		// 	var weapons = [];
+		// 	t[1].split(",").forEach(function(h, i, array) {
+		// 		var v = h.split(".");
+		// 		weapons.push(parseOrZero(v[1], parseInt));
+		// 	});
+		// 	return weapons;
+		// };
 
 		var heroToName = {
 			 1: "Takeda",
@@ -335,16 +355,34 @@ yattoApp.controller('SequencerController',
 		$scope.initialize = function() {
 			setDefaults();
 			var artifacts = [];
-			// get from calculator controller
-			if (shareVariables.hasVariable("artifacts")) {
-				artifacts = shareVariables.getVariable("artifacts");
+			var weapons = [];
+
+			if (isNonNull($rootScope.state)) {
+				var t = $scope.importFromString($rootScope.state);
+				artifacts = t[0];
+				weapons = t[1];
 			} else {
+				console.log("null root state");
 				// try getting from cookies
-				var state = localStorageService.get('state')
-				if (typeof state !== "undefined" && state != null) {
-					artifacts = $scope.importFromString(state);
+				var state = localStorageService.get('state');
+				console.log(state);
+				if (isNonNull(state)) {
+					var t = $scope.importFromString(state);
+					artifacts = t[0];
+					weapons = t[1];
 				}
 			}
+
+
+			// if (shareVariables.hasVariable("artifacts")) {
+			// 	artifacts = shareVariables.getVariable("artifacts");
+			// } else {
+			// 	// try getting from cookies
+			// 	var state = localStorageService.get('state')
+			// 	if (isNonNull(state)) {
+			// 		artifacts = $scope.importFromString(state);
+			// 	}
+			// }
 
 			for (var i in artifacts) {
 				var a = artifacts[i];
@@ -352,17 +390,30 @@ yattoApp.controller('SequencerController',
 			}
 
 
-			var weapons = [];
+
 			// get from calculator controller
-			if (shareVariables.hasVariable("weapons")) {
-				weapons = shareVariables.getVariable("weapons");
-			} else {
-				// try getting from cookies
-				var state = localStorageService.get('state')
-				if (typeof state !== "undefined" && state != null) {
-					weapons = $scope.importWFromString(state);
-				}
-			}
+			// if (shareVariables.hasVariable("weapons")) {
+			// 	weapons = shareVariables.getVariable("weapons");
+			// } else {
+			// 	// try getting from cookies
+			// 	var state = localStorageService.get('state')
+			// 	if (isNonNull(state)) {
+			// 		weapons = $scope.importWFromString(state);
+			// 	}
+			// }
+
+			// get from calculator controller
+			// if (isNonNull($rootScope.state)) {
+			// 	weapons = $scope.importWFromString($rootScope.state);
+			// } else {
+			// 	// try getting from cookies
+			// 	var state = localStorageService.get('state');
+			// 	if (isNonNull(state)) {
+			// 		weapons = $scope.importWFromString(state);
+			// 	}
+			// }
+
+
 			$scope.current_weapons = [];
 			for (var i in weapons) {
 				var index = parseInt(i);
@@ -391,7 +442,11 @@ yattoApp.controller('SequencerController',
 		$scope.stateChanged(true);
 
 		$scope.weaponConfirm = function() {
-			$scope.w_confirm = true;
+			if ($scope.w_confirm) {
+				calculateWeapons();
+			} else {
+				$scope.w_confirm = true;
+			}
 		};
 
 		$scope.getWeapons = function() {
@@ -412,7 +467,65 @@ yattoApp.controller('SequencerController',
 			$scope.columns.push($scope.w_steps.slice(itemsPerColumn*3));
 		};
 
-		$scope.weaponChanged = function() {
+		$scope.check = function(index) {
+			console.log(index);
+			var new_w = [];
+			var newi = 0;
+			for (var w in $scope.w_steps) {
+				if (w < index) {
+					$scope.current_weapons[$scope.w_steps[w].wi].n += 1;
+				} else {
+					var weapon = $scope.w_steps[w];
+					new_w.push({
+						index: newi + 1,
+						seed: weapon.seed,
+						weapon: weapon.weapon,
+						wi: weapon.wi,
+						typeclass: weapon.typeclass
+					})
+					newi += 1;
+				}
+			}
+
+			$scope.w_steps = new_w;
+			$scope.weaponSeed = $scope.w_steps[0].seed;
+			$scope.current_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.n; }));
+			$scope.after_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
+
+			calculateColumns();
+
+		}
+
+		$scope.alreadySure = false;
+		$scope.openModal = function() {
+			if (!$scope.alreadySure) {
+				var modalInstance = $modal.open({
+					templateUrl: 'weaponModal.html',
+					controller: 'WeaponModalController',
+					size: 'md',
+					resolve: {
+						alreadySure: function() {
+							return $scope.alreadySure;
+						}
+					}
+				});
+
+				modalInstance.result.then(function (info) {
+					$scope.alreadySure = info.alreadySure;
+					$scope.calculateWeapons();
+				}, function () {
+					return;
+				});
+			} else {
+				$scope.calculateWeapons();
+			}
+		}
+
+		$scope.calculateWeapons = function() {
+			if ($scope.weaponNum > 500) {
+				$scope.weaponNum = 500;
+			}
+			console.log("calculating with " + $scope.weaponNum);
 			var currentSeed = $scope.weaponSeed;
 			for (var i in $scope.current_weapons) {
 				$scope.current_weapons[i].a = $scope.current_weapons[i].n;
@@ -435,6 +548,7 @@ yattoApp.controller('SequencerController',
 					index: i + 1,
 					seed: currentSeed,
 					weapon: heroToName[weapon],
+					wi: weapon - 1,
 					typeclass: cssclass
 				});
 				currentSeed = nextSeed;
@@ -446,6 +560,7 @@ yattoApp.controller('SequencerController',
 			calculateColumns();
 
 		};
+
+
 	}
 );
-

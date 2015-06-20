@@ -162,10 +162,6 @@ yattoApp.controller('CalculatorController',
 				return {index: h.index, value: h.level}; }));
 		};
 
-		var hasCookie = function(cookie) {
-			return (typeof cookie !== "undefined" && cookie != null);
-		};
-
 		$scope.setActiveTab = function() {
 			if ($scope.steps.length > 0) {
 				for (var m in $scope.methods) {
@@ -187,17 +183,17 @@ yattoApp.controller('CalculatorController',
 			var cookie_summs = localStorageService.get('summs');
 			var cookie_autoc = localStorageService.get('autoc');
 
-			if (hasCookie(cookie_state)) { $scope.state = cookie_state; }
-			if (hasCookie(cookie_steps)) { $scope.steps = cookie_steps; }
-			if (hasCookie(cookie_summs)) { $scope.summary_steps = cookie_summs; }
-			if (hasCookie(cookie_autoc)) { $scope.autocookies = cookie_autoc; }
+			if (isNonNull(cookie_state)) { $rootScope.state = cookie_state; }
+			if (isNonNull(cookie_steps)) { $scope.steps = cookie_steps; }
+			if (isNonNull(cookie_summs)) { $scope.summary_steps = cookie_summs; }
+			if (isNonNull(cookie_autoc)) { $scope.autocookies = cookie_autoc; }
 
 			$scope.setActiveTab();
-			$scope.importFromString($scope.state, true);
+			$scope.importFromString($rootScope.state, true);
 		};
 
 		$scope.storeToCookies = function() {
-			localStorageService.set('state', $scope.state);
+			localStorageService.set('state', $rootScope.state);
 			localStorageService.set('steps', $scope.steps);
 			localStorageService.set('summs', $scope.summary_steps);
 			localStorageService.set('autoc', $scope.autocookies);
@@ -280,29 +276,29 @@ yattoApp.controller('CalculatorController',
 			$scope.twa_damage = parseFloat(tap[2].toPrecision(4));
 		};
 
-		var stateToUrl = function(s) {
-			var pieces = s.split("|");
-			var newA = [];
-			pieces[0].split(",").forEach(function(a, i, array) {
-				var v = a.split(".");
-				var aindex = parseOrZero(v[0], parseInt);
-				var avalue = parseOrZero(v[1], parseInt);
-				newA.push(encode(aindex.toString()) + "." + encode(avalue.toString()));
-			});
-			pieces[0] = newA.join();
-			var newH = [];
-			pieces[1].split(",").forEach(function(h, i, array) {
-				var v = h.split(".");
-				var hlevel = parseOrZero(v[0], parseInt);
-				var hweapons = parseOrZero(v[1], parseInt);
-				newH.push(encode(hlevel.toString()) + "." + encode(hweapons.toString()));
-			});
-			pieces[1] = newH.join();
-			return pieces.join("|");
-		};
+		// var stateToUrl = function(s) {
+		// 	var pieces = s.split("|");
+		// 	var newA = [];
+		// 	pieces[0].split(",").forEach(function(a, i, array) {
+		// 		var v = a.split(".");
+		// 		var aindex = parseOrZero(v[0], parseInt);
+		// 		var avalue = parseOrZero(v[1], parseInt);
+		// 		newA.push(encode(aindex.toString()) + "." + encode(avalue.toString()));
+		// 	});
+		// 	pieces[0] = newA.join();
+		// 	var newH = [];
+		// 	pieces[1].split(",").forEach(function(h, i, array) {
+		// 		var v = h.split(".");
+		// 		var hlevel = parseOrZero(v[0], parseInt);
+		// 		var hweapons = parseOrZero(v[1], parseInt);
+		// 		newH.push(encode(hlevel.toString()) + "." + encode(hweapons.toString()));
+		// 	});
+		// 	pieces[1] = newH.join();
+		// 	return pieces.join("|");
+		// };
 
 		$scope.generateStateString = function() {
-			$scope.state = [
+			$rootScope.state = [
 				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
 				$scope.heroes.map(function(h) { return h.level + "." + h.weapons; }).join(),
 				$scope.customizations.map(function(c) { return c.value; }).join(),
@@ -317,7 +313,7 @@ yattoApp.controller('CalculatorController',
 				$scope.active ? 1 : 0,
 				$scope.critss,
 				$scope.zerker].join("|");
-			$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($scope.state);
+			$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($rootScope.state);
 		};
 
 		$scope.stateChanged = function(cookies) {
@@ -646,8 +642,8 @@ yattoApp.controller('CalculatorController',
 		setDefaults();
 		$scope.readFromCookies();
 		if ("state" in $routeParams) {
-			$scope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-			$scope.importFromString($scope.state, false);
+			$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
+			$scope.importFromString($rootScope.state, false);
 		}
 
 		$scope.generateStateString();

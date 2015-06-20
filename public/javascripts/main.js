@@ -223,8 +223,6 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 	}
 
 	$scope.login = function() {
-		console.log("about to open login modal");
-
 		if ($rootScope.loggedIn) {
 			$http({
 				method: "POST",
@@ -302,6 +300,10 @@ $.ajax({
 		processData($.csv2Array(data));
 	}
 });
+
+var isNonNull = function(thing) {
+	return typeof thing !== "undefined" && thing != null;
+};
 
 /** Function count the occurrences of substring in a string;
  * @param {String} string   Required. The string;

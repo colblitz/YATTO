@@ -1,5 +1,5 @@
 yattoApp.controller('ReferenceController',
-	function($scope, shareVariables, localStorageService) {
+	function($scope, $rootScope, shareVariables, localStorageService) {
 		MathJax.Hub.Configured();
 		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
@@ -141,12 +141,21 @@ yattoApp.controller('ReferenceController',
 			setDefaults();
 			var artifacts = [];
 			// get from calculator controller
-			if (shareVariables.hasVariable("artifacts")) {
-				artifacts = shareVariables.getVariable("artifacts");
+			// if (shareVariables.hasVariable("artifacts")) {
+			// 	artifacts = shareVariables.getVariable("artifacts");
+			// } else {
+			// 	// try getting from cookies
+			// 	var state = localStorageService.get('state')
+			// 	if (typeof state !== "undefined" && state != null) {
+			// 		artifacts = $scope.importFromString(state);
+			// 	}
+			// }
+			if (isNonNull($rootScope.state)) {
+				artifacts = $scope.importFromString($rootScope.state);
 			} else {
 				// try getting from cookies
-				var state = localStorageService.get('state')
-				if (typeof state !== "undefined" && state != null) {
+				var state = localStorageService.get('state');
+				if (isNonNull(state)) {
 					artifacts = $scope.importFromString(state);
 				}
 			}
