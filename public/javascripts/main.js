@@ -90,15 +90,11 @@ yattoApp.directive('reddit', function() {
 // --------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------
 
-yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $modalInstance, username, password) {
-	$scope.username = username;
+yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $modalInstance) {
+	$scope.username = "";
 	$scope.password = "";
 
 	$scope.login = function() {
-		console.log("modal login");
-		console.log("u: " + $scope.username);
-		console.log("p: " + $scope.password);
-
 		// do login
 		$http({
 			method: "POST",
@@ -108,31 +104,16 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
 				"password": $scope.password
 			}
 		}).success(function(data, status, headers, config) {
-			console.log("yay stuff: " + data.content);
+			console.log("logged in");
 			var user = data.content;
-			$scope.username = user.username;
-			// $scope.loginText = "Logout (" + user.username + ")";
 			$rootScope.loggedIn = true;
-
-			console.log(user.username);
-			console.log(user.state);
-			console.log("yay user2: " + data.user);
-			$modalInstance.close({username: user.username, state: user.password});
+			$modalInstance.close({username: user.username, state: user.state});
 		}).error(function(data, status, headers, config) {
-			// console.log("boo error");
-			// console.log(data.err);
-			// console.log(status);
-			// console.log(headers);
-			// console.log(config);
 			$scope.message = data.err;
 		});
 	}
 
 	$scope.register = function() {
-		console.log("modal register");
-		console.log("u: " + $scope.username);
-		console.log("p: " + $scope.password);
-
 		// do register
 		$http({
 			method: "POST",
@@ -142,10 +123,12 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
 				"password": $scope.password
 			}
 		}).success(function(data, status, headers, config) {
-			console.log("yay register worked: " + data.content);
-			$modalInstance.close({username: $scope.username, password: $scope.password});
+			console.log("registered");
+			var user = data.content;
+			$rootScope.loggedIn = true;
+			$rootScope.state = user.state;
+			$modalInstance.close({username: user.username});
 		}).error(function(data, status, headers, config) {
-			console.log("boo register error: " + data.err);
 			$scope.message = data.err;
 		});
 	}
@@ -159,51 +142,44 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
 // --------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------
 
-yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal, localStorageService, shareVariables) {
+yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal, $routeParams, localStorageService, shareVariables) {
 	console.log("main controller");
-	$scope.loginText = "Login";
 	$rootScope.loggedIn = false;
-	shareVariables.setVariable("loggedIn", false);
+	$rootScope.versionS = "v3.0.0";
 
-	$http({
-		method: "POST",
-		url: "check",
-		// data: {
-		// 	"username": $scope.username,
-		// 	"password": $scope.password
-		// }
-	}).success(function(data, status, headers, config) {
-		console.log("yay check succeeded");
-		console.log(data.content);
-		var user = data.content;
-		if (user != null) {
-			$scope.username = user.username;
-			$scope.loginText = "Logout (" + user.username + ")";
-			$rootScope.loggedIn = true;
-			shareVariables.setVariable("loggedIn", true);
-		}
-		// console.log(status);
-		// console.log(headers);
-		// console.log(config);
-	}).error(function(data, status, headers, config) {
-		console.log("boo check error: " + data.err);
-		// $scope.message = data.err;
-	});
+	$rootScope.state = [
+		$rootScope.versionS,
+		"", //  1 - artifacts
+		"", //  2 - weapons
+		"", //  3 - levels
+		"", //  4 - customizations
+		"", //  5 - methods
+		"", //  6 - relics
+		"", //  7 - nsteps
+		"", //  8 - w_getting
+		"", //  9 - r_cstage
+		"", // 10 - r_undead
+		"", // 12 - r_levels
+		"", // 13 - active
+		"", // 14 - critss
+		"", // 15 - zerker
+		"", // 16 - a_currentSeed
+		"", // 17 - a_aPriorities
+		"", // 18 - a_maxDiamonds
+		"", // 19 - w_currentSeed
+		""  // 20 - w_toCalculate
+	].join("|");
 
+	$scope.loginText = "Login";
 
-	var mc = this;
-
-	mc.isCollapsed = false;
+	$scope.isCollapsed = false;
 	var toggled = localStorageService.get('toggle');
-	if (typeof toggled !== "undefined" && toggled != null) { mc.isCollapsed = toggled; }
+	if (isNonNull(toggled)) { $scope.isCollapsed = toggled; }
 
-	mc.toggle = function() {
-		mc.isCollapsed = !mc.isCollapsed;
-		localStorageService.set('toggle', mc.isCollapsed);
+	$scope.toggle = function() {
+		$scope.isCollapsed = !$scope.isCollapsed;
+		localStorageService.set('toggle', $scope.isCollapsed);
 	};
-
-	$scope.username = "";
-	$scope.password = "";
 
 	$scope.test = function() {
 		console.log("testing");
@@ -211,60 +187,96 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 			method: "GET",
 			url: "test"
 		}).success(function(data, status, headers, config) {
-			console.log("yay test stuff: " + data.content);
+			console.log("test succes: " + data.content);
 		}).error(function(data, status, headers, config) {
-			console.log("boo teset error: " + data.content);
+			console.log("test failed with error: " + data.content);
 		});
 		console.log("done testing");
-		// console.log("lkasjdf");
-
-		console.log("logged in user: " + $scope.logged_in_user.username);
-		console.log("logged in user: " + $scope.logged_in_user.toString());
 	}
+
+	$scope.logout = function() {
+		$http({
+			method: "POST",
+			url: "logout"
+		}).success(function(data, status, headers, config) {
+			console.log("logged out");
+			$scope.loginText = "Login";
+			$rootScope.loggedIn = false;
+		}).error(function(data, status, headers, config) {
+			console.log("logout error: " + data.err);
+		});
+	};
 
 	$scope.login = function() {
 		if ($rootScope.loggedIn) {
-			$http({
-				method: "POST",
-				url: "logout"
-			}).success(function(data, status, headers, config) {
-				console.log("logout done");
-				$scope.username = null;
-				$scope.loginText = "Login";
-				$rootScope.loggedIn = false;
-			}).error(function(data, status, headers, config) {
-				console.log("logout error: " + data.err);
-			});
+			$scope.logout();
 		} else {
 			var modalInstance = $modal.open({
 				templateUrl: 'loginModal.html',
 				controller: 'ModalController',
 				size: 'sm',
-				resolve: {
-					username: function() {
-						return $scope.username;
-					},
-					password: function() {
-						return $scope.password;
-					}
-				}
+				resolve: {}
 			});
 
 			modalInstance.result.then(function (info) {
-				console.log("result from modal: " + info.username + " " + info.password);
-				$scope.username = info.username;
-				$scope.state = info.state;
-
+				console.log("result from modal: " + info.username + " " + info.state);
 				if (info.username) {
 					console.log("yay stuff after modal: " + info);
-					$scope.username = info.username;
+
 					$scope.loginText = "Logout (" + info.username + ")";
+					$scope.$broadcast("stateUpdate");
 				}
 			}, function () {
 				console.log('Modal dismissed at: ' + new Date());
 			});
 		}
 	};
+
+
+
+
+	// initialize, check
+	$http({
+		method: "POST",
+		url: "check"
+	}).success(function(data, status, headers, config) {
+		var user = data.content;
+		if (user != null) {
+			$scope.loginText = "Logout (" + user.username + ")";
+			$rootScope.loggedIn = true;
+		}
+	}).error(function(data, status, headers, config) {
+		console.log("check failed with error: " + data.err);
+	});
+
+	// if logged in, get state of user
+
+	// if user route param, get state of user
+	if ("username" in $routeParams) {
+		var username = $routeParams.username;
+
+		// get state of user
+		alsdjfljasdf
+
+		if (got state) {
+			// logout
+			$scope.logout();
+			$scope.loginText = "Viewing (" + username + ")";
+			// update rootScope
+		}
+
+
+
+
+
+
+
+			$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
+			$scope.importFromString($rootScope.state, false);
+		}
+	}
+
+
 });
 
 // --------------------------------------------------------------------------------------------------------------

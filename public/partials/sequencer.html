@@ -10,7 +10,7 @@
 				</div>
 				<div class="col-md-4">
 					<div class="small-form-item">
-						Artifact Seed: <input type="number" class="form-control number-input right-input" ng-model="seed" min="0" ng-change="stateChanged(true, true)"/>
+						Artifact Seed: <input type="number" class="form-control number-input right-input" ng-model="seed_artifact" min="0" ng-change="stateChanged(true, true)"/>
 					</div>
 					<div class="small-form-item">
 						Max diamonds: <input type="number" class="form-control number-input right-input" ng-model="maxDiamonds" min="0" ng-change="stateChanged(false, true, true)"/>
@@ -93,36 +93,12 @@
 				<h3>Weapon sequence</h3>
 				<div class="col-md-4">
 					<div class="large-form-item">
-						Weapon Seed: <input type="number" class="form-control number-input s-weapon-input right-input" ng-model="weaponSeed" min="0" ng-change="weaponChanged()"/>
+						Weapon Seed: <input type="number" class="form-control number-input s-weapon-input right-input" ng-model="seed_weapon" min="0" ng-change="weaponChanged()"/>
 					</div>
 					<div class="large-form-item">
 						Num to calculate (500 max): <input type="number" class="form-control number-input right-input" ng-model="weaponNum" min="0" ng-change="weaponChanged()"/>
 					</div>
 					<button class="btn btn-primary wbtn" id="" ng-click="openModal()">Get Weapon Sequence</button>
-					<!-- <button class="btn btn-primary wbtn" id="" ng-click="calculateWeapons()" ng-show="w_confirm">Yes I'm Sure</button> -->
-
-
-<!-- 					<div class="small-form-item">
-									<label id="chi">\(\chi^2\)</label>&nbsp;<label>Probability:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_chiprob" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>Current total:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_totalwp" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>Weapons to next set:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_tonexts" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>If I get this many weapons:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_getting" ng-change="stateChanged()"/>
-								</div>
-								<div class="small-form-item">
-									<label>Probability to get next set:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_probset" readonly/>
-								</div> -->
-
 				</div>
 
 				<script type="text/ng-template" id="weaponModal.html">

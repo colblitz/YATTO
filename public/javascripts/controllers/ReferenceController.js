@@ -108,6 +108,7 @@ yattoApp.controller('ReferenceController',
 			a.text = getText(a);
 		};
 
+		// TODO: update this
 		$scope.importFromString = function(state) {
 			var t = state.split("|");
 
@@ -140,16 +141,7 @@ yattoApp.controller('ReferenceController',
 		$scope.initialize = function() {
 			setDefaults();
 			var artifacts = [];
-			// get from calculator controller
-			// if (shareVariables.hasVariable("artifacts")) {
-			// 	artifacts = shareVariables.getVariable("artifacts");
-			// } else {
-			// 	// try getting from cookies
-			// 	var state = localStorageService.get('state')
-			// 	if (typeof state !== "undefined" && state != null) {
-			// 		artifacts = $scope.importFromString(state);
-			// 	}
-			// }
+
 			if (isNonNull($rootScope.state)) {
 				artifacts = $scope.importFromString($rootScope.state);
 			} else {
@@ -169,6 +161,10 @@ yattoApp.controller('ReferenceController',
 				$scope.calcArtifacts(i);
 			}
 		};
+
+		$scope.$on('stateUpdate', function() {
+			// TODO: update from rootScope.state
+		});
 
 		$scope.initialize();
 	}
