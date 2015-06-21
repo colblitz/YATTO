@@ -681,6 +681,24 @@ yattoApp.controller('CalculatorController',
 			// });
 		};
 
+		$scope.saveUserState = function() {
+			if ($rootScope.loggedIn) {
+				console.log("is logged in");
+				console.log("sending: " + $rootScope.state);
+				$http({
+					method: "POST",
+					url: "state",
+					data: {
+						"state": $rootScope.state
+					}
+				}).success(function(data, status, headers, config) {
+					console.log("state saved");
+				}).error(function(data, status, headers, config) {
+					console.log("error saving state: " + data);
+				});
+			}
+		}
+
 		$scope.$on('stateUpdate', function() {
 			// TODO: update from rootScope.state
 		});

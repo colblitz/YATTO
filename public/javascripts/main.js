@@ -126,7 +126,20 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
 			console.log("registered");
 			var user = data.content;
 			$rootScope.loggedIn = true;
-			$rootScope.state = user.state;
+
+			// successfully registered, send state
+			$http({
+				method: "POST",
+				url: "state",
+				data: {
+					"state": $rootScope.state
+				}
+			}).success(function(data, status, headers, config) {
+				console.log("state saved");
+			}).error(function(data, status, headers, config) {
+				console.log("error saving state: " + data);
+			});
+
 			$modalInstance.close({username: user.username});
 		}).error(function(data, status, headers, config) {
 			$scope.message = data.err;
@@ -232,10 +245,11 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 		}
 	};
 
+	// Set to default above, try to get from cookies
+	var state = localStorageService.get('state');
+	if (isNonNull(state)) { $rootScope.state = state; }
 
-
-
-	// initialize, check
+	// Then check if logged in
 	$http({
 		method: "POST",
 		url: "check"
@@ -249,31 +263,36 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 		console.log("check failed with error: " + data.err);
 	});
 
-	// if logged in, get state of user
+	// We're logged in, get state
+	if ($rootScope.loggedIn) {
+		// if logged in, get state of user
+	}
+
+
 
 	// if user route param, get state of user
 	if ("username" in $routeParams) {
 		var username = $routeParams.username;
 
 		// get state of user
-		alsdjfljasdf
+		// alsdjfljasdf
 
-		if (got state) {
-			// logout
-			$scope.logout();
-			$scope.loginText = "Viewing (" + username + ")";
-			// update rootScope
-		}
-
-
+		// if (got state) {
+		// 	// logout
+		// 	$scope.logout();
+		// 	$scope.loginText = "Viewing (" + username + ")";
+		// 	// update rootScope
+		// }
 
 
 
 
 
-			$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-			$scope.importFromString($rootScope.state, false);
-		}
+
+
+		// 	$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
+		// 	$scope.importFromString($rootScope.state, false);
+		// }
 	}
 
 
