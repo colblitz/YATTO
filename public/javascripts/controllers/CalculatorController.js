@@ -638,6 +638,110 @@ yattoApp.controller('CalculatorController',
 			$scope.stateChanged(true);
 		};
 
+		var customizationValues = {
+			// gold dropped
+			"0_0" : 0,
+			"0_14" : 0.05,
+			"0_2" : 0.05,
+			"0_3" : 0.05,
+			"0_6" : 0.05,
+			"0_1" : 0.05,
+			"0_8" : 0.1,
+			"0_9" : 0.13,
+			"0_10" : 0.06,
+			"0_13" : 0.07,
+			"0_11" : 0.05,
+			// crit damage
+			"1_0" : 0,
+			"1_9" : 0.03,
+			"1_1" : 0.05,
+			"1_3" : 0.07,
+			"1_2" : 0.1,
+			"1_8" : 0.01,
+			"1_4" : 0.04,
+			"1_5" : 0.04,
+			"1_6" : 0.19,
+			"1_7" : 0.22,
+			"1_10" : 0.06,
+			// crit chance
+			"2_0" : 0,
+			"2_3" : 0.005,
+			"2_1" : 0.005,
+			"2_2" : 0.005,
+			"2_4" : 0.005,
+			"2_6" : 0.005,
+			"2_14" : 0.005,
+			"2_13" : 0.01,
+			"2_8" : 0.005,
+			"2_9" : 0.01,
+			"2_11" : 0.03,
+			"2_12" : 0.005,
+			"2_17" :  0.01,
+			"2_16" : 0.01,
+			// all damage
+			"3_0" : 0,
+			"3_901" : 0.02,
+			"3_902" : 0.02,
+			"3_903" : 0.03,
+			"3_904" : 0.03,
+			"3_905" : 0.04,
+			"3_906" : 0.04,
+			"3_907" : 0.05,
+			"3_19" : 0.05,
+			"3_3" : 0.06,
+			"3_4" : 0.06,
+			"3_29" : 0.07,
+			"3_30" : 0.06,
+			"3_26" : 0.03,
+			"3_1" : 0.01,
+			"3_13" : 0.09,
+			"3_5" : 0.05,
+			"3_15" : 0.01,
+			"3_20" : 0.02,
+			"3_14" : 0.05,
+			"3_7" : 0.08,
+			// tap damage
+			"4_0" : 0,
+			"4_1" : 0.04,
+			"4_2" : 0.04,
+			"4_3" : 0.04,
+			"4_4" : 0.04,
+			"4_5" : 0.04,
+			"4_6" : 0.06,
+			"4_7" : 0.02,
+			"4_8" : 0.08,
+			"4_9" : 0.02,
+			"4_10" : 0.06,
+			// chest gold
+			"5_0" : 0,
+			"5_1" : 0.05,
+			"5_2" : 0.07,
+			"5_3" : 0.1,
+			"5_5" : 0.1,
+			"5_8" : 0.1,
+			"5_6" : 0.5,
+			"5_7" : 0.15,
+			"5_9" : 0.4,
+			"5_10": 0.2
+		};
+
+		var cMapping = {
+			"0": 2,
+			"1": 1,
+			"2": 4,
+			"3": 0,
+			"4": 5,
+			"5": 3
+		};
+
+		var parseCustomizations = function(s) {
+			var c = [0, 0, 0, 0, 0, 0];
+			s.split("/").forEach(function(p, i, array) {
+				c[cMapping[p[0]]] += customizationValues[p];
+			});
+			return c.map(function(f) { return parseFloat(f.toPrecision(3)); });
+		}
+
 		$scope.filechanged = function() {
 			// console.log("savefile: " + savefile);
 			console.log("here");
@@ -661,12 +765,128 @@ yattoApp.controller('CalculatorController',
 
 			console.log(artifactLevels);
 			console.log(customizations);
+			console.log(parseCustomizations(customizations));
 			console.log(relics);
 			console.log(diamonds);
 			console.log(artifactSeed);
 			console.log(weaponSeed);
 			console.log(weapons);
 			console.log(levels);
+
+			// 0/0/0/0/0/0
+			// 14/9/3/901/1/1
+			// 2/1/1/902/2/2
+
+			// 3/3/2/903/3/3
+			// 6/2/4/904/4/5
+			// 1/8/6/905/5/8
+
+			// 8/4/14/906/6/6
+			// 9/5/13/907/7/7
+			// 10/6/8/19/8/9
+
+			// 13/7/9/3/9/10
+			// 11/10/11/4/10/10
+			// 11/10/12/29/10/10
+
+			// gold dropp - 11 0_0 / 0_14 / 0_2 / 0_3 / 0_6 / 0_1 / 0_8 / 0_9 / 0_10 / 0_13 / 0_11 /
+			// cri damage - 11 1_0 / 1_9 / 1_1 / 1_3 / 1_2 / 1_8 / 1_4 / 1_5 / 1_6 / 1_7 / 1_10 /
+			// cri chance - 14 2_0 / 2_3 / 2_1 / 2_2 / 2_4 / 2_6 / 2_14 / 2_13 / 2_8 / 2_9 / 2_11 / 2_12 / 2_17 / 2_16 /
+			// all damage - 20 3_0 / 3_901 / 3_902 / 3_903 / 3_904 / 3_905 / 3_906 / 3_907 / 3_19 / 3_3 / 3_4 / 3_30 / 3_26 / 3_1 / 3_13 / 3_5 / 3_15 / 3_20 / 3_14 / 3_7 /
+			// tap damage - 11 4_0 / 4_1 / 4_2 / 4_3 / 4_4 / 4_5 / 4_6 / 4_7 / 4_8 / 4_9 / 4_10 /
+			// chest gold - 10 5_0 / 5_1 / 5_2 / 5_3 / 5_5 / 5_8 / 5_6 / 5_7 / 5_9 / 5_10
+
+			// chest gold
+			// none 0 0
+			// stars 5 1
+			// thunderbolt 7 2
+			// electric 10 3
+			// eminence light 10 5
+			// spiky 10 8
+			// leaf shield 50 6
+			// resurrection light 15 7
+			// skulls 40 9
+			// bubbles 20 10
+
+			// critical Hit
+			// hero suit 0 0
+			// casual 0.5 3
+			// astronaut 0.5 1
+			// blue knight 0.5 2
+			// cat suit 0.5 4
+			// ninja 0.5 6
+			// purple wizard 0.5 14
+			// pygamas 1 13
+			// rennaissance 0.5 8
+			// robot 1 9
+			// snowman 3 11
+			// storm armor 0.5 12
+			// green knight 1 17
+			// white and gold 1 16
+
+			// tap damage
+			// white 0 0
+			// cool blue 4 1
+			// rainbow 4 2
+			// dirt 4 3
+			// flame 4 4
+			// ice 4 5
+			// lightning blue 6 6
+			// fiery red 2 7
+			// passion 8 8
+			// shadow 2 9
+			// water 6 10
+
+			// all damage
+			// hero sword +0 0
+			// knight sword +2 901
+			// charlemagne +2 902
+			// ice sword +3 903
+			// fire sword +3 904
+			// mad max +4 905
+			// purple dragon +4 906
+			// warrior blade +5 907
+			// skull blade +5 19
+			// goofy hammer +6 3
+			// carrot +6 4
+			// kunai +7 29
+			// laser dagger +6 30
+			// broom 3 26
+			// curved blade 1 1
+			// umbrella 9 13
+			// fencing sword 5 5
+			// meat hook 1 15
+			// sai 2 20
+			// wooden sword 5 14
+			// hola sword 8 7
+
+			// crit damage
+			// red 0 0
+			// shimmering 3 9
+			// blue 5 1
+			// blue wrap 7 3
+			// green 10 2
+			// red wrap 1 8
+			// green wrap 4 4
+			// yellow 4 5
+			// yellow wrap 19 6
+			// purple 22 7
+			// brown 6 10
+
+			// gold Dropped
+			// none 0 0
+			// top hat 5 14
+			// blue knight 5 2
+			// cat hood 5 3
+			// ninja mask 5 6
+			// astronaut helmet 5 1
+			// witch hat 10 8
+			// robot helmet 13 9
+			// snowman head 6 10
+			// water melon 7 13
+			// bat 5 11
+
+
 
 
 			// console.log(jj.artifactLevels);
