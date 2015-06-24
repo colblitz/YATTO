@@ -184,12 +184,8 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 		console.log("done testing");
 	};
 
-
-
-
-
-
 	$scope.setDefaults();
+
 	// Get things from cookies
 	var toggled = localStorageService.get('toggle');
 	if (isNonNull(toggled)) { $scope.isCollapsed = toggled; }
@@ -197,28 +193,11 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 	var state = localStorageService.get('state');
 	if (isNonNull(state)) { $rootScope.state = state; }
 
-	// Then check if logged in
-	// var initialCheck = $http({
-	// 		method: "POST",
-	// 		url: "check"
-	// 	});
 
-	// initialCheck.then(function(res) {
-	// 	console.log("check successful");
-	// 	console.log("response data: " + res.data);
-	// 	var user = res.data.user;
-	// 	if (user != null) {
-	// 		console.log("user: " + user.username);
-	// 		$scope.loginText = "Logout (" + user.username + ")";
-	// 		$rootScope.loggedIn = true;
-	// 		$rootScope.username = user.username;
-
-	// 		console.log("logged in, getting state for user: " + $rootScope.username);
-	// 		$scope.getState($rootScope.username);
-	// 	}
-	// }, function(err) {
-	// 	console.log("check error");
-	// });
+// if ("state" in $routeParams) {
+// 			$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
+// 			$scope.importFromString($rootScope.state, false);
+// 		}
 
 	if ("username" in $routeParams) {
 		var username = $routeParams.username;
@@ -243,42 +222,4 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 			console.log("check failed with error: " + data.err);
 		});
 	}
-
-	// console.log("logged in: " + $rootScope.loggedIn);
-
-	// console.log("main - starting");
-	// // We're logged in, get state
-	// if ($rootScope.loggedIn) {
-	// 	// if logged in, get state of user
-	// 	console.log("logged in, getting state for user: " + $rootScope.username);
-	// 	$scope.getState($rootScope.username);
-	// }
-
-
-
-	// if user route param, get state of user
-	// if ("username" in $routeParams) {
-	// 	var username = $routeParams.username;
-
-	// 	// get state of user
-	// 	// alsdjfljasdf
-
-	// 	// if (got state) {
-	// 	// 	// logout
-	// 	// 	$scope.logout();
-	// 	// 	$scope.loginText = "Viewing (" + username + ")";
-	// 	// 	// update rootScope
-	// 	// }
-
-	// 	// 	$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-	// 	// 	$scope.importFromString($rootScope.state, false);
-	// 	// }
-	// }
-
-
-// if ("state" in $routeParams) {
-// 			$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-// 			$scope.importFromString($rootScope.state, false);
-// 		}
-
 });
