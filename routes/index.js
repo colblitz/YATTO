@@ -1,5 +1,6 @@
 var express = require('express');
 var mongoose = require('mongoose');
+var User = require('../models/user');
 var State = require('../models/state');
 var router = express.Router();
 
@@ -84,12 +85,108 @@ module.exports = function(passport) {
 	})
 
 	router.get('/state', function(req, res) {
-		console.log("getting state");
-		// get state, return it
+		console.log("getting state for username: " + req.query.username);
+		User.findOne({'username': req.query.username}, function(err, user) {
+			if (err) {
+				console.log("error finding user: " + err);
+				sendErrResponse(res, err);
+			} else if (user) {
+				console.log(user);
+				console.log("found user, id is: " + user._id);
+				State.findOne({'user':user._id}, function(err, state) {
+					if (err) {
+						console.log("error finding state: " + err);
+						sendErrResponse(res, err);
+					} else if (state) {
+						console.log("found state");
+						console.log(state);
+						sendSuccess(res, state.state);
+					} else {
+						console.log("blah");
+						sendErrResponse(res, "No state found for user");
+					}
+				}).sort({'date':-1}).limit(1);
+			} else {
+				console.log("no user");
+				sendErrResponse(res, "No user found");
+			}
+		});
+	})
 
-		// State.findOne({ 'username' :  username }
-		// db.theColl.find( { _id: ObjectId("4ecbe7f9e8c1c9092c000027") } )
-	});
+
+// router.get('/suggest', function(req, res) {
+//     Iou.aggregate([
+//         {$match: {$and: [{debtee: req.user._id}, {resolved: false}, {lock: false}]}},
+//         {$group: {_id: '$debtor', values: {$push: '$value'}, ious: {$push: '$_id'}}}
+//     ], function(err, result) {
+//         if (err) {
+//             utils.sendErrResponse(res, 500, err.message);
+//         } else if (result.length > 0) {
+//             var output = [];
+//             for (var i = 0; i < result.length; i++) {
+//                 matchSender(i, output, result, req, function callback(output) {
+//                         utils.sendSuccessResponse(res, output);
+//                 });
+//             }
+//         } else {
+//             console.log("second");
+//             utils.sendSuccessResponse(res, []);
+//         }
+//     });
+// });
+
+
+// 	router.get('/state', function(req, res, next) {
+// 		console.log("getting state for username: " + req.query.username);
+// 		User.findOne({'username':req.query.username}, function(err, user) {
+// 			if (err) {
+// 				console.log("error finding user: " + err);
+// 				sendErrResponse(res, err);
+// 				return;
+// 			}
+// 			if (user) {
+// 				console.log(user);
+// 				console.log("found user, id is: " + user._id);
+// 				State.findOne({'user':user._id}, function(err, state) {
+// 					if (err) {
+// 						console.log("error finding state: " + err);
+// 						sendErrResponse(res, err);
+// 						return;
+// 					}
+// 					if (state) {
+// 						console.log("found state");
+// 						console.log(state);
+// 						sendSuccess(res, state.state);
+// 						console.log("asdf");
+// 						return;
+// 						console.log("what");
+// 					}
+// 					console.log("blah");
+// 					sendErrResponse(res, "No state found for user");
+// 					return;
+// 				}).sort({'date':-1}).limit(1);
+// 				console.log("hello");
+// 			}
+// 			console.log("stop");
+// 			sendErrResponse(res, "No user found");
+// 			return;
+// 		});
+// 		console.log("rawr");
+
+// 		// var user = User.findOne({ 'username' :  req.query.username });
+// 		// if (user) {
+// 		// 	console.log(user);
+// 		// 	console.log("found user, id is: " + user._id);
+// 		// 	var state = State.findOne({ 'user' : user._id }).sort({'date':-1}).limit(1);
+// 		// 	if (state) {
+// 		// 		console.log("found state: " + state.state);
+// 		// 		sendSuccess(res, state.state);
+// 		// 	}
+// 		// } else {
+// 		// 	console.log("no user found");
+// 		// }
+// 		// sendErrResponse(res, "blkahskurhegiusheie");
+// 	});
 
 	return router;
 }

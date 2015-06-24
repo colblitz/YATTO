@@ -12,40 +12,6 @@ yattoApp.controller('WeaponModalController', function ($scope, $modalInstance) {
 
 yattoApp.controller('SequencerController',
 	function($scope, $rootScope, $modal, shareVariables, localStorageService) {
-		var getOrderList = function() {
-			return [
-				13, // Knight's Shield
-				 0, // Amulet of the Valrunes
-				 6, // Dark Cloak of Life
-				 7, // Death Seeker
-				23, // Savior Shield
-				17, // Overseer's Lotion
-				21, // Sacred Scroll
-				12, // Hunter's Ointment
-				14, // Laborer's Pendant
-				 2, // Barbarian's Mettle
-				22, // Saintly Shield
-				15, // Ogre's Gauntlet
-				18, // Parchment of Importance
-				26, // Universal Fissure
-				19, // Ring of Opulence
-				 1, // Axe of Resolution
-				11, // Hero's Thrust
-				 5, // Crown Egg
-				 3, // Chest of Contentment
-				10, // Future's Fortune
-				 8, // Divine Chalice
-				25, // Undead Aura
-				27, // Warrior's Revival
-				20, // Ring of Wondrous Charm
-				28, // Worldly Illuminator
-				24, // Tincture of the Maker
-				 4, // Crafter's Elixir
-				16, // Otherworldly Armor
-				 9  // Drunken Hammer
-				];
-		};
-
 		var costToBuy = function(i) {
 			return Math.floor((i) * Math.pow(1.35, i));
 		};
@@ -313,42 +279,6 @@ yattoApp.controller('SequencerController',
 			});
 
 			return [artifacts, weapons];
-		};
-
-		var heroToName = {
-			 1: "Takeda",
-			 2: "Contessa",
-			 3: "Hornetta",
-			 4: "Mila",
-			 5: "Terra",
-			 6: "Inquisireaux",
-			 7: "Charlotte",
-			 8: "Jordaan",
-			 9: "Jukka",
-			10: "Milo",
-			11: "Macelord",
-			12: "Gertrude",
-			13: "Twitterella",
-			14: "Master Hawk",
-			15: "Elpha",
-			16: "Poppy",
-			17: "Skulptor",
-			18: "Sterling",
-			19: "Orba",
-			20: "Remus",
-			21: "Mikey",
-			22: "Peter",
-			23: "Teeny Tom",
-			24: "Deznis",
-			25: "Hamlette",
-			26: "Eistor",
-			27: "Flavius",
-			28: "Chester",
-			29: "Mohacas",
-			30: "Jaqulin",
-			31: "Pixie",
-			32: "Jackalope",
-			33: "Dark Lord"
 		};
 
 		$scope.initialize = function() {

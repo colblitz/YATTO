@@ -90,218 +90,6 @@ yattoApp.directive('reddit', function() {
 // --------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------
 
-yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $modalInstance) {
-	$scope.username = "";
-	$scope.password = "";
-
-	$scope.login = function() {
-		// do login
-		$http({
-			method: "POST",
-			url: "login",
-			data: {
-				"username": $scope.username,
-				"password": $scope.password
-			}
-		}).success(function(data, status, headers, config) {
-			console.log("logged in");
-			var user = data.content;
-			$rootScope.loggedIn = true;
-			$modalInstance.close({username: user.username, state: user.state});
-		}).error(function(data, status, headers, config) {
-			$scope.message = data.err;
-		});
-	}
-
-	$scope.register = function() {
-		// do register
-		$http({
-			method: "POST",
-			url: "register",
-			data: {
-				"username": $scope.username,
-				"password": $scope.password
-			}
-		}).success(function(data, status, headers, config) {
-			console.log("registered");
-			var user = data.content;
-			$rootScope.loggedIn = true;
-
-			// successfully registered, send state
-			$http({
-				method: "POST",
-				url: "state",
-				data: {
-					"state": $rootScope.state
-				}
-			}).success(function(data, status, headers, config) {
-				console.log("state saved");
-			}).error(function(data, status, headers, config) {
-				console.log("error saving state: " + data);
-			});
-
-			$modalInstance.close({username: user.username});
-		}).error(function(data, status, headers, config) {
-			$scope.message = data.err;
-		});
-	}
-
-	$scope.cancel = function () {
-		$modalInstance.dismiss('cancel');
-	};
-});
-
-// --------------------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------------------
-
-yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal, $routeParams, localStorageService, shareVariables) {
-	console.log("main controller");
-	$rootScope.loggedIn = false;
-	$rootScope.versionS = "v3.0.0";
-
-	$rootScope.state = [
-		$rootScope.versionS,
-		"", //  1 - artifacts
-		"", //  2 - weapons
-		"", //  3 - levels
-		"", //  4 - customizations
-		"", //  5 - methods
-		"", //  6 - relics
-		"", //  7 - nsteps
-		"", //  8 - w_getting
-		"", //  9 - r_cstage
-		"", // 10 - r_undead
-		"", // 12 - r_levels
-		"", // 13 - active
-		"", // 14 - critss
-		"", // 15 - zerker
-		"", // 16 - a_currentSeed
-		"", // 17 - a_aPriorities
-		"", // 18 - a_maxDiamonds
-		"", // 19 - w_currentSeed
-		""  // 20 - w_toCalculate
-	].join("|");
-
-	$scope.loginText = "Login";
-
-	$scope.isCollapsed = false;
-	var toggled = localStorageService.get('toggle');
-	if (isNonNull(toggled)) { $scope.isCollapsed = toggled; }
-
-	$scope.toggle = function() {
-		$scope.isCollapsed = !$scope.isCollapsed;
-		localStorageService.set('toggle', $scope.isCollapsed);
-	};
-
-	$scope.test = function() {
-		console.log("testing");
-		$http({
-			method: "GET",
-			url: "test"
-		}).success(function(data, status, headers, config) {
-			console.log("test succes: " + data.content);
-		}).error(function(data, status, headers, config) {
-			console.log("test failed with error: " + data.content);
-		});
-		console.log("done testing");
-	}
-
-	$scope.logout = function() {
-		$http({
-			method: "POST",
-			url: "logout"
-		}).success(function(data, status, headers, config) {
-			console.log("logged out");
-			$scope.loginText = "Login";
-			$rootScope.loggedIn = false;
-		}).error(function(data, status, headers, config) {
-			console.log("logout error: " + data.err);
-		});
-	};
-
-	$scope.login = function() {
-		if ($rootScope.loggedIn) {
-			$scope.logout();
-		} else {
-			var modalInstance = $modal.open({
-				templateUrl: 'loginModal.html',
-				controller: 'ModalController',
-				size: 'sm',
-				resolve: {}
-			});
-
-			modalInstance.result.then(function (info) {
-				console.log("result from modal: " + info.username + " " + info.state);
-				if (info.username) {
-					console.log("yay stuff after modal: " + info);
-
-					$scope.loginText = "Logout (" + info.username + ")";
-					$scope.$broadcast("stateUpdate");
-				}
-			}, function () {
-				console.log('Modal dismissed at: ' + new Date());
-			});
-		}
-	};
-
-	// Set to default above, try to get from cookies
-	var state = localStorageService.get('state');
-	if (isNonNull(state)) { $rootScope.state = state; }
-
-	// Then check if logged in
-	$http({
-		method: "POST",
-		url: "check"
-	}).success(function(data, status, headers, config) {
-		var user = data.content;
-		if (user != null) {
-			$scope.loginText = "Logout (" + user.username + ")";
-			$rootScope.loggedIn = true;
-		}
-	}).error(function(data, status, headers, config) {
-		console.log("check failed with error: " + data.err);
-	});
-
-	// We're logged in, get state
-	if ($rootScope.loggedIn) {
-		// if logged in, get state of user
-	}
-
-
-
-	// if user route param, get state of user
-	if ("username" in $routeParams) {
-		var username = $routeParams.username;
-
-		// get state of user
-		// alsdjfljasdf
-
-		// if (got state) {
-		// 	// logout
-		// 	$scope.logout();
-		// 	$scope.loginText = "Viewing (" + username + ")";
-		// 	// update rootScope
-		// }
-
-
-
-
-
-
-
-		// 	$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-		// 	$scope.importFromString($rootScope.state, false);
-		// }
-	}
-
-
-});
-
-// --------------------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------------------
-// --------------------------------------------------------------------------------------------------------------
-
 yattoApp.controller('FaqController', function($scope) {
 	MathJax.Hub.Configured();
 	MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
@@ -311,6 +99,171 @@ yattoApp.controller('FormulasController', function($scope) {
 	MathJax.Hub.Configured();
 	MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 });
+
+// --------------------------------------------------------------------------------------------------------------
+// ----- TT Constants -------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+
+var getOrderList = function() {
+	return [
+		13, // Knight's Shield
+		 0, // Amulet of the Valrunes
+		 6, // Dark Cloak of Life
+		 7, // Death Seeker
+		23, // Savior Shield
+		17, // Overseer's Lotion
+		21, // Sacred Scroll
+		12, // Hunter's Ointment
+		14, // Laborer's Pendant
+		 2, // Barbarian's Mettle
+		22, // Saintly Shield
+		15, // Ogre's Gauntlet
+		18, // Parchment of Importance
+		26, // Universal Fissure
+		19, // Ring of Opulence
+		 1, // Axe of Resolution
+		11, // Hero's Thrust
+		 5, // Crown Egg
+		 3, // Chest of Contentment
+		10, // Future's Fortune
+		 8, // Divine Chalice
+		25, // Undead Aura
+		27, // Warrior's Revival
+		20, // Ring of Wondrous Charm
+		28, // Worldly Illuminator
+		24, // Tincture of the Maker
+		 4, // Crafter's Elixir
+		16, // Otherworldly Armor
+		 9  // Drunken Hammer
+		];
+};
+
+var customizationValues = {
+	// gold dropped
+	"0_0" : 0,
+	"0_14" : 0.05,
+	"0_2" : 0.05,
+	"0_3" : 0.05,
+	"0_6" : 0.05,
+	"0_1" : 0.05,
+	"0_8" : 0.1,
+	"0_9" : 0.13,
+	"0_10" : 0.06,
+	"0_13" : 0.07,
+	"0_11" : 0.05,
+	// crit damage
+	"1_0" : 0,
+	"1_9" : 0.03,
+	"1_1" : 0.05,
+	"1_3" : 0.07,
+	"1_2" : 0.1,
+	"1_8" : 0.01,
+	"1_4" : 0.04,
+	"1_5" : 0.04,
+	"1_6" : 0.19,
+	"1_7" : 0.22,
+	"1_10" : 0.06,
+	// crit chance
+	"2_0" : 0,
+	"2_3" : 0.005,
+	"2_1" : 0.005,
+	"2_2" : 0.005,
+	"2_4" : 0.005,
+	"2_6" : 0.005,
+	"2_14" : 0.005,
+	"2_13" : 0.01,
+	"2_8" : 0.005,
+	"2_9" : 0.01,
+	"2_11" : 0.03,
+	"2_12" : 0.005,
+	"2_17" :  0.01,
+	"2_16" : 0.01,
+	// all damage
+	"3_0" : 0,
+	"3_901" : 0.02,
+	"3_902" : 0.02,
+	"3_903" : 0.03,
+	"3_904" : 0.03,
+	"3_905" : 0.04,
+	"3_906" : 0.04,
+	"3_907" : 0.05,
+	"3_19" : 0.05,
+	"3_3" : 0.06,
+	"3_4" : 0.06,
+	"3_29" : 0.07,
+	"3_30" : 0.06,
+	"3_26" : 0.03,
+	"3_1" : 0.01,
+	"3_13" : 0.09,
+	"3_5" : 0.05,
+	"3_15" : 0.01,
+	"3_20" : 0.02,
+	"3_14" : 0.05,
+	"3_7" : 0.08,
+	// tap damage
+	"4_0" : 0,
+	"4_1" : 0.04,
+	"4_2" : 0.04,
+	"4_3" : 0.04,
+	"4_4" : 0.04,
+	"4_5" : 0.04,
+	"4_6" : 0.06,
+	"4_7" : 0.02,
+	"4_8" : 0.08,
+	"4_9" : 0.02,
+	"4_10" : 0.06,
+	// chest gold
+	"5_0" : 0,
+	"5_1" : 0.05,
+	"5_2" : 0.07,
+	"5_3" : 0.1,
+	"5_5" : 0.1,
+	"5_8" : 0.1,
+	"5_6" : 0.5,
+	"5_7" : 0.15,
+	"5_9" : 0.4,
+	"5_10": 0.2
+};
+
+var heroToName = {
+	 1: "Takeda",
+	 2: "Contessa",
+	 3: "Hornetta",
+	 4: "Mila",
+	 5: "Terra",
+	 6: "Inquisireaux",
+	 7: "Charlotte",
+	 8: "Jordaan",
+	 9: "Jukka",
+	10: "Milo",
+	11: "Macelord",
+	12: "Gertrude",
+	13: "Twitterella",
+	14: "Master Hawk",
+	15: "Elpha",
+	16: "Poppy",
+	17: "Skulptor",
+	18: "Sterling",
+	19: "Orba",
+	20: "Remus",
+	21: "Mikey",
+	22: "Peter",
+	23: "Teeny Tom",
+	24: "Deznis",
+	25: "Hamlette",
+	26: "Eistor",
+	27: "Flavius",
+	28: "Chester",
+	29: "Mohacas",
+	30: "Jaqulin",
+	31: "Pixie",
+	32: "Jackalope",
+	33: "Dark Lord"
+};
+
+// --------------------------------------------------------------------------------------------------------------
+// ----- Stuff for Random ---------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
 
 var unityRandom = [];
 
@@ -332,45 +285,9 @@ $.ajax({
 	}
 });
 
-var isNonNull = function(thing) {
-	return typeof thing !== "undefined" && thing != null;
-};
-
-/** Function count the occurrences of substring in a string;
- * @param {String} string   Required. The string;
- * @param {String} subString    Required. The string to search for;
- * @param {Boolean} allowOverlapping    Optional. Default: false;
- */
-var occurrences = function(string, subString, allowOverlapping){
-	string+=""; subString+="";
-	if(subString.length<=0) return string.length+1;
-
-	var n=0, pos=0;
-	var step=(allowOverlapping)?(1):(subString.length);
-
-	while(true){
-			pos=string.indexOf(subString,pos);
-			if(pos>=0){ n++; pos+=step; } else break;
-	}
-	return(n);
-};
-
-var parseOrZero = function(s, f) {
-	var i = f(s);
-	if (i == null || isNaN(i)) {
-		i = 0;
-	}
-	return i;
-};
-
-
 var MMAX = 2147483647;
 var MMIN = -2147483648;
 var MSEED = 161803398;
-
-var newZeroes = function(length) {
-	return Array.apply(null, new Array(length)).map(Number.prototype.valueOf,0);
-};
 
 var Random = function(s) {
 	var ii;
@@ -417,3 +334,43 @@ var Random = function(s) {
 		return (num * 4.6566128752457969E-10);
 	};
 }
+
+// --------------------------------------------------------------------------------------------------------------
+// ----- Utility ------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------
+
+var isNonNull = function(thing) {
+	return typeof thing !== "undefined" && thing != null;
+};
+
+/** Function count the occurrences of substring in a string;
+ * @param {String} string   Required. The string;
+ * @param {String} subString    Required. The string to search for;
+ * @param {Boolean} allowOverlapping    Optional. Default: false;
+ */
+var occurrences = function(string, subString, allowOverlapping){
+	string+=""; subString+="";
+	if(subString.length<=0) return string.length+1;
+
+	var n=0, pos=0;
+	var step=(allowOverlapping)?(1):(subString.length);
+
+	while(true){
+			pos=string.indexOf(subString,pos);
+			if(pos>=0){ n++; pos+=step; } else break;
+	}
+	return(n);
+};
+
+var parseOrZero = function(s, f) {
+	var i = f(s);
+	if (i == null || isNaN(i)) {
+		i = 0;
+	}
+	return i;
+};
+
+var newZeroes = function(length) {
+	return Array.apply(null, new Array(length)).map(Number.prototype.valueOf,0);
+};
+
