@@ -48,7 +48,19 @@ module.exports = function(passport) {
 			if (!user) { sendErrResponse(res, info); return; }
 			req.logIn(user, function(err) {
 				if (err) { sendErrResponse(res, err); }
-				sendSuccess(res, { username: user.username, state: user.state });
+				State.findOne({'user':user._id}, function(err, state) {
+					if (err) {
+						console.log("error finding state: " + err);
+						sendErrResponse(res, err);
+					} else if (state) {
+						console.log("found state after login");
+						console.log(state);
+						sendSuccess(res, { username: user.username, state: state });
+					} else {
+						console.log("blah");
+						sendErrResponse(res, "No state found for user");
+					}
+				}).sort({'date':-1}).limit(1);
 			});
 		})(req, res, next);
 	});

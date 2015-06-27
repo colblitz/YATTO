@@ -10,10 +10,10 @@
 				</div>
 				<div class="col-md-4">
 					<div class="small-form-item">
-						Artifact Seed: <input type="number" class="form-control number-input right-input" ng-model="seed_artifact" min="0" ng-change="stateChanged(true, true)"/>
+						Artifact Seed: <input type="number" class="form-control number-input right-input" ng-model="a_currentSeed" min="0" ng-change="stateChanged(true, true)"/>
 					</div>
 					<div class="small-form-item">
-						Max diamonds: <input type="number" class="form-control number-input right-input" ng-model="maxDiamonds" min="0" ng-change="stateChanged(false, true, true)"/>
+						Max diamonds: <input type="number" class="form-control number-input right-input" ng-model="a_maxDiamonds" min="0" ng-change="stateChanged(false, true, true)"/>
 					</div>
 					<div class="small-form-item">
 						Sequences tried: <input type="number" class="form-control number-input right-input" ng-model="salvageint" disabled="true"/>
@@ -36,7 +36,7 @@
 					<tr ng-repeat="a in s_artifacts track by $index">
 						<td class="s-artifacts-col00">{{a.name}}</td>
 						<td class="s-artifacts-col01">
-							<input type="number" class="form-control number-input artifact-input" ng-model="a.priority" min="0" max="10" ng-class="{'artifact-owned': a.owned}" ng-change="resetSearch()"/>
+							<input type="number" class="form-control number-input artifact-input" ng-model="a.priority" min="0" max="10" ng-class="{'artifact-owned': a.owned}" ng-change="stateChanged(true, true, true)"/>
 						</td>
 						<td class="s-artifacts-col02">
 							<input type="checkbox" ng-model="a.owned" ng-change="stateChanged(true, true)"/>
@@ -93,10 +93,10 @@
 				<h3>Weapon sequence</h3>
 				<div class="col-md-4">
 					<div class="large-form-item">
-						Weapon Seed: <input type="number" class="form-control number-input s-weapon-input right-input" ng-model="seed_weapon" min="0" ng-change="weaponChanged()"/>
+						Weapon Seed: <input type="number" class="form-control number-input s-weapon-input right-input" ng-model="w_currentSeed" min="0" ng-change="weaponStateChanged()"/>
 					</div>
 					<div class="large-form-item">
-						Num to calculate (500 max): <input type="number" class="form-control number-input right-input" ng-model="weaponNum" min="0" ng-change="weaponChanged()"/>
+						Num to calculate (500 max): <input type="number" class="form-control number-input right-input" ng-model="w_toCalculate" min="0" ng-change="weaponStateChanged()"/>
 					</div>
 					<button class="btn btn-primary wbtn" id="" ng-click="openModal()">Get Weapon Sequence</button>
 				</div>

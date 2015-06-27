@@ -109,23 +109,11 @@ yattoApp.controller('ReferenceController',
 		};
 
 		// TODO: update this
-		$scope.importFromString = function(state) {
-			var t = state.split("|");
-
-			// state verification
-			if (occurrences(t[0], ",", false) != 28 ||
-					occurrences(t[0], ".", false) != 29 ||
-					occurrences(t[1], ",", false) != 32 ||
-					occurrences(t[1], ".", false) != 33 ||
-					occurrences(t[2], ",", false) != 5  ||
-					occurrences(t[3], ",", false) != 5) {
-				console.log("bad state:");
-				console.log(state);
-				return [];
-			}
+		$scope.updateFromState = function() {
+			var t = $rootScope.state.split("|");
 
 			var artifacts = [];
-			t[0].split(",").forEach(function(a, i, array) {
+			t[1].split(",").forEach(function(a, i, array) {
 				var v = a.split(".");
 				var aindex = parseOrZero(v[0], parseInt);
 				var avalue = parseOrZero(v[1], parseInt);
@@ -135,22 +123,6 @@ yattoApp.controller('ReferenceController',
 					value: avalue
 				});
 			});
-			return artifacts;
-		};
-
-		$scope.initialize = function() {
-			setDefaults();
-			var artifacts = [];
-
-			if (isNonNull($rootScope.state)) {
-				artifacts = $scope.importFromString($rootScope.state);
-			} else {
-				// try getting from cookies
-				var state = localStorageService.get('state');
-				if (isNonNull(state)) {
-					artifacts = $scope.importFromString(state);
-				}
-			}
 
 			for (var i in artifacts) {
 				var a = artifacts[i];
@@ -162,8 +134,13 @@ yattoApp.controller('ReferenceController',
 			}
 		};
 
+		$scope.initialize = function() {
+			setDefaults();
+			$scope.updateFromState();
+		};
+
 		$scope.$on('stateUpdate', function() {
-			// TODO: update from rootScope.state
+			$scope.updateFromState();
 		});
 
 		$scope.initialize();

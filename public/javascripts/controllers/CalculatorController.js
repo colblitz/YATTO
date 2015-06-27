@@ -3,13 +3,18 @@ yattoApp.controller('CalculatorController',
 		MathJax.Hub.Configured();
   		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
-  	console.log("calculator");
+  	var log = function(s) {
+  		return "[CalculatorController] " + s;
+  	};
+
+  	console.log(log("starting"));
   	// $scope.loggedIn = function() {
   	// 	console.log("alkjsldkjfasdF");
    //    return shareVariables.getVariable("loggedIn");
    //  };
-   	console.log($rootScope.loggedIn);
+   	// console.log($rootScope.loggedIn);
 
+   	// options for sorting artifacts
 		$scope.sortableOptions = {
 			'ui-floating': false,
 			'axis': 'y',
@@ -18,7 +23,7 @@ yattoApp.controller('CalculatorController',
 			update: function(e, ui) {
 				// TODO: a bit hacky, but seems like the update event is being fired before change to $artifacts is applied?
 				$timeout(function() {
-					$scope.stateChanged(true);
+					$scope.stateChanged(1);
 				}, 10);
 			}
 		};
@@ -60,18 +65,18 @@ yattoApp.controller('CalculatorController',
 			}
 
 			$scope.customizations = [
-				{name: "All Damage",      index: 0, value: 0, step: 0.01},
-				{name: "Critical Damage", index: 1, value: 0, step: 0.01},
-				{name: "Gold Dropped",    index: 2, value: 0, step: 0.01},
-				{name: "Chest Gold",      index: 3, value: 0, step: 0.01},
-				{name: "Critical Hit",    index: 4, value: 0, step: 0.005},
-				{name: "Tap Damage",      index: 5, value: 0, step: 0.01}];
+				{name: "All Damage",      index: 0, value: 0, step: 0.01,  max: 0.87},
+				{name: "Critical Damage", index: 1, value: 0, step: 0.01,  max: 0.81},
+				{name: "Gold Dropped",    index: 2, value: 0, step: 0.01,  max: 0.66},
+				{name: "Chest Gold",      index: 3, value: 0, step: 0.01,  max: 1.67},
+				{name: "Critical Hit",    index: 4, value: 0, step: 0.005, max: 0.11},
+				{name: "Tap Damage",      index: 5, value: 0, step: 0.01,  max: 0.44}];
 
 			$scope.methods = [
 				{name: "Gold",              index: 0, value: true, tabname: "Gold"},
 				{name: "All Damage",        index: 1, value: true, tabname: "ADmg"},
 				{name: "Tap Damage",        index: 2, value: true,  tabname: "TDmg"},
-				{name: "Dmg Equivalent", index: 3, value: true,  tabname: "DmgE"},
+				{name: "Dmg Equivalent",    index: 3, value: true,  tabname: "DmgE"},
 				{name: "Relics/second",     index: 4, value: false, tabname: " R/s "},
 				{name: "Stages/second",     index: 5, value: false, tabname: " S/s "}];
 
@@ -119,8 +124,8 @@ yattoApp.controller('CalculatorController',
 			$scope.tap_damage = 0;
 			$scope.twc_damage = 0;
 
-			$scope.autocookies = 'On';
-			$scope.generateStateString();
+			// $scope.autocookies = 'On';
+			// $scope.generateStateString();
 		};
 
 		var transformScopeArray = function(scopeArray) {
@@ -175,40 +180,43 @@ yattoApp.controller('CalculatorController',
 					}
 				}
 			}
-		}
+		};
 
 		$scope.readFromCookies = function() {
-			var cookie_state = localStorageService.get('state');
+			// var cookie_state = localStorageService.get('state');
 			var cookie_steps = localStorageService.get('steps');
 			var cookie_summs = localStorageService.get('summs');
-			var cookie_autoc = localStorageService.get('autoc');
+			// var cookie_autoc = localStorageService.get('autoc');
 
-			if (isNonNull(cookie_state)) { $rootScope.state = cookie_state; }
+			// if (isNonNull(cookie_state)) { $rootScope.state = cookie_state; }
 			if (isNonNull(cookie_steps)) { $scope.steps = cookie_steps; }
 			if (isNonNull(cookie_summs)) { $scope.summary_steps = cookie_summs; }
-			if (isNonNull(cookie_autoc)) { $scope.autocookies = cookie_autoc; }
+			// if (isNonNull(cookie_autoc)) { $scope.autocookies = cookie_autoc; }
 
 			$scope.setActiveTab();
-			console.log("from cookies: " + $rootScope.state);
-			$scope.importFromString($rootScope.state, true);
+			// console.log("from cookies: " + $rootScope.state);
+			// $scope.importFromString($rootScope.state, true);
 		};
 
 		$scope.storeToCookies = function() {
-			localStorageService.set('state', $rootScope.state);
+			// localStorageService.set('state', $rootScope.state);
 			localStorageService.set('steps', $scope.steps);
 			localStorageService.set('summs', $scope.summary_steps);
-			localStorageService.set('autoc', $scope.autocookies);
+			// localStorageService.set('autoc', $scope.autocookies);
 		};
 
 		$scope.updateCookies = function() {
-			if ($scope.autocookies == 'On') {
+			console.log(log("aCookies: " + $rootScope.aCookies));
+			if ($rootScope.aCookies == 'On') {
+				console.log(log("is on, store to cookies"));
+				$scope.$parent.saveS();
 				$scope.storeToCookies();
-			} else {
-				localStorageService.set('autoc', $scope.autocookies);
 			}
+			localStorageService.set('autoc', $rootScope.aCookies);
 		};
 
 		$scope.clearAllCookies = function() {
+			console.log(log("clearing all cookies"));
 			localStorageService.clearAll();
 		};
 
@@ -270,172 +278,213 @@ yattoApp.controller('CalculatorController',
 			var g = getGameState();
 			g.get_all_skills();
 			var tap = g.tap_damage();
+			console.log(log(tap));
 			$scope.all_damage = g.a_ad * 100;
-			$scope.dps_damage = parseFloat(g.get_hero_dps().toPrecision(4));
-			$scope.tap_damage = parseFloat(tap[0].toPrecision(4));
-			$scope.twc_damage = parseFloat(tap[1].toPrecision(4));
-			$scope.twa_damage = parseFloat(tap[2].toPrecision(4));
+			$scope.dps_damage = parseFloat(g.get_hero_dps().toPrecision(4)).toExponential();
+			$scope.tap_damage = parseFloat(tap[0].toPrecision(4)).toExponential();
+			$scope.twc_damage = parseFloat(tap[1].toPrecision(4)).toExponential();
+			$scope.twa_damage = parseFloat(tap[2].toPrecision(4)).toExponential();
 		};
 
-		var updateStateString = function(i, value) {
-			var s = $rootScope.state;
-			var t = s.split("|");
-			t[i] = value;
-			$rootScope.state = t.join("|");
-		}
+		// $scope.generateStateString = function() {
+		// 	$rootScope.state = [
+		// 		$rootScope.versionS,
+		// 		$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
+		// 		$scope.heroes.map(function(h) { return h.weapons; }).join(),
+		// 		$scope.heroes.map(function(h) { return h.level; }).join(),
+		// 		$scope.customizations.map(function(c) { return c.value; }).join(),
+		// 		$scope.methods.map(function(m) { return m.value ? 1 : 0; }).join(),
+		// 		$scope.relics,
+		// 		$scope.nsteps,
+		// 		$scope.greedy,
+		// 		$scope.w_getting,
+		// 		$scope.r_cstage,
+		// 		$scope.r_undead,
+		// 		$scope.r_levels,
+		// 		$scope.active ? 1 : 0,
+		// 		$scope.critss,
+		// 		$scope.zerker,
+		// 		$scope.a_currentSeed,
+		// 		$scope.w_currentSeed,
+		// 		$scope.rest_of_state].join("|");
+		// 	$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($rootScope.state);
+		// };
 
-		$scope.generateStateString = function() {
-			$rootScope.state = [
-				$rootScope.versionS,
-				$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
-				$scope.heroes.map(function(h) { return h.weapons; }).join(),
-				$scope.heroes.map(function(h) { return h.level; }).join(),
-				$scope.customizations.map(function(c) { return c.value; }).join(),
-				$scope.methods.map(function(m) { return m.value ? 1 : 0; }).join(),
-				$scope.relics,
-				$scope.nsteps,
-				$scope.greedy,
-				$scope.w_getting,
-				$scope.r_cstage,
-				$scope.r_undead,
-				$scope.r_levels,
-				$scope.active ? 1 : 0,
-				$scope.critss,
-				$scope.zerker,
-				$scope.a_currentSeed,
-				$scope.w_currentSeed,
-				$scope.rest_of_state].join("|");
+		$scope.updateThings = function() {
 			$scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($rootScope.state);
-		};
 
-		$scope.stateChanged = function(cookies) {
-			// re-generate state
-			$scope.generateStateString();
-
-			// shareVariables.setVariable("artifacts", $scope.artifacts);
-			// shareVariables.setVariable("weapons", getWeapons());
-
-			// store state to cookies
-			if (cookies) {
-				$scope.updateCookies();
-			}
+			$scope.updateCookies();
 
 			// recalculate things
+			console.log(log("recalculating things"));
 			$scope.updateRelicInfo();
 			$scope.updateWeaponInfo();
 			$scope.updateStatsInfo();
 		};
+
+		$scope.stateChanged = function(i) {
+			console.log(log("state changed"));
+			var newValue = "";
+			if (i == 1)       { newValue = $scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(); }
+			else if (i == 2)  { newValue = $scope.heroes.map(function(h) { return h.weapons; }).join(); }
+			else if (i == 3)  { newValue = $scope.heroes.map(function(h) { return h.level; }).join(); }
+			else if (i == 4)  { newValue = $scope.customizations.map(function(c) { return c.value; }).join(); }
+			else if (i == 5)  { newValue = $scope.methods.map(function(m) { return m.value ? 1 : 0; }).join(); }
+			else if (i == 6)  { newValue = $scope.relics; }
+			else if (i == 7)  { newValue = $scope.nsteps; }
+			else if (i == 8)  { newValue = $scope.greedy; }
+			else if (i == 9)  { newValue = $scope.w_getting; }
+			else if (i == 10) { newValue = $scope.r_cstage; }
+			else if (i == 11) { newValue = $scope.r_undead; }
+			else if (i == 12) { newValue = $scope.r_levels; }
+			else if (i == 13) { newValue = $scope.active; }
+			else if (i == 14) { newValue = $scope.critss; }
+			else if (i == 15) { newValue = $scope.zerker; }
+			else if (i == 16) { newValue = $scope.a_currentSeed; }
+			else if (i == 17) { newValue = $scope.a_aPriorities; }
+			else if (i == 18) { newValue = $scope.a_maxDiamonds; }
+			else if (i == 19) { newValue = $scope.w_currentSeed; }
+			else if (i == 20) { newValue = $scope.w_toCalculate; }
+
+			$scope.$parent.updateSS(i, newValue);
+			$scope.updateThings();
+		};
+
+
+
+		// $scope.stateChanged = function(cookies) {
+		// 	// re-generate state
+		// 	$scope.generateStateString();
+
+		// 	// shareVariables.setVariable("artifacts", $scope.artifacts);
+		// 	// shareVariables.setVariable("weapons", getWeapons());
+
+		// 	// store state to cookies
+		// 	if (cookies) {
+		// 		$scope.updateCookies();
+		// 	}
+
+		// 	// recalculate things
+		// 	$scope.updateRelicInfo();
+		// 	$scope.updateWeaponInfo();
+		// 	$scope.updateStatsInfo();
+		// };
 
 		// 9.289,4.217,1.190,10.94,3.319,0.58,18.190,11.276,15.290,26.180,19.108,5.245,25.350,13.
 		// 225,24.90,8.118,6.25,7.25,12.10,14.10,16.10,17.10,2.10,20.25,21.10,22.10,23.25,27.10,
 		// 28.5|800.12,800.8,800.11,800.6,800.6,800.8,800.8,800.8,800.12,800.13,800.14,800.14,800.
 		// 12,800.3,800.5,800.7,800.4,800.5,800.9,800.6,800.8,800.7,800.7,800.6,800.3,800.10,800.8,
 		// 800.9,800.4,800.11,800.5,800.13,2100.5|0.8,0.81,0.66,1.67,0.11,0.44|1,1,1,1,0,0|542280|0|1|15|0|350|27700
-		$scope.importFromString = function(state, cookies) {
-			var t = state.split("|");
-			if (t[0][0] == "v") {
-				try {
-					var artifacts = [];
-					t[1].split(",").forEach(function(a, i, array) {
-						var v = a.split(".");
-						var aindex = parseOrZero(v[0], parseInt);
-						var avalue = parseOrZero(v[1], parseInt);
-						artifacts.push({
-							name: artifact_info[aindex].name,
-							index: aindex,
-							value: avalue
-						});
-					});
-					$scope.artifacts = artifacts;
-					t[2].split(",").forEach(function(w, i, array) {
-						$scope.heroes[i].weapons = parseOrZero(w, parseInt);
-					});
-					t[3].split(",").forEach(function(l, i, array) {
-						$scope.heroes[i].level = parseOrZero(l, parseInt);
-					});
-					t[4].split(",").forEach(function(c, i, array) {
-						$scope.customizations[i].value = parseOrZero(c, parseFloat);
-					})
-					t[5].split(",").forEach(function(m, i, array) {
-						$scope.methods[i].value = m == 1 ? true : false;
-					})
-					$scope.relics    = parseOrZero(t[6], parseInt);
-					$scope.nsteps    = parseOrZero(t[7], parseInt);
-					$scope.greedy    = parseOrZero(t[8], parseInt);
-					$scope.w_getting = parseOrZero(t[9], parseInt);
-					$scope.r_cstage  = parseOrZero(t[10], parseInt);
-					$scope.r_undead  = parseOrZero(t[11], parseInt);
-					$scope.r_levels  = parseOrZero(t[12], parseInt);
-					$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
-					$scope.critss    = parseOrZero(t[14], parseInt);
-					$scope.zerker    = parseOrZero(t[15], parseInt);
-					$scope.a_currentSeed = parseOrZero(t[16], parseInt);
-					$scope.w_currentSeed = parseOrZero(t[17], parseInt);
-					$scope.rest_of_state = t.slice(18)
-					$scope.a_aPriorities = t[17].split(",").map(function(p) { return parseOrZero(p, parseInt); });
-					$scope.a_maxDiamonds = parseOrZero(t[18], parseInt);
+		// $scope.importFromString = function(state, cookies) {
+		// 	var t = state.split("|");
+		// 	if (t[0][0] == "v") {
+		// 		try {
+		// 			var artifacts = [];
+		// 			t[1].split(",").forEach(function(a, i, array) {
+		// 				var v = a.split(".");
+		// 				var aindex = parseOrZero(v[0], parseInt);
+		// 				var avalue = parseOrZero(v[1], parseInt);
+		// 				artifacts.push({
+		// 					name: artifact_info[aindex].name,
+		// 					index: aindex,
+		// 					value: avalue
+		// 				});
+		// 			});
+		// 			$scope.artifacts = artifacts;
+		// 			t[2].split(",").forEach(function(w, i, array) {
+		// 				$scope.heroes[i].weapons = parseOrZero(w, parseInt);
+		// 			});
+		// 			t[3].split(",").forEach(function(l, i, array) {
+		// 				$scope.heroes[i].level = parseOrZero(l, parseInt);
+		// 			});
+		// 			t[4].split(",").forEach(function(c, i, array) {
+		// 				$scope.customizations[i].value = parseOrZero(c, parseFloat);
+		// 			})
+		// 			t[5].split(",").forEach(function(m, i, array) {
+		// 				$scope.methods[i].value = m == 1 ? true : false;
+		// 			})
+		// 			$scope.relics    = parseOrZero(t[6], parseInt);
+		// 			$scope.nsteps    = parseOrZero(t[7], parseInt);
+		// 			$scope.greedy    = parseOrZero(t[8], parseInt);
+		// 			$scope.w_getting = parseOrZero(t[9], parseInt);
+		// 			$scope.r_cstage  = parseOrZero(t[10], parseInt);
+		// 			$scope.r_undead  = parseOrZero(t[11], parseInt);
+		// 			$scope.r_levels  = parseOrZero(t[12], parseInt);
+		// 			$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
+		// 			$scope.critss    = parseOrZero(t[14], parseInt);
+		// 			$scope.zerker    = parseOrZero(t[15], parseInt);
+		// 			$scope.a_currentSeed = parseOrZero(t[16], parseInt);
+		// 			$scope.w_currentSeed = parseOrZero(t[17], parseInt);
+		// 			$scope.rest_of_state = t.slice(18)
+		// 			$scope.a_aPriorities = t[17].split(",").map(function(p) { return parseOrZero(p, parseInt); });
+		// 			$scope.a_maxDiamonds = parseOrZero(t[18], parseInt);
 
-					$scope.w_toCalculate = parseOrZero(t[20], parseInt);
-				} catch (err) {
-					console.log("bad state: " + state);
-					console.log(err);
-				}
-			} else {
-				// Old stuff
-				// state verification
-				if (occurrences(t[0], ",", false) != 28 ||
-					  occurrences(t[0], ".", false) != 29 ||
-					  occurrences(t[1], ",", false) != 32 ||
-					  occurrences(t[1], ".", false) != 33 ||
-					  occurrences(t[2], ",", false) != 5  ||
-					  occurrences(t[3], ",", false) != 5) {
-					console.log("bad state:");
-					console.log(state);
-					return;
-				}
+		// 			$scope.w_toCalculate = parseOrZero(t[20], parseInt);
+		// 		} catch (err) {
+		// 			console.log("bad state: " + state);
+		// 			console.log(err);
+		// 		}
+		// 	} else {
+		// 		// Old stuff
+		// 		// state verification
+		// 		if (occurrences(t[0], ",", false) != 28 ||
+		// 			  occurrences(t[0], ".", false) != 29 ||
+		// 			  occurrences(t[1], ",", false) != 32 ||
+		// 			  occurrences(t[1], ".", false) != 33 ||
+		// 			  occurrences(t[2], ",", false) != 5  ||
+		// 			  occurrences(t[3], ",", false) != 5) {
+		// 			console.log("bad state:");
+		// 			console.log(state);
+		// 			return;
+		// 		}
 
-				var artifacts = [];
-				t[0].split(",").forEach(function(a, i, array) {
-					var v = a.split(".");
-					var aindex = parseOrZero(v[0], parseInt);
-					var avalue = parseOrZero(v[1], parseInt);
-					artifacts.push({
-						name: artifact_info[aindex].name,
-						index: aindex,
-						value: avalue
-					});
-				});
-				$scope.artifacts = artifacts;
-				t[1].split(",").forEach(function(h, i, array) {
-					var v = h.split(".");
-					var hlevel = parseOrZero(v[0], parseInt);
-					var hweapons = parseOrZero(v[1], parseInt);
-					$scope.heroes[i].level = hlevel;
-					$scope.heroes[i].weapons = hweapons;
-					// $scope.weapons[i].value = parseOrZero(w, parseInt);
-				});
-				t[2].split(",").forEach(function(c, i, array) {
-					$scope.customizations[i].value = parseOrZero(c, parseFloat);
-				})
-				t[3].split(",").forEach(function(m, i, array) {
-					$scope.methods[i].value = m == 1 ? true : false;
-				})
-				$scope.relics    = parseOrZero(t[4], parseInt);
-				$scope.nsteps    = parseOrZero(t[5], parseInt);
-				$scope.greedy    = parseOrZero(t[6], parseInt);
-				$scope.w_getting = parseOrZero(t[7], parseInt);
-				$scope.r_cstage  = parseOrZero(t[8], parseInt);
-				$scope.r_undead  = parseOrZero(t[9], parseInt);
-				$scope.r_levels  = parseOrZero(t[10], parseInt);
-				$scope.active    = parseOrZero(t[11], parseInt) == 1 ? true : false;
-				$scope.critss    = parseOrZero(t[12], parseInt);
-				$scope.zerker    = parseOrZero(t[13], parseInt);
-			}
+		// 		var artifacts = [];
+		// 		t[0].split(",").forEach(function(a, i, array) {
+		// 			var v = a.split(".");
+		// 			var aindex = parseOrZero(v[0], parseInt);
+		// 			var avalue = parseOrZero(v[1], parseInt);
+		// 			artifacts.push({
+		// 				name: artifact_info[aindex].name,
+		// 				index: aindex,
+		// 				value: avalue
+		// 			});
+		// 		});
+		// 		$scope.artifacts = artifacts;
+		// 		t[1].split(",").forEach(function(h, i, array) {
+		// 			var v = h.split(".");
+		// 			var hlevel = parseOrZero(v[0], parseInt);
+		// 			var hweapons = parseOrZero(v[1], parseInt);
+		// 			$scope.heroes[i].level = hlevel;
+		// 			$scope.heroes[i].weapons = hweapons;
+		// 			// $scope.weapons[i].value = parseOrZero(w, parseInt);
+		// 		});
+		// 		t[2].split(",").forEach(function(c, i, array) {
+		// 			$scope.customizations[i].value = parseOrZero(c, parseFloat);
+		// 		})
+		// 		t[3].split(",").forEach(function(m, i, array) {
+		// 			$scope.methods[i].value = m == 1 ? true : false;
+		// 		})
+		// 		$scope.relics    = parseOrZero(t[4], parseInt);
+		// 		$scope.nsteps    = parseOrZero(t[5], parseInt);
+		// 		$scope.greedy    = parseOrZero(t[6], parseInt);
+		// 		$scope.w_getting = parseOrZero(t[7], parseInt);
+		// 		$scope.r_cstage  = parseOrZero(t[8], parseInt);
+		// 		$scope.r_undead  = parseOrZero(t[9], parseInt);
+		// 		$scope.r_levels  = parseOrZero(t[10], parseInt);
+		// 		$scope.active    = parseOrZero(t[11], parseInt) == 1 ? true : false;
+		// 		$scope.critss    = parseOrZero(t[12], parseInt);
+		// 		$scope.zerker    = parseOrZero(t[13], parseInt);
+		// 	}
 
-			$scope.stateChanged(cookies);
-		};
+		// 	$scope.stateChanged(cookies);
+		// };
 
 		var getGameState = function() {
+			console.log(log(transformScopeArray($scope.artifacts)));
+			console.log(log(getWeapons()));
+			console.log(log(getLevels()));
+			console.log(log(transformScopeArray($scope.customizations)));
+
 			return new GameState(
 				transformScopeArray($scope.artifacts),
 				getWeapons(),
@@ -455,22 +504,26 @@ yattoApp.controller('CalculatorController',
 			if (ai == 25) {
 				$scope.r_undead = $scope.artifacts[i].value;
 			}
-			$scope.stateChanged(true);
+			$scope.stateChanged(1);
 		};
 
-		$scope.heroesCheck = function(i, ai) {
-			if ($scope.heroes[i].level == null) {
-				$scope.heroes[i].level = 0;
+		$scope.weaponsCheck = function(i, ai) {
+			if ($scope.heroes[i].weapons == null) {
+				$scope.heroes[i].weapons = 0;
 			}
+			$scope.stateChanged(2);
+		};
+
+		$scope.levelsCheck = function(i, ai) {
 			if ($scope.heroes[i].weapons == null) {
 				$scope.heroes[i].weapons = 0;
 			}
 			$scope.r_levels = getLevels().reduce(function(a, b) { return a + b; });
-			$scope.stateChanged(true);
+			$scope.stateChanged(3);
 		};
 
 		$scope.customizationCheck = function(i, ai) {
-			$scope.stateChanged(true);
+			$scope.stateChanged(4);
 		};
 
 		var sortByArtifactOrder = function(s) {
@@ -630,10 +683,10 @@ yattoApp.controller('CalculatorController',
 				}
 			}
 			$scope.relics = Math.max($scope.relics, 0);
-
+			$scope.$parent.updateSS(6, $scope.relics);
 			// TODO: impact on other methods (grey out?)
 
-			$scope.stateChanged(true);
+			$scope.stateChanged(1);
 		};
 
 		var cMapping = {
@@ -651,11 +704,11 @@ yattoApp.controller('CalculatorController',
 				c[cMapping[p[0]]] += customizationValues[p];
 			});
 			return c.map(function(f) { return parseFloat(f.toPrecision(3)); });
-		}
+		};
 
 		$scope.loadFromFile = function() {
 			if (!isNonNull($scope.savefile) || $scope.savefile == "") {
-				console.log("bad file");
+				console.log(log("bad file"));
 				return;
 			}
 			var b = $scope.savefile.indexOf("playerInfoSaveString");
@@ -676,11 +729,6 @@ yattoApp.controller('CalculatorController',
 				$scope.artifacts[a].value = artifactLevels[$scope.artifacts[a].index];
 			}
 
-			var customizations = parseCustomizations(j.unlockedPlayerCustomizations);
-			for (var c in customizations) {
-				$scope.customizations[c].value = customizations[c];
-			}
-
 			var weapons = j.heroSave.heroWeaponUpgrades;
 			for (var w in weapons) {
 				$scope.heroes[w-1].weapons = parseInt(weapons[w]);
@@ -691,52 +739,112 @@ yattoApp.controller('CalculatorController',
 				$scope.heroes[l-1].level = Math.max(parseInt(levels[l]), $scope.heroes[l-1].level);
 			}
 
+			var customizations = parseCustomizations(j.unlockedPlayerCustomizations);
+			for (var c in customizations) {
+				$scope.customizations[c].value = customizations[c];
+			}
+
 			// TODO: set other variables
 			$scope.relics = Math.round(parseFloat(j.playerRelics));
-			var diamonds = j.playerDiamonds;
-			var artifactSeed = j.nextArtifactSeed;
-			var weaponSeed = j.heroSave.heroWeaponSeed;
+			$scope.a_currentSeed = parseInt(j.nextArtifactSeed);
+			$scope.w_currentSeed = parseInt(j.heroSave.heroWeaponSeed);
 
-			// TODO: update state
-			// $scope.stateChanged(true);
+			// update root scope
+			$scope.$parent.updateSS(1, $scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join());
+			$scope.$parent.updateSS(2, $scope.heroes.map(function(h) { return h.weapons; }).join());
+			$scope.$parent.updateSS(3, $scope.heroes.map(function(h) { return h.level; }).join());
+			$scope.$parent.updateSS(4, $scope.customizations.map(function(c) { return c.value; }).join());
+			$scope.$parent.updateSS(6, $scope.relics);
+			$scope.$parent.updateSS(16, $scope.a_currentSeed);
+			$scope.$parent.updateSS(19, $scope.w_currentSeed);
+
+			// update things
+			$scope.updateThings();
 		};
 
 		$scope.saveUserState = function() {
-			if ($rootScope.loggedIn) {
-				console.log("is logged in");
-				console.log("sending: " + $rootScope.state);
-				$http({
-					method: "POST",
-					url: "state",
-					data: {
-						"state": $rootScope.state
-					}
-				}).success(function(data, status, headers, config) {
-					console.log("state saved");
-				}).error(function(data, status, headers, config) {
-					console.log("error saving state: " + data);
+			$scope.$parent.saveState();
+		};
+
+		$scope.updateFromState = function() {
+			console.log(log("update from root state"));
+			var t = $rootScope.state.split("|");
+
+			var artifacts = [];
+			t[1].split(",").forEach(function(a, i, array) {
+				var v = a.split(".");
+				var aindex = parseOrZero(v[0], parseInt);
+				var avalue = parseOrZero(v[1], parseInt);
+				artifacts.push({
+					name: artifact_info[aindex].name,
+					index: aindex,
+					value: avalue
 				});
-			}
-		}
+			});
+			$scope.artifacts = artifacts;
+			t[2].split(",").forEach(function(w, i, array) {
+				$scope.heroes[i].weapons = parseOrZero(w, parseInt);
+			});
+			t[3].split(",").forEach(function(l, i, array) {
+				$scope.heroes[i].level = parseOrZero(l, parseInt);
+			});
+			t[4].split(",").forEach(function(c, i, array) {
+				$scope.customizations[i].value = parseOrZero(c, parseFloat);
+			})
+			t[5].split(",").forEach(function(m, i, array) {
+				$scope.methods[i].value = m == 1 ? true : false;
+			})
+			$scope.relics    = parseOrZero(t[6], parseInt);
+			$scope.nsteps    = parseOrZero(t[7], parseInt);
+			$scope.greedy    = parseOrZero(t[8], parseInt);
+			$scope.w_getting = parseOrZero(t[9], parseInt);
+			$scope.r_cstage  = parseOrZero(t[10], parseInt);
+			$scope.r_undead  = parseOrZero(t[11], parseInt);
+			$scope.r_levels  = parseOrZero(t[12], parseInt);
+			$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
+			$scope.critss    = parseOrZero(t[14], parseInt);
+			$scope.zerker    = parseOrZero(t[15], parseInt);
+			$scope.a_currentSeed = parseOrZero(t[16], parseInt);
+			$scope.a_aPriorities = t[17].split(",").map(function(p) { return parseOrZero(p, parseInt); });
+			$scope.a_maxDiamonds = parseOrZero(t[18], parseInt);
+			$scope.w_currentSeed = parseOrZero(t[19], parseInt);
+			$scope.w_toCalculate = parseOrZero(t[20], parseInt);
+
+			$scope.updateThings();
+		};
 
 		$scope.$on('stateUpdate', function() {
-			// TODO: update from rootScope.state
+			console.log(log("update things from broadcast"));
+			$scope.updateFromState();
 		});
 
 		// initialize
+		// TODO: change this
 		setDefaults();
 		$scope.readFromCookies();
-		if ("state" in $routeParams) {
-			$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-			$scope.importFromString($rootScope.state, false);
+		// if ("state" in $routeParams) {
+		// 	$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
+		// 	$scope.importFromString($rootScope.state, false);
+		// }
+
+		// $scope.generateStateString();
+		// $scope.updateRelicInfo();
+		// $scope.updateWeaponInfo();
+
+		console.log(log("updating from state"));
+		$scope.updateFromState();
+
+		console.log(log("update things"));
+		$scope.updateThings();
+
+		if ("username" in $routeParams) {
+			var username = $routeParams.username;
+			console.log(log("calling get state from calculator"));
+			$scope.$parent.viewingUser(username);
 		}
 
-		$scope.generateStateString();
-		$scope.updateRelicInfo();
-		$scope.updateWeaponInfo();
-
-		shareVariables.setVariable("artifacts", $scope.artifacts);
-		shareVariables.setVariable("weapons", getWeapons());
+		// shareVariables.setVariable("artifacts", $scope.artifacts);
+		// shareVariables.setVariable("weapons", getWeapons());
 
 		// test1();
 		// test2();
