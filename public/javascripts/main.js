@@ -3,21 +3,6 @@ var yattoApp = angular.module('yattoApp', [
 	'ngRoute', 'ngCookies', 'ngRepeatReorder', 'ui.sortable', 'ui.bootstrap', 'LocalStorageModule', 'angularSpinner'
 ]);
 
-yattoApp.service('shareVariables', function () {
-	var variables = {};
-	return {
-		getVariable: function(k) {
-			return variables[k];
-		},
-		setVariable: function(k, v) {
-			variables[k] = v;
-		},
-		hasVariable: function(k) {
-			return k in variables;
-		}
-	};
-});
-
 yattoApp.config(['$routeProvider', '$locationProvider',
 	function($routeProvider, $locationProvider) {
 		$routeProvider.
@@ -44,6 +29,10 @@ yattoApp.config(['$routeProvider', '$locationProvider',
 			when('/sequencer', {
 				templateUrl: 'partials/sequencer.html',
 				controller: 'SequencerController'
+			}).
+			when('/prestiger', {
+				templateUrl: 'partials/prestiger.html',
+				controller: 'PrestigerController'
 			}).
 			otherwise({
 				templateUrl: 'partials/calculator.html',

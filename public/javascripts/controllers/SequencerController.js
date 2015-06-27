@@ -11,7 +11,7 @@ yattoApp.controller('WeaponModalController', function ($scope, $modalInstance) {
 });
 
 yattoApp.controller('SequencerController',
-	function($scope, $rootScope, $modal, shareVariables, localStorageService) {
+	function($scope, $rootScope, $modal, localStorageService) {
 		var costToBuy = function(i) {
 			return Math.floor((i) * Math.pow(1.35, i));
 		};
@@ -232,10 +232,6 @@ yattoApp.controller('SequencerController',
 			}
 		};
 
-		// $scope.getWeapons = function() {
-		// 	$scope.showWeapons = true;
-		// };
-
 		var calculateColumns = function() {
 			var itemsPerColumn = Math.ceil($scope.w_steps.length / $scope.columnCount);
 			$scope.columns = [];
@@ -274,7 +270,6 @@ yattoApp.controller('SequencerController',
 
 			$scope.weaponStateChanged();
 		};
-
 
 		$scope.openModal = function() {
 			if (!$scope.alreadySure) {
@@ -359,28 +354,7 @@ yattoApp.controller('SequencerController',
 			});
 
 			var weapons = t[2].split(",").map(function(w) { return parseOrZero(w, parseInt); });
-			// t[2].split(",").forEach(function(w, i, array) {
-			// 	$scope.heroes[i].weapons = parseOrZero(w, parseInt);
-			// });
-			// t[3].split(",").forEach(function(l, i, array) {
-			// 	$scope.heroes[i].level = parseOrZero(l, parseInt);
-			// });
-			// t[4].split(",").forEach(function(c, i, array) {
-			// 	$scope.customizations[i].value = parseOrZero(c, parseFloat);
-			// })
-			// t[5].split(",").forEach(function(m, i, array) {
-			// 	$scope.methods[i].value = m == 1 ? true : false;
-			// })
-			$scope.relics    = parseOrZero(t[6], parseInt);
-			$scope.nsteps    = parseOrZero(t[7], parseInt);
-			$scope.greedy    = parseOrZero(t[8], parseInt);
-			$scope.w_getting = parseOrZero(t[9], parseInt);
-			$scope.r_cstage  = parseOrZero(t[10], parseInt);
-			$scope.r_undead  = parseOrZero(t[11], parseInt);
-			$scope.r_levels  = parseOrZero(t[12], parseInt);
-			$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
-			$scope.critss    = parseOrZero(t[14], parseInt);
-			$scope.zerker    = parseOrZero(t[15], parseInt);
+
 			$scope.a_currentSeed = parseOrZero(t[16], parseInt);
 			$scope.a_aPriorities = t[17].split(",").map(function(p) { return parseOrZero(p, parseInt); });
 			$scope.a_maxDiamonds = parseOrZero(t[18], parseInt);
@@ -418,6 +392,15 @@ yattoApp.controller('SequencerController',
 			$scope.$parent.updateSS(18, $scope.a_maxDiamonds);
 			$scope.$parent.updateSS(19, $scope.w_currentSeed);
 			$scope.$parent.updateSS(20, $scope.w_toCalculate);
+
+			if ($rootScope.aCookies == 'On') {
+				console.log("is on, store to cookies");
+				$scope.$parent.saveS();
+			}
+
+			if ($rootScope.loggedIn) {
+				$scope.$parent.saveState();
+			}
 		}
 
 		$scope.stateChanged = function(reset, stopSearch, skip) {
@@ -432,7 +415,6 @@ yattoApp.controller('SequencerController',
 		};
 
 		$scope.weaponStateChanged = function() {
-			// $scope.calculateWeapons();
 			$scope.updateRootScope();
 		}
 
@@ -441,8 +423,6 @@ yattoApp.controller('SequencerController',
 		// get things from cookies
 		var asure = localStorageService.get('asure');
 		if (isNonNull(asure)) { $scope.alreadySure = asure; }
-
-		// try to get from cookies
 
 		$scope.initialize();
 		$scope.stateChanged(true);

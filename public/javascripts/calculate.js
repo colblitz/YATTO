@@ -471,11 +471,9 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 	};
 
 	this.get_all_skills = function() {
-		console.log("[Calculate.js] " + this.heroes);
 		for (var i = 0; i < this.heroes.length; i++) {
 			var skills = level_to_skills(this.heroes[i]);
 			for (var s = 0; s < skills; s++) {
-				console.log("[Calculate.js] adding skill " + i + ", " + s);
 				this.add_skill(i, s);
 				this.hero_skills[i] = s;
 			}
@@ -581,22 +579,17 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 		var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
 
 		var hero_total_dps = this.get_hero_dps();
-		console.log("[Calculate.js] " + hero_total_dps);
 
 		// from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + h_ad)
 		var from_main = this.main_dmg * (1 + h_ad);
 		var from_hero = (h_pd * hero_total_dps) * (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer) * (1 + this.c_ad);
 		var total_tap = from_main + from_hero;
-		console.log("[Calculate.js] from main " + from_main);
-		console.log("[Calculate.js] from hero " + from_hero);
-		console.log("[Calculate.js] " + total_tap);
 
 		var crit_multiplier = this.get_crit_multiplier();
 		var crit_chance = this.get_crit_chance();
 
 		var overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier));
 		var total_tapping = total_tap * overall_crit_multiplier;
-		console.log("[Calculate.js] " + total_tapping);
 
 		var a_crit_uptime = this.l_parchment > 0 ? Math.min((30 + 3 * this.l_parchment) / 900, 1) : 0;
 		var a_crit_bonus = this.others.cs > 0 ? (0.17 + (this.others.cs - 1) * 0.03) : 0;
@@ -752,7 +745,6 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 				}
 
 				var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
-				// console.log(gold_needed / mob_gold);
 				if (gold_needed < 10000 * mob_gold) {
 					this.current_gold += mob_gold;
 					this.time += mobs_time;

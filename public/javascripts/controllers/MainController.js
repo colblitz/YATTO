@@ -73,7 +73,7 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
 // --------------------------------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------
 
-yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal, $routeParams, localStorageService, shareVariables) {
+yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal, $routeParams, localStorageService) {
 	var log = function(s) {
 		return "[MainController] " + s;
 	};
@@ -163,6 +163,11 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 			$scope.loginText = "Login";
 			$rootScope.loggedIn = false;
 			$rootScope.username = "";
+
+			// go back to cookies
+			var state = localStorageService.get('state');
+			if (isNonNull(state)) { $rootScope.state = state; }
+			$scope.$broadcast("stateUpdate");
 		}).error(function(data, status, headers, config) {
 			console.log(log("logout error: " + data.err));
 		});

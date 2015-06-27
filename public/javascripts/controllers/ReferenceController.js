@@ -1,5 +1,5 @@
 yattoApp.controller('ReferenceController',
-	function($scope, $rootScope, shareVariables, localStorageService) {
+	function($scope, $rootScope, localStorageService) {
 		MathJax.Hub.Configured();
 		MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
