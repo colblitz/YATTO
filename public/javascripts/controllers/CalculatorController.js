@@ -600,50 +600,55 @@ yattoApp.controller('CalculatorController',
 		};
 
 		$scope.updateFromState = function() {
-			console.log(log("update from root state"));
-			var t = $rootScope.state.split("|");
+			try {
+				console.log(log("update from root state"));
+				var t = $rootScope.state.split("|");
 
-			var artifacts = [];
-			t[1].split(",").forEach(function(a, i, array) {
-				var v = a.split(".");
-				var aindex = parseOrZero(v[0], parseInt);
-				var avalue = parseOrZero(v[1], parseInt);
-				artifacts.push({
-					name: artifact_info[aindex].name,
-					index: aindex,
-					value: avalue
+				var artifacts = [];
+				t[1].split(",").forEach(function(a, i, array) {
+					var v = a.split(".");
+					var aindex = parseOrZero(v[0], parseInt);
+					var avalue = parseOrZero(v[1], parseInt);
+					artifacts.push({
+						name: artifact_info[aindex].name,
+						index: aindex,
+						value: avalue
+					});
 				});
-			});
-			$scope.artifacts = artifacts;
-			t[2].split(",").forEach(function(w, i, array) {
-				$scope.heroes[i].weapons = parseOrZero(w, parseInt);
-			});
-			t[3].split(",").forEach(function(l, i, array) {
-				$scope.heroes[i].level = parseOrZero(l, parseInt);
-			});
-			t[4].split(",").forEach(function(c, i, array) {
-				$scope.customizations[i].value = parseOrZero(c, parseFloat);
-			})
-			t[5].split(",").forEach(function(m, i, array) {
-				$scope.methods[i].value = m == 1 ? true : false;
-			})
-			$scope.relics    = parseOrZero(t[6], parseInt);
-			$scope.nsteps    = parseOrZero(t[7], parseInt);
-			$scope.greedy    = parseOrZero(t[8], parseInt);
-			$scope.w_getting = parseOrZero(t[9], parseInt);
-			$scope.r_cstage  = parseOrZero(t[10], parseInt);
-			$scope.r_undead  = parseOrZero(t[11], parseInt);
-			$scope.r_levels  = parseOrZero(t[12], parseInt);
-			$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
-			$scope.critss    = parseOrZero(t[14], parseInt);
-			$scope.zerker    = parseOrZero(t[15], parseInt);
-			$scope.a_currentSeed = parseOrZero(t[16], parseInt);
-			$scope.a_aPriorities = t[17].split(",").map(function(p) { return parseOrZero(p, parseInt); });
-			$scope.a_maxDiamonds = parseOrZero(t[18], parseInt);
-			$scope.w_currentSeed = parseOrZero(t[19], parseInt);
-			$scope.w_toCalculate = parseOrZero(t[20], parseInt);
+				$scope.artifacts = artifacts;
+				t[2].split(",").forEach(function(w, i, array) {
+					$scope.heroes[i].weapons = parseOrZero(w, parseInt);
+				});
+				t[3].split(",").forEach(function(l, i, array) {
+					$scope.heroes[i].level = parseOrZero(l, parseInt);
+				});
+				t[4].split(",").forEach(function(c, i, array) {
+					$scope.customizations[i].value = parseOrZero(c, parseFloat);
+				})
+				t[5].split(",").forEach(function(m, i, array) {
+					$scope.methods[i].value = m == 1 ? true : false;
+				})
+				$scope.relics    = parseOrZero(t[6], parseInt);
+				$scope.nsteps    = parseOrZero(t[7], parseInt);
+				$scope.greedy    = parseOrZero(t[8], parseInt);
+				$scope.w_getting = parseOrZero(t[9], parseInt);
+				$scope.r_cstage  = parseOrZero(t[10], parseInt);
+				$scope.r_undead  = parseOrZero(t[11], parseInt);
+				$scope.r_levels  = parseOrZero(t[12], parseInt);
+				$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
+				$scope.critss    = parseOrZero(t[14], parseInt);
+				$scope.zerker    = parseOrZero(t[15], parseInt);
+				$scope.a_currentSeed = parseOrZero(t[16], parseInt);
+				$scope.a_aPriorities = t[17].split(",").map(function(p) { return parseOrZero(p, parseInt); });
+				$scope.a_maxDiamonds = parseOrZero(t[18], parseInt);
+				$scope.w_currentSeed = parseOrZero(t[19], parseInt);
+				$scope.w_toCalculate = parseOrZero(t[20], parseInt);
 
-			$scope.updateThings();
+				$scope.updateThings();
+			} catch (err) {
+				localStorageService.remove('state');
+				setDefaults();
+			}
 		};
 
 		$scope.$on('stateUpdate', function() {
