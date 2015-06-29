@@ -649,6 +649,7 @@ yattoApp.controller('CalculatorController',
 
 		// initialize
 		setDefaults();
+		console.log(log("defaults set"));
 		$scope.readFromCookies();
 		$scope.updateFromState();
 		$scope.updateThings();
@@ -657,6 +658,11 @@ yattoApp.controller('CalculatorController',
 			var username = $routeParams.username;
 			console.log(log("calling get state from calculator"));
 			$scope.$parent.viewingUser(username);
+		} else if ("state" in $routeParams) {
+			$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
+			$scope.updateFromState();
+		// $scope.importFromString($rootScope.state, false);
+
 		}
 	}
 );

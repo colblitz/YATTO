@@ -99,6 +99,7 @@
 						Num to calculate (500 max): <input type="number" class="form-control number-input right-input" ng-model="w_toCalculate" min="0" ng-change="weaponStateChanged()"/>
 					</div>
 					<button class="btn btn-primary wbtn" id="" ng-click="openModal()">Get Weapon Sequence</button>
+					<button class="btn btn-success wbtn" id="" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">Save to account</button>
 				</div>
 
 				<script type="text/ng-template" id="weaponModal.html">
@@ -130,7 +131,7 @@
 						<tr ng-repeat="s in current_weapons track by $index" class="step-row">
 							<td class="s-current-col1">{{s.name}}</td>
 							<td class="s-current-col2">
-								<input type="number" class="form-control number-input left-input weapon-input" ng-model="s.n" min="0" ng-change=""  ng-class="{'weapon-min': s.n==current_min}"/>
+								<input type="number" class="form-control number-input left-input weapon-input" ng-model="s.n" min="0" ng-change="weaponStateChanged()" ng-class="{'weapon-min': s.n==current_min}"/>
 							</td>
 							<td class="s-current-col2" ng-class="{'weapon-min': s.a==after_min}">{{s.a}}</td>
 						</tr>

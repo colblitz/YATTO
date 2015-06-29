@@ -42,6 +42,16 @@
 		<script src="javascripts/controllers/SequencerController.js"></script>
 		<script src="javascripts/controllers/PrestigerController.js"></script>
 
+		<!-- Google Analytics -->
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+		  ga('create', 'UA-64621913-1', 'auto');
+		  ga('send', 'pageview');
+		</script>
+
 	</head>
 	<body ng-app="yattoApp">
 		<div id="everything-container" class="container-fluid" ng-controller="MainController as mc" ng-init="logged_in_user = {req:user}">
@@ -107,11 +117,13 @@
 						<li>Again, if you have artifacts at really low levels (compared to your other artifacts), relics/second and stages/second can be really slow and cause the whole thing to freeze up. I'm still working on this, so just fyi for now.</li>
 						<li>Things have been changed so that if you have both a relic limit and a step limit it will quit once either of them has been reached (originally it would keep going until both limits are reached). A step limit of 0 indicates a default of 200 steps.</li>
 					</ul> -->
-					<b>Update(6/9/2015):</b> Yatto 3.0.0 is here! (<a href="http://redd.it/3962ct">reddit post</a>)
+					<b>Update(7/1/2015):</b> Yatto 3.0.0 is here! (<a href="">reddit post</a>)
 					<ul>
-						<li>Yatto has a backend! aka, save your progress to an account! I'm not sure if this will eventually replace cookies (eh....), but I'm sure a lot of you will find it useful, especially for sharing. For now you can see anyone's stats by going to yatto.me/#/calculator?user=[username], but I might add a "keep me private" option if people want it (or you could just not share your username....)</li>
-						<li>Upload your stats with your .adat file</li>
-						<li>The weapon sequencer has been reworked a bit</li>
+						<li><b>Yatto has a backend!</b> AKA, <a href="http://i.imgur.com/VGAV9iU.jpg">accounts for everyone!</a> I'm not sure if this will eventually replace cookies (eh....), but I'm sure a lot of you will find it useful, especially for sharing, since you can now also see anyone's stats by going to yatto.me/#/calculator?username=[username]. I might add a "keep me private" option if people want it, but for now you could just not share your username.... >></li>
+						<li>Ok the bad news - <b>this breaks all the old state urls and cookies</b>, so you'll need to re-input your information / update your bookmarks. Sorry >.< (The urls you get from here on out will still work, supposedly)</li>
+						<li>To help with that a bit, you can now upload your stats with your .adat file. Select the file with the choose file button, then when the file name shows up, click "load info"</li>
+						<li>Alright, this is how accounts work - click the login thing in the top right, then enter a username and password, and click register. I don't have any sort of password changing shenanigans yet, so get it right the first time :[ (Just kidding - I really don't have any way to change your password, but feel free to send me a message and I can delete the user for you) Once you're logged in, you can save your stats by clicking the "Save to Account" button. <b>Your stats are not automatically saved</b> (just technical reasons for now - I don't want you guys accidentally killing my server :<), but I do try to save them to your account if you leave/refresh/exit the page.</li>
+						<li>Also the weapon sequencer has been reworked a bit. </li>
 					</ul>
 				</div>
 				<div id="expander" class="col-md-10 col-md-offset-1 col-xs-12" ng-click="toggle()">

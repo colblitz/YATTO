@@ -386,6 +386,7 @@ yattoApp.controller('SequencerController',
 
 		$scope.updateRootScope = function() {
 			console.log("[SequencerController] updating root scope");
+			console.log("[SequencerController] " + $scope.current_weapons.map(function(w) { return w.n; }).join());
 			$scope.$parent.updateSS(2, $scope.current_weapons.map(function(w) { return w.n; }).join());
 			$scope.$parent.updateSS(16, $scope.a_currentSeed);
 			$scope.$parent.updateSS(17, $scope.a_aPriorities);
@@ -394,13 +395,13 @@ yattoApp.controller('SequencerController',
 			$scope.$parent.updateSS(20, $scope.w_toCalculate);
 
 			if ($rootScope.aCookies == 'On') {
-				console.log("is on, store to cookies");
+				console.log("[SequencerController] is on, store to cookies");
 				$scope.$parent.saveS();
 			}
 
-			if ($rootScope.loggedIn) {
-				$scope.$parent.saveState();
-			}
+			// if ($rootScope.loggedIn) {
+			// 	$scope.$parent.saveState();
+			// }
 		}
 
 		$scope.stateChanged = function(reset, stopSearch, skip) {
@@ -416,7 +417,11 @@ yattoApp.controller('SequencerController',
 
 		$scope.weaponStateChanged = function() {
 			$scope.updateRootScope();
-		}
+		};
+
+		$scope.saveUserState = function() {
+			$scope.$parent.saveState();
+		};
 
 		setDefaults();
 

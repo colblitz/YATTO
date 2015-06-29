@@ -53,12 +53,14 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
 					"state": $rootScope.state
 				}
 			}).success(function(data, status, headers, config) {
-				console.log("[ModalController] - state saved");
+				$modalInstance.close({
+					loggedIn: true,
+					username: data.content.username,
+					state: data.content.state
+				});
 			}).error(function(data, status, headers, config) {
-				console.log("[ModalController] - error saving state: " + data);
+				$scope.message = data.err;
 			});
-
-			$modalInstance.close({username: user.username});
 		}).error(function(data, status, headers, config) {
 			$scope.message = data.err;
 		});
