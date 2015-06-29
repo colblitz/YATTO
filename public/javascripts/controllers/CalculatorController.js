@@ -668,8 +668,13 @@ yattoApp.controller('CalculatorController',
 			console.log(log("calling get state from calculator"));
 			$scope.$parent.viewingUser(username);
 		} else if ("state" in $routeParams) {
-			$rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-			$scope.updateFromState();
+			var state = LZString.decompressFromEncodedURIComponent($routeParams.state);
+			if (isNonNull(state) && state[0] != "v") {
+				console.log(log("old state, don't do anything"));
+			} else {
+				$rootScope.state = state;
+				$scope.updateFromState();
+			}
 		// $scope.importFromString($rootScope.state, false);
 
 		}
