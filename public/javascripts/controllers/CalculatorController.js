@@ -260,7 +260,6 @@ yattoApp.controller('CalculatorController',
 			var g = getGameState();
 			g.get_all_skills();
 			var tap = g.tap_damage();
-			console.log(log(tap));
 			$scope.all_damage = g.a_ad * 100;
 			$scope.dps_damage = parseFloat(g.get_hero_dps().toPrecision(4)).toExponential();
 			$scope.tap_damage = parseFloat(tap[0].toPrecision(4)).toExponential();
@@ -309,11 +308,6 @@ yattoApp.controller('CalculatorController',
 		};
 
 		var getGameState = function() {
-			console.log(log(transformScopeArray($scope.artifacts)));
-			console.log(log(getWeapons()));
-			console.log(log(getLevels()));
-			console.log(log(transformScopeArray($scope.customizations)));
-
 			return new GameState(
 				transformScopeArray($scope.artifacts),
 				getWeapons(),
@@ -402,6 +396,14 @@ yattoApp.controller('CalculatorController',
 
 			var response;
 			$timeout(function() {
+				console.log(log(artifacts));
+				console.log(log(weapons));
+				console.log(log(levels));
+				console.log(log(customizations));
+				console.log(log(methods));
+
+				console.log(log($scope.relics));
+				console.log(log($scope.nsteps));
 				response = get_steps({
 					a: artifacts,
 					w: weapons,
@@ -414,6 +416,8 @@ yattoApp.controller('CalculatorController',
 					s: $scope.active,
 					t: $scope.critss,
 					z: $scope.zerker});
+
+				console.log(log(JSON.stringify(response)));
 
 				$scope.$apply(function() {
 					$scope.steps = [];

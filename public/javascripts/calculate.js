@@ -1054,13 +1054,14 @@ var get_steps = function(params) {
 	var response = {};
 	for (var mi in params.m) {
 		var m = params.m[mi];
-		var steps = [];
-		if (params.g == 1) {
-			steps = get_best(params, m);
-		} else {
-			// TODO: shouldn't get here yet
-			// steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];
-		}
+		var steps = get_best(params, m);
+		// var steps = [];
+		// if (params.g == 1) {
+		// 	steps = get_best(params, m);
+		// } else {
+		// 	// TODO: shouldn't get here yet
+		// 	// steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];
+		// }
 		var summary = {};
 		var costs = {};
 		for (var s in steps) {
