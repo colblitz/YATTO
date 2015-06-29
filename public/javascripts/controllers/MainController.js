@@ -54,10 +54,11 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
 				}
 			}).success(function(data, status, headers, config) {
 				console.log("modal: " + data.content);
+				console.log("user: " + user);
 				$modalInstance.close({
 					loggedIn: true,
-					username: data.content.username,
-					state: data.content.state
+					username: user.username,
+					state: user.state
 				});
 			}).error(function(data, status, headers, config) {
 				$scope.message = data.err;
