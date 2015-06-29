@@ -281,7 +281,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 
 	console.log(log("getting state from cookies"));
 	var state = localStorageService.get('state');
-	if (state[0] != "v") {
+	if (isNonNull(state) && state[0] != "v") {
 		localStorageService.remove('state');
 	} else {
 		if (isNonNull(state)) { $rootScope.state = state; }
