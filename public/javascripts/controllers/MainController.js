@@ -179,7 +179,43 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 
 	$scope.login = function() {
 		if ($rootScope.loggedIn) {
-			$scope.logout();
+			// TODO: change this to $scope.amViewing or something
+			if ($scope.loginText.indexOf("viewing") > -1) {
+				$scope.loginText = "Login";
+				// TODO: this is duplicate code, refactor
+				$http({
+					method: "POST",
+					url: "check"
+				}).success(function(data, status, headers, config) {
+					console.log(log("check successful"));
+					var user = data.content;
+					if (user != null) {
+						console.log(log("am logged in as user: " + user.username));
+						$rootScope.loggedIn = true;
+
+						// TODO: change this to $scope.amViewing or something
+						if ($scope.loginText.indexOf("viewing") > -1) {
+							console.log(log("but we're viewing someone else so ignore"));
+						} else {
+							$scope.loginText = "Logout (" + user.username + ")";
+							$rootScope.username = user.username;
+
+							console.log(log("logged in, getting state for user: " + $rootScope.username));
+							$scope.getState($rootScope.username);
+						}
+					} else {
+						console.log(log("not logged in"));
+					}
+
+					// force update in other controllers
+					console.log(log("broadcasting state update: " + $rootScope.state));
+					$scope.$broadcast("stateUpdate");
+				}).error(function(data, status, headers, config) {
+					console.log(log("check failed with error: " + data.err));
+				});
+			} else {
+				$scope.logout();
+			}
 		} else {
 			if ($scope.loginText.indexOf("viewing") > -1) {
 				console.log(log("stop viewing"));
@@ -321,12 +357,18 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 			var user = data.content;
 			if (user != null) {
 				console.log(log("am logged in as user: " + user.username));
-				$scope.loginText = "Logout (" + user.username + ")";
 				$rootScope.loggedIn = true;
-				$rootScope.username = user.username;
 
-				console.log(log("logged in, getting state for user: " + $rootScope.username));
-				$scope.getState($rootScope.username);
+				// TODO: change this to $scope.amViewing or something
+				if ($scope.loginText.indexOf("viewing") > -1) {
+					console.log(log("but we're viewing someone else so ignore"));
+				} else {
+					$scope.loginText = "Logout (" + user.username + ")";
+					$rootScope.username = user.username;
+
+					console.log(log("logged in, getting state for user: " + $rootScope.username));
+					$scope.getState($rootScope.username);
+				}
 			} else {
 				console.log(log("not logged in"));
 			}
