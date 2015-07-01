@@ -231,6 +231,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 	$scope.viewingUser = function(username) {
 		$scope.getState(username);
 		$rootScope.loggedIn = false;
+		$rootScope.aCookies = 'Off';
 		$scope.loginText = "Stop viewing (" + username + ")";
 	};
 
