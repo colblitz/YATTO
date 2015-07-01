@@ -601,7 +601,7 @@ yattoApp.controller('CalculatorController',
 
 		$scope.updateFromState = function() {
 			try {
-				console.log(log("update from root state"));
+				console.log(log("update from root state: " + $rootScope.state));
 				var t = $rootScope.state.split("|");
 
 				var undead = 0;
