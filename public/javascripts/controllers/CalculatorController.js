@@ -620,6 +620,7 @@ yattoApp.controller('CalculatorController',
 						value: avalue
 					});
 				});
+				console.log(log("undead is " + undead));
 				$scope.artifacts = artifacts;
 				t[2].split(",").forEach(function(w, i, array) {
 					$scope.heroes[i].weapons = parseOrZero(w, parseInt);
@@ -639,6 +640,7 @@ yattoApp.controller('CalculatorController',
 				$scope.w_getting = parseOrZero(t[9], parseInt);
 				$scope.r_cstage  = parseOrZero(t[10], parseInt);
 				$scope.r_undead  = parseOrZero(t[11], parseInt) == 0 ? undead : parseOrZero(t[11], parseInt);
+				console.log(log("scope undead is " + $scope.r_undead));
 				$scope.r_levels  = parseOrZero(t[12], parseInt);
 				$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
 				$scope.critss    = parseOrZero(t[14], parseInt);
