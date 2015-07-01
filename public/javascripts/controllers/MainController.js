@@ -187,6 +187,9 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 				$rootScope.loggedIn = false;
 				$rootScope.username = "";
 
+				var cookies = localStorageService.get('autoc');
+				if (isNonNull(cookies)) { $rootScope.aCookies = cookies; }
+
 				console.log(log("try to get from cookies"));
 				var state = localStorageService.get('state');
 				if (isNonNull(state)) { $rootScope.state = state; }
