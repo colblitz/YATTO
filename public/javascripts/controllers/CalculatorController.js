@@ -654,6 +654,7 @@ yattoApp.controller('CalculatorController',
 
 				$scope.updateThings();
 			} catch (err) {
+				console.log(log("error updating state: " + err));
 				localStorageService.remove('state');
 				setDefaults();
 			}
