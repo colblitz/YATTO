@@ -620,7 +620,6 @@ yattoApp.controller('CalculatorController',
 						value: avalue
 					});
 				});
-				console.log(log("undead is " + undead));
 				$scope.artifacts = artifacts;
 				t[2].split(",").forEach(function(w, i, array) {
 					$scope.heroes[i].weapons = parseOrZero(w, parseInt);
@@ -639,8 +638,7 @@ yattoApp.controller('CalculatorController',
 				$scope.greedy    = parseOrZero(t[8], parseInt);
 				$scope.w_getting = parseOrZero(t[9], parseInt);
 				$scope.r_cstage  = parseOrZero(t[10], parseInt);
-				$scope.r_undead  = parseOrZero(t[11], parseInt) == 0 ? undead : parseOrZero(t[11], parseInt);
-				console.log(log("scope undead is " + $scope.r_undead));
+				$scope.r_undead  = parseOrZero(t[11], parseInt);
 				$scope.r_levels  = parseOrZero(t[12], parseInt);
 				$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
 				$scope.critss    = parseOrZero(t[14], parseInt);
@@ -650,6 +648,9 @@ yattoApp.controller('CalculatorController',
 				$scope.a_maxDiamonds = parseOrZero(t[18], parseInt);
 				$scope.w_currentSeed = parseOrZero(t[19], parseInt);
 				$scope.w_toCalculate = parseOrZero(t[20], parseInt);
+
+				if ($scope.r_undead == 0) { $scope.r_undead = undead; }
+				if ($scope.r_levels == 0) { $scope.r_levels = getLevels().reduce(function(a, b) { return a + b; }); }
 
 				$scope.updateThings();
 			} catch (err) {
