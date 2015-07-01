@@ -604,11 +604,16 @@ yattoApp.controller('CalculatorController',
 				console.log(log("update from root state"));
 				var t = $rootScope.state.split("|");
 
+				var undead = 0;
 				var artifacts = [];
 				t[1].split(",").forEach(function(a, i, array) {
 					var v = a.split(".");
 					var aindex = parseOrZero(v[0], parseInt);
 					var avalue = parseOrZero(v[1], parseInt);
+
+					if (aindex == 25) {
+						undead = avalue;
+					}
 					artifacts.push({
 						name: artifact_info[aindex].name,
 						index: aindex,
@@ -633,7 +638,7 @@ yattoApp.controller('CalculatorController',
 				$scope.greedy    = parseOrZero(t[8], parseInt);
 				$scope.w_getting = parseOrZero(t[9], parseInt);
 				$scope.r_cstage  = parseOrZero(t[10], parseInt);
-				$scope.r_undead  = parseOrZero(t[11], parseInt);
+				$scope.r_undead  = parseOrZero(t[11], parseInt) == 0 ? undead : parseOrZero(t[11], parseInt);
 				$scope.r_levels  = parseOrZero(t[12], parseInt);
 				$scope.active    = parseOrZero(t[13], parseInt) == 1 ? true : false;
 				$scope.critss    = parseOrZero(t[14], parseInt);
