@@ -559,7 +559,8 @@ yattoApp.controller('CalculatorController',
 				artifactLevels[ai] = parseInt(l);
 			}
 			for (var a in $scope.artifacts) {
-				$scope.artifacts[a].value = artifactLevels[$scope.artifacts[a].index];
+				var t = Number(artifactLevels[$scope.artifacts[a].index]);
+				$scope.artifacts[a].value = (isNaN(t) ? 0 : t);
 			}
 
 			var weapons = j.heroSave.heroWeaponUpgrades;
