@@ -5,6 +5,7 @@ yattoApp.controller('ReferenceController',
 
 		var setDefaults = function() {
 			$scope.r_artifacts = [];
+			$scope.sum_cumulative = 0;
 
 			for (var i in artifact_info) {
 				var a = artifact_info[i];
@@ -106,6 +107,10 @@ yattoApp.controller('ReferenceController',
 			}
 			a.magnitude = getMagnitude(a);
 			a.text = getText(a);
+
+			$scope.sum_cumulative = $scope.r_artifacts
+				.map(function(a) { return a.cumulative; })
+				.reduce(function(a, b) {return a + b; }, 0);
 		};
 
 		// TODO: update this
