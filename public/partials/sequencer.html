@@ -90,7 +90,7 @@
 	<div class="row">
 		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
 			<div class="row">
-				<h3>Weapon sequence</h3>
+				<h3>Future Weapons Sequence</h3>
 				<div class="col-md-4">
 					<div class="large-form-item">
 						Weapon Seed: <input type="number" class="form-control number-input s-weapon-input right-input" ng-model="w_currentSeed" min="0" ng-change="weaponStateChanged()"/>
@@ -117,7 +117,14 @@
 				</script>
 
 				<div class="col-md-8">
-					<span>Enter in your weapon seed and the number you want to see, then fill in the "current" column with the weapons you already have. They should be carried over from the main calculator page if you have them filled out there, and will carry back over. Then click "Get sequence" to see your future weapon sequence. Once you get more weapons irl, either click the checkmark next to the latest weapon you got to have your seed and current numbers be updated, or fill in your current weapons manually. In the latter case, you'll have to re-look up your weapon seed before getting the sequence again.</span>
+					<span>
+						<ul>
+							<li>Enter in your weapon seed and the number you want to see, then fill in the "current" column with the weapons you already have. They should be carried over from the main calculator page if you have them filled out there, and will carry back over.</li>
+							<li>Then click "Get sequence" to see your <b>future</b> weapon sequence.</li>
+							<li>Once you get more weapons irl, either click the checkmark next to the latest weapon you got to have your seed and current numbers be updated, or fill in your current weapons manually. In the latter case, you'll have to re-look up your weapon seed before getting the sequence again.</li>
+							<li><b>This will not tell you what weapons you already have.</b></li>
+						</ul>
+					</span>
 				</div>
 			</div>
 			<div class="row">
@@ -143,7 +150,7 @@
 						<tr>
 							<th class="s-weapons-colh0 colh"></th>
 							<th class="s-weapons-colh1 colh"></th>
-							<th class="s-weapons-colh2 colh">Weapon</th>
+							<th class="s-weapons-colh2 colh">Future weapon</th>
 						</tr>
 						<tr ng-repeat="s in columns[co] track by $index" class="step-row">
 							<td class="s-weapons-col0"><span class="checkmark" ng-click="check(s.index)"><i class="fa fa-check"></i></span></td>
