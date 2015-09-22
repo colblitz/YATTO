@@ -297,6 +297,212 @@ for (var h in hero_info) {
 	}
 }
 
+var getOrderList = function() {
+  return [
+    13, // Knight's Shield
+     0, // Amulet of the Valrunes
+     6, // Dark Cloak of Life
+     7, // Death Seeker
+    23, // Savior Shield
+    17, // Overseer's Lotion
+    21, // Sacred Scroll
+    12, // Hunter's Ointment
+    14, // Laborer's Pendant
+     2, // Barbarian's Mettle
+    22, // Saintly Shield
+    15, // Ogre's Gauntlet
+    18, // Parchment of Importance
+    26, // Universal Fissure
+    19, // Ring of Opulence
+     1, // Axe of Resolution
+    11, // Hero's Thrust
+     5, // Crown Egg
+     3, // Chest of Contentment
+    10, // Future's Fortune
+     8, // Divine Chalice
+    25, // Undead Aura
+    27, // Warrior's Revival
+    20, // Ring of Wondrous Charm
+    28, // Worldly Illuminator
+    24, // Tincture of the Maker
+     4, // Crafter's Elixir
+    16, // Otherworldly Armor
+     9  // Drunken Hammer
+    ];
+};
+
+var cMapping = {
+  "0": 2, // gold dropped - hats
+  "1": 1, // crit damage - scarves
+  "2": 4, // crit chance - shirts
+  "3": 0, // all damage - swords
+  "4": 5, // tap damage - trails
+  "5": 3  // chest gold - auras
+};
+
+var CTYPE_D = 0;
+var CTYPE_P = 1;
+var CTYPE_T = 2;
+var CTYPE_S = 3;
+var CTYPE_N = 4;
+
+var Customization = function(name, value, cost, ctype, label) {
+  this.name = name;
+  this.label = label;
+  this.value = value;
+  this.cost = cost;
+  this.ctype = ctype;
+  this.type = cMapping[label[0]];
+}
+
+var customization_info = [
+	// All Damage - Swords
+  new Customization("Hero Sword",          0,    0, CTYPE_N, "3_0"),
+  new Customization("Knight Sword",        2,    1, CTYPE_P, "3_901"),
+  new Customization("Charlemagne",         2,    3, CTYPE_P, "3_902"),
+  new Customization("Ice Sword",           3,    7, CTYPE_P, "3_903"),
+  new Customization("Fire Sword",          3,   15, CTYPE_P, "3_904"),
+  new Customization("Mad Max",             4,   25, CTYPE_P, "3_905"),
+  new Customization("Purple Dragon",       4,   30, CTYPE_P, "3_906"),
+  new Customization("Warrior Blade",       5,   40, CTYPE_P, "3_907"),
+  new Customization("Skull Blade",         5,   50, CTYPE_P, "3_19"),
+  new Customization("Goofy Hammer",        6,   70, CTYPE_P, "3_3"),
+  new Customization("Carrot",              6,  100, CTYPE_P, "3_4"),
+  new Customization("Kunai",               7,  200, CTYPE_P, "3_29"),
+  new Customization("Colossus",            7,  300, CTYPE_P, "3_909"),
+  new Customization("Balloon",             7,  400, CTYPE_P, "3_22"),
+  new Customization("Spiky Sword",         7,  500, CTYPE_P, "3_12"),
+  new Customization("Laser Dagger",        6,  620, CTYPE_D, "3_30"),
+  new Customization("Broom",               3,  270, CTYPE_D, "3_26"),
+  new Customization("Curved Blade",        1,  110, CTYPE_D, "3_1"),
+  new Customization("Umbrella",            9,  880, CTYPE_D, "3_13"),
+  new Customization("Fencing Sword",       5,  500, CTYPE_D, "3_5"),
+  new Customization("Meat Hook",           1,   80, CTYPE_D, "3_15"),
+  new Customization("Popsicle",            2,  100, CTYPE_D, "3_10"),
+  new Customization("Golf Stick",          2,  150, CTYPE_D, "3_25"),
+  new Customization("Sai",                 2,  200, CTYPE_D, "3_20"),
+  new Customization("Guitar",              3,  350, CTYPE_D, "3_21"),
+  new Customization("Wooden Sword",        5,  500, CTYPE_D, "3_14"),
+  new Customization("Scythe",              6,  666, CTYPE_D, "3_11"),
+  new Customization("Hola Sword",          8,  860, CTYPE_D, "3_7"),
+  new Customization("Poop",                9, 1000, CTYPE_D, "3_18"),
+  new Customization("Wisdom Sword",       12, 1500, CTYPE_D, "3_17"),
+  new Customization("Pixel Sword",        12, 1500, CTYPE_D, "3_28"),
+  // Crit Damage - Scarves
+  new Customization("Red",                 0,    0, CTYPE_N, "1_0"),
+  new Customization("Shimmering",          3,    2, CTYPE_P, "1_9"),
+  new Customization("Blue",                5,    5, CTYPE_P, "1_1"),
+  new Customization("Blue Wrap",           7,   10, CTYPE_P, "1_3"),
+  new Customization("Green",              10,   20, CTYPE_P, "1_2"),
+  new Customization("Metallic",           10,   50, CTYPE_P, "1_11"),
+  new Customization("Red Wrap",            1,   30, CTYPE_D, "1_8"),
+  new Customization("Green Wrap",          4,   85, CTYPE_D, "1_4"),
+  new Customization("Yellow",              4,   75, CTYPE_D, "1_5"),
+  new Customization("Yellow Wrap",        19,  380, CTYPE_D, "1_6"),
+  new Customization("Purple",             22,  435, CTYPE_D, "1_7"),
+  new Customization("Brown",               6,  110, CTYPE_D, "1_10"),
+  // Gold Dropped - Hats
+  new Customization("None",                0,    0, CTYPE_N, "0_0"),
+  new Customization("Top Hat",             5,   50, CTYPE_S, "0_14"),
+  new Customization("Blue Knight",         5,  300, CTYPE_S, "0_2"),
+  new Customization("Cat Hood",            5,  400, CTYPE_S, "0_3"),
+  new Customization("Ninja Mask",          5,  700, CTYPE_S, "0_6"),
+  new Customization("Astronaut Helmet",    5, 1000, CTYPE_S, "0_1"),
+  new Customization("Cowboy Hat",          5, 1500, CTYPE_S, "0_4"),
+  new Customization("Ice Cream Cone" ,     5, 1600, CTYPE_S, "0_5"),
+  new Customization("Witch Hat",          10,  500, CTYPE_D, "0_8"),
+  new Customization("Pixel Helmet",       10,  550, CTYPE_D, "0_7"),
+  new Customization("Robot Helmet",       13,  650, CTYPE_D, "0_9"),
+  new Customization("Snowman Head",        6,  310, CTYPE_D, "0_10"),
+  new Customization("Water Melon",         7,  770, CTYPE_D, "0_13"),
+  new Customization("Bat",                 5,  250, CTYPE_D, "0_11"),
+  // Chest Gold - Auras
+  new Customization("None",                0,    0, CTYPE_N, "5_0"),
+  new Customization("Stars",               5,  100, CTYPE_S, "5_1"),
+  new Customization("Thunderbolt",         7,  200, CTYPE_S, "5_2"),
+  new Customization("Electric",           10,  500, CTYPE_S, "5_3"),
+  new Customization("Eminence Light",     10,  600, CTYPE_S, "5_5"),
+  new Customization("Flame",              10, 1300, CTYPE_S, "5_4"),
+  new Customization("Spiky",              10, 2000, CTYPE_S, "5_8"),
+  new Customization("Leaf Shield",        50,  990, CTYPE_D, "5_6"),
+  new Customization("Resurrection Light", 15,  340, CTYPE_D, "5_7"),
+  new Customization("Skulls",             40,  620, CTYPE_D, "5_9"),
+  new Customization("Bubbles",            20,  380, CTYPE_D, "5_10"),
+  // Crit Chance - Armor
+  new Customization("Hero Suit",           0,    0, CTYPE_N, "2_0"),
+  new Customization("Casual",            0.5,   10, CTYPE_T, "2_3"),
+  new Customization("Astronaut",         0.5,  150, CTYPE_T, "2_1"),
+  new Customization("Blue Knight",       0.5,  200, CTYPE_T, "2_2"),
+  new Customization("Cat Suit",          0.5,  500, CTYPE_T, "2_4"),
+  new Customization("Ninja",             0.5,  700, CTYPE_T, "2_6"),
+  new Customization("Purple Wizard",     0.5, 1000, CTYPE_T, "2_14"),
+  new Customization("Saiyan",            0.5, 1300, CTYPE_T, "2_10"),
+  new Customization("Pyjamas",             1,  400, CTYPE_D, "2_13"),
+  new Customization("Renaissance",       0.5,   50, CTYPE_D, "2_8"),
+  new Customization("Robot",               1,  450, CTYPE_D, "2_9"),
+  new Customization("Snowman",             3, 1000, CTYPE_D, "2_11"),
+  new Customization("Storm Armor",       0.5,  250, CTYPE_D, "2_12"),
+  new Customization("Green Knight",        1,  430, CTYPE_D, "2_17"),
+  new Customization("White and Gold",      1,  310, CTYPE_D, "2_16"),
+  new Customization("Grey Knight",         2,  800, CTYPE_D, "2_5"),
+  new Customization("Casual2",             1,  350, CTYPE_D, "2_15"),
+  // Tap Damage - Trails
+  new Customization("White",               0,    0, CTYPE_N, "4_0"),
+  new Customization("Cool Blue",           4,   50, CTYPE_T, "4_1"),
+  new Customization("Rainbow",             4,  100, CTYPE_T, "4_2"),
+  new Customization("Dirt",                4,  300, CTYPE_T, "4_3"),
+  new Customization("Flame",               4,  400, CTYPE_T, "4_4"),
+  new Customization("Ice",                 4,  410, CTYPE_D, "4_5"),
+  new Customization("Lightning Blue",      6,  700, CTYPE_D, "4_6"),
+  new Customization("Fiery Red",           2,  140, CTYPE_D, "4_7"),
+  new Customization("Passion",             8,  620, CTYPE_D, "4_8"),
+  new Customization("Shadow",              2,  290, CTYPE_D, "4_9"),
+  new Customization("Water",               6,  490, CTYPE_D, "4_10")
+];
+
+var customizationValues = {};
+customization_info.forEach(function(c, i) {
+	customizationValues[c.label] = c.value / 100;
+});
+
+var heroToName = {
+   1: "Takeda",
+   2: "Contessa",
+   3: "Hornetta",
+   4: "Mila",
+   5: "Terra",
+   6: "Inquisireaux",
+   7: "Charlotte",
+   8: "Jordaan",
+   9: "Jukka",
+  10: "Milo",
+  11: "Macelord",
+  12: "Gertrude",
+  13: "Twitterella",
+  14: "Master Hawk",
+  15: "Elpha",
+  16: "Poppy",
+  17: "Skulptor",
+  18: "Sterling",
+  19: "Orba",
+  20: "Remus",
+  21: "Mikey",
+  22: "Peter",
+  23: "Teeny Tom",
+  24: "Deznis",
+  25: "Hamlette",
+  26: "Eistor",
+  27: "Flavius",
+  28: "Chester",
+  29: "Mohacas",
+  30: "Jaqulin",
+  31: "Pixie",
+  32: "Jackalope",
+  33: "Dark Lord"
+};
+
+
+
 var next_ff_level = function(ff, c_gd) {
 	var new_level = ff;
 	var multiplier = function(l) {

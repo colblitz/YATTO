@@ -523,14 +523,15 @@ yattoApp.controller('CalculatorController',
 		};
 
 		var cMapping = {
-			"0": 2,
-			"1": 1,
-			"2": 4,
-			"3": 0,
-			"4": 5,
-			"5": 3
+			"0": 2, // gold dropped
+			"1": 1, // crit damage
+			"2": 4, // crit chance
+			"3": 0, // all damage
+			"4": 5, // tap damage
+			"5": 3 // chest gold
 		};
 
+		// TODO: fix this
 		var parseCustomizations = function(s) {
 			var c = [0, 0, 0, 0, 0, 0];
 			s.split("/").forEach(function(p, i, array) {

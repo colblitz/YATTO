@@ -1,0 +1,56 @@
+<div id="othercalc-container">
+	<div class="row">
+		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
+			<div class="row">
+				<div class="col-md-6" id="customizations-col">
+					<div id="customizations-box" class="panel">
+						<div class="row">
+							<div class="col-md-7" id="customizations-owned">
+								<div id="customizations-list">
+									<h3>Customizations</h3>
+									<div ng-repeat="cl in oc_customizations">
+										<div class="oc-category">
+											<h4>{{customizationLabels[$index]}}</h4>
+										</div>
+										<div ng-repeat="c in cl" class="oc-customizations">
+											<label><input type="checkbox" ng-model="c.owned" ng-change="recalculate()"/>{{c.name}}</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-5" id="customizations-list">
+								<h3>Best customizations</h3>
+								<div class="customization-list-description">This will list the unpurchased customizations in order of greatest gain in DmgE per diamonds to least</div>
+								<!-- <a href="http://a/%%300">this link</a> -->
+								<div class="small-form-item">
+									<label>Total Diamond Cost:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="diamonds" ng-change="" readonly/>
+								</div>
+								<table>
+									<tr>
+										<th class="ssteps-colh0 colh"></th>
+										<th class="ssteps-colh1 colh">Customization</th>
+										<th class="ssteps-colh2 colh">Cost</th>
+									</tr>
+									<tr ng-repeat="c in unowned_customizations" class="customization-row">
+										<td class="ssteps-col0"><span class="checkmark" ng-click=""><i class="fa fa-check"></i></span></td>
+										<td class="ssteps-col1">{{c.name}}</td>
+										<td class="ssteps-col2">{{c.cost}}</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6" id="herolevels-col">
+					<div id="herolevels-box" class="panel">
+						<div id="herolevels-list" class="list col-md-5">
+							<h3>Hero Levels</h3>
+							put list of stuff here
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
