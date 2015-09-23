@@ -811,6 +811,14 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 		return [total_tap, total_tapping, a_total_tapping];
 	};
 
+	this.get_dmg_equivalent = function(game_state) {
+		var gold_multiplier = this.gold_multiplier();
+		var dmg_multiplier = this.tap_damage()[1];
+		var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_multiplier) / Math.log(1.075));
+		var dmg_equivalent = dmg_multiplier + gold_dmg_equivalent;
+		return dmg_equivalent;
+	};
+
 	this.level_heroes = function() {
 		// buy all the heroes that you can buy
 		var heroes_after = this.heroes.slice();
