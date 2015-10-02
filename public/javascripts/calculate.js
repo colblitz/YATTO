@@ -461,9 +461,13 @@ var customization_info = [
 ];
 
 var customizationValues = {};
+var customizationMax = [0, 0, 0, 0, 0, 0];
 customization_info.forEach(function(c, i) {
+	var v = c.value / 100;
 	customizationValues[c.label] = c.value / 100;
+	customizationMax[c.type] += v;
 });
+console.log(customizationMax);
 
 var heroToName = {
    1: "Takeda",

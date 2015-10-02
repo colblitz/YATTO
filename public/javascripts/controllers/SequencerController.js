@@ -298,8 +298,8 @@ yattoApp.controller('SequencerController',
 		};
 
 		$scope.calculateWeapons = function() {
-			if ($scope.w_toCalculate > 500) {
-				$scope.w_toCalculate = 500;
+			if ($scope.w_toCalculate > 1000) {
+				$scope.w_toCalculate = 1000;
 			}
 			console.log("calculating with " + $scope.w_toCalculate);
 			var currentSeed = $scope.w_currentSeed;
@@ -316,10 +316,31 @@ yattoApp.controller('SequencerController',
 				var nextSeed = random.next(1, 2147483647);
 				var weapon = random.next(1, 34);
 
+
+				var indexOfMaxValue = $scope.current_weapons.map(
+					function(x) { return x.a; }).reduce(
+					function(iMax,x,i,a) {return x>a[iMax] ? i : iMax;}, 0);
+
+				var cssclass = "";
 				var before = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
 				$scope.current_weapons[weapon-1].a += 1;
 				var after = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
-				var cssclass = before == after ? (weapon == 33 ? "darklord" : "") : "newset";
+
+				// console.log("weapon: " + weapon);
+				// console.log("maxw: " + maxw);
+
+				if (before == after) {
+					if (weapon == 33) {
+						cssclass = "darklord";
+					} else if (weapon - 1 == indexOfMaxValue) {
+						cssclass = "maxweapon";
+					} else if ($scope.current_weapons[weapon-1].a - 1 == before) {
+						cssclass = "minweapon";
+					}
+				} else {
+					cssclass = "newset";
+				}
+				//var cssclass = before == after ? (weapon == 33 ? "darklord" : "") : "newset";
 				$scope.w_steps.push({
 					index: i + 1,
 					seed: currentSeed,

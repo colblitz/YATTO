@@ -96,7 +96,7 @@
 						Weapon Seed: <input type="number" class="form-control number-input s-weapon-input right-input" ng-model="w_currentSeed" min="0" ng-change="weaponStateChanged()"/>
 					</div>
 					<div class="large-form-item">
-						Num to calculate (500 max): <input type="number" class="form-control number-input right-input" ng-model="w_toCalculate" min="0" ng-change="weaponStateChanged()"/>
+						Num to calculate (1000 max): <input type="number" class="form-control number-input right-input" ng-model="w_toCalculate" min="0" ng-change="weaponStateChanged()"/>
 					</div>
 					<button class="btn btn-primary wbtn" id="" ng-click="openModal()">Get Weapon Sequence</button>
 					<button class="btn btn-success wbtn" id="" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">Save to account</button>
@@ -123,6 +123,14 @@
 							<li>Then click "Get sequence" to see your <b>future</b> weapon sequence.</li>
 							<li>Once you get more weapons irl, either click the checkmark next to the latest weapon you got to have your seed and current numbers be updated, or fill in your current weapons manually. In the latter case, you'll have to re-look up your weapon seed before getting the sequence again.</li>
 							<li><b>This will not tell you what weapons you already have.</b></li>
+							<li>Color Code:
+								<ul>
+									<li><span class="minweapon">Light Green</span> - A weapon that is one of the ones you need to finish a set</li>
+									<li><span class="newset">Green</span> - A weapon that will actually finish a set</li>
+									<li><span class="maxweapon">Purple</span> - A weapon that you already have the most of</li>
+									<li><span class="darklord">Red</span> - Dark Lord weapon</li>
+								</ul>
+							</li>
 						</ul>
 					</span>
 				</div>

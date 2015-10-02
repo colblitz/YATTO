@@ -58,11 +58,11 @@ yattoApp.controller('CalculatorController',
 			}
 
 			$scope.customizations = [
-				{name: "All Damage",      index: 0, value: 0, step: 0.01,  max: 0.87},
-				{name: "Critical Damage", index: 1, value: 0, step: 0.01,  max: 0.81},
-				{name: "Gold Dropped",    index: 2, value: 0, step: 0.01,  max: 0.66},
-				{name: "Chest Gold",      index: 3, value: 0, step: 0.01,  max: 1.67},
-				{name: "Critical Hit",    index: 4, value: 0, step: 0.005, max: 0.11},
+				{name: "All Damage",      index: 0, value: 0, step: 0.01,  max: 1.54},
+				{name: "Critical Damage", index: 1, value: 0, step: 0.01,  max: 0.91},
+				{name: "Gold Dropped",    index: 2, value: 0, step: 0.01,  max: 0.86},
+				{name: "Chest Gold",      index: 3, value: 0, step: 0.01,  max: 1.77},
+				{name: "Critical Hit",    index: 4, value: 0, step: 0.005, max: 0.145},
 				{name: "Tap Damage",      index: 5, value: 0, step: 0.01,  max: 0.44}];
 
 			$scope.methods = [

@@ -304,6 +304,13 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 				}
 			}).success(function(data, status, headers, config) {
 				console.log(log("state saved"));
+				$rootScope.stateSavedSuccessfully = true;
+				setTimeout(function() {
+					console.log("lakjsldfkj");
+					$rootScope.$apply(function() {
+						$rootScope.stateSavedSuccessfully = false
+					});
+				}, 1000);
 			}).error(function(data, status, headers, config) {
 				console.log(log("error saving state: " + data));
 			});

@@ -106,7 +106,7 @@
 							<button class="btn btn-success thinbtn" ng-click="storeToCookies()">Save cookies</button>
 							<button class="btn btn-success thinbtn" ng-click="readFromCookies()">Load from cookies</button>
 							<button class="btn btn-danger thinbtn" ng-click="clearAllCookies()">Clear cookies</button>
-							<button class="btn btn-success thinbtn" id="savebutton" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">Save to account</button>
+							<button class="btn btn-success thinbtn" id="savebutton" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">{{stateSavedSuccessfully ? "Successfully saved!" : "Save to account"}}</button>
 <!--
 							{{$root.loggedIn}} -->
 							<button class="btn btn-primary thinbtn" ng-click="loadFromFile()">Load info from file</button>
