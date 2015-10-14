@@ -255,7 +255,8 @@ yattoApp.controller('SequencerController',
 						seed: weapon.seed,
 						weapon: weapon.weapon,
 						wi: weapon.wi,
-						typeclass: weapon.typeclass
+						typeclass: weapon.typeclass,
+						premium: weapon.premium
 					})
 					newi += 1;
 				}
@@ -264,7 +265,7 @@ yattoApp.controller('SequencerController',
 			$scope.w_steps = new_w;
 			$scope.w_currentSeed = $scope.w_steps[0].seed;
 			$scope.current_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.n; }));
-			$scope.after_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
+			// $scope.after_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
 
 			calculateColumns();
 
@@ -316,46 +317,153 @@ yattoApp.controller('SequencerController',
 				var nextSeed = random.next(1, 2147483647);
 				var weapon = random.next(1, 34);
 
-
-				var indexOfMaxValue = $scope.current_weapons.map(
-					function(x) { return x.a; }).reduce(
-					function(iMax,x,i,a) {return x>a[iMax] ? i : iMax;}, 0);
-
-				var cssclass = "";
-				var before = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
-				$scope.current_weapons[weapon-1].a += 1;
-				var after = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
-
-				// console.log("weapon: " + weapon);
-				// console.log("maxw: " + maxw);
-
-				if (before == after) {
-					if (weapon == 33) {
-						cssclass = "darklord";
-					} else if (weapon - 1 == indexOfMaxValue) {
-						cssclass = "maxweapon";
-					} else if ($scope.current_weapons[weapon-1].a - 1 == before) {
-						cssclass = "minweapon";
-					}
-				} else {
-					cssclass = "newset";
-				}
-				//var cssclass = before == after ? (weapon == 33 ? "darklord" : "") : "newset";
 				$scope.w_steps.push({
 					index: i + 1,
 					seed: currentSeed,
 					weapon: heroToName[weapon],
-					wi: weapon - 1,
-					typeclass: cssclass
+					wi: weapon - 1
+					// currentWeapons: $.extend(true, [], $scope.current_weapons)//,
+					//typeclass: cssclass
 				});
+
+				$scope.current_weapons[weapon - 1].a += 1;
 				currentSeed = nextSeed;
 			}
 
 			$scope.current_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.n; }));
 			$scope.after_min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
 
-			calculateColumns();
+			$scope.recolorWeapons();
 
+			calculateColumns();
+		};
+
+		$scope.calculatePremiums = function(windex) {
+			// console.log("premiums: " + windex);
+
+			// var w = $scope.w_steps[i];
+			// if (w.premium) {
+			// 	console.log(w.currentWeapons.map(function(x) { return x.a; }));
+			// 	var min = Math.min.apply(null, w.currentWeapons.map(function(x) { return x.a; }));
+			// 	console.log(min);
+			// 	var possible = [];
+			// 	for (var i in w.currentWeapons) {
+			// 		if (w.currentWeapons[i].a == min) {
+			// 			possible.push(i);
+			// 		}
+			// 	}
+
+			// 	console.log(possible);
+
+			// 	var random = new Random(w.seed);
+			// 	var nextSeed = random.next(1, 2147483647);
+			// 	var newIndex = random.next(0, possible.length);
+			// 	var newWeapon = parseInt(possible[newIndex]);
+
+			// 	w.weapon = heroToName[newWeapon + 1];
+			// 	w.wi = newWeapon;
+			// } else {
+			// 	var random = new Random(w.seed);
+			// 	var nextSeed = random.next(1, 2147483647);
+			// 	var weapon = random.next(1, 34);
+
+			// 	w.weapon = heroToName[weapon];
+			// 	w.wi = weapon - 1;
+			// }
+
+			for (var i in $scope.current_weapons) {
+				$scope.current_weapons[i].a = $scope.current_weapons[i].n;
+			}
+
+			$scope.w_steps.forEach(function(w, i) {
+				var weapon = w.wi;
+
+				// console.log("-------");
+				// console.log($scope.current_weapons.map(function(x) { return x.a; }));
+				// console.log(w.currentWeapons.map(function(x) { return x.a; }));
+
+				if (w.premium) {
+					var min = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
+					// console.log(min);
+					// console.log($scope.current_weapons);
+					var possible = [];
+					for (var i in $scope.current_weapons) {
+						if ($scope.current_weapons[i].a == min) {
+							possible.push(i);
+						}
+					}
+
+					// console.log(possible);
+
+					var random = new Random(w.seed);
+					var nextSeed = random.next(1, 2147483647);
+					var newIndex = random.next(0, possible.length);
+					// console.log(newIndex);
+					var newWeapon = parseInt(possible[newIndex]);
+					// console.log(newWeapon);
+					w.weapon = heroToName[newWeapon + 1];
+					// console.log(newWeapon + 1);
+					// console.log(heroToName[newWeapon + 1]);
+					w.wi = newWeapon;
+					weapon = newWeapon;
+				} else if (i == windex) {
+					var random = new Random(w.seed);
+					var nextSeed = random.next(1, 2147483647);
+					var weapon = random.next(1, 34);
+
+					w.weapon = heroToName[weapon];
+					w.wi = weapon - 1;
+				}
+
+				$scope.current_weapons[weapon].a += 1;
+			});
+
+			$scope.recolorWeapons();
+		};
+
+		$scope.recolorWeapons = function() {
+			for (var i in $scope.current_weapons) {
+				$scope.current_weapons[i].a = $scope.current_weapons[i].n;
+			}
+
+			$scope.w_steps.forEach(function(w, i) {
+				var weapon = w.wi;
+				// console.log("weapon " + i + ": " + weapon);
+				// console.log($scope.current_weapons.map(function(x) { return x.a; }));
+				var indexOfMaxValue = $scope.current_weapons.map(
+					function(x) { return x.a; }).reduce(
+					function(iMax,x,i,a) {return x>a[iMax] ? i : iMax;}, 0);
+
+				var cssclass = "";
+				var before = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
+				$scope.current_weapons[weapon].a += 1;
+				var after = Math.min.apply(null, $scope.current_weapons.map(function(x) { return x.a; }));
+
+				// console.log(before);
+				// console.log(after);
+
+				// console.log("min: " + ($scope.current_weapons[weapon].a - 1));
+				// console.log("max: " + indexOfMaxValue);
+
+				// console.log("weapon: " + weapon);
+				// console.log("maxw: " + maxw);
+
+				if (before == after) {
+					if (weapon == 32) {
+						cssclass = "darklord";
+					} else if (weapon == indexOfMaxValue) {
+						cssclass = "maxweapon";
+					} else if ($scope.current_weapons[weapon].a - 1 == before) {
+						cssclass = "minweapon";
+					}
+				} else {
+					cssclass = "newset";
+				}
+
+				//var cssclass = before == after ? (weapon == 33 ? "darklord" : "") : "newset";
+
+				w.typeclass = cssclass;
+			});
 		};
 
 
