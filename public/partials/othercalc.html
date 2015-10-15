@@ -4,6 +4,7 @@
 			<div class="row">
 				<div class="col-md-8" id="customizations-col">
 					<div id="customizations-box" class="panel">
+						<b>THESE VALUES WILL NOT BE SAVED, OR GET FILLED IN BY UPLOADING YOUR ADAT FILE</b> - I'm still working on this stuff. The list order shouldn't change by too much, though, so you should be able to just do it once and save it somewhere...?
 						<div class="row">
 							<div class="col-md-7" id="customizations-owned">
 								<div id="customizations-list">
@@ -49,19 +50,40 @@
 							<div id="herolevels-list">
 								<h3>Hero Levels</h3>
 								<!-- {{oc_customization_totals}} -->
+								Enter in the gold you have and your current hero levels (they get carried over from the main calculator page but don't write back to it), then hit recalculate to get the best distribution of hero levels. You can also include a target total levels and your stage to get how much gold you'd need along with how many monsters that'd be (I'm not 100% sure about the number of monsters yet, but it should be close)
 
-								lakjsdfl jalsdj fl;ajs ;dljf lasjkd flajsdlkf
+								<hr>
 
 								<div>
 									<label>Gold:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="exponent" ng-change="" min="0"/>
+									<input type="number" class="form-control number-input right-input" ng-model="exponent" ng-change="" min="0" tabindex="2"/>
 									<label class="right-input">E+</label>
-									<input type="number" class="form-control number-input right-input" ng-model="mantissa" ng-change="" max="10"/>
+									<input type="number" class="form-control number-input right-input" ng-model="mantissa" ng-change="" max="10" tabindex="1"/>
 								</div>
 
 								<div>
 									<label>Total Levels:</label>
 									<input type="number" class="form-control number-input right-input" ng-model="total_levels" ng-change="" readonly/>
+								</div>
+
+								<div>
+									<label>Want to get to total levels:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="target_levels" ng-change="" tabindex="3"/>
+								</div>
+
+								<div>
+									<label>On stage:</label>
+									<input type="number" class="form-control number-input right-input" ng-model="target_stage" ng-change="" tabindex="4"/>
+								</div>
+
+								<div>
+									<label>Gold required:</label>
+									<input type="text" class="form-control number-input right-input" ng-model="target_gold" ng-change="" readonly/>
+								</div>
+
+								<div>
+									<label>Monsters:</label>
+									<input type="text" class="form-control number-input right-input" ng-model="target_monsters" ng-change="" readonly/>
 								</div>
 
 								<button class="btn btn-primary wbtn right-input" id="" ng-click="recalcBest()">Recalculate</button>
@@ -77,7 +99,7 @@
 									<tr ng-repeat="h in oc_heroes track by $index" class="step-row">
 										<td class="s-current-col1">{{h.name}}</td>
 										<td class="s-current-col2">
-											<input type="number" class="form-control number-input right-input level-input" ng-model="h.level" min="0" ng-change=""/>
+											<input type="number" class="form-control number-input right-input level-input" ng-model="h.level" min="0" ng-change="" tabindex="{{8+$index+1}}" />
 										</td>
 										<td class="s-current-col2">
 											<input type="number" class="form-control number-input right-input level-input" ng-model="h.best" readonly/>

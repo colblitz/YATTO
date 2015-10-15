@@ -262,6 +262,29 @@ yattoApp.controller('OtherCalcController',
 
 			$scope.total_levels = levels_new.reduce(function(a, b) { return a + b; });
 
+			var current = $scope.total_levels;
+			var required_gold = 0;
+			while (current < $scope.target_levels) {
+				var t = lheap.pop();
+				var cost = t[0];
+				var index = t[1];
+				required_gold += cost;
+				current += 1;
+				levels_new[index] += 1;
+				var new_cost = hero_info[index].get_upgrade_cost(levels_new[index]);
+				lheap.push([new_cost, index]);
+			}
+			console.log(required_gold);
+			$scope.target_gold = parseFloat(required_gold.toPrecision(4)).toExponential();
+
+			base_stage_gold($scope.target_stage)
+
+			var g = getGameState($scope.oc_customization_totals);
+			g.get_all_skills();
+
+			var gold_per_mob = g.mob_multiplier() * base_stage_gold($scope.target_stage);
+			$scope.target_monsters = parseFloat(Math.round(required_gold / gold_per_mob).toPrecision(4)).toExponential();
+
 			// console.log(gold_left);
 			// console.log(levels_new);
 			// console.log(levels_new.reduce(function(a, b) { return a + b; }));
