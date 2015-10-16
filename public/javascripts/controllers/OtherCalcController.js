@@ -183,6 +183,16 @@ yattoApp.controller('OtherCalcController',
 			// });
 		};
 
+		$scope.setAll = function() {
+			console.log($scope.setLevel);
+			var l = parseOrZero($scope.setLevel, parseInt);
+			if (isNonNull(l) && l != 0) {
+				$scope.oc_heroes.forEach(function(h, i) {
+					h.level = l;
+				});
+			}
+		};
+
 		$scope.recalcBest = function() {
 			// TODO: optimize this
 
