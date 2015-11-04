@@ -804,7 +804,8 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 		var a_crit_uptime = this.l_parchment > 0 ? Math.min((30 + 3 * this.l_parchment) / 900, 1) : 0;
 		var a_crit_bonus = this.others.cs > 0 ? Math.min((0.17 + (this.others.cs - 1) * 0.03), 1) : 0;
 
-		var a_crit_chance = Math.min(1, crit_chance + a_crit_uptime * a_crit_bonus);
+		// var a_crit_chance = Math.min(1, crit_chance + a_crit_uptime * a_crit_bonus);
+		var a_crit_chance = Math.min(crit_chance * (1 - a_crit_uptime) + Math.min(1, crit_chance + a_crit_bonus) * a_crit_uptime, 1);
 		var a_overall_crit_multiplier = ((1 - a_crit_chance) + (a_crit_chance * 0.65 * crit_multiplier));
 
 		var a_tap_uptime = this.l_axe > 0 ? Math.min((30 + 3 * this.l_axe) / 1800, 1) : 0;
