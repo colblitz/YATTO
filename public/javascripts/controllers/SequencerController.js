@@ -415,8 +415,18 @@ yattoApp.controller('SequencerController',
 					w.wi = weapon - 1;
 				}
 
+				// The calculation of the weapon var fails for darklord ("33"),
+				// should be "32" as far as I know
+				// For other heros it seems to work (e.g Jackalope -> "31")
+				if (weapon == 33) {
+					weapon -= 1 ;
+				}
+
+				// execption occrus here for var weapon = 33, DL
+				// since the array is only filled up to 32
 				$scope.current_weapons[weapon].a += 1;
 			});
+
 
 			$scope.recolorWeapons();
 		};
