@@ -595,6 +595,17 @@ yattoApp.controller('CalculatorController',
 
 			// update things
 			$scope.updateThings();
+
+			console.log("lkajsdlkfjasdf");
+			$scope.$parent.saveStateFile(
+				[$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
+				 $scope.heroes.map(function(h) { return h.weapons; }).join(),
+				 $scope.heroes.map(function(h) { return h.level; }).join(),
+				 $scope.customizations.map(function(c) { return c.value; }).join(),
+				 $scope.relics,
+				 $scope.a_currentSeed,
+				 $scope.w_currentSeed].join("|")
+			);
 		};
 
 		$scope.saveUserState = function() {

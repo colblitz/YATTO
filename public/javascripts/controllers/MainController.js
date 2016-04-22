@@ -317,6 +317,25 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 		}
 	};
 
+	$scope.saveStateFile = function(filestring) {
+		if ($rootScope.loggedIn) {
+			console.log(log("is logged in"));
+			console.log(log("sending: " + filestring));
+			$http({
+				method: "POST",
+				url: "filestate",
+				data: {
+					"state": filestring
+				}
+			}).success(function(data, status, headers, config) {
+				console.log(log("statefile saved"));
+			}).error(function(data, status, headers, config) {
+				console.log(log("error saving statefile: " + data));
+			});
+		}
+	};
+
+
 	window.onbeforeunload = function (event) {
 		console.log(log("window unload, save state"));
 		$scope.saveState();

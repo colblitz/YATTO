@@ -2,6 +2,7 @@ var express = require('express');
 var mongoose = require('mongoose');
 var User = require('../models/user');
 var State = require('../models/state');
+var Filestate = require('../models/filestate');
 var router = express.Router();
 
 var sendSuccess = function(res, content) {
@@ -79,8 +80,44 @@ module.exports = function(passport) {
 			console.log("received: " + req.body.state);
 
 			var newState = new State();
+			var userId = mongoose.Types.ObjectId(req.user.id)
 			newState.state = req.body.state;
-			newState.user = mongoose.Types.ObjectId(req.user.id);
+			newState.user = userId;
+
+			// State.find({'user':userId}).count(function(error, n) {
+   //  		console.log("callback");
+   //  		console.log(n);
+
+   //  		var l = Math.max(0, n-5);
+   //  		State.find({'user':userId}, function(err, states) {
+   //  			console.log("find");
+   //  			console.log(states);
+   //  		}).sort({'date':1}).limit(l);
+			// });
+
+			// State.find({'user':userId}).count(function(error, n) {
+   //  		console.log("second ");
+   //  		console.log(n);
+
+   //  		if (n > 5) {
+	  //   		var l = Math.max(0, n-5);
+	  //   		State.remove({'user':userId}, function(err, states) {
+	  //   			console.log("delete");
+	  //   			console.log(states);
+	  //   		}).sort({'date':1}).limit(l);
+	  //   	}
+			// });
+
+			// State.find({'user':userId}).count(function(error, n) {
+   //  		console.log("after");
+   //  		console.log(n);
+			// });
+
+
+// 			db.collection.find().skip(db.collection.count() - N)
+// If you want them in the reverse order:
+
+// db.collection.find().sort({ $natural: -1 }).limit(N)
 
 			newState.save(function(err) {
 				if (err) {
@@ -89,6 +126,30 @@ module.exports = function(passport) {
 					return;
 				}
 				console.log("State successfully saved");
+			});
+			sendSuccess(res, null);
+		} else {
+			console.log("not authenticated");
+		}
+	});
+
+	router.post('/filestate', function(req, res, next) {
+		if (req.isAuthenticated()) {
+			console.log("user: " + req.user.username);
+			console.log("user: " + req.user.id);
+			console.log("received: " + req.body.state);
+
+			var newState = new Filestate();
+			var userId = mongoose.Types.ObjectId(req.user.id)
+			newState.state = req.body.state;
+			newState.user = userId;
+			newState.save(function(err) {
+				if (err) {
+					console.log("Error saving state: " + err);
+					sendErrResponse(res, err);
+					return;
+				}
+				console.log("Filestate successfully saved");
 			});
 			sendSuccess(res, null);
 		} else {
