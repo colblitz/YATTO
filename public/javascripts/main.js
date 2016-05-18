@@ -113,7 +113,7 @@ var processData = function(data) {
 };
 
 $.ajax({
-  url: "../artifact_order_public - Random.csv",
+  url: "../saved_data - Copy.csv",
   async: false,
   dataType: "text",
   success: function(data) {

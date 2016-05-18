@@ -19,7 +19,7 @@ yattoApp.controller('SequencerController',
 		var salvageCosts = {};
 
 		var i = 0;
-		while (i < 30) {
+		while (i < 31) {
 			var aCost = costToBuy(i);
 			var nCost = costToBuy(i+1);
 			var a = (aCost + nCost) * 1;
@@ -86,7 +86,7 @@ yattoApp.controller('SequencerController',
 			}).length;
 		};
 
-
+		// TODO: Make this not depend on unityRandom
 		$scope.getList = function(reset, slist) {
 			var steps = [];
 			var currentSeed = $scope.a_currentSeed;
@@ -120,7 +120,7 @@ yattoApp.controller('SequencerController',
 					}
 					currentSeed = unityRandom[currentSeed].nextSeed;
 				} else {
-					var numOwned = 29 - list.length;
+					var numOwned = 30 - list.length;
 					var index = unityRandom[currentSeed].values[numOwned];
 					var next = list[index];
 					var keep = !salvages[steps.length];

@@ -99,7 +99,8 @@
 				<!-- <span class="col-md-1 navlink navlogin" ><a href="" ng-click="test()"><i class="fa"></i>Test</a></span> -->
 			</div>
 			<div class="row">
-				<div id="banner" class="col-md-10 col-md-offset-1 col-xs-12" collapse="isCollapsed">
+				<!-- <div id="banner" class="col-md-10 col-md-offset-1 col-xs-12" collapse="isCollapsed"> -->
+				<div id="banner" class="col-md-10 col-md-offset-1 col-xs-12">
 					<!-- <b>Update(5/12/2015):</b> There's been an update (check the <a href="http://dd.reddit.com/r/TapTitans/comments/35oeia/yatto_updates/">reddit post</a> for more details) that now uses a different format for cookies and state. You'll need to re-enter in your weapons (sorry!) but you can save the artifact portion of the save state (everything before the first "|"). You'll want to copy that portion, reset all cookies, refresh (everything will be defaults), then replace the default artifact portion with yours, then load from save state, and re-enter your weapons. -->
 					<!-- <b>Update(5/20/2015):</b> An artifact calculator has been added to the reference page, and in doing so a few things about how artifact info is stored were changed, so please let me know if any values seem off. (Note: if the artifact levels aren't showing up on the reference page try going to calculator and back to reference.) -->
 					<!-- <b>Update(5/20/2015):</b> Shoutouts to <a href="https://www.reddit.com/user/roflswithcopters">/u/roflswithcopters</a> for helping me find a bug with my gold multiplier formula. Future's Fortune should be calculated correctly now. -->
@@ -136,7 +137,10 @@
 					<!-- <b>Update(10/15/2015):</b> Added some new stuff - there's now a page where you can optimize your customization buying (this isn't added to the state yet so won't be saved) and your hero level buying. You can also simulate using premiums now - there might be a few bugs in how calculating premiums interacts with when you click the checkmark, just let me know if something is off. I'm definitely getting more apathetic about the aesthetics of things, but the functionality should be there and I figured people won't mind as much as long as it works >> -->
 					<!-- <b>Update(3/17/2016):</b> Quick note - I had to change a few things in my server setup/am tinkering with stuff so there might be some downtime over the next few days. Let me know if there are any issues :D -->
 					<!-- <b>Update(4/7/2016):</b> Things should be more stable now, ish - again, let me know if there are any issues (/u/colblitz on Reddit) -->
-					<b>Update(5/17/2016):</b> Yes, the new update (TT v. 4.0.0) has been coming out for some people, and yes I do plan on updating/adding to YATTO for the new content, but I myself don't have the update yet and I'll be out of town this weekend, so it may be some time before YATTO gets updated. Initial impression is that the new stuff is entirely isolated with no carry-over, so everything for the old stuff should still be valid.
+					<!-- <b>Update(5/17/2016):</b> Yes, the new update (TT v. 4.0.0) has been coming out for some people, and yes I do plan on updating/adding to YATTO for the new content, but I myself don't have the update yet and I'll be out of town this weekend, so it may be some time before YATTO gets updated. Initial impression is that the new stuff is entirely isolated with no carry-over, so everything for the old stuff should still be valid.
+					<h1>If you're on the new update (4.1.1) the optimizer AND THE SEQUENCER will be off (because they added a new artifact - Brew of Absorption is back!)</h1> -->
+					<b>Update(5/18/2016):</b> New update (TT v. 4.1.1) seems to out for everyone now, and again, yes I do plan on adding to YATTO for the new content, but I'll be out of town this weekend so no promises on when. <h3>The sequencer should be working again, to include Brew of Absorption, and the optimizer works, sort of - it doesn't yet take into account Brew's dps increase, so calculations are as if it only has All Damage.</h3>
+					Let me know if the sequencer is wrong (/u/colblitz on Reddit) - it would be very useful to include screenshots of before/after, or even better have before/after versions of your savefile
 				</div>
 				<div id="expander" class="col-md-10 col-md-offset-1 col-xs-12" ng-click="toggle()">
 					<i class="expandicon fa fa-angle-double-down" ng-show="isCollapsed"></i>

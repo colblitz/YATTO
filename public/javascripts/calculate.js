@@ -47,35 +47,36 @@ var Artifact = function(name, ad0, adpl, levelcap, x, y, effect, desc) {
 }
 
 var artifact_info = [
-	new Artifact("Amulet of the Valrunes",   50,  25,  0, 0.7, 2.0,   10, "gold from monsters"),       //  0 monster gold
-	new Artifact("Axe of Resolution",        70,  35,  0, 0.5, 1.7,   10, "Berserker Rage duration"),  //  1 BR duration
-	new Artifact("Barbarian's Mettle",       70,  35, 10, 0.4, 1.5,   -5, "Berserker Rage cooldown"),  //  2 BR CDR
-	new Artifact("Chest of Contentment",     40,  20,  0, 1.0, 1.5,   20, "Chesterson gold"),          //  3 chesterson gold
-	new Artifact("Crafter's Elixir",         40,  20,  0, 0.5, 1.8,   15, "gold from all sources"),    //  4 increase gold (multiplicative)
-	new Artifact("Crown Egg",                40,  20,  0, 1.0, 1.5,   20, "base Chesterson chance"),   //  5 chesterson chance
-	new Artifact("Dark Cloak of Life",       30,  15, 25, 0.5, 2.0,   -2, "boss health"),              //  6 boss life
-	new Artifact("Death Seeker",             30,  15, 25, 0.8, 2.5,   10, "base crit chance"),         //  7 crit chance
-	new Artifact("Divine Chalice",           30,  15,  0, 0.7, 1.7,  0.5, "chance for 10x gold"),      //  8 chance for 10x gold
-	new Artifact("Drunken Hammer",           60,  30,  0, 0.6, 1.7,    2, "tap damage"),               //  9 tap damage
-	new Artifact("Future's Fortune",         30,  15,  0, 0.7, 2.0,    5, "gold from all sources"),    // 10 increase gold (additive)
-	new Artifact("Hero's Thrust",            30,  15,  0, 0.7, 1.7,   20, "crit damage"),              // 11 crit damage
-	new Artifact("Hunter's Ointment",       120,  60, 10, 0.4, 1.5,   -5, "War Cry cooldown"),         // 12 WC CDR
-	new Artifact("Knight's Shield",          60,  30,  0, 0.7, 1.5,  100, "gold from bosses"),         // 13 boss gold
-	new Artifact("Laborer's Pendant",        70,  35, 10, 0.7, 1.5,   -5, "Hand of Midas cooldown"),   // 14 HoM CDR
-	new Artifact("Ogre's Gauntlet",          70,  35,  0, 0.5, 1.7,   10, "Shadow Clone duration"),    // 15 SC duration
-	new Artifact("Otherworldly Armor",       70,  35, 10, 1.0, 2.2,   -5, "hero death chance"),        // 16 hero death chance
-	new Artifact("Overseer's Lotion",        70,  35, 10, 0.4, 1.5,   -5, "Shadow Clonse cooldown"),   // 17 SC CDR
-	new Artifact("Parchment of Importance",  70,  35,  0, 0.5, 1.7,   10, "Critical Strike duration"), // 18 CS duration
-	new Artifact("Ring of Opulence",         70,  35,  0, 0.7, 1.7,   10, "Hand of Midas duration"),   // 19 HoM duration
-	new Artifact("Ring of Wondrous Charm",   30,  15, 25, 0.5, 1.7,   -2, "hero upgrade cost"),        // 20 upgrade cost
-	new Artifact("Sacred Scroll",            70,  35, 10, 0.4, 1.5,   -5, "Critical Strike cooldown"), // 21 CS CDR
-	new Artifact("Saintly Shield",           70,  35, 10, 0.3, 1.5,   -5, "Heavenly Strike cooldown"), // 22 HS CDR
-	new Artifact("Savior Shield",            30,  15, 25, 0.5, 1.7,   10, "boss time"),                // 23 boss time
-	new Artifact("Tincture of the Maker",    10,   5,  0, 0.6, 2.5,    5, "overall all damage"),       // 24 all damage
-	new Artifact("Undead Aura",              30,  15,  0, 0.7, 2.0,    5, "relics from prestige"),     // 25 bonus relics
-	new Artifact("Universal Fissure",       120,  60,  0, 0.5, 1.7,   10, "War Cry duration"),         // 26 WR duration
-	new Artifact("Warrior's Revival",        70,  35, 10, 1.0, 2.2,   -5, "hero revive time"),         // 27 revive time
-	new Artifact("Worldly Illuminator",     300, 150,  5, 0.6, 3.0, -100, "monsters per stage")        // 28 number of mobs
+	new Artifact("Amulet of the Valrunes",   50,  25,  0, 0.7, 2.0,   10, "gold from monsters"),              //  0 monster gold
+	new Artifact("Axe of Resolution",        70,  35,  0, 0.5, 1.7,   10, "Berserker Rage duration"),         //  1 BR duration
+	new Artifact("Barbarian's Mettle",       70,  35, 10, 0.4, 1.5,   -5, "Berserker Rage cooldown"),         //  2 BR CDR
+	new Artifact("Chest of Contentment",     40,  20,  0, 1.0, 1.5,   20, "Chesterson gold"),                 //  3 chesterson gold
+	new Artifact("Crafter's Elixir",         40,  20,  0, 0.5, 1.8,   15, "gold from all sources"),           //  4 increase gold (multiplicative)
+	new Artifact("Crown Egg",                40,  20,  0, 1.0, 1.5,   20, "base Chesterson chance"),          //  5 chesterson chance
+	new Artifact("Dark Cloak of Life",       30,  15, 25, 0.5, 2.0,   -2, "boss health"),                     //  6 boss life
+	new Artifact("Death Seeker",             30,  15, 25, 0.8, 2.5,   10, "base crit chance"),                //  7 crit chance
+	new Artifact("Divine Chalice",           30,  15,  0, 0.7, 1.7,  0.5, "chance for 10x gold"),             //  8 chance for 10x gold
+	new Artifact("Drunken Hammer",           60,  30,  0, 0.6, 1.7,    2, "tap damage"),                      //  9 tap damage
+	new Artifact("Future's Fortune",         30,  15,  0, 0.7, 2.0,    5, "gold from all sources"),           // 10 increase gold (additive)
+	new Artifact("Hero's Thrust",            30,  15,  0, 0.7, 1.7,   20, "crit damage"),                     // 11 crit damage
+	new Artifact("Hunter's Ointment",       120,  60, 10, 0.4, 1.5,   -5, "War Cry cooldown"),                // 12 WC CDR
+	new Artifact("Knight's Shield",          60,  30,  0, 0.7, 1.5,  100, "gold from bosses"),                // 13 boss gold
+	new Artifact("Laborer's Pendant",        70,  35, 10, 0.7, 1.5,   -5, "Hand of Midas cooldown"),          // 14 HoM CDR
+	new Artifact("Ogre's Gauntlet",          70,  35,  0, 0.5, 1.7,   10, "Shadow Clone duration"),           // 15 SC duration
+	new Artifact("Otherworldly Armor",       70,  35, 10, 1.0, 2.2,   -5, "hero death chance"),               // 16 hero death chance
+	new Artifact("Overseer's Lotion",        70,  35, 10, 0.4, 1.5,   -5, "Shadow Clonse cooldown"),          // 17 SC CDR
+	new Artifact("Parchment of Importance",  70,  35,  0, 0.5, 1.7,   10, "Critical Strike duration"),        // 18 CS duration
+	new Artifact("Ring of Opulence",         70,  35,  0, 0.7, 1.7,   10, "Hand of Midas duration"),          // 19 HoM duration
+	new Artifact("Ring of Wondrous Charm",   30,  15, 25, 0.5, 1.7,   -2, "hero upgrade cost"),               // 20 upgrade cost
+	new Artifact("Sacred Scroll",            70,  35, 10, 0.4, 1.5,   -5, "Critical Strike cooldown"),        // 21 CS CDR
+	new Artifact("Saintly Shield",           70,  35, 10, 0.3, 1.5,   -5, "Heavenly Strike cooldown"),        // 22 HS CDR
+	new Artifact("Savior Shield",            30,  15, 25, 0.5, 1.7,   10, "boss time"),                       // 23 boss time
+	new Artifact("Tincture of the Maker",    10,   5,  0, 0.6, 2.5,    5, "overall all damage"),              // 24 all damage
+	new Artifact("Undead Aura",              30,  15,  0, 0.7, 2.0,    5, "relics from prestige"),            // 25 bonus relics
+	new Artifact("Universal Fissure",       120,  60,  0, 0.5, 1.7,   10, "War Cry duration"),                // 26 WR duration
+	new Artifact("Warrior's Revival",        70,  35, 10, 1.0, 2.2,   -5, "hero revive time"),                // 27 revive time
+	new Artifact("Worldly Illuminator",     300, 150,  5, 0.6, 3.0, -100, "monsters per stage"),              // 28 number of mobs
+	new Artifact("Brew of Absorption",       60,  30,  0, 0.6, 1.7,    2, "overall all damage when online"),  // 29 BR duration
 ];
 
 var numSkillTypes = 9;
@@ -299,35 +300,36 @@ for (var h in hero_info) {
 
 var getOrderList = function() {
   return [
-    13, // Knight's Shield
-     0, // Amulet of the Valrunes
-     6, // Dark Cloak of Life
-     7, // Death Seeker
-    23, // Savior Shield
-    17, // Overseer's Lotion
-    21, // Sacred Scroll
-    12, // Hunter's Ointment
-    14, // Laborer's Pendant
-     2, // Barbarian's Mettle
-    22, // Saintly Shield
-    15, // Ogre's Gauntlet
-    18, // Parchment of Importance
-    26, // Universal Fissure
-    19, // Ring of Opulence
-     1, // Axe of Resolution
-    11, // Hero's Thrust
-     5, // Crown Egg
-     3, // Chest of Contentment
-    10, // Future's Fortune
-     8, // Divine Chalice
-    25, // Undead Aura
-    27, // Warrior's Revival
-    20, // Ring of Wondrous Charm
-    28, // Worldly Illuminator
-    24, // Tincture of the Maker
-     4, // Crafter's Elixir
-    16, // Otherworldly Armor
-     9  // Drunken Hammer
+    13, //  1 Knight's Shield
+     0, //  2 Amulet of the Valrunes
+     6, //  3 Dark Cloak of Life
+     7, //  4 Death Seeker
+    23, //  5 Savior Shield
+    17, //  6 Overseer's Lotion
+    21, //  7 Sacred Scroll
+    12, //  8 Hunter's Ointment
+    14, //  9 Laborer's Pendant
+     2, // 10 Barbarian's Mettle
+    22, // 11 Saintly Shield
+    15, // 12 Ogre's Gauntlet
+    18, // 13 Parchment of Importance
+    26, // 14 Universal Fissure
+    19, // 15 Ring of Opulence
+     1, // 16 Axe of Resolution
+    11, // 17 Hero's Thrust
+     5, // 18 Crown Egg
+     3, // 19 Chest of Contentment
+    10, // 20 Future's Fortune
+     8, // 21 Divine Chalice
+    25, // 22 Undead Aura
+    27, // 23 Warrior's Revival
+    20, // 24 Ring of Wondrous Charm
+    28, // 25 Worldly Illuminator
+    24, // 26 Tincture of the Maker
+     4, // 27 Crafter's Elixir
+    16, // 28 Otherworldly Armor
+     9, // 29 Drunken Hammer
+    29  // 30 Brew of Absorption
     ];
 };
 
