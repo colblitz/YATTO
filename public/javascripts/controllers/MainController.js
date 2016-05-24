@@ -2,6 +2,13 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
 	$scope.username = "";
 	$scope.password = "";
 
+	$scope.processKeypress = function(event) {
+		console.log(event.which);
+		if (event.which === 13) {
+			$scope.login();
+		} 
+	}
+
 	$scope.login = function() {
 		// do login
 		if ($scope.password == "") {
@@ -261,7 +268,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 						}
 					}
 				}, function () {
-					console.log(log("Modal dismissed at: " + new Date()));
+					console.log("i wuz here");
 				});
 			}
 		}

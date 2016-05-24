@@ -62,24 +62,26 @@
 			</div>
 
 			<script type="text/ng-template" id="loginModal.html">
-				<div class="modal-header">
-					<h3 class="modal-title">Login!</h3>
-				</div>
-				<div class="modal-body">
-					<div class="modal-form-item">
-						<span class="modal-form-label">Username:</span>
-						<input type="text" class="form-control right-input modal-input" ng-model="username"/>
+				<div tabindex="0" ng-keypress="processKeypress($event)">
+					<div class="modal-header">
+						<h3 class="modal-title">Login!</h3>
 					</div>
-					<div class="modal-form-item">
-						<span class="modal-form-label">Password:</span>
-						<input type="password" class="form-control right-input modal-input" ng-model="password"/>
+					<div class="modal-body">
+						<div class="modal-form-item">
+							<span class="modal-form-label">Username:</span>
+							<input type="text" class="form-control right-input modal-input" ng-model="username"/>
+						</div>
+						<div class="modal-form-item">
+							<span class="modal-form-label">Password:</span>
+							<input type="password" class="form-control right-input modal-input" ng-model="password"/>
+						</div>
+						<span class="modal-message">{{message}}</span>
 					</div>
-					<span class="modal-message">{{message}}</span>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-primary" ng-click="login()">Login</button>
-					<button class="btn btn-primary" ng-click="register()">Register</button>
-					<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+					<div class="modal-footer login-modal-footer">
+						<button class="btn btn-primary" ng-click="login()">Login</button>
+						<button class="btn btn-primary" ng-click="register()">Register</button>
+						<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+					</div>
 				</div>
 			</script>
 
