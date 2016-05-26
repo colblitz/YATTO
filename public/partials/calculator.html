@@ -12,6 +12,14 @@
 							<div id="options-nsteps" class="small-form-item">
 								Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged(7)"/>
 							</div>
+
+							<div id="options-memory" class="small-form-item">
+								Memory Damage Bonus: <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged(21)"/>
+							</div>
+							<label>
+								(If you have 2132%, enter 21.32, not 2132)
+							</label>
+
 							<label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged(13)"/> Incorporate actives for steps (Crit, BR)</label>
 
 							<div id="options-critical" class="small-form-item">

@@ -35,7 +35,10 @@ yattoApp.controller('CalculatorController',
 
 		$scope.stepmessage = "Click calculate to get steps!";
 
-		$scope.artifact_caps = [null, null, 10, null, null, null, 25, 25, null, null, null, null, 10, null, 10, null, 10, 10, null, null, 25, 10, 10, 25, null, null, null, 10, 5];
+		// $scope.artifact_caps = [null, null, 10, null, null, null, 25, 25, null, null, null, null, 10, null, 10, null, 10, 10, null, null, 25, 10, 10, 25, null, null, null, 10, 5];
+
+		$scope.artifact_caps = artifact_info.map(function(a) { return a.levelcap == Infinity ? null : a.levelcap; });
+		// console.log($scope.artifact_caps);
 
 		var setDefaults = function() {
 			$scope.artifacts = [];
@@ -97,6 +100,9 @@ yattoApp.controller('CalculatorController',
 			$scope.critss = 0;
 			$scope.zerker = 0;
 
+			$scope.maxStageSPM = 0;
+			$scope.memory = 0;
+
 			$scope.w_chiprob = 0;
 			$scope.w_totalwp = 0;
 			$scope.w_tonexts = 0;
@@ -116,6 +122,7 @@ yattoApp.controller('CalculatorController',
 			$scope.dps_damage = 0;
 			$scope.tap_damage = 0;
 			$scope.twc_damage = 0;
+
 		};
 
 		var transformScopeArray = function(scopeArray) {
@@ -302,6 +309,7 @@ yattoApp.controller('CalculatorController',
 			else if (i == 18) { newValue = $scope.a_maxDiamonds; }
 			else if (i == 19) { newValue = $scope.w_currentSeed; }
 			else if (i == 20) { newValue = $scope.w_toCalculate; }
+			else if (i == 21) { newValue = $scope.memory; }
 
 			$scope.$parent.updateSS(i, newValue);
 			$scope.updateThings();
@@ -313,7 +321,7 @@ yattoApp.controller('CalculatorController',
 				getWeapons(),
 				getLevels(),
 				transformScopeArray($scope.customizations),
-				{ cs: $scope.critss, br: $scope.zerker });
+				{ cs: $scope.critss, br: $scope.zerker, memory: $scope.memory });
 		};
 
 		$scope.artifactCheck = function(i, ai) {
@@ -415,7 +423,8 @@ yattoApp.controller('CalculatorController',
 					g: $scope.greedy,
 					s: $scope.active,
 					t: $scope.critss,
-					z: $scope.zerker});
+					z: $scope.zerker,
+					y: $scope.memory});
 
 				console.log(log(JSON.stringify(response)));
 
@@ -528,7 +537,7 @@ yattoApp.controller('CalculatorController',
 			"2": 4, // crit chance
 			"3": 0, // all damage
 			"4": 5, // tap damage
-			"5": 3 // chest gold
+			"5": 3  // chest gold
 		};
 
 		// TODO: fix this
@@ -585,6 +594,7 @@ yattoApp.controller('CalculatorController',
 			$scope.w_currentSeed = parseInt(j.heroSave.heroWeaponSeed);
 
 			// update root scope
+			$scope.$parent.updateSS(0, j.lastSavedVersion);
 			$scope.$parent.updateSS(1, $scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join());
 			$scope.$parent.updateSS(2, $scope.heroes.map(function(h) { return h.weapons; }).join());
 			$scope.$parent.updateSS(3, $scope.heroes.map(function(h) { return h.level; }).join());
@@ -593,10 +603,13 @@ yattoApp.controller('CalculatorController',
 			$scope.$parent.updateSS(16, $scope.a_currentSeed);
 			$scope.$parent.updateSS(19, $scope.w_currentSeed);
 
+			$scope.maxStageSPM = j.trophyProgressGirl.ReachStage.progress;
+			$scope.memory = 2 * $scope.maxStageSPM / 100.00;
+			$scope.$parent.updateSS(21, $scope.memory);
+
 			// update things
 			$scope.updateThings();
 
-			console.log("lkajsdlkfjasdf");
 			$scope.$parent.saveStateFile(
 				[$scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(),
 				 $scope.heroes.map(function(h) { return h.weapons; }).join(),
@@ -619,6 +632,7 @@ yattoApp.controller('CalculatorController',
 
 				var undead = 0;
 				var artifacts = [];
+
 				t[1].split(",").forEach(function(a, i, array) {
 					var v = a.split(".");
 					var aindex = parseOrZero(v[0], parseInt);
@@ -633,6 +647,16 @@ yattoApp.controller('CalculatorController',
 						value: avalue
 					});
 				});
+
+				// brew for 3.0.0
+				if (t[0] == "v3.0.0" && artifacts.length < 30) {
+					artifacts.push({
+						name: artifact_info[29].name,
+						index: 29,
+						value: 0
+					});
+				}
+
 				$scope.artifacts = artifacts;
 				t[2].split(",").forEach(function(w, i, array) {
 					$scope.heroes[i].weapons = parseOrZero(w, parseInt);
@@ -661,6 +685,10 @@ yattoApp.controller('CalculatorController',
 				$scope.a_maxDiamonds = parseOrZero(t[18], parseInt);
 				$scope.w_currentSeed = parseOrZero(t[19], parseInt);
 				$scope.w_toCalculate = parseOrZero(t[20], parseInt);
+
+				if (21 in t) {
+					$scope.memory = parseOrZero(t[21], parseFloat);
+				}
 
 				if ($scope.r_undead == 0) { $scope.r_undead = undead; }
 				if ($scope.r_levels == 0) { $scope.r_levels = getLevels().reduce(function(a, b) { return a + b; }); }

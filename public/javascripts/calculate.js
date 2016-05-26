@@ -633,6 +633,7 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 	this.l_charm     = artifacts[20];
 	this.l_ua        = artifacts[25];
 	this.l_world     = artifacts[28];
+	this.l_brew      = artifacts[29];
 	this.main_dmg = 600 * Math.pow(1.05, 600);
 
 	this.weapons = weapons.slice();
@@ -770,8 +771,9 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 				continue;
 			}
 
+			// console.log("memory: ", this.others.memory);
 			var hero_dps = hero_info[i].get_base_damage(level);
-			var m_hero = 1 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + h_ad;
+			var m_hero = 1 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + h_ad + this.others.memory;
 			var m_artifact = 1 + this.a_ad;
 			var m_customization = 1 + this.c_ad;
 			var m_weapon = this.w_bh[i];
@@ -791,10 +793,11 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 		var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
 
 		var hero_total_dps = this.get_hero_dps();
+		// console.log("hero_total_dps: ", hero_total_dps);
 
 		// from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + h_ad)
 		var from_main = this.main_dmg * (1 + h_ad);
-		var from_hero = (h_pd * hero_total_dps) * (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer) * (1 + this.c_ad);
+		var from_hero = (h_pd * hero_total_dps) * (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer + 0.02 * this.l_brew) * (1 + this.c_ad);
 		var total_tap = from_main + from_hero;
 
 		var crit_multiplier = this.get_crit_multiplier();
@@ -1113,6 +1116,9 @@ var get_value = function(game_state, method) {
 		case METHOD_TAP_DAMAGE:
 			return game_state.tap_damage()[1];
 		case METHOD_DMG_EQUIVALENT:
+		// console.log("dmge");
+		// console.log(game_state.gold_multiplier());
+		// console.log(game_state.tap_damage());
 			return [game_state.gold_multiplier(), game_state.tap_damage()[1]];
 		case METHOD_RELICS_PS:
 			return game_state.relics_per_second()[2];
@@ -1146,7 +1152,7 @@ var get_value_memoize = function(a, p, mo) {
 	if (aHash in memoize) {
 		return memoize[aHash];
 	} else {
-		var g = new GameState(a, w, l, c, { cs: p.t, br: p.z });
+		var g = new GameState(a, w, l, c, { cs: p.t, br: p.z, memory: p.y });
 		// if rps or sps, will reset anyways
 		g.get_all_skills();
 		var base = get_value(g, m);
@@ -1179,6 +1185,7 @@ var get_best = function(params, method) {
 	while (relics_left > 0 && steps.length < stepLimit) {
 		var options = [];
 		var base = get_value_memoize(current_artifacts, params, method);
+		// console.log("base:", base);
 
 		for (var i in current_artifacts) {
 			var level = current_artifacts[i];
@@ -1188,6 +1195,8 @@ var get_best = function(params, method) {
 			var relic_cost = artifact_info[i].costToLevel(level);
 			var artifacts_copy = current_artifacts.slice();
 			artifacts_copy[i] += 1;
+
+			// console.log(artifact_info[i].name);
 
 			// Future's Fortune for gold
 			if (method == METHOD_GOLD && i == 10) {
@@ -1228,6 +1237,8 @@ var get_best = function(params, method) {
 				// e = (total_change - 1) / relic_cost;
 
 				var eq_tdmg = (gold_dmg_equivalent - 1) * base[1] + new_value[1];
+				// console.log((eq_tdmg - base[1]));
+				// console.log(relic_cost);
 				e = (eq_tdmg - base[1]) / relic_cost;
 			} else {
 				e = (new_value - base) / relic_cost;
@@ -1242,6 +1253,8 @@ var get_best = function(params, method) {
 				cumulative: cumulative + relic_cost
 			});
 		}
+
+		// console.log(options);
 
 		// pick best option
 		var best_option = get_max(options, function(o1, o2) {

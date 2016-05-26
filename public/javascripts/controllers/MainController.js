@@ -94,7 +94,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 	var setDefaults = function() {
 		$rootScope.loggedIn = false;
 		$rootScope.username = "";
-		$rootScope.versionS = "v3.0.0";
+		$rootScope.versionS = "v4.1.1";
 		$rootScope.aCookies = 'On';
 
 		var defaultA = Object.keys(artifact_info).map(function(a) { return a + ".0"; }).join();
@@ -125,7 +125,8 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 			defaultP, // 17 - a_aPriorities
 			0,        // 18 - a_maxDiamonds
 			0,        // 19 - w_currentSeed
-			0         // 20 - w_toCalculate
+			0,        // 20 - w_toCalculate
+			0,        // 21 - memory
 		].join("|");
 
 		$scope.loginText = "Login";
@@ -143,6 +144,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 	};
 
 	$scope.saveS = function() {
+		console.log($rootScope.state);
 		console.log(log("storing state to cookies"));
 		localStorageService.set('state', $rootScope.state);
 	};
