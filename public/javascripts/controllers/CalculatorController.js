@@ -267,6 +267,8 @@ yattoApp.controller('CalculatorController',
 			var g = getGameState();
 			g.get_all_skills();
 			var tap = g.tap_damage();
+			console.log("--------------------");
+			console.log(tap);
 			$scope.all_damage = g.a_ad * 100;
 			$scope.dps_damage = parseFloat(g.get_hero_dps().toPrecision(4)).toExponential();
 			$scope.tap_damage = parseFloat(tap[0].toPrecision(4)).toExponential();
