@@ -562,6 +562,7 @@ yattoApp.controller('CalculatorController',
 			// http://pastebin.com/Fz0pz0BV
 			var j = JSON.parse(JSON.parse(s));
 
+			// TODO: artifact_mapping {}
 			var artifactOrder = getOrderList();
 			var artifactLevels = {};
 			for (var a in j.artifactLevels) {

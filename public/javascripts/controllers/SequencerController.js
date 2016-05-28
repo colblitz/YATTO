@@ -81,6 +81,7 @@ yattoApp.controller('SequencerController',
 
 
 		var getOwned = function() {
+			// TODO: artifact_mapping {}
 			return getOrderList().filter(function(x) {
 				return $scope.s_artifacts[x].owned;
 			}).length;
@@ -90,6 +91,7 @@ yattoApp.controller('SequencerController',
 		$scope.getList = function(reset, slist) {
 			var steps = [];
 			var currentSeed = $scope.a_currentSeed;
+			// TODO: artifact_mapping {}
 			var list = getOrderList().filter(function(x) {
 				return !$scope.s_artifacts[x].owned;
 			});
