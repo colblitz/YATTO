@@ -2,50 +2,50 @@ var BonusTypes = {
   ALL_DAMAGE_ARTIFACTS:        0,
   ALL_DAMAGE_HEROSKILLS:       1,
   ALL_DAMAGE_CUSTOMIZATIONS:   2,
-  ALL_DAMAGE_MEMORY
-  TAP_DAMAGE_ARTIFACTS:        3,
-  TAP_DAMAGE_HEROSKILLS:       4,
-  TAP_DAMAGE_CUSTOMIZATIONS:   5,
-  TAP_DAMAGE_DPS               6,
-  CRIT_CHANCE:                 7,
-  CRIT_DAMAGE_ARTIFACTS:       8,
-  CRIT_DAMAGE_HEROSKILLS:      9,
-  CRIT_DAMAGE_CUSTOMIZATIONS: 10,
-  GOLD_ARTIFACTS:             11,
-  GOLD_HEROSKILLS:            12,
-  GOLD_CUSTOMIZATIONS:        13,
-  GOLD_OVERALL:               14, // gold while playing
-  GOLD_MOBS:                  15,
-  GOLD_BOSS:                  16,
-  GOLD_10X_CHANCE:            17,
-  CHEST_ARTIFACTS:            18,
-  CHEST_HEROSKILLS:           19,
-  CHEST_CUSTOMIZATIONS:       20,
-  CHEST_CHANCE:               21,
-  INDIVIDUAL_HERO_DAMAGE:     22,
-  BOSS_HEALTH:                23,
-  BOSS_TIME:                  24,
-  BOSS_DAMAGE:                25,
-  NUM_MOBS:                   26,
-  RELICS:                     27,
-  UPGRADE_COST:               28,
-  ARTIFACT_DAMAGE_BOOST:      29,
-  SKILL_CDR_AUTO:             30,
-  SKILL_CDR_CRIT:             31,
-  SKILL_CDR_HERO:             32,
-  SKILL_CDR_GOLD:             33,
-  SKILL_CDR_TDMG:             34,
-  SKILL_CDR_OHKO:             35,
-  SKILL_DRN_AUTO:             36,
-  SKILL_DRN_CRIT:             37,
-  SKILL_DRN_HERO:             38,
-  SKILL_DRN_GOLD:             39,
-  SKILL_DRN_TDMG:             40,
-  SKILL_DRN_OHKO:             41,
-  HERO_DEATH_CHANCE:          42,
-  HERO_REVIVE_TIME:           43,
-  WEAPON_INDIVIDUAL:          44,
-  WEAPON_SET:                 45,
+  ALL_DAMAGE_MEMORY:           3,
+  TAP_DAMAGE_ARTIFACTS:        4,
+  TAP_DAMAGE_HEROSKILLS:       5,
+  TAP_DAMAGE_CUSTOMIZATIONS:   6,
+  TAP_DAMAGE_DPS               7,
+  CRIT_CHANCE:                 8,
+  CRIT_DAMAGE_ARTIFACTS:       9,
+  CRIT_DAMAGE_HEROSKILLS:     10,
+  CRIT_DAMAGE_CUSTOMIZATIONS: 11,
+  GOLD_ARTIFACTS:             12,
+  GOLD_HEROSKILLS:            13,
+  GOLD_CUSTOMIZATIONS:        14,
+  GOLD_OVERALL:               15, // gold while playing
+  GOLD_MOBS:                  16,
+  GOLD_BOSS:                  17,
+  GOLD_10X_CHANCE:            18,
+  CHEST_ARTIFACTS:            19,
+  CHEST_HEROSKILLS:           20,
+  CHEST_CUSTOMIZATIONS:       21,
+  CHEST_CHANCE:               22,
+  INDIVIDUAL_HERO_DAMAGE:     23,
+  BOSS_HEALTH:                24,
+  BOSS_TIME:                  25,
+  BOSS_DAMAGE:                26,
+  NUM_MOBS:                   27,
+  RELICS:                     28,
+  UPGRADE_COST:               29,
+  ARTIFACT_DAMAGE_BOOST:      30,
+  SKILL_CDR_AUTO:             31,
+  SKILL_CDR_CRIT:             32,
+  SKILL_CDR_HERO:             33,
+  SKILL_CDR_GOLD:             34,
+  SKILL_CDR_TDMG:             35,
+  SKILL_CDR_OHKO:             36,
+  SKILL_DRN_AUTO:             37,
+  SKILL_DRN_CRIT:             38,
+  SKILL_DRN_HERO:             39,
+  SKILL_DRN_GOLD:             40,
+  SKILL_DRN_TDMG:             41,
+  SKILL_DRN_OHKO:             42,
+  HERO_DEATH_CHANCE:          43,
+  HERO_REVIVE_TIME:           44,
+  WEAPON_INDIVIDUAL:          45,
+  WEAPON_SET:                 46,
 };
 
 var Artifact = function(name, world, id, x, y, levelcap, effects, flavor) {
@@ -364,6 +364,7 @@ var Hero = function(name, id, baseCost, skills) {
     var bonuses = {};
     for (var i = 0; i < levelToSkills(world, level); i++) {
       var skillType = skills[world][i][1];
+      // TODO: ternary if (bonuses[skillType] ? bonuses[skillType] : 0) + blah
       if (!(skillType in bonuses)) {
         bonuses[skillType] = 0;
       }
@@ -1054,7 +1055,6 @@ var getEmptyBonuses = function() {
   return EMPTY_BONUSES.slice();
 };
 
-// artifacts is array of [artifact id, level]
 var addArtifacts = function(world, bonuses, artifacts) {
   artifacts.forEach(function(a, i) {
     var id = a[0];
@@ -1073,7 +1073,6 @@ var addArtifacts = function(world, bonuses, artifacts) {
   });
 };
 
-// levels is array of hero level, ordered by id
 var addLevels = function(world, bonuses, levels) {
   levels.forEach(function(l, i) {
     var hero = heroInfo[i];
@@ -1088,13 +1087,11 @@ var addLevels = function(world, bonuses, levels) {
   });
 };
 
-// weapons is array of weapon counts, ordered by id
 var addWeapons = function(world, bonuses, weapons) {
   bonuses[BonusTypes.WEAPON_SET] = setBonus(weapons);
   bonuses[BonusTypes.WEAPON_INDIVIDUAL] = getHeroWeaponBonuses(weapons);
 };
 
-// customizations is array of totals
 var addCustomizations = function(world, bonuses, customizations) {
   customizations.forEach(function(c, i) {
     bonuses[cBonus[i]] += c;
@@ -1108,6 +1105,17 @@ var BASE_SKILL_CRIT_COOLDOWN = 1800;
 var BASE_SKILL_TDMG_COOLDOWN = 3600;
 var BASE_SKILL_CRIT_DURATION = 30;
 var BASE_SKILL_TDMG_DURATION = 30;
+
+// params {
+// 	world: 1 or 2
+// 	artifacts: array of [artifact id, level]
+// 	levels: array of hero level, ordered by id
+// 	weapons: array of weapon counts, ordered by id
+// 	customizations: array of totals
+// 	skillLevelCrit: int
+// 	skillLevelTDMG: int
+//  memory: % int
+// }
 var GameState = function(params) {
   this.bonuses = getEmptyBonuses();
   this.world = params.world;
@@ -1121,6 +1129,7 @@ var GameState = function(params) {
   addLevels(this.world, this.bonuses, params.levels);
   addWeapons(this.world, this.bonuses, params.weapons);
   addCustomizations(this.world, this.bonuses, params.customizations);
+  this.bonuses[BonusTypes.ALL_DAMAGE_MEMORY] = params.memory;
 
   this.getBonus = function(bonusType) {
     return this.bonuses[bonusType] / 100.0;
@@ -1138,13 +1147,13 @@ var GameState = function(params) {
     return this.bonuses[BonusTypes.WEAPON_SET] / 100.0;
   };
 
-  this.allDamage = function() {
+  this.getAllDamage = function() {
     return this.bonuses[BonusTypes.ALL_DAMAGE_ARTIFACTS];
   };
 
   // Returns the average multiplier across all mobs and bosses and stages for
   // how much gold you'll get relative to the base gold of one normal mob
-  this.goldMultiplier = function() {
+  this.getGoldMultiplier = function() {
     // PlayerModel.RewardEnemyGold
     // StageController.GetStageBaseGold
 
@@ -1169,9 +1178,9 @@ var GameState = function(params) {
 
     var averageMobBossGold = (goldFromMobs + goldFromBoss) / (numberOfMobs + 1);
 
-    var additiveMultipliers = 1 + this.getBonus(BonusTypes.GOLD_ARTIFACTS)
-                                + this.getBonus(BonusTypes.GOLD_HEROSKILLS)
-                                + this.getBonus(BonusTypes.GOLD_CUSTOMIZATIONS);
+    var additiveMultipliers = Math.ceil(1 + this.getBonus(BonusTypes.GOLD_ARTIFACTS)
+                                				  + this.getBonus(BonusTypes.GOLD_HEROSKILLS)
+                                					+ this.getBonus(BonusTypes.GOLD_CUSTOMIZATIONS));
     var overallMultiplier = 1 + this.getBonus(BonusTypes.GOLD_OVERALL);
     var upgradeMultiplier = 1 / (1 + this.getBonus(BonusTypes.UPGRADE_COST));
 
@@ -1199,7 +1208,7 @@ var GameState = function(params) {
     return dps;
   };
 
-  this.tapDamage = function() {
+  this.getTapDamage = function() {
     // PlayerInfo.GetAttackDamageByLevel
     var totalHeroDPS = this.getTotalHeroDPS();
     var totalDPS = totalHeroDPS + MAIN_HERO_DPS;
@@ -1243,256 +1252,28 @@ var GameState = function(params) {
     return [totalTapDamage, totalTappingDamage, totalSkillsDamage];
   };
 
-  this.dmgEquivalent = function() {
-    var multiplierGold = this.goldMultiplier();
-    var equivalentTDMG = Math.pow(1.044685, Math.log(multiplierGold) / Math.log(1.075));
-    var multiplierTDMG = this.tapDamage()[1];
-  };
+  this.nextFFLevel = function() {
+  	var newLevel =
+  }
+
+	var next_ff_level = function(ff, c_gd) {
+	  var new_level = ff;
+	  var multiplier = function(l) {
+	    return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED + c_gd);
+	  }
+	  while (multiplier(new_level) == multiplier(ff)) {
+	    new_level += 1;
+	  }
+	  return new_level;
+	};
+
+  // this.dmgEquivalent = function() {
+  //   var multiplierGold = this.goldMultiplier();
+  //   var equivalentTDMG = Math.pow(1.044685, Math.log(multiplierGold) / Math.log(1.075));
+  //   var multiplierTDMG = this.tapDamage()[1];
+  // };
 
 }
-
-
-
-var GameState = function(artifacts, weapons, levels, customizations, others) {
-  this.artifacts = artifacts.slice();
-  this.a_ad = 0.01 * all_damage(this.artifacts);
-  this.l_amulet    = artifacts[0];
-  this.l_axe       = artifacts[1];
-  this.l_chest     = artifacts[3];
-  this.l_elixir    = artifacts[4];
-  this.l_egg       = artifacts[5];
-  this.l_dseeker   = artifacts[7];
-  this.l_chalice   = artifacts[8];
-  this.l_hammer    = artifacts[9];
-  this.l_fortune   = artifacts[10];
-  this.l_hthrust   = artifacts[11];
-  this.l_kshield   = artifacts[13];
-  this.l_parchment = artifacts[18];
-  this.l_charm     = artifacts[20];
-  this.l_ua        = artifacts[25];
-  this.l_world     = artifacts[28];
-  this.l_brew      = artifacts[29];
-  this.main_dmg = 600 * Math.pow(1.05, 600);
-
-  this.weapons = weapons.slice();
-  this.w_bh = getHeroWeaponBonuses(this.weapons);
-  // this.w_bh = get_hero_weapon_bonuses(this.weapons);
-  this.w_sb = set_bonus(this.weapons);
-
-  this.customizations = customizations.slice();
-  this.c_ad = customizations[0];
-  this.c_cd = customizations[1];
-  this.c_gd = customizations[2];
-  this.c_cg = customizations[3];
-  this.c_cc = customizations[4];
-  this.c_td = customizations[5];
-
-  this.others = others ? others : {};
-
-  this.c_chance = Math.min(1, BASE_CHEST_CHANCE + 0.004 * this.l_egg);
-  this.n_chance = 1 - this.c_chance;
-
-  this.n_gold = 1 + 0.1 * this.l_amulet;
-  this.d_chance = Math.min(1, 0.005 * this.l_chalice);
-  this.d_multiplier = 1 - this.d_chance + 10 * this.d_chance;
-  this.m_multiplier = this.n_chance * this.n_gold * this.d_multiplier;
-  this.boss_gold = BOSS_CONSTANT * (1 + this.l_kshield);
-
-  // this.other_total = (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
-  this.other_total = (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
-
-  this.heroes = levels.slice();
-  this.hero_skills = newZeroes(hero_info.length);
-  this.skill_bonuses = newZeroes(numSkillTypes);
-  this.current_stage = 1;
-  this.current_gold = 0;
-  this.time = 0;
-
-  this.new_run = function() {
-    this.heroes = newZeroes(hero_info.length);
-    this.hero_skills = newZeroes(hero_info.length);
-    this.skill_bonuses = newZeroes(numSkillTypes);
-    this.current_stage = 1;
-    this.current_gold = 0;
-    this.time = 0;
-  };
-
-  this.add_skill = function(h, s) {
-    var skill = hero_info[h].skills[s];
-    this.skill_bonuses[skill[1]] += skill[0];
-  };
-
-  this.get_all_skills = function() {
-    for (var i = 0; i < this.heroes.length; i++) {
-      var skills = level_to_skills(this.heroes[i]);
-      for (var s = 0; s < skills; s++) {
-        this.add_skill(i, s);
-        this.hero_skills[i] = s;
-      }
-    }
-  };
-
-  this.total_relics = function() {
-    if (this.current_stage < 90) {
-      return 0;
-    }
-    var stage_relics = Math.pow(Math.floor(this.current_stage/15) - 5, 1.7);
-    var hero_relics = Math.floor(sumArray(this.heroes) / 1000);
-    var multiplier = 2 + 0.1 * this.l_ua;
-    return Math.floor((stage_relics + hero_relics) * multiplier);
-  };
-
-  this.get_total_bonus = function(stype) {
-    return this.skill_bonuses[stype];
-  };
-
-  this.gold_multiplier = function() {
-    var mobs = 10 - this.l_world;
-
-    var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
-    var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
-
-    var c_gold = 10 * (1 + 0.2 * this.l_chest) * (1 + this.c_cg) * (1 + h_cg);
-
-    var m_gold = mobs * (this.c_chance * c_gold + this.m_multiplier);
-    var multiplier_gold = (m_gold + this.boss_gold) / (mobs + 1);
-    //var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
-    var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd + this.c_gd) * this.other_total;
-
-    return multiplier_gold * multiplier_total;
-  };
-
-  this.mob_multiplier = function() {
-    var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
-    var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
-
-    var c_gold = 10 * (1 + 0.2 * this.l_chest) * (1 + this.c_cg) * (1 + h_cg);
-    var multiplier_mob = this.c_chance * c_gold + this.m_multiplier;
-    var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
-    return multiplier_mob * multiplier_total;
-  };
-
-  // TODO: take into account particular boss multiplier for stage
-  this.gold_for_stage = function(stage) {
-    var mobs = 10 - this.l_world + 1;
-    var base = base_stage_gold(stage);
-    var mult = this.gold_multiplier();
-    return mobs * base * mult;
-  };
-
-//   public double GetStageBaseGold(int stage)
-// {
-//     double num2 = this.GetStageBaseHP(stage) * (ServerVarsModel.monsterGoldMultiplier + (ServerVarsModel.monsterGoldSlope * Math.Min((float) this.currentStage, ServerVarsModel.noMoreMonsterGoldSlope)));
-//     return (num2 * Math.Ceiling((double) (1.0 + PlayerModel.instance.GetStatBonus(BonusType.GoldAll))));
-// }
-
-
-
-
-  // TODO: take into account particular boss multiplier for stage
-  this.gold_between_stages = function(start_stage, end_stage) {
-    var total = 0;
-    for (var i = start_stage; i < end_stage; i++) {
-      total += base_stage_gold(i);
-    }
-    var mobs = 10 - this.l_world + 1;
-    var mult = this.gold_multiplier();
-    return mobs * mult * total;
-  };
-
-  this.get_crit_multiplier = function() {
-    var h_cd = this.get_total_bonus(STYPE_CRIT_DAMAGE);
-    return (10 + h_cd) * (1 + 0.2 * this.l_hthrust) * (1 + this.c_cd);
-  };
-
-  this.get_crit_chance = function() {
-    var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
-    return Math.min(1, BASE_CRIT_CHANCE + 0.02 * this.l_dseeker + this.c_cc + h_cc);
-  };
-
-  this.get_hero_dps = function() {
-    var dps = 0;
-    var h_ad = this.get_total_bonus(STYPE_ALL_DAMAGE);
-    for (var i in this.heroes) {
-      var level = this.heroes[i];
-      if (level == 0) {
-        continue;
-      }
-
-      // console.log("memory: ", this.others.memory);
-      var hero_dps = hero_info[i].get_base_damage(level);
-      var m_hero = 1 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + h_ad + this.others.memory;
-      var m_artifact = 1 + this.a_ad;
-      var m_customization = 1 + this.c_ad;
-      var m_weapon = this.w_bh[i];
-      var m_set = this.w_sb;
-
-      hero_dps = hero_dps * m_hero * m_artifact * m_customization * m_weapon * m_set;
-      dps += hero_dps;
-    }
-    return dps;
-  };
-
-  // (num * (1.0 + statBonus) + num4) * (1.0 + num3) * (1.0 + num5)
-
-  // (((( * ) * ) * (1.0 + artifactDamageBonus)) * (1.0 + num7)) * (1.0 + num8);
-
-
-  this.tap_damage = function() {
-    var h_ad = this.get_total_bonus(STYPE_ALL_DAMAGE);
-    var h_td = this.get_total_bonus(STYPE_TAP_DAMAGE);
-    var h_pd = this.get_total_bonus(STYPE_PERCENT_DPS);
-    var h_cd = this.get_total_bonus(STYPE_CRIT_DAMAGE);
-    var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
-
-    var hero_total_dps = this.get_hero_dps();
-    // console.log("hero_total_dps: ", hero_total_dps);
-
-    // from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + h_ad)
-    var from_main = this.main_dmg * (1 + h_ad);
-    var from_hero = (h_pd * hero_total_dps);
-    console.log(from_main);
-    console.log(from_hero);
-    var total = from_main + from_hero;
-    var total_tap = total * (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer + 0.02 * this.l_brew) * (1 + this.c_ad);
-    // var total_tap = from_main + from_hero;
-
-    var crit_multiplier = this.get_crit_multiplier();
-    var crit_chance = this.get_crit_chance();
-
-    var overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier));
-    var total_tapping = total_tap * overall_crit_multiplier;
-
-    var a_crit_uptime = this.l_parchment > 0 ? Math.min((30 + 3 * this.l_parchment) / 900, 1) : 0;
-    var a_crit_bonus = this.others.cs > 0 ? Math.min((0.17 + (this.others.cs - 1) * 0.03), 1) : 0;
-
-    // var a_crit_chance = Math.min(1, crit_chance + a_crit_uptime * a_crit_bonus);
-    var a_crit_chance = Math.min(crit_chance * (1 - a_crit_uptime) + Math.min(1, crit_chance + a_crit_bonus) * a_crit_uptime, 1);
-    var a_overall_crit_multiplier = ((1 - a_crit_chance) + (a_crit_chance * 0.65 * crit_multiplier));
-
-    var a_tap_uptime = this.l_axe > 0 ? Math.min((30 + 3 * this.l_axe) / 1800, 1) : 0;
-    var a_tap_bonus = this.others.br > 0 ? (0.70 + (this.others.br - 1) * 0.3) : 0;
-
-    var a_total_tapping = total_tap * a_overall_crit_multiplier * (1 + a_tap_uptime * a_tap_bonus);
-
-    return [total_tap, total_tapping, a_total_tapping];
-  };
-
-  this.get_dmg_equivalent = function(game_state) {
-    var gold_multiplier = this.gold_multiplier();
-    var dmg_multiplier = this.tap_damage()[1];
-    var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_multiplier) / Math.log(1.075));
-    var dmg_equivalent = dmg_multiplier + gold_dmg_equivalent;
-    return dmg_equivalent;
-  };
-
-
-
-
-
-}
-
-
 
 
 // var BASE_CRIT_CHANCE = 0.02;
@@ -1998,83 +1779,25 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
 //   };
 // }
 
-var METHOD_GOLD = 0;
-var METHOD_ALL_DAMAGE = 1;
-var METHOD_TAP_DAMAGE = 2;
-var METHOD_DMG_EQUIVALENT = 3;
-var METHOD_RELICS_PS = 4;
-var METHOD_STAGE_PS = 5;
-
-var METHOD_TAP_DAMAGE_WITH_ACTIVES = 6;
-var METHOD_DMG_EQUIVALENT_WITH_ACTIVES = 7;
-
-// var next_ff_level = function(ff, c_gd) {
-//   var new_level = ff;
-//   var multiplier = function(l) {
-//     return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED + c_gd);
-//   }
-//   while (multiplier(new_level) == multiplier(ff)) {
-//     new_level += 1;
-//   }
-//   return new_level;
-// };
-
-
-var get_value = function(game_state, method) {
-  switch (method) {
-    case METHOD_GOLD:
-      return game_state.gold_multiplier();
-    case METHOD_ALL_DAMAGE:
-      return game_state.a_ad;
-    case METHOD_TAP_DAMAGE:
-      return game_state.tap_damage()[1];
-    case METHOD_DMG_EQUIVALENT:
-    // console.log("dmge");
-    // console.log(game_state.gold_multiplier());
-    // console.log(game_state.tap_damage());
-      return [game_state.gold_multiplier(), game_state.tap_damage()[1]];
-    case METHOD_RELICS_PS:
-      return game_state.relics_per_second()[2];
-    case METHOD_STAGE_PS:
-      return game_state.relics_per_second().slice(0, 2);
-    case METHOD_TAP_DAMAGE_WITH_ACTIVES:
-      return game_state.tap_damage()[2];
-    case METHOD_DMG_EQUIVALENT_WITH_ACTIVES:
-      return [game_state.gold_multiplier(), game_state.tap_damage()[2]];
-  }
+var Methods = {
+	ALL_DAMAGE:     0,
+	GOLD:           1,
+	TAP_DAMAGE:     2,
+	DMG_EQUIVALENT: 3,
 };
 
-var hashArray = function(array) {
-  // TODO: find better hash?
-  return array.toString();
+var getValue = function(gameState, method, actives) {
+	var a = actives ? 2 : 1;
+	switch (method) {
+		case Methods.ALL_DAMAGE:     return gameState.getAllDamage();
+		case Methods.GOLD:           return gameState.getGoldMultiplier();
+		case Methods.TAP_DAMAGE:     return gameState.getTapDamage()[a];
+		case Methods.DMG_EQUIVALENT: return { gold: gameState.getGoldMultiplier(), tdmg: gameState.getTapDamage()[a] };
+		default: console.log("NO UNDERSTANDO");
+	}
 };
 
-var memoize = {};
-var get_value_memoize = function(a, p, mo) {
-  var w = p.w;
-  var l = p.l;
-  var c = p.c;
-  var m = mo;
-  if (p.s && m == METHOD_TAP_DAMAGE) {
-    m = METHOD_TAP_DAMAGE_WITH_ACTIVES;
-  } else if (p.s && m == METHOD_DMG_EQUIVALENT) {
-    m = METHOD_DMG_EQUIVALENT_WITH_ACTIVES;
-  }
-
-  var aHash = m + hashArray(a);
-  if (aHash in memoize) {
-    return memoize[aHash];
-  } else {
-    var g = new GameState(a, w, l, c, { cs: p.t, br: p.z, memory: p.y });
-    // if rps or sps, will reset anyways
-    g.get_all_skills();
-    var base = get_value(g, m);
-    memoize[aHash] = base;
-    return base;
-  }
-};
-
-var get_max = function(array, custom) {
+var getMax = function(array, custom) {
   var max = array[0];
   var maxIndex = 0;
   for (var i = 1; i < array.length; i++) {
@@ -2086,276 +1809,568 @@ var get_max = function(array, custom) {
   return max;
 };
 
-// artifacts, weapons, levels, customizations, relics, nsteps, method
-var get_best = function(params, method) {
-  var relics_left = params.r == 0 ? 1000000000 : params.r;
-  var current_artifacts = params.a.slice();
-  var steps = [];
-  var cumulative = 0;
-
-  var stepLimit = params.n == 0 ? 200 : params.n
-
-  while (relics_left > 0 && steps.length < stepLimit) {
-    var options = [];
-    var base = get_value_memoize(current_artifacts, params, method);
-    // console.log("base:", base);
-
-    for (var i in current_artifacts) {
-      var level = current_artifacts[i];
-      if (level == 0 || level == artifact_info[i].levelcap) {
-        continue;
-      }
-      var relic_cost = artifact_info[i].costToLevel(level);
-      var artifacts_copy = current_artifacts.slice();
-      artifacts_copy[i] += 1;
-
-      // console.log(artifact_info[i].name);
-
-      // Future's Fortune for gold
-      if (method == METHOD_GOLD && i == 10) {
-        relic_cost = 0;
-        // TODO: next_ff_level needs hero skills
-        var level_to = next_ff_level(current_artifacts[i], params.c[2]);
-        artifacts_copy[i] = level_to;
-        while (level_to > level) {
-          level_to -= 1;
-          relic_cost += artifact_info[i].costToLevel(level_to);
-        }
-      }
-
-      // Future's Fortune for dmg_equivalent
-      var ff_dmg_eq_gold;
-      var ff_dmg_eq_levels;
-      if ((method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) && i == 10) {
-        // TODO: next_ff_level needs hero skills
-        var level_to = next_ff_level(current_artifacts[i], params.c[2]);
-        var ff_gold_artifacts_copy = current_artifacts.slice();
-        ff_gold_artifacts_copy[i] = level_to;
-        ff_dmg_eq_levels = level_to - current_artifacts[i];
-        ff_dmg_eq_gold = get_value_memoize(ff_gold_artifacts_copy, params, METHOD_GOLD);
-      }
-
-      var new_value = get_value_memoize(artifacts_copy, params, method);
-      var e;
-      if (method == METHOD_STAGE_PS) {
-        e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
-      } else if (method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) {
-        // https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/
-        var gold_ratio = new_value[0] / base[0];
-        if (i == 10) {
-          gold_ratio = 1 + ((ff_dmg_eq_gold - base[0]) / ff_dmg_eq_levels) / base[0];
-        }
-        var tdmg_ratio = new_value[1] / base[1];
-        var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_ratio) / Math.log(1.075));
-        // var total_change = tdmg_ratio * gold_dmg_equivalent;
-
-        // e = (total_change - 1) / relic_cost;
-
-        var eq_tdmg = (gold_dmg_equivalent - 1) * base[1] + new_value[1];
-        // console.log((eq_tdmg - base[1]));
-        // console.log(relic_cost);
-        e = (eq_tdmg - base[1]) / relic_cost;
-      } else {
-        e = (new_value - base) / relic_cost;
-      }
-
-      options.push({
-        efficiency: e,
-        index: i,
-        name: artifact_info[i].name,
-        level: artifacts_copy[i],
-        cost: relic_cost,
-        cumulative: cumulative + relic_cost
-      });
-    }
-
-    // console.log(options);
-
-    // pick best option
-    var best_option = get_max(options, function(o1, o2) {
-      if (method != METHOD_STAGE_PS) {
-        return o1.efficiency > o2.efficiency;
-      } else {
-        if (o1.efficiency[0] > o2.efficiency[0]) {
-          return true;
-        } else if (o1.efficiency[0] < o2.efficiency[0]) {
-          return false;
-        }
-        return o1.efficiency[1] > o2.efficiency[1];
-      }
-    });
-
-    if (best_option.cost > relics_left && params.n == 0) {
-      break;
-    }
-    relics_left -= best_option.cost;
-    cumulative += best_option.cost;
-    current_artifacts[best_option.index] = best_option.level;
-    delete best_option.efficiency;
-    steps.push(best_option);
-  }
-  return steps;
+var copyParamsForGameState = function(params, newArtifacts) {
+	return {
+		world:          params.world,
+		artifacts:      newArtifacts,
+		levels:         params.levels,
+		weapons:        params.weapons,
+		memory:         params.memory,
+		customizations: params.customizations,
+		skillLevelCrit: params.skillLevelCrit,
+		skillLevelTDMG: params.skillLevelTDMG,
+	};
 };
 
-var get_steps = function(params) {
-  // reset cache
-  memoize = {};
-  var response = {};
-  for (var mi in params.m) {
-    var m = params.m[mi];
-    var steps = get_best(params, m);
-    // var steps = [];
-    // if (params.g == 1) {
-    //  steps = get_best(params, m);
-    // } else {
-    //  // TODO: shouldn't get here yet
-    //  // steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];
-    // }
-    var summary = {};
-    var costs = {};
-    for (var s in steps) {
-      var step = steps[s];
-      var i = step["index"];
-      summary[i] = Math.max(step["level"], summary[i] ? summary[i] : 0);
-      costs[i] = (costs[i] ? costs[i] : 0) + step["cost"];
-    }
-    var summary_steps = []
-    for (var key in summary) {
-      var step = {};
-      step["index"] = key;
-      step["name"] = artifact_info[key].name;
-      step["level"] = summary[key];
-      step["cost"] = costs[key];
-      summary_steps.push(step);
-    }
-    var m_response = {};
-    m_response["steps"] = steps;
-    m_response["summary"] = summary_steps;
-    response[m] = m_response;
-  }
-  return response;
+// params {
+// 	world: 1 or 2
+// 	artifacts: array of [artifact id, level]
+// 	levels: array of hero level, ordered by id
+// 	weapons: array of weapon counts, ordered by id
+// 	customizations: array of totals
+// 	skillLevelCrit: int
+// 	skillLevelTDMG: int
+//  memory: % int
+//  relics: int
+//  steps: int
+//  useActives: boolean
+// }
+var getBestSteps = function(params, method) {
+	var relicsLeft = params.relics == 0 ? 1000000000 : params.relics;
+	var currentArtifacts = params.artifacts.slice();
+	var steps = [];
+	var cumulative = 0;
+	var stepLimit = params.steps == 0 ? 300 : params.steps;
+
+	while (relicsLeft > 0 && steps.length < stepLimit) {
+		// array to hold possible upgrades
+		var options = [];
+
+		// get initial values
+		var baseState = new GameState(params);
+		var baseValue = getValue(baseState, method, params.actives);
+
+		currentArtifacts.forEach(function(ap, i) {
+			var artifact = artifactMapping[ap[0]];
+
+			var level = ap[1];
+			if (level == 0 || level == artifact.levelcap) {
+				continue;
+			}
+
+			// cost to level this artifact
+			var relicCost = artifact.costToLevel(level);
+
+			// get value if leveled
+			var newArtifacts = currentArtifacts.slice();
+			newArtifacts[i][1] += 1;
+			params.artifacts = newArtifacts;
+			// var newParams = copyParamsForGameState(params, newArtifacts);
+
+			// TODO: FUTURE'S FORTUNE
+			// if (method == METHOD_GOLD && i == 10) {
+   //      relic_cost = 0;
+   //      // TODO: next_ff_level needs hero skills
+   //      var level_to = next_ff_level(current_artifacts[i], params.c[2]);
+   //      artifacts_copy[i] = level_to;
+   //      while (level_to > level) {
+   //        level_to -= 1;
+   //        relic_cost += artifact_info[i].costToLevel(level_to);
+   //      }
+   //    }
+
+   //    // Future's Fortune for dmg_equivalent
+   //    var ff_dmg_eq_gold;
+   //    var ff_dmg_eq_levels;
+   //    if ((method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) && i == 10) {
+   //      // TODO: next_ff_level needs hero skills
+   //      var level_to = next_ff_level(current_artifacts[i], params.c[2]);
+   //      var ff_gold_artifacts_copy = current_artifacts.slice();
+   //      ff_gold_artifacts_copy[i] = level_to;
+   //      ff_dmg_eq_levels = level_to - current_artifacts[i];
+   //      ff_dmg_eq_gold = get_value_memoize(ff_gold_artifacts_copy, params, METHOD_GOLD);
+   //    }
+
+
+
+
+			var newGameState = new GameState(params);
+			var newValue = getValue(newGameState, method, params.actives);
+
+			var efficiency;
+			if (method == Methods.DMG_EQUIVALENT) {
+				var goldRatio = newValue[0] / baseValue[0];
+				var tdmgRatio = newValue[1] / baseValue[1];
+
+				// TODO: FUTURE'S FORTUNE
+				// if (i == 10) {
+    //       gold_ratio = 1 + ((ff_dmg_eq_gold - base[0]) / ff_dmg_eq_levels) / base[0];
+    //     }
+
+				var goldDmgEquivalent = Math.pow(1.044685, Math.log(goldRatio) / Math.log(1.075));
+				var tdmgEquivalentRatio = goldDmgEquivalent * tdmgRatio;
+				var tdmgEquivalent = baseValue[1] * tdmgEquivalentRatio;
+
+				efficiency = (tdmgEquivalent - baseValue[1]) / relicCost;
+			} else {
+				efficiency = (newValue - baseValue) / relicCost;
+			}
+
+			options.push({
+				index: i,
+				name: artifact.name,
+				level: newArtifacts[i][1],
+				cost: relicCost,
+				efficiency: efficiency,
+				cumulative: cumulative + relicCost,
+			});
+		});
+
+		// pick best option
+		var bestOption = getMax(options, function(o1, o2) {
+			return o1.efficiency > o2.efficiency;
+		});
+
+		// if we don't have enough relics, break
+		if (bestOption.cost > relicsLeft && parms.steps == 0) {
+			break;
+		}
+
+		// update
+		relicsLeft -= bestOption.cost;
+		cumulative += bestOption.cost;
+		currentArtifacts[bestOption.index][1] = bestOption.level;
+		steps.push(bestOption);
+	}
+	return steps;
 };
 
-var calculate_weapons_probability = function(weapons) {
-  // TODO: how does javascript not have a good statistics package
-  var total = sumArray(weapons);
-  if (total == 0) {
-    return 1;
-  }
-  var expected = total / hero_info.length;
-  var chi2 = 0;
-  for (var i in weapons) {
-    chi2 += Math.pow(weapons[i] - expected, 2) / expected;
-  }
-  var p = pochisq(chi2, hero_info.length - 1)
-  return p;
+var getSteps = function(params) {
+	var response = {};
+	params.methods.forEach(function(m, i) {
+		var steps = getBestSteps(params, m);
+		var summary = {};
+		var costs = {};
+		steps.forEach(function(s, index) {
+			var i = s.index;
+			summary[i] = Math.max(s.level, summary[i] ? summary[i] : 0);
+			costs[i] = (costs[i] ? costs[i] : 0) + s.cost;
+		});
+		var summarySteps = [];
+		for (var k in summary) {
+			var step = {
+				index: k,
+				name: artifactMapping[i].name,
+				level: summary[k],
+				cost: costs[k],
+			};
+			summarySteps.push(step);
+		}
+		response[m] = {
+			steps: steps,
+			summary: summarySteps,
+		};
+	});
+	return response;
 };
 
- /*  The following JavaScript functions for calculating normal and
-    chi-square probabilities and critical values were adapted by
-    John Walker from C implementations
-    written by Gary Perlman of Wang Institute, Tyngsboro, MA
-    01879.  Both the original C code and this JavaScript edition
-    are in the public domain.  */
+// var get_steps = function(params) {
+//   // reset cache
+//   memoize = {};
+//   var response = {};
+//   for (var mi in params.m) {
+//     var m = params.m[mi];
+//     var steps = get_best(params, m);
+//     // var steps = [];
+//     // if (params.g == 1) {
+//     //  steps = get_best(params, m);
+//     // } else {
+//     //  // TODO: shouldn't get here yet
+//     //  // steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];
+//     // }
+//     var summary = {};
+//     var costs = {};
+//     for (var s in steps) {
+//       var step = steps[s];
+//       var i = step["index"];
+//       summary[i] = Math.max(step["level"], summary[i] ? summary[i] : 0);
+//       costs[i] = (costs[i] ? costs[i] : 0) + step["cost"];
+//     }
+//     var summary_steps = []
+//     for (var key in summary) {
+//       var step = {};
+//       step["index"] = key;
+//       step["name"] = artifact_info[key].name;
+//       step["level"] = summary[key];
+//       step["cost"] = costs[key];
+//       summary_steps.push(step);
+//     }
+//     var m_response = {};
+//     m_response["steps"] = steps;
+//     m_response["summary"] = summary_steps;
+//     response[m] = m_response;
+//   }
+//   return response;
+// };
 
-/*  POZ  --  probability of normal z value
+// var METHOD_GOLD = 0;
+// var METHOD_ALL_DAMAGE = 1;
+// var METHOD_TAP_DAMAGE = 2;
+// var METHOD_DMG_EQUIVALENT = 3;
+// var METHOD_RELICS_PS = 4;
+// var METHOD_STAGE_PS = 5;
 
-  Adapted from a polynomial approximation in:
-      Ibbetson D, Algorithm 209
-      Collected Algorithms of the CACM 1963 p. 616
-  Note:
-      This routine has six digit accuracy, so it is only useful for absolute
-      z values < 6.  For z values >= to 6.0, poz() returns 0.0.
-*/
+// var METHOD_TAP_DAMAGE_WITH_ACTIVES = 6;
+// var METHOD_DMG_EQUIVALENT_WITH_ACTIVES = 7;
 
-var poz = function poz() {
-  var y, x, w;
-  var Z_MAX = 6.0;              /* Maximum meaningful z value */
+// // var next_ff_level = function(ff, c_gd) {
+// //   var new_level = ff;
+// //   var multiplier = function(l) {
+// //     return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED + c_gd);
+// //   }
+// //   while (multiplier(new_level) == multiplier(ff)) {
+// //     new_level += 1;
+// //   }
+// //   return new_level;
+// // };
 
-  if (z == 0.0) {
-    x = 0.0;
-  } else {
-    y = 0.5 * Math.abs(z);
-    if (y >= (Z_MAX * 0.5)) {
-      x = 1.0;
-    } else if (y < 1.0) {
-      w = y * y;
-      x = ((((((((0.000124818987 * w
-        - 0.001075204047) * w + 0.005198775019) * w
-        - 0.019198292004) * w + 0.059054035642) * w
-        - 0.151968751364) * w + 0.319152932694) * w
-        - 0.531923007300) * w + 0.797884560593) * y * 2.0;
-    } else {
-      y -= 2.0;
-      x = (((((((((((((-0.000045255659 * y
-        + 0.000152529290) * y - 0.000019538132) * y
-        - 0.000676904986) * y + 0.001390604284) * y
-        - 0.000794620820) * y - 0.002034254874) * y
-        + 0.006549791214) * y - 0.010557625006) * y
-        + 0.011630447319) * y - 0.009279453341) * y
-        + 0.005353579108) * y - 0.002141268741) * y
-        + 0.000535310849) * y + 0.999936657524;
-    }
-  }
-  return z > 0.0 ? ((x + 1.0) * 0.5) : ((1.0 - x) * 0.5);
-}
 
-var BIGX = 20.0;                  /* max value to represent exp(x) */
+// var get_value = function(game_state, method) {
+//   switch (method) {
+//     case METHOD_GOLD:
+//       return game_state.gold_multiplier();
+//     case METHOD_ALL_DAMAGE:
+//       return game_state.a_ad;
+//     case METHOD_TAP_DAMAGE:
+//       return game_state.tap_damage()[1];
+//     case METHOD_DMG_EQUIVALENT:
+//     // console.log("dmge");
+//     // console.log(game_state.gold_multiplier());
+//     // console.log(game_state.tap_damage());
+//       return [game_state.gold_multiplier(), game_state.tap_damage()[1]];
+//     case METHOD_RELICS_PS:
+//       return game_state.relics_per_second()[2];
+//     case METHOD_STAGE_PS:
+//       return game_state.relics_per_second().slice(0, 2);
+//     case METHOD_TAP_DAMAGE_WITH_ACTIVES:
+//       return game_state.tap_damage()[2];
+//     case METHOD_DMG_EQUIVALENT_WITH_ACTIVES:
+//       return [game_state.gold_multiplier(), game_state.tap_damage()[2]];
+//   }
+// };
 
-var ex = function (x) {
-  return (x < -BIGX) ? 0.0 : Math.exp(x);
-}
+// var hashArray = function(array) {
+//   // TODO: find better hash?
+//   return array.toString();
+// };
 
-/*  POCHISQ  --  probability of chi-square value
+// var memoize = {};
+// var get_value_memoize = function(a, p, mo) {
+//   var w = p.w;
+//   var l = p.l;
+//   var c = p.c;
+//   var m = mo;
+//   if (p.s && m == METHOD_TAP_DAMAGE) {
+//     m = METHOD_TAP_DAMAGE_WITH_ACTIVES;
+//   } else if (p.s && m == METHOD_DMG_EQUIVALENT) {
+//     m = METHOD_DMG_EQUIVALENT_WITH_ACTIVES;
+//   }
 
-Adapted from:
-  Hill, I. D. and Pike, M. C.  Algorithm 299
-  Collected Algorithms for the CACM 1967 p. 243
-Updated for rounding errors based on remark in
-  ACM TOMS June 1985, page 185
-*/
+//   var aHash = m + hashArray(a);
+//   if (aHash in memoize) {
+//     return memoize[aHash];
+//   } else {
+//     var g = new GameState(a, w, l, c, { cs: p.t, br: p.z, memory: p.y });
+//     // if rps or sps, will reset anyways
+//     g.get_all_skills();
+//     var base = get_value(g, m);
+//     memoize[aHash] = base;
+//     return base;
+//   }
+// };
 
-var pochisq = function(x, df) {
-  var a, y, s;
-  var e, c, z;
-  var even;                     /* True if df is an even number */
+// var get_max = function(array, custom) {
+//   var max = array[0];
+//   var maxIndex = 0;
+//   for (var i = 1; i < array.length; i++) {
+//     if (custom(array[i], max)) {
+//       maxIndex = i;
+//       max = array[i];
+//     }
+//   }
+//   return max;
+// };
 
-  var LOG_SQRT_PI = 0.5723649429247000870717135; /* log(sqrt(pi)) */
-  var I_SQRT_PI = 0.5641895835477562869480795;   /* 1 / sqrt(pi) */
+// // artifacts, weapons, levels, customizations, relics, nsteps, method
+// var get_best = function(params, method) {
+//   var relics_left = params.r == 0 ? 1000000000 : params.r;
+//   var current_artifacts = params.a.slice();
+//   var steps = [];
+//   var cumulative = 0;
 
-  if (x <= 0.0 || df < 1) {
-    return 1.0;
-  }
+//   var stepLimit = params.n == 0 ? 200 : params.n
 
-  a = 0.5 * x;
-  even = !(df & 1);
-  if (df > 1) {
-    y = ex(-a);
-  }
-  s = (even ? y : (2.0 * poz(-Math.sqrt(x))));
-  if (df > 2) {
-    x = 0.5 * (df - 1.0);
-    z = (even ? 1.0 : 0.5);
-    if (a > BIGX) {
-      e = (even ? 0.0 : LOG_SQRT_PI);
-      c = Math.log(a);
-      while (z <= x) {
-        e = Math.log(z) + e;
-        s += ex(c * z - a - e);
-        z += 1.0;
-      }
-      return s;
-    } else {
-      e = (even ? 1.0 : (I_SQRT_PI / Math.sqrt(a)));
-      c = 0.0;
-      while (z <= x) {
-        e = e * (a / z);
-        c = c + e;
-        z += 1.0;
-      }
-      return c * y + s;
-    }
-  } else {
-    return s;
-  }
-}
+//   while (relics_left > 0 && steps.length < stepLimit) {
+//     var options = [];
+//     var base = get_value_memoize(current_artifacts, params, method);
+//     // console.log("base:", base);
+
+//     for (var i in current_artifacts) {
+//       var level = current_artifacts[i];
+//       if (level == 0 || level == artifact_info[i].levelcap) {
+//         continue;
+//       }
+//       var relic_cost = artifact_info[i].costToLevel(level);
+//       var artifacts_copy = current_artifacts.slice();
+//       artifacts_copy[i] += 1;
+
+//       // console.log(artifact_info[i].name);
+
+//       // Future's Fortune for gold
+//       if (method == METHOD_GOLD && i == 10) {
+//         relic_cost = 0;
+//         // TODO: next_ff_level needs hero skills
+//         var level_to = next_ff_level(current_artifacts[i], params.c[2]);
+//         artifacts_copy[i] = level_to;
+//         while (level_to > level) {
+//           level_to -= 1;
+//           relic_cost += artifact_info[i].costToLevel(level_to);
+//         }
+//       }
+
+//       // Future's Fortune for dmg_equivalent
+//       var ff_dmg_eq_gold;
+//       var ff_dmg_eq_levels;
+//       if ((method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) && i == 10) {
+//         // TODO: next_ff_level needs hero skills
+//         var level_to = next_ff_level(current_artifacts[i], params.c[2]);
+//         var ff_gold_artifacts_copy = current_artifacts.slice();
+//         ff_gold_artifacts_copy[i] = level_to;
+//         ff_dmg_eq_levels = level_to - current_artifacts[i];
+//         ff_dmg_eq_gold = get_value_memoize(ff_gold_artifacts_copy, params, METHOD_GOLD);
+//       }
+
+//       var new_value = get_value_memoize(artifacts_copy, params, method);
+//       var e;
+//       if (method == METHOD_STAGE_PS) {
+//         e = [(new_value[0] - base[0]) / relic_cost, (base[1] - new_value[1]) / relic_cost];
+//       } else if (method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) {
+//         // https://www.reddit.com/r/TapTitans/comments/35e0wd/relationship_between_gold_and_damage/
+//         var gold_ratio = new_value[0] / base[0];
+//         if (i == 10) {
+//           gold_ratio = 1 + ((ff_dmg_eq_gold - base[0]) / ff_dmg_eq_levels) / base[0];
+//         }
+//         var tdmg_ratio = new_value[1] / base[1];
+//         var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_ratio) / Math.log(1.075));
+//         // var total_change = tdmg_ratio * gold_dmg_equivalent;
+
+//         // e = (total_change - 1) / relic_cost;
+
+//         var eq_tdmg = (gold_dmg_equivalent - 1) * base[1] + new_value[1];
+//         // console.log((eq_tdmg - base[1]));
+//         // console.log(relic_cost);
+//         e = (eq_tdmg - base[1]) / relic_cost;
+//       } else {
+//         e = (new_value - base) / relic_cost;
+//       }
+
+//       options.push({
+//         efficiency: e,
+//         index: i,
+//         name: artifact_info[i].name,
+//         level: artifacts_copy[i],
+//         cost: relic_cost,
+//         cumulative: cumulative + relic_cost
+//       });
+//     }
+
+//     // console.log(options);
+
+//     // pick best option
+//     var best_option = get_max(options, function(o1, o2) {
+//       if (method != METHOD_STAGE_PS) {
+//         return o1.efficiency > o2.efficiency;
+//       } else {
+//         if (o1.efficiency[0] > o2.efficiency[0]) {
+//           return true;
+//         } else if (o1.efficiency[0] < o2.efficiency[0]) {
+//           return false;
+//         }
+//         return o1.efficiency[1] > o2.efficiency[1];
+//       }
+//     });
+
+//     if (best_option.cost > relics_left && params.n == 0) {
+//       break;
+//     }
+//     relics_left -= best_option.cost;
+//     cumulative += best_option.cost;
+//     current_artifacts[best_option.index] = best_option.level;
+//     delete best_option.efficiency;
+//     steps.push(best_option);
+//   }
+//   return steps;
+// };
+
+// var get_steps = function(params) {
+//   // reset cache
+//   memoize = {};
+//   var response = {};
+//   for (var mi in params.m) {
+//     var m = params.m[mi];
+//     var steps = get_best(params, m);
+//     // var steps = [];
+//     // if (params.g == 1) {
+//     //  steps = get_best(params, m);
+//     // } else {
+//     //  // TODO: shouldn't get here yet
+//     //  // steps = get_best_dp(artifacts, weapons, customizations, relics, nsteps, m, [])[1];
+//     // }
+//     var summary = {};
+//     var costs = {};
+//     for (var s in steps) {
+//       var step = steps[s];
+//       var i = step["index"];
+//       summary[i] = Math.max(step["level"], summary[i] ? summary[i] : 0);
+//       costs[i] = (costs[i] ? costs[i] : 0) + step["cost"];
+//     }
+//     var summary_steps = []
+//     for (var key in summary) {
+//       var step = {};
+//       step["index"] = key;
+//       step["name"] = artifact_info[key].name;
+//       step["level"] = summary[key];
+//       step["cost"] = costs[key];
+//       summary_steps.push(step);
+//     }
+//     var m_response = {};
+//     m_response["steps"] = steps;
+//     m_response["summary"] = summary_steps;
+//     response[m] = m_response;
+//   }
+//   return response;
+// };
+
+// var calculate_weapons_probability = function(weapons) {
+//   // TODO: how does javascript not have a good statistics package
+//   var total = sumArray(weapons);
+//   if (total == 0) {
+//     return 1;
+//   }
+//   var expected = total / hero_info.length;
+//   var chi2 = 0;
+//   for (var i in weapons) {
+//     chi2 += Math.pow(weapons[i] - expected, 2) / expected;
+//   }
+//   var p = pochisq(chi2, hero_info.length - 1)
+//   return p;
+// };
+
+//  /*  The following JavaScript functions for calculating normal and
+//     chi-square probabilities and critical values were adapted by
+//     John Walker from C implementations
+//     written by Gary Perlman of Wang Institute, Tyngsboro, MA
+//     01879.  Both the original C code and this JavaScript edition
+//     are in the public domain.  */
+
+// /*  POZ  --  probability of normal z value
+
+//   Adapted from a polynomial approximation in:
+//       Ibbetson D, Algorithm 209
+//       Collected Algorithms of the CACM 1963 p. 616
+//   Note:
+//       This routine has six digit accuracy, so it is only useful for absolute
+//       z values < 6.  For z values >= to 6.0, poz() returns 0.0.
+// */
+
+// var poz = function poz() {
+//   var y, x, w;
+//   var Z_MAX = 6.0;              /* Maximum meaningful z value */
+
+//   if (z == 0.0) {
+//     x = 0.0;
+//   } else {
+//     y = 0.5 * Math.abs(z);
+//     if (y >= (Z_MAX * 0.5)) {
+//       x = 1.0;
+//     } else if (y < 1.0) {
+//       w = y * y;
+//       x = ((((((((0.000124818987 * w
+//         - 0.001075204047) * w + 0.005198775019) * w
+//         - 0.019198292004) * w + 0.059054035642) * w
+//         - 0.151968751364) * w + 0.319152932694) * w
+//         - 0.531923007300) * w + 0.797884560593) * y * 2.0;
+//     } else {
+//       y -= 2.0;
+//       x = (((((((((((((-0.000045255659 * y
+//         + 0.000152529290) * y - 0.000019538132) * y
+//         - 0.000676904986) * y + 0.001390604284) * y
+//         - 0.000794620820) * y - 0.002034254874) * y
+//         + 0.006549791214) * y - 0.010557625006) * y
+//         + 0.011630447319) * y - 0.009279453341) * y
+//         + 0.005353579108) * y - 0.002141268741) * y
+//         + 0.000535310849) * y + 0.999936657524;
+//     }
+//   }
+//   return z > 0.0 ? ((x + 1.0) * 0.5) : ((1.0 - x) * 0.5);
+// }
+
+// var BIGX = 20.0;                  /* max value to represent exp(x) */
+
+// var ex = function (x) {
+//   return (x < -BIGX) ? 0.0 : Math.exp(x);
+// }
+
+// /*  POCHISQ  --  probability of chi-square value
+
+// Adapted from:
+//   Hill, I. D. and Pike, M. C.  Algorithm 299
+//   Collected Algorithms for the CACM 1967 p. 243
+// Updated for rounding errors based on remark in
+//   ACM TOMS June 1985, page 185
+// */
+
+// var pochisq = function(x, df) {
+//   var a, y, s;
+//   var e, c, z;
+//   var even;                     /* True if df is an even number */
+
+//   var LOG_SQRT_PI = 0.5723649429247000870717135; /* log(sqrt(pi)) */
+//   var I_SQRT_PI = 0.5641895835477562869480795;   /* 1 / sqrt(pi) */
+
+//   if (x <= 0.0 || df < 1) {
+//     return 1.0;
+//   }
+
+//   a = 0.5 * x;
+//   even = !(df & 1);
+//   if (df > 1) {
+//     y = ex(-a);
+//   }
+//   s = (even ? y : (2.0 * poz(-Math.sqrt(x))));
+//   if (df > 2) {
+//     x = 0.5 * (df - 1.0);
+//     z = (even ? 1.0 : 0.5);
+//     if (a > BIGX) {
+//       e = (even ? 0.0 : LOG_SQRT_PI);
+//       c = Math.log(a);
+//       while (z <= x) {
+//         e = Math.log(z) + e;
+//         s += ex(c * z - a - e);
+//         z += 1.0;
+//       }
+//       return s;
+//     } else {
+//       e = (even ? 1.0 : (I_SQRT_PI / Math.sqrt(a)));
+//       c = 0.0;
+//       while (z <= x) {
+//         e = e * (a / z);
+//         c = c + e;
+//         z += 1.0;
+//       }
+//       return c * y + s;
+//     }
+//   } else {
+//     return s;
+//   }
+// }
