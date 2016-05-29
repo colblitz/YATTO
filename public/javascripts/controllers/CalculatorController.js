@@ -35,11 +35,7 @@ yattoApp.controller('CalculatorController',
 
     $scope.stepmessage = "Click calculate to get steps!";
 
-    // $scope.artifact_caps = [null, null, 10, null, null, null, 25, 25, null, null, null, null, 10, null, 10, null, 10, 10, null, null, 25, 10, 10, 25, null, null, null, 10, 5];
-
-
     $scope.artifact_caps = artifact_info.map(function(a) { return a.levelcap == Infinity ? null : a.levelcap; });
-    // console.log($scope.artifact_caps);
 
     var setDefaults = function() {
       $scope.artifacts = [];
@@ -196,9 +192,7 @@ yattoApp.controller('CalculatorController',
     };
 
     $scope.updateCookies = function() {
-      console.log(log("aCookies: " + $rootScope.aCookies));
       if ($rootScope.aCookies == 'On') {
-        console.log(log("is on, store to cookies"));
         $scope.$parent.saveS();
         $scope.storeToCookies();
       }
@@ -206,7 +200,6 @@ yattoApp.controller('CalculatorController',
     };
 
     $scope.clearAllCookies = function() {
-      console.log(log("clearing all cookies"));
       localStorageService.clearAll();
     };
 
@@ -268,8 +261,6 @@ yattoApp.controller('CalculatorController',
       var g = getGameState();
       g.get_all_skills();
       var tap = g.tap_damage();
-      console.log("--------------------");
-      console.log(tap);
       $scope.all_damage = g.a_ad * 100;
       $scope.dps_damage = parseFloat(g.get_hero_dps().toPrecision(4)).toExponential();
       $scope.tap_damage = parseFloat(tap[0].toPrecision(4)).toExponential();
@@ -283,14 +274,12 @@ yattoApp.controller('CalculatorController',
       $scope.updateCookies();
 
       // recalculate things
-      console.log(log("recalculating things"));
       $scope.updateRelicInfo();
       $scope.updateWeaponInfo();
       $scope.updateStatsInfo();
     };
 
     $scope.stateChanged = function(i) {
-      console.log(log("state changed"));
       var newValue = "";
       if (i == 1)       { newValue = $scope.artifacts.map(function(a) { return a.index + "." + a.value; }).join(); }
       else if (i == 2)  { newValue = $scope.heroes.map(function(h) { return h.weapons; }).join(); }
@@ -407,14 +396,6 @@ yattoApp.controller('CalculatorController',
 
       var response;
       $timeout(function() {
-        console.log(log(artifacts));
-        console.log(log(weapons));
-        console.log(log(levels));
-        console.log(log(customizations));
-        console.log(log(methods));
-
-        console.log(log($scope.relics));
-        console.log(log($scope.nsteps));
         response = get_steps({
           a: artifacts,
           w: weapons,
@@ -428,8 +409,6 @@ yattoApp.controller('CalculatorController',
           t: $scope.critss,
           z: $scope.zerker,
           y: $scope.memory});
-
-        console.log(log(JSON.stringify(response)));
 
         $scope.$apply(function() {
           $scope.steps = [];
@@ -554,7 +533,6 @@ yattoApp.controller('CalculatorController',
 
     $scope.loadFromFile = function() {
       if (!isNonNull($scope.savefile) || $scope.savefile == "") {
-        console.log(log("bad file"));
         return;
       }
       var b = $scope.savefile.indexOf("playerInfoSaveString");
@@ -631,7 +609,6 @@ yattoApp.controller('CalculatorController',
 
     $scope.updateFromState = function() {
       try {
-        console.log(log("update from root state: " + $rootScope.state));
         var t = $rootScope.state.split("|");
 
         var undead = 0;
@@ -699,27 +676,23 @@ yattoApp.controller('CalculatorController',
 
         $scope.updateThings();
       } catch (err) {
-        console.log(log("error updating state: " + err));
         localStorageService.remove('state');
         setDefaults();
       }
     };
 
     $scope.$on('stateUpdate', function() {
-      console.log(log("update things from broadcast"));
       $scope.updateFromState();
     });
 
     // initialize
     setDefaults();
-    console.log(log("defaults set"));
     $scope.readFromCookies();
     $scope.updateFromState();
     $scope.updateThings();
 
     if ("username" in $routeParams) {
       var username = $routeParams.username;
-      console.log(log("calling get state from calculator"));
       $scope.$parent.viewingUser(username);
     } else if ("state" in $routeParams) {
       var state = LZString.decompressFromEncodedURIComponent($routeParams.state);
