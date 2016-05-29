@@ -1,52 +1,52 @@
-// Hero functions
-  // this.getUpgradeCost = function(world, level) {
-  //   if (level < PRECOMPUTE_UPGRADE_COST) {
-  //     return this.upgradeCosts[world][level];
-  //   }
-  //   return (level < 1000 ? this.baseCost[world] : this.baseCost10[world]) * Math.pow(HERO_UPGRADE_SCALING, level);
-  // };
 
-  // this.costToLevel = function(world, startLevel, endLevel) {
-  //   if (endLevel == startLevel + 1) {
-  //     return this.getUpgradeCost(world, startLevel);
-  //   }
-  //   if (endLevel <= 1000) {
-  //     return this.baseCost[world] * (Math.pow(HERO_UPGRADE_SCALING, endLevel) - Math.pow(HERO_UPGRADE_SCALING, startLevel)) / (HERO_UPGRADE_SCALING - 1);
-  //   }
-  //   if (startLevel >= 1000) {
-  //     return this.baseCost10[world] * (Math.pow(HERO_UPGRADE_SCALING, endLevel) - Math.pow(HERO_UPGRADE_SCALING, startLevel)) / (HERO_UPGRADE_SCALING - 1);
-  //   }
-  //   return this.costToLevel(world, startLevel, 1000) + this.evolve_cost[world] + this.costToLevel(world, 1000, endLevel);
-  // };
+  this.getUpgradeCost = function(world, level) {
+    if (level < PRECOMPUTE_UPGRADE_COST) {
+      return this.upgradeCosts[world][level];
+    }
+    return (level < 1000 ? this.baseCost[world] : this.baseCost10[world]) * Math.pow(HERO_UPGRADE_SCALING, level);
+  };
 
-  // this.costToNextSkill = mapMap(baseCost, c => []);
-  // for (var i = 0; i < 2000; i++) {
-  //   for (var w in baseCost) {
-  //     for (var l in SKILL_LEVELS[w]) {
-  //       if (i < SKILL_LEVELS[w][l]) {
-  //         this.costToNextSkill[w].push(this.costToLevel(w, i, SKILL_LEVELS[l]));
-  //         break;
-  //       }
-  //     }
-  //   }
-  // }
+  this.costToLevel = function(world, startLevel, endLevel) {
+    if (endLevel == startLevel + 1) {
+      return this.getUpgradeCost(world, startLevel);
+    }
+    if (endLevel <= 1000) {
+      return this.baseCost[world] * (Math.pow(HERO_UPGRADE_SCALING, endLevel) - Math.pow(HERO_UPGRADE_SCALING, startLevel)) / (HERO_UPGRADE_SCALING - 1);
+    }
+    if (startLevel >= 1000) {
+      return this.baseCost10[world] * (Math.pow(HERO_UPGRADE_SCALING, endLevel) - Math.pow(HERO_UPGRADE_SCALING, startLevel)) / (HERO_UPGRADE_SCALING - 1);
+    }
+    return this.costToLevel(world, startLevel, 1000) + this.evolve_cost[world] + this.costToLevel(world, 1000, endLevel);
+  };
 
-  // this.costToBuySkill = function(world, level) {
-  //   if (level < 1000) {
-  //     return 5 * this.getUpgradeCost(world, level + 1);
-  //   }
-  //   return 0.5 * this.getUpgradeCost(world, level + 1);
-  // };
+  this.costToNextSkill = mapMap(baseCost, c => []);
+  for (var i = 0; i < 2000; i++) {
+    for (var w in baseCost) {
+      for (var l in SKILL_LEVELS[w]) {
+        if (i < SKILL_LEVELS[w][l]) {
+          this.costToNextSkill[w].push(this.costToLevel(w, i, SKILL_LEVELS[l]));
+          break;
+        }
+      }
+    }
+  }
+
+  this.costToBuySkill = function(world, level) {
+    if (level < 1000) {
+      return 5 * this.getUpgradeCost(world, level + 1);
+    }
+    return 0.5 * this.getUpgradeCost(world, level + 1);
+  };
 
 
-  // this.getCostToNextSkill = function(world, level) {
-  //   for (var l in SKILL_LEVELS[world]) {
-  //     if (level < SKILL_LEVELS[world][l]) {
-  //       return [SKILL_LEVELS[world][l], this.costToNextSkill[world][level]];
-  //     }
-  //   }
-  //   return [0, Infinity];
-  // };
+  this.getCostToNextSkill = function(world, level) {
+    for (var l in SKILL_LEVELS[world]) {
+      if (level < SKILL_LEVELS[world][l]) {
+        return [SKILL_LEVELS[world][l], this.costToNextSkill[world][level]];
+      }
+    }
+    return [0, Infinity];
+  };
 
 
 var nextBossStage = function(stage) {

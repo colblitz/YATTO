@@ -108,7 +108,7 @@ var artifactInfo = {
   FISSURE:   new Artifact("Universal Fissure",       1, 14, 0.5, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  60, BonusTypes.SKILL_DRN_HERO:          10}, ""),
   WR:        new Artifact("Warrior's Revival",       1, 23, 1.0, 2.2,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.HERO_REVIVE_TIME:        -5}, ""),
   WI:        new Artifact("Worldly Illuminator",     1, 25, 0.6, 3.0,    5, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 150, BonusTypes.NUM_MOBS:              -100}, ""),
-   ,
+
   AOS:       new Artifact("Amulet of Storms",        2, 55, 2.0, 6.0,    5, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 300, BonusTypes.NUM_MOBS:              -100}, ""),
   ORB:       new Artifact("Annihilation Orb",        2, 49, 1.0, 1.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  20, BonusTypes.CHEST_ARTIFACTS:         10, BonusTypes.GOLD_ARTIFACTS:          2}, ""),
   AO:        new Artifact("Anointment Ointment",     2, 54, 0.5, 2.8,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 150, BonusTypes.UPGRADE_COST:            -1, BonusTypes.GOLD_OVERALL:            5}, ""),
@@ -689,13 +689,13 @@ var BASE_SKILL_CRIT_DURATION = 30;
 var BASE_SKILL_TDMG_DURATION = 30;
 
 // params {
-// 	world: 1 or 2
-// 	artifacts: array of [artifact id, level]
-// 	levels: array of hero level, ordered by id
-// 	weapons: array of weapon counts, ordered by id
-// 	customizations: array of totals
-// 	skillLevelCrit: int
-// 	skillLevelTDMG: int
+//  world: 1 or 2
+//  artifacts: array of [artifact id, level]
+//  levels: array of hero level, ordered by id
+//  weapons: array of weapon counts, ordered by id
+//  customizations: array of totals
+//  skillLevelCrit: int
+//  skillLevelTDMG: int
 //  memory: % int
 // }
 var GameState = function(params) {
@@ -761,8 +761,8 @@ var GameState = function(params) {
     var averageMobBossGold = (goldFromMobs + goldFromBoss) / (numberOfMobs + 1);
 
     var additiveMultipliers = Math.ceil(1 + this.getBonus(BonusTypes.GOLD_ARTIFACTS)
-                                				  + this.getBonus(BonusTypes.GOLD_HEROSKILLS)
-                                					+ this.getBonus(BonusTypes.GOLD_CUSTOMIZATIONS));
+                                          + this.getBonus(BonusTypes.GOLD_HEROSKILLS)
+                                          + this.getBonus(BonusTypes.GOLD_CUSTOMIZATIONS));
     var overallMultiplier = 1 + this.getBonus(BonusTypes.GOLD_OVERALL);
     var upgradeMultiplier = 1 / (1 + this.getBonus(BonusTypes.UPGRADE_COST));
 
@@ -834,38 +834,36 @@ var GameState = function(params) {
     return [totalTapDamage, totalTappingDamage, totalSkillsDamage];
   };
 
-  this.nextFFLevel = function() {
-  	// TODO: do this
+  this.nextFFLevel = function(ff) {
+    var newLevel = ff;
+    var multiplier = function(l) {
+        return Math.ceil(1 + (l * artifactInfo.FF.effects[BonusTypes.GOLD_ARTIFACTS] / 100)
+                           + this.getBonus(BonusTypes.GOLD_HEROSKILLS)
+                           + this.getBonus(BonusTypes.GOLD_CUSTOMIZATIONS));
+    };
+    while (multiplier(newLevel) == multiplier(ff)) {
+      newLevel += 1;
+    }
+    return newLevel;
   };
-
-	// var next_ff_level = function(ff, c_gd) {
-	//   var new_level = ff;
-	//   var multiplier = function(l) {
-	//     return Math.ceil(1 + 0.05 * l + TOTAL_STYPE_GOLD_DROPPED + c_gd);
-	//   }
-	//   while (multiplier(new_level) == multiplier(ff)) {
-	//     new_level += 1;
-	//   }
-	//   return new_level;
-	// };
 };
 
 var Methods = {
-	ALL_DAMAGE:     0,
-	GOLD:           1,
-	TAP_DAMAGE:     2,
-	DMG_EQUIVALENT: 3,
+  ALL_DAMAGE:     0,
+  GOLD:           1,
+  TAP_DAMAGE:     2,
+  DMG_EQUIVALENT: 3,
 };
 
 var getValue = function(gameState, method, actives) {
-	var a = actives ? 2 : 1;
-	switch (method) {
-		case Methods.ALL_DAMAGE:     return gameState.getAllDamage();
-		case Methods.GOLD:           return gameState.getGoldMultiplier();
-		case Methods.TAP_DAMAGE:     return gameState.getTapDamage()[a];
-		case Methods.DMG_EQUIVALENT: return { gold: gameState.getGoldMultiplier(), tdmg: gameState.getTapDamage()[a] };
-		default: console.log("NO UNDERSTANDO");
-	}
+  var a = actives ? 2 : 1;
+  switch (method) {
+    case Methods.ALL_DAMAGE:     return gameState.getAllDamage();
+    case Methods.GOLD:           return gameState.getGoldMultiplier();
+    case Methods.TAP_DAMAGE:     return gameState.getTapDamage()[a];
+    case Methods.DMG_EQUIVALENT: return { gold: gameState.getGoldMultiplier(), tdmg: gameState.getTapDamage()[a] };
+    default: console.log("NO UNDERSTANDO");
+  }
 };
 
 var getMax = function(array, custom) {
@@ -881,166 +879,166 @@ var getMax = function(array, custom) {
 };
 
 var copyParamsForGameState = function(params, newArtifacts) {
-	return {
-		world:          params.world,
-		artifacts:      newArtifacts,
-		levels:         params.levels,
-		weapons:        params.weapons,
-		memory:         params.memory,
-		customizations: params.customizations,
-		skillLevelCrit: params.skillLevelCrit,
-		skillLevelTDMG: params.skillLevelTDMG,
-	};
+  return {
+    world:          params.world,
+    artifacts:      newArtifacts,
+    levels:         params.levels,
+    weapons:        params.weapons,
+    memory:         params.memory,
+    customizations: params.customizations,
+    skillLevelCrit: params.skillLevelCrit,
+    skillLevelTDMG: params.skillLevelTDMG,
+  };
 };
 
 // params {
-// 	world: 1 or 2
-// 	artifacts: array of [artifact id, level]
-// 	levels: array of hero level, ordered by id
-// 	weapons: array of weapon counts, ordered by id
-// 	customizations: array of totals
-// 	skillLevelCrit: int
-// 	skillLevelTDMG: int
+//  world: 1 or 2
+//  artifacts: array of [artifact id, level]
+//  levels: array of hero level, ordered by id
+//  weapons: array of weapon counts, ordered by id
+//  customizations: array of totals
+//  skillLevelCrit: int
+//  skillLevelTDMG: int
 //  memory: % int
 //  relics: int
 //  steps: int
 //  useActives: boolean
 // }
 var getBestSteps = function(params, method) {
-	var relicsLeft = params.relics == 0 ? 1000000000 : params.relics;
-	var currentArtifacts = params.artifacts.slice();
-	var steps = [];
-	var cumulative = 0;
-	var stepLimit = params.steps == 0 ? 300 : params.steps;
+  var relicsLeft = params.relics == 0 ? 1000000000 : params.relics;
+  var currentArtifacts = params.artifacts.slice();
+  var steps = [];
+  var cumulative = 0;
+  var stepLimit = params.steps == 0 ? 300 : params.steps;
 
-	while (relicsLeft > 0 && steps.length < stepLimit) {
-		// array to hold possible upgrades
-		var options = [];
+  // TODO: only relicsLeft or steps
+  while (relicsLeft > 0 && steps.length < stepLimit) {
+    // array to hold possible upgrades
+    var options = [];
 
-		// get initial values
-		var baseState = new GameState(params);
-		var baseValue = getValue(baseState, method, params.actives);
+    // get initial values
+    params.artifacts = currentArtifacts;
+    var baseState = new GameState(params);
+    var baseValue = getValue(baseState, method, params.actives);
 
-		currentArtifacts.forEach(function(ap, i) {
-			var artifact = artifactMapping[ap[0]];
+    currentArtifacts.forEach(function(ap, i) {
+      var artifact = artifactMapping[ap[0]];
 
-			var level = ap[1];
-			if (level == 0 || level == artifact.levelcap) {
-				continue;
-			}
+      var level = ap[1];
+      if (level == 0 || level == artifact.levelcap) {
+        continue;
+      }
 
-			// cost to level this artifact
-			var relicCost = artifact.costToLevel(level);
+      // cost to level this artifact
+      var relicCost = artifact.costToLevel(level);
 
-			// get value if leveled
-			var newArtifacts = currentArtifacts.slice();
-			newArtifacts[i][1] += 1;
-			params.artifacts = newArtifacts;
-			// var newParams = copyParamsForGameState(params, newArtifacts);
+      // get value if leveled
+      var newArtifacts = currentArtifacts.slice();
+      newArtifacts[i][1] += 1;
 
-			// TODO: FUTURE'S FORTUNE
-			// if (method == METHOD_GOLD && i == 10) {
-   //      relic_cost = 0;
-   //      // TODO: next_ff_level needs hero skills
-   //      var level_to = next_ff_level(current_artifacts[i], params.c[2]);
-   //      artifacts_copy[i] = level_to;
-   //      while (level_to > level) {
-   //        level_to -= 1;
-   //        relic_cost += artifact_info[i].costToLevel(level_to);
-   //      }
-   //    }
+      // TODO: make this better
+      if (method == Methods.GOLD && artifact == artifactInfo.FF) {
+        relicCost = 0;
+        var levelTo = baseState.nextFFLevel(level);
+        newArtifacts[i][1] = levelTo;
+        while (levelTo > level) {
+          levelTo -= 1;
+          relicCost += artifactInfo.FF.costToLevel(levelTo);
+        }
+      }
 
-   //    // Future's Fortune for dmg_equivalent
-   //    var ff_dmg_eq_gold;
-   //    var ff_dmg_eq_levels;
-   //    if ((method == METHOD_DMG_EQUIVALENT || method == METHOD_DMG_EQUIVALENT_WITH_ACTIVES) && i == 10) {
-   //      // TODO: next_ff_level needs hero skills
-   //      var level_to = next_ff_level(current_artifacts[i], params.c[2]);
-   //      var ff_gold_artifacts_copy = current_artifacts.slice();
-   //      ff_gold_artifacts_copy[i] = level_to;
-   //      ff_dmg_eq_levels = level_to - current_artifacts[i];
-   //      ff_dmg_eq_gold = get_value_memoize(ff_gold_artifacts_copy, params, METHOD_GOLD);
-   //    }
+      var dmgEFFGold;
+      var dmgEFFLevels;
+      if (method == Methods.DMG_EQUIVALENT && artifact == artifactInfo.FF) {
+        var levelTo = baseState.nextFFLevel(level);
+        var ffArtifacts = newArtifacts.slice();
+        ffArtifacts[i][1] = levelTo;
+        dmgEFFLevels = levelTo - currentArtifacts[i][1];
+        params.artifacts = ffArtifacts;
+        var ffState = new GameState(params);
+        dmgEFFGold = getValue(ffState, Methods.GOLD, params.actives);
+      }
 
+      params.artifacts = newArtifacts;
+      var newGameState = new GameState(params);
+      var newValue = getValue(newGameState, method, params.actives);
 
+      var efficiency;
+      if (method == Methods.DMG_EQUIVALENT) {
+        var goldRatio = newValue[0] / baseValue[0];
+        var tdmgRatio = newValue[1] / baseValue[1];
 
+        // TODO: Make this better
+        if (artifact == artifactInfo.FF) {
+          goldRatio = 1 + ((dmgEFFGold - baseValue[0]) / dmgEFFLevels) / baseValue[0];
+        }
 
-			var newGameState = new GameState(params);
-			var newValue = getValue(newGameState, method, params.actives);
+        var goldDmgEquivalent = Math.pow(1.044685, Math.log(goldRatio) / Math.log(1.075));
+        var tdmgEquivalentRatio = goldDmgEquivalent * tdmgRatio;
+        var tdmgEquivalent = baseValue[1] * tdmgEquivalentRatio;
 
-			var efficiency;
-			if (method == Methods.DMG_EQUIVALENT) {
-				var goldRatio = newValue[0] / baseValue[0];
-				var tdmgRatio = newValue[1] / baseValue[1];
+        efficiency = (tdmgEquivalent - baseValue[1]) / relicCost;
+      } else {
+        efficiency = (newValue - baseValue) / relicCost;
+      }
 
-				// TODO: FUTURE'S FORTUNE
-				// if (i == 10) {
-    //       gold_ratio = 1 + ((ff_dmg_eq_gold - base[0]) / ff_dmg_eq_levels) / base[0];
-    //     }
+      options.push({
+        index: i,
+        name: artifact.name,
+        level: newArtifacts[i][1],
+        cost: relicCost,
+        efficiency: efficiency,
+        cumulative: cumulative + relicCost,
+      });
+    });
 
-				var goldDmgEquivalent = Math.pow(1.044685, Math.log(goldRatio) / Math.log(1.075));
-				var tdmgEquivalentRatio = goldDmgEquivalent * tdmgRatio;
-				var tdmgEquivalent = baseValue[1] * tdmgEquivalentRatio;
+    // TODO: add new artifact option
 
-				efficiency = (tdmgEquivalent - baseValue[1]) / relicCost;
-			} else {
-				efficiency = (newValue - baseValue) / relicCost;
-			}
+    // pick best option
+    var bestOption = getMax(options, function(o1, o2) {
+      return o1.efficiency > o2.efficiency;
+    });
 
-			options.push({
-				index: i,
-				name: artifact.name,
-				level: newArtifacts[i][1],
-				cost: relicCost,
-				efficiency: efficiency,
-				cumulative: cumulative + relicCost,
-			});
-		});
+    // TODO: use all relics options
+    // if we don't have enough relics, break
+    if (bestOption.cost > relicsLeft && parms.steps == 0) {
+      break;
+    }
 
-		// pick best option
-		var bestOption = getMax(options, function(o1, o2) {
-			return o1.efficiency > o2.efficiency;
-		});
-
-		// if we don't have enough relics, break
-		if (bestOption.cost > relicsLeft && parms.steps == 0) {
-			break;
-		}
-
-		// update
-		relicsLeft -= bestOption.cost;
-		cumulative += bestOption.cost;
-		currentArtifacts[bestOption.index][1] = bestOption.level;
-		steps.push(bestOption);
-	}
-	return steps;
+    // update
+    relicsLeft -= bestOption.cost;
+    cumulative += bestOption.cost;
+    currentArtifacts[bestOption.index][1] = bestOption.level;
+    steps.push(bestOption);
+  }
+  return steps;
 };
 
 var getSteps = function(params) {
-	var response = {};
-	params.methods.forEach(function(m, i) {
-		var steps = getBestSteps(params, m);
-		var summary = {};
-		var costs = {};
-		steps.forEach(function(s, index) {
-			var i = s.index;
-			summary[i] = Math.max(s.level, summary[i] ? summary[i] : 0);
-			costs[i] = (costs[i] ? costs[i] : 0) + s.cost;
-		});
-		var summarySteps = [];
-		for (var k in summary) {
-			var step = {
-				index: k,
-				name: artifactMapping[i].name,
-				level: summary[k],
-				cost: costs[k],
-			};
-			summarySteps.push(step);
-		}
-		response[m] = {
-			steps: steps,
-			summary: summarySteps,
-		};
-	});
-	return response;
+  var response = {};
+  params.methods.forEach(function(m, i) {
+    var steps = getBestSteps(params, m);
+    var summary = {};
+    var costs = {};
+    steps.forEach(function(s, index) {
+      var i = s.index;
+      summary[i] = Math.max(s.level, summary[i] ? summary[i] : 0);
+      costs[i] = (costs[i] ? costs[i] : 0) + s.cost;
+    });
+    var summarySteps = [];
+    for (var k in summary) {
+      var step = {
+        index: k,
+        name: artifactMapping[i].name,
+        level: summary[k],
+        cost: costs[k],
+      };
+      summarySteps.push(step);
+    }
+    response[m] = {
+      steps: steps,
+      summary: summarySteps,
+    };
+  });
+  return response;
 };
