@@ -2,6 +2,7 @@ var BonusTypes = {
   ALL_DAMAGE_ARTIFACTS:        0,
   ALL_DAMAGE_HEROSKILLS:       1,
   ALL_DAMAGE_CUSTOMIZATIONS:   2,
+  ALL_DAMAGE_MEMORY
   TAP_DAMAGE_ARTIFACTS:        3,
   TAP_DAMAGE_HEROSKILLS:       4,
   TAP_DAMAGE_CUSTOMIZATIONS:   5,
@@ -43,6 +44,8 @@ var BonusTypes = {
   SKILL_DRN_OHKO:             41,
   HERO_DEATH_CHANCE:          42,
   HERO_REVIVE_TIME:           43,
+  WEAPON_INDIVIDUAL:          44,
+  WEAPON_SET:                 45,
 };
 
 var Artifact = function(name, world, id, x, y, levelcap, effects, flavor) {
@@ -124,7 +127,7 @@ var Artifact = function(name, world, id, x, y, levelcap, effects, flavor) {
 //   };
 // }
 
-var artifact_info = {
+var artifactInfo = {
   AOV:       new Artifact("Amulet of the Valrunes",  1,  2, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  25, BonusTypes.GOLD_MOBS:               10}, ""),
   AXE:       new Artifact("Axe of Resolution",       1, 16, 0.5, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_TDMG:          10}, ""),
   BM:        new Artifact("Barbarian's Mettle",      1, 10, 0.4, 1.5,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_CDR_TDMG:          -5}, ""),
@@ -133,7 +136,7 @@ var artifact_info = {
   ELIXIR:    new Artifact("Crafter's Elixir",        1, 27, 0.5, 1.8, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  20, BonusTypes.GOLD_OVERALL:            15}, ""), // gold while playing
   EGG:       new Artifact("Crown Egg",               1, 18, 1.0, 1.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  20, BonusTypes.CHEST_CHANCE:            20}, ""),
   CLOAK:     new Artifact("Dark Cloak of Life",      1,  3, 0.5, 2.0,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.BOSS_HEALTH:             -2}, ""),
-  DS:        new Artifact("Death Seeker",            1,  4, 0.8, 2.5,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.CRIT_CHANCE:             10}, ""),
+  DS:        new Artifact("Death Seeker",            1,  4, 0.8, 2.5,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.CRIT_CHANCE:              2}, ""),
   CHALICE:   new Artifact("Divine Chalice",          1, 21, 0.7, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.GOLD_10X_CHANCE:        0.5}, ""),
   HAMMER:    new Artifact("Drunken Hammer",          1, 29, 0.6, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.TAP_DAMAGE_ARTIFACTS:     2}, ""),
   FF:        new Artifact("Future's Fortune",        1, 20, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.GOLD_ARTIFACTS:           5}, ""),
@@ -199,9 +202,9 @@ var artifact_info = {
 };
 
 // generate id to enum
-var artifact_mapping = {};
-for (var key in artifact_info) {
-  artifact_mapping[artifact_info[key].id] = artifact_info[key];
+var artifactMapping = {};
+for (var key in artifactInfo) {
+  artifactMapping[artifactInfo[key].id] = artifactInfo[key];
 }
 
 // var artifact_info = [
@@ -253,7 +256,7 @@ var SKILL_LEVELS = {
   2: [10, 30, 60, 100, 200, 400, 800, 1010, 1030, 1060, 1100, 1200, 1400, 1800],
 };
 
-var level_to_skills = function(world, level) {
+var levelToSkills = function(world, level) {
   var eqLevel = (level > 1000 ? level - 1000 : level);
   var slevels = SKILL_LEVELS[world].slice(0, 7);
   for (var l in slevels) {
@@ -262,7 +265,7 @@ var level_to_skills = function(world, level) {
     }
   }
   return 7;
-}
+};
 
 // var level_to_skills = function(level) {
 //   var eqLevel = (level > 1000 ? level - 1000 : level);
@@ -276,80 +279,80 @@ var level_to_skills = function(world, level) {
 // }
 
 var HERO_UPGRADE_SCALING = 1.075;
-var precompute_upgrade_cost = 6000;
-var Hero = function(name, id, base_cost, skills) {
+var PRECOMPUTE_UPGRADE_COST = 6000;
+var Hero = function(name, id, baseCost, skills) {
   this.name = name;
   this.id = id;
-  this.base_cost = base_cost;
+  this.baseCost = baseCost;
   this.skills = skills;
 
   // base_cost should be of form {1: x, 2: y}
-  this.base_cost10 = mapMap(base_cost, c => c*10);
-  this.upgrade_costs = mapMap(base_cost, c => [c]);
+  this.baseCost10 = mapMap(baseCost, function(c) { return c*10; });
+  this.upgradeCosts = mapMap(baseCost, function(c) { return [c]; });
 
   // precompute a bunch of upgrade costs
   var m = HERO_UPGRADE_SCALING;
-  for (var i = 1; i < precompute_upgrade_cost; i++) {
-    for (var w in base_cost) {
-      this.upgrade_costs[w].push((i < 1000 ? this.base_cost[w] : this.base_cost10[w]) * m);
+  for (var i = 1; i < PRECOMPUTE_UPGRADE_COST; i++) {
+    for (var w in baseCost) {
+      this.upgradeCosts[w].push((i < 1000 ? this.baseCost[w] : this.baseCost10[w]) * m);
       m *= HERO_UPGRADE_SCALING;
     }
   }
 
-  this.evolve_cost = mapMap(this.upgrade_costs, l => 10.75 * l[999]);
+  this.evolveCost = mapMap(this.upgradeCosts, function(l) { return 10.75 * l[999]; });
 
-  this.get_upgrade_cost = function(world, level) {
-    if (level < precompute_upgrade_cost) {
-      return this.upgrade_costs[world][level];
+  this.getUpgradeCost = function(world, level) {
+    if (level < PRECOMPUTE_UPGRADE_COST) {
+      return this.upgradeCosts[world][level];
     }
-    return (level < 1000 ? this.base_cost[world] : this.base_cost10[world]) * Math.pow(HERO_UPGRADE_SCALING, level);
+    return (level < 1000 ? this.baseCost[world] : this.baseCost10[world]) * Math.pow(HERO_UPGRADE_SCALING, level);
   };
 
-  this.cost_to_level = function(world, start_level, end_level) {
-    if (end_level == start_level + 1) {
-      return this.get_upgrade_cost(world, start_level);
-    }
-    if (end_level <= 1000) {
-      return this.base_cost[world] * (Math.pow(HERO_UPGRADE_SCALING, end_level) - Math.pow(HERO_UPGRADE_SCALING, start_level)) / (HERO_UPGRADE_SCALING - 1);
-    }
-    if (start_level >= 1000) {
-      return this.base_cost10[world] * (Math.pow(HERO_UPGRADE_SCALING, end_level) - Math.pow(HERO_UPGRADE_SCALING, start_level)) / (HERO_UPGRADE_SCALING - 1);
-    }
-    return this.cost_to_level(world, start_level, 1000) + this.evolve_cost[world] + this.cost_to_level(world, 1000, end_level);
-  };
+  // this.costToLevel = function(world, startLevel, endLevel) {
+  //   if (endLevel == startLevel + 1) {
+  //     return this.getUpgradeCost(world, startLevel);
+  //   }
+  //   if (endLevel <= 1000) {
+  //     return this.baseCost[world] * (Math.pow(HERO_UPGRADE_SCALING, endLevel) - Math.pow(HERO_UPGRADE_SCALING, startLevel)) / (HERO_UPGRADE_SCALING - 1);
+  //   }
+  //   if (startLevel >= 1000) {
+  //     return this.baseCost10[world] * (Math.pow(HERO_UPGRADE_SCALING, endLevel) - Math.pow(HERO_UPGRADE_SCALING, startLevel)) / (HERO_UPGRADE_SCALING - 1);
+  //   }
+  //   return this.costToLevel(world, startLevel, 1000) + this.evolve_cost[world] + this.costToLevel(world, 1000, endLevel);
+  // };
 
-  this.cost_to_next_skill = mapMap(base_cost, c => []);
-  for (var i = 0; i < 2000; i++) {
-    for (var w in base_cost) {
-      for (var l in SKILL_LEVELS[w]) {
-        if (i < SKILL_LEVELS[w][l]) {
-          this.cost_to_next_skill[w].push(this.cost_to_level(w, i, SKILL_LEVELS[l]));
-          break;
-        }
-      }
-    }
-  }
+  // this.costToNextSkill = mapMap(baseCost, c => []);
+  // for (var i = 0; i < 2000; i++) {
+  //   for (var w in baseCost) {
+  //     for (var l in SKILL_LEVELS[w]) {
+  //       if (i < SKILL_LEVELS[w][l]) {
+  //         this.costToNextSkill[w].push(this.costToLevel(w, i, SKILL_LEVELS[l]));
+  //         break;
+  //       }
+  //     }
+  //   }
+  // }
 
-  this.cost_to_buy_skill = function(world, level) {
-    if (level < 1000) {
-      return 5 * this.get_upgrade_cost(world, level + 1);
-    }
-    return 0.5 * this.get_upgrade_cost(world, level + 1);
-  };
+  // this.costToBuySkill = function(world, level) {
+  //   if (level < 1000) {
+  //     return 5 * this.getUpgradeCost(world, level + 1);
+  //   }
+  //   return 0.5 * this.getUpgradeCost(world, level + 1);
+  // };
 
 
-  this.get_cost_to_next_skill = function(world, level) {
-    for (var l in SKILL_LEVELS[world]) {
-      if (level < SKILL_LEVELS[world][l]) {
-        return [SKILL_LEVELS[world][l], this.cost_to_next_skill[world][level]];
-      }
-    }
-    return [0, Infinity];
-  };
+  // this.getCostToNextSkill = function(world, level) {
+  //   for (var l in SKILL_LEVELS[world]) {
+  //     if (level < SKILL_LEVELS[world][l]) {
+  //       return [SKILL_LEVELS[world][l], this.costToNextSkill[world][level]];
+  //     }
+  //   }
+  //   return [0, Infinity];
+  // };
 
-  this.get_bonuses = function(world, level, btype) {
+  this.getBonuses = function(world, level, btype) {
     var bonus = 0;
-    for (var i = 0; i < level_to_skills(world, level); i++) {
+    for (var i = 0; i < levelToSkills(world, level); i++) {
       if (skills[world][i][1] == btype) {
         bonus += skills[world][i][0];
       }
@@ -357,10 +360,22 @@ var Hero = function(name, id, base_cost, skills) {
     return bonus;
   };
 
-  this.get_base_damage = function(world, level) {
-    // HeroInfo.GetDPSByLevel
+  this.getAllBonuses = function(world, level) {
+    var bonuses = {};
+    for (var i = 0; i < levelToSkills(world, level); i++) {
+      var skillType = skills[world][i][1];
+      if (!(skillType in bonuses)) {
+        bonuses[skillType] = 0;
+      }
+      bonuses[skillType] += skills[world][i][0];
+    }
+    return bonuses;
+  };
+
+  this.getBaseDamage = function(world, level) {
+    // HeroInfo.GetDPSByLevel (without all the multipliers)
     var n, m;
-    var c = this.get_upgrade_cost(world, level - 1);
+    var c = this.getUpgradeCost(world, level - 1);
     if (level >= 1001) {
       n = Math.max(Math.pow(0.904, level - 1001) * Math.pow(0.715, this.id + 33), 1e-308);
       m = Math.pow(1.075, level - 1000) - 1;
@@ -454,7 +469,7 @@ var Hero = function(name, id, base_cost, skills) {
 //     return (n * c * m) / 0.75;
 //   };
 // }
-var hero_info = [
+var heroInfo = [
   new Hero("Takeda the Blade Assassin", 1, {1: 50, 2: }, {
     1: [[50, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [100, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
@@ -590,16 +605,15 @@ var hero_info = [
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS]],
     2: [[300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE],
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS]]}),
-  // NOT CHECKED
   new Hero("Chester the Beast Tamer", 28, {1: 2850e60, 2: }, {
     1: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.ALL_DAMAGE_HEROSKILLS], [400, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [600, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [20, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
-    2: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.ALL_DAMAGE_HEROSKILLS], [400, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [600, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
+    2: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.ALL_DAMAGE_HEROSKILLS], [1500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [3200, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [20, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
   new Hero("Mohacas the Wind Warrior", 29, {1: 3.14e81, 2: }, {
     1: [[330, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [550, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [20, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.GOLD_HEROSKILLS]],
-    2: [[330, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [550, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS],
+    2: [[330, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [600, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [20, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.GOLD_HEROSKILLS]]}),
   new Hero("Jaqulin the Unknown", 30, {1: 3.14e96, 2: }, {
     1: [[1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS], [4, BonusTypes.TAP_DAMAGE_DPS], [20, BonusTypes.GOLD_HEROSKILLS],
@@ -609,17 +623,17 @@ var hero_info = [
   new Hero("Pixie the Rebel Fairy", 31, {1: 3.76e116, 2: }, {
     1: [[900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.CRIT_CHANCE], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [25, BonusTypes.CHEST_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [15, BonusTypes.GOLD_HEROSKILLS]],
-    2: [[900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.CRIT_CHANCE], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
+    2: [[900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.CRIT_CHANCE], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [25, BonusTypes.CHEST_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [15, BonusTypes.GOLD_HEROSKILLS]]}),
   new Hero("Jackalope the Fireballer", 32, {1: 4.14e136, 2: }, {
     1: [[40, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.GOLD_HEROSKILLS], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.BOSS_DAMAGE]],
-    2: [[40, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.GOLD_HEROSKILLS], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
+    2: [[990, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.GOLD_HEROSKILLS], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.BOSS_DAMAGE]]}),
   new Hero("Dark Lord, Punisher of All", 33, {1: 456e156, 2: }, {
     1: [[2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.TAP_DAMAGE_HEROSKILLS], [1, BonusTypes.TAP_DAMAGE_DPS], [25, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [40, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
-    2: [[2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.TAP_DAMAGE_HEROSKILLS], [1, BonusTypes.TAP_DAMAGE_DPS], [25, BonusTypes.GOLD_HEROSKILLS],
+    2: [[2500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.TAP_DAMAGE_HEROSKILLS], [1, BonusTypes.TAP_DAMAGE_DPS], [25, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [40, BonusTypes.ALL_DAMAGE_HEROSKILLS]]})];
 
 // var TOTAL_STYPE_GOLD_DROPPED = 0;
@@ -693,10 +707,10 @@ var CTYPE_N = 4;
 
 var Customization = function(name, value, cost, ctype, label) {
   this.name = name;
-  this.label = label;
   this.value = value;
   this.cost = cost;
   this.ctype = ctype;
+  this.label = label;
   this.type = cMapping[label[0]]; // acts as index
   this.bonus = cBonus[this.type];
 }
@@ -725,7 +739,7 @@ var Customization = function(name, value, cost, ctype, label) {
 //   this.type = cMapping[label[0]];
 // }
 
-var customization_info = [
+var customizationInfo = [
   // All Damage - Swords
   new Customization("Hero Sword",          0,    0, CTYPE_N, "3_0"),
   new Customization("Knight Sword",        2,    1, CTYPE_P, "3_901"),
@@ -830,14 +844,24 @@ var customization_info = [
   new Customization("Water",               6,  490, CTYPE_D, "4_10")
 ];
 
-var customizationValues = {};
-var customizationMax = [0, 0, 0, 0, 0, 0];
-customization_info.forEach(function(c, i) {
-  var v = c.value / 100;
-  customizationValues[c.label] = c.value / 100;
-  customizationMax[c.type] += v;
+var customizationMapping = {};
+for (var k in customizationInfo) {
+  customizationMapping[customizationInfo[k].label] = customizationInfo[k];
+}
+
+var customizationMax = cBonus.map(function(a) { return 0; });
+customizationInfo.forEach(function(c, i) {
+  customizationMax[c.type] += c.value;
 });
-console.log(customizationMax);
+
+// var customizationValues = {};
+// var customizationMax = [0, 0, 0, 0, 0, 0];
+// customization_info.forEach(function(c, i) {
+//   var v = c.value / 100;
+//   customizationValues[c.label] = c.value / 100;
+//   customizationMax[c.type] += v;
+// });
+// console.log(customizationMax);
 
 var heroToName = {
    1: "Takeda",
@@ -888,91 +912,34 @@ var heroToName = {
 //   return new_level;
 // };
 
-var all_damage = function(artifacts) {
-  var total_ad = 0;
-  for (var i in artifacts) {
-    total_ad += artifact_info[i].getAD(artifacts[i]);
-  }
-  total_ad *= (1 + 0.05 * artifacts[24]);
-  return Math.round(total_ad);
+
+// weapons is array of counts, returns individual hero bonuses
+var getHeroWeaponBonuses = function(weapons) {
+  return weapons.map(function(n) { return 100 + 50 * n; });
 };
 
-var cost_to_buy_next = function(artifacts) {
-  if (! 0 in artifacts) {
-    return Infinity;
-  }
-  var owned = artifacts.filter(function(l) { return l != 0; }).length + 1;
-  return Math.floor(owned * Math.pow(1.35, owned));
-};
-
-var get_hero_weapon_bonuses = function(weapons) {
-  return weapons.map(function(n) { return 1 + 0.5 * n; });
-};
-
-var number_of_sets = function(weapons) {
+var numberOfSets = function(weapons) {
   return Math.min.apply(null, weapons);
 };
 
-var set_bonus = function(weapons) {
-  var sets = number_of_sets(weapons);
-  if (sets == 0) {
-    return 1;
-  } else {
-    return 10 * sets;
-  }
+var setBonus = function(weapons) {
+  var sets = numberOfSets(weapons);
+  return sets == 0 ? 100 : 1000*sets;
 };
 
-var next_boss_stage = function(stage) {
-  // if on boss stage returns that stage, because haven't beat it yet
-  return Math.floor(Math.ceil(stage * 0.2)) * 5;
-};
+var MONSTER_HP_LEVEL_OFF = 156;
+var MONSTER_HP_MULTIPLIER = 18.5;
+var MONSTER_HP_BASE_1 = 1.57;
+var MONSTER_HP_BASE_2 = 1.17;
 
-var stage_constant = 18.5 * Math.pow(1.57, 156);
-var stage_hp = function(stage) {
-  if (stage <= 156) {
-    return 18.5 * Math.pow(1.57, stage);
-  }
-  return stage_constant * Math.pow(1.17, stage - 156);
-};
+var STAGE_CONSTANT = MONSTER_HP_MULTIPLIER * Math.pow(MONSTER_HP_BASE_1, MONSTER_HP_LEVEL_OFF);
 
-var boss_hp = function(stage) {
-  switch (stage % 10) {
-    case 1:
-    case 6:
-      return stage_hp(stage) * 2;
-    case 2:
-    case 7:
-      return stage_hp(stage) * 4;
-    case 3:
-    case 8:
-      return stage_hp(stage) * 6;
-    case 4:
-    case 9:
-      return stage_hp(stage) * 7;
-    case 5:
-    case 0:
-      return stage_hp(stage) * 10;
-  }
-}
+var BOSS_CONSTANT = (2 + 4*MONSTER_HP_BASE_2 + 6*Math.pow(MONSTER_HP_BASE_2, 2) + 7*Math.pow(MONSTER_HP_BASE_2, 3) + 10*Math.pow(MONSTER_HP_BASE_2, 4)) /
+                    (1 + MONSTER_HP_BASE_2 + Math.pow(MONSTER_HP_BASE_2, 2) + Math.pow(MONSTER_HP_BASE_2, 3) + Math.pow(MONSTER_HP_BASE_2, 4));
 
-var log117 = Math.log(1.17);
-var log157 = Math.log(1.57);
-var health_to_stage = function(health) {
-  if (health > stage_constant) {
-    return Math.round(Math.log(health / stage_constant) / log117 + 156);
-  } else {
-    return Math.round(Math.log(health / 18.5) / log157);
-  }
-};
+var BOSS_GOLD_CONSTANT = 2 + 4 + 6 + 7 + 10 / 5.0;
 
-var base_stage_gold = function(stage) {
-  return stage_hp(stage) * (0.02 + 0.00045 * Math.min(stage, 150));
-};
-
-// TODO: Check this constant
-var BOSS_CONSTANT = (2 + 4*1.14 + 6*Math.pow(1.14, 2) + 7*Math.pow(1.14, 3) + 10*Math.pow(1.14, 4))/(1 + 1.14 + Math.pow(1.14, 2) + Math.pow(1.14, 3) + Math.pow(1.14, 4));
-//BOSS_CONSTANT = 6;
-
+// TODO: maybe redundant - main.js
 var newZeroes = function(length) {
   return Array.apply(null, new Array(length)).map(Number.prototype.valueOf,0);
 };
@@ -981,8 +948,311 @@ var sumArray = function(array) {
   return array.reduce(function(a, b) { return a + b; });
 };
 
+
+
+
+// var all_damage = function(artifacts) {
+//   var total_ad = 0;
+//   for (var i in artifacts) {
+//     total_ad += artifact_info[i].getAD(artifacts[i]);
+//   }
+//   total_ad *= (1 + 0.05 * artifacts[24]);
+//   return Math.round(total_ad);
+// };
+
+// var cost_to_buy_next = function(artifacts) {
+//   if (! 0 in artifacts) {
+//     return Infinity;
+//   }
+//   var owned = artifacts.filter(function(l) { return l != 0; }).length + 1;
+//   return Math.floor(owned * Math.pow(1.35, owned));
+// };
+
+// var get_hero_weapon_bonuses = function(weapons) {
+//   return weapons.map(function(n) { return 1 + 0.5 * n; });
+// };
+
+// var number_of_sets = function(weapons) {
+//   return Math.min.apply(null, weapons);
+// };
+
+// var set_bonus = function(weapons) {
+//   var sets = number_of_sets(weapons);
+//   if (sets == 0) {
+//     return 1;
+//   } else {
+//     return 10 * sets;
+//   }
+// };
+
+// var next_boss_stage = function(stage) {
+//   // if on boss stage returns that stage, because haven't beat it yet
+//   return Math.floor(Math.ceil(stage * 0.2)) * 5;
+// };
+
+// var stage_constant = 18.5 * Math.pow(1.57, 156);
+// var stage_hp = function(stage) {
+//   if (stage <= 156) {
+//     return 18.5 * Math.pow(1.57, stage);
+//   }
+//   return stage_constant * Math.pow(1.17, stage - 156);
+// };
+
+// var boss_hp = function(stage) {
+//   switch (stage % 10) {
+//     case 1:
+//     case 6:
+//       return stage_hp(stage) * 2;
+//     case 2:
+//     case 7:
+//       return stage_hp(stage) * 4;
+//     case 3:
+//     case 8:
+//       return stage_hp(stage) * 6;
+//     case 4:
+//     case 9:
+//       return stage_hp(stage) * 7;
+//     case 5:
+//     case 0:
+//       return stage_hp(stage) * 10;
+//   }
+// }
+
+// var log117 = Math.log(1.17);
+// var log157 = Math.log(1.57);
+// var health_to_stage = function(health) {
+//   if (health > stage_constant) {
+//     return Math.round(Math.log(health / stage_constant) / log117 + 156);
+//   } else {
+//     return Math.round(Math.log(health / 18.5) / log157);
+//   }
+// };
+
+// var base_stage_gold = function(stage) {
+//   return stage_hp(stage) * (0.02 + 0.00045 * Math.min(stage, 150));
+// };
+
+// // TODO: Check this constant
+// var BOSS_CONSTANT = (2 + 4*1.14 + 6*Math.pow(1.14, 2) + 7*Math.pow(1.14, 3) + 10*Math.pow(1.14, 4))/(1 + 1.14 + Math.pow(1.14, 2) + Math.pow(1.14, 3) + Math.pow(1.14, 4));
+// //BOSS_CONSTANT = 6;
+
+// var newZeroes = function(length) {
+//   return Array.apply(null, new Array(length)).map(Number.prototype.valueOf,0);
+// };
+
+// var sumArray = function(array) {
+//   return array.reduce(function(a, b) { return a + b; });
+// };
+
+
+
+var EMPTY_BONUSES = Object.keys(BonusTypes).map(function(b) { return 0; });
+EMPTY_BONUSES[BonusTypes.WEAPON_INDIVIDUAL] = heroInfo.map(function(h) { return 0; });
+EMPTY_BONUSES[BonusTypes.INDIVIDUAL_HERO_DAMAGE] = heroInfo.map(function(h) { return 0; });
+
+var getEmptyBonuses = function() {
+  return EMPTY_BONUSES.slice();
+};
+
+// artifacts is array of [artifact id, level]
+var addArtifacts = function(world, bonuses, artifacts) {
+  artifacts.forEach(function(a, i) {
+    var id = a[0];
+    var level = a[1];
+    var artifact = artifactMapping[id];
+
+    if (level != 0) {
+      for (var bonusType in artifact.effects) {
+        bonuses[bonusType] += artifact.effects[bonusType] * level;
+        if (bonusType == BonusTypes.ALL_DAMAGE_ARTIFACTS) {
+          // because AD is actually (level + 1) * adpl
+          bonuses[bonusType] += artifact.effects[bonusType];
+        }
+      }
+    }
+  });
+};
+
+// levels is array of hero level, ordered by id
+var addLevels = function(world, bonuses, levels) {
+  levels.forEach(function(l, i) {
+    var hero = heroInfo[i];
+    var bonuses = hero.getAllBonuses(world, l);
+    for (var bonusType in bonuses) {
+      if (bonusTypes == BonusTypes.INDIVIDUAL_HERO_DAMAGE) {
+        bonuses[bonusType][i] += bonuses[bonusType];
+      } else {
+        bonuses[bonusType] += bonuses[bonusType];
+      }
+    }
+  });
+};
+
+// weapons is array of weapon counts, ordered by id
+var addWeapons = function(world, bonuses, weapons) {
+  bonuses[BonusTypes.WEAPON_SET] = setBonus(weapons);
+  bonuses[BonusTypes.WEAPON_INDIVIDUAL] = getHeroWeaponBonuses(weapons);
+};
+
+// customizations is array of totals
+var addCustomizations = function(world, bonuses, customizations) {
+  customizations.forEach(function(c, i) {
+    bonuses[cBonus[i]] += c;
+  });
+};
+
 var BASE_CRIT_CHANCE = 0.02;
 var BASE_CHEST_CHANCE = 0.02;
+var MAIN_HERO_DAMAGE = 600 * Math.pow(1.05, 600);
+var BASE_SKILL_CRIT_COOLDOWN = 1800;
+var BASE_SKILL_TDMG_COOLDOWN = 3600;
+var BASE_SKILL_CRIT_DURATION = 30;
+var BASE_SKILL_TDMG_DURATION = 30;
+var GameState = function(params) {
+  this.bonuses = getEmptyBonuses();
+  this.world = params.world;
+
+  // need for tap damage
+  this.levels = params.levels;
+  this.skillLevelCrit = params.skillLevelCrit;
+  this.skillLevelTDMG = params.skillLevelTDMG;
+
+  addArtifacts(this.world, this.bonuses, params.artifacts);
+  addLevels(this.world, this.bonuses, params.levels);
+  addWeapons(this.world, this.bonuses, params.weapons);
+  addCustomizations(this.world, this.bonuses, params.customizations);
+
+  this.getBonus = function(bonusType) {
+    return this.bonuses[bonusType] / 100.0;
+  };
+
+  this.getHeroBonus = function(i) {
+    return this.bonuses[BonusTypes.INDIVIDUAL_HERO_DAMAGE][i] / 100.0;
+  };
+
+  this.getWeaponBonus = function(i) {
+    return this.bonuses[BonusTypes.WEAPON_INDIVIDUAL][i] / 100.0;
+  };
+
+  this.getSetBonus = function() {
+    return this.bonuses[BonusTypes.WEAPON_SET] / 100.0;
+  };
+
+  this.allDamage = function() {
+    return this.bonuses[BonusTypes.ALL_DAMAGE_ARTIFACTS];
+  };
+
+  // Returns the average multiplier across all mobs and bosses and stages for
+  // how much gold you'll get relative to the base gold of one normal mob
+  this.goldMultiplier = function() {
+    // PlayerModel.RewardEnemyGold
+    // StageController.GetStageBaseGold
+
+    var numberOfMobs = 10 + this.getBonus(BonusTypes.NUM_MOBS);
+
+    // StageController.GetTreasureSpawnChance
+    var chestChance = Math.min(1, BASE_CHEST_CHANCE * (1 + this.getBonus(BonusTypes.CHEST_CHANCE)));
+    var chestGold = 10 * (1 + this.getBonus(BonusTypes.CHEST_ARTIFACTS))
+                       * (1 + this.getBonus(BonusTypes.CHEST_HEROSKILLS))
+                       * (1 + this.getBonus(BonusTypes.CHEST_CUSTOMIZATIONS));
+
+    var mobChance = 1 - chestChance;
+    var mobGold = (1 + this.getBonus(BonusTypes.GOLD_MOBS));
+
+    var chance10x = Math.min(1, this.getBonus(BonusTypes.GOLD_10X_CHANCE));
+    var multiplier10x = 1 + 9*chance10x; // chance10x * 10 + (1 - chance10x) * 1
+
+    var mobMultiplier = mobGold * multiplier10x;
+
+    var goldFromMobs = numberOfMobs * (chestChance * chestGold + mobChance * mobMultiplier);
+    var goldFromBoss = BOSS_GOLD_CONSTANT * (1 + this.getBonus(BonusTypes.GOLD_BOSS));
+
+    var averageMobBossGold = (goldFromMobs + goldFromBoss) / (numberOfMobs + 1);
+
+    var additiveMultipliers = 1 + this.getBonus(BonusTypes.GOLD_ARTIFACTS)
+                                + this.getBonus(BonusTypes.GOLD_HEROSKILLS)
+                                + this.getBonus(BonusTypes.GOLD_CUSTOMIZATIONS);
+    var overallMultiplier = 1 + this.getBonus(BonusTypes.GOLD_OVERALL);
+    var upgradeMultiplier = 1 / (1 + this.getBonus(BonusTypes.UPGRADE_COST));
+
+    return averageMobBossGold * additiveMultipliers * overallMultiplier * upgradeMultiplier;
+  };
+
+  this.getTotalHeroDPS = function() {
+    // HeroInfo.GetDPSByLevel
+    var dps = 0;
+    this.levels.forEach(function(level, i) {
+      if (level == 0) return;
+
+      var heroDPS = heroInfo[i].getBaseDamage(this.world, level);
+      var m1 = 1 + this.getHeroBonus(i)
+                 + this.getBonus(BonusTypes.ALL_DAMAGE_HEROSKILLS)
+                 + this.getBonus(BonusTypes.ALL_DAMAGE_MEMORY);
+      var m2 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_ARTIFACTS);
+      var m3 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_CUSTOMIZATIONS);
+      var mw = getWeaponBonus(i);
+      var ms = getSetBonus();
+
+      heroDPS = heroDPS * m1 * m2 * m3 * mw * ms;
+      dps += heroDPS;
+    });
+    return dps;
+  };
+
+  this.tapDamage = function() {
+    // PlayerInfo.GetAttackDamageByLevel
+    var totalHeroDPS = this.getTotalHeroDPS();
+    var totalDPS = totalHeroDPS + MAIN_HERO_DPS;
+
+    var m1 = 1 + this.getBonus(BonusTypes.TAP_DAMAGE_HEROSKILLS) + this.getBonus(BonusTypes.TAP_DAMAGE_CUSTOMIZATIONS);
+    var m2 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_ARTIFACTS);
+    var m3 = 1 + this.getBonus(BonusTypes.TAP_DAMAGE_ARTIFACTS);
+    var m4 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_CUSTOMIZATIONS);
+
+    // Should match the displayed Tap Damage
+    var totalTapDamage = totalDPS * m1 * m2 * m3 * m4;
+
+    var critMultiplier = (10 + this.getBonus(BonusTypes.CRIT_DAMAGE_HEROSKILLS))
+                       * (1 + this.getBonus(BonusTypes.CRIT_DAMAGE_ARTIFACTS)
+                       * (1 + this.getBonus(BonusTypes.CRIT_DAMAGE_CUSTOMIZATIONS));
+    var critChance = Math.min(1, BASE_CRIT_CHANCE + this.getBonus(BonusTypes.CRIT_CHANCE));
+    var overallCritMultiplier = ((1 - critChance) + (critChance * 0.65 * critMultiplier));
+
+    // Average damage done per tap
+    var totalTappingDamage = totalTapDamage * overallCritMultiplier;
+
+    var skillCritCDR = BASE_SKILL_CRIT_COOLDOWN * (1 + this.getBonus(BonusTypes.SKILL_CDR_CRIT));
+    var skillCritDRN = BASE_SKILL_CRIT_DURATION * (1 + this.getBonus(BonusTypes.SKILL_DRN_CRIT));
+    var skillCritUptime = Math.max(0, Math.min(1, skillCritCDR / skillCritDRN));
+    // Not sure how to deal with poisonous touch yet
+    if (this.world == 2) { skillCritUptime = 0; }
+
+    var skillBonusCritChance = this.skillLevelCrit > 0 ? (0.17 + 0.03 * (this.skillLevelCrit - 1)) : 0;
+    // Outermost Math.min should be unecessary, but just in case
+    var skillAverageCritChance = Math.min(1, critChance * (1 - skillCritUptime) + Math.min(1, critChance + skillBonusCritChance) * skillCritUptime)
+    var skillAverageCritMultiplier = ((1 - skillAverageCritChance) + (skillAverageCritChance * 0.65 * critMultiplier));
+
+    var skillTDMGCDR = BASE_SKILL_TDMG_COOLDOWN * (1 + this.getBonus(BonusTypes.SKILL_CDR_TDMG));
+    var skillTDMGDRN = BASE_SKILL_TDMG_DURATION * (1 + this.getBonus(BonusTypes.SKILL_DRN_TDMG));
+    var skillTDMGUptime = Math.max(0, Math.min(1, skillTDMGCDR / skillTDMGDRN));
+    var skillTDMGBonus = this.skillLevelTDMG > 0 ? (0.70 + 0.3 * (this.skillLevelTDMG - 1)) : 0;
+    var skillTDMGMultiplier = 1 + (skillTDMGUptime * skillTDMGBonus); // (1 - uptime) * 1 + uptime * (1 + bonus)
+
+    var totalSkillsDamage = totalTapDamage * skillAverageCritMultiplier * skillTDMGMultiplier;
+
+    return [totalTapDamage, totalTappingDamage, totalSkillsDamage];
+  };
+
+  this.dmgEquivalent = function() {
+    var multiplierGold = this.goldMultiplier();
+    var equivalentTDMG = Math.pow(1.044685, Math.log(multiplierGold) / Math.log(1.075));
+    var multiplierTDMG = this.tapDamage()[1];
+  };
+
+}
+
+
+
 var GameState = function(artifacts, weapons, levels, customizations, others) {
   this.artifacts = artifacts.slice();
   this.a_ad = 0.01 * all_damage(this.artifacts);
@@ -1005,7 +1275,8 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
   this.main_dmg = 600 * Math.pow(1.05, 600);
 
   this.weapons = weapons.slice();
-  this.w_bh = get_hero_weapon_bonuses(this.weapons);
+  this.w_bh = getHeroWeaponBonuses(this.weapons);
+  // this.w_bh = get_hero_weapon_bonuses(this.weapons);
   this.w_sb = set_bonus(this.weapons);
 
   this.customizations = customizations.slice();
@@ -1215,273 +1486,517 @@ var GameState = function(artifacts, weapons, levels, customizations, others) {
     return dmg_equivalent;
   };
 
-  this.level_heroes = function() {
-    // buy all the heroes that you can buy
-    var heroes_after = this.heroes.slice();
-    for (var i in heroes_after) {
-      var level = heroes_after[i];
-      if (level == 0 && hero_info[i].base_cost < this.current_gold) {
-        heroes_after[i] += 1;
-        this.current_gold -= hero_info[i].base_cost;
-      }
-    }
-
-    // level your last hero as much as possible
-    var owned = heroes_after.filter(function(h) { return h != 0; });
-    var last_owned = owned.length - 1;
-    var level_last = heroes_after[last_owned];
-
-    // TODO: javascript is stupid
-    if (last_owned != -1) {
-      for (var i in [100, 10, 1]) {
-        var k = Math.pow(10, (2 - i));
-        var cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
-        while (cost < this.current_gold) {
-          heroes_after[last_owned] += k;
-          level_last = heroes_after[last_owned];
-          this.current_gold -= cost;
-          cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
-        }
-      }
-    }
-
-    // buy all the skills that you can
-    for (var i in heroes_after) {
-      if (heroes_after[i] == 0) {
-        continue;
-      }
-      var level = heroes_after[i];
-      var temp = hero_info[i].get_cost_to_next_skill(level);
-      var next_skill_level = temp[0];
-      var cost = temp[1];
-      cost += hero_info[i].cost_to_buy_skill(next_skill_level);
-      while (cost < this.current_gold && level < 800) {
-        heroes_after[i] = next_skill_level;
-        // TODO: check this, hero_skills
-        this.add_skill(i, this.hero_skills[i]);
-        this.hero_skills[i] += 1;
-        level = next_skill_level;
-        this.current_gold -= cost;
-        temp = hero_info[i].get_cost_to_next_skill(level);
-        next_skill_level = temp[0];
-        cost = temp[1];
-        cost += hero_info[i].cost_to_buy_skill(next_skill_level);
-      }
-    }
-
-    this.heroes = heroes_after;
-  };
-
-  this.evolve_heroes = function() {
-    var heroes_after = this.heroes.slice();
-
-    // level your last hero as much as possible
-    var owned = heroes_after.filter(function(h) { return h != 0; });
-    var last_owned = owned.length - 1;
-    var level_last = heroes_after[last_owned];
-
-    // TODO: javascript is stupid
-    if (last_owned != -1) {
-      for (var i in [100, 10, 1]) {
-        var k = Math.pow(10, (2 - i));
-        var cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
-        while (cost < this.current_gold) {
-          heroes_after[last_owned] += k;
-          level_last = heroes_after[last_owned];
-          this.current_gold -= cost;
-          cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
-        }
-      }
-    }
-
-    for (var i in heroes_after) {
-      var level = heroes_after[i];
-      if (level == 1000 && hero_info[i].evolve_cost < this.current_gold) {
-        heroes_after[i] += 1;
-        this.current_gold -= hero_info[i].evolve_cost;
-      }
-    }
-    this.heroes = heroes_after;
-  };
-
-  // TODO: Use this to figure out when to prestige
-  this.calculate_rps_per_stage = function() {
-    var TAPS_PER_SECOND = 10;
-    this.new_run();
-
-    var done = false;
-    var rps = {};
-    var mobs = 10 - this.l_world;
-    while (!done) {
-      var temp = this.tap_damage();
-      var tapping = temp[1];
-      var dps = TAPS_PER_SECOND * tapping;
-
-      var mobs_health = stage_hp(this.current_stage);
-      var boss_health = boss_hp(this.current_stage);
-
-      var base_time = 0.75; // 4.5/6
-      var mobs_time = base_time + Math.ceil(mobs_health / tapping) / TAPS_PER_SECOND;
-      var boss_time = base_time + Math.ceil(boss_health / tapping) / TAPS_PER_SECOND;
-      var total_time = mobs * mobs_time + boss_time;
-
-      if (boss_time > 5) {
-        // cannot kill boss in 5 seconds, see if we want to grind
-        var owned_heroes = this.heroes.filter(function(h) { return h != 0; });
-        var next_hero = owned_heroes.length;
-        var grind_target = 0;
-        if (next_hero == 33 && this.heroes[32] < 1001) {
-
-          grind_target = hero_info[32].evolve_cost;
-          grind = "evolve";
-        } else if (next_hero == 33) {
-          end_game = true;
-          continue;
-        } else {
-          grind_target = hero_info[next_hero].base_cost;
-          grind = "hero";
-        }
-
-        var gold_needed = grind_target - this.current_gold;
-        // check if we can already get whatever we were grinding for
-        if (gold_needed < 0) {
-          if (grind == "evolve") {
-            this.evolve_heroes();
-          }
-          if (grind == "hero") {
-            this.level_heroes();
-          }
-          continue;
-        }
-
-        var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
-        if (gold_needed < 10000 * mob_gold) {
-          this.current_gold += mob_gold;
-          this.time += mobs_time;
-        } else {
-          done = true;
-          continue;
-        }
-      } else {
-        // Pass stage
-        this.current_gold += this.gold_for_stage(this.current_stage);
-        if (this.current_stage % 5 == 0) {
-          this.level_heroes();
-        }
-        this.time += total_time;
-        this.current_stage += 1;
-        rps[this.current_stage] = [this.total_relics() / this.time, boss_time];
-      }
-    }
-  }
-
-  // TODO: make list of log so people can see what's going on
-  this.relics_per_second = function() {
-    var TAPS_PER_SECOND = 10; // TODO: make this user variable
-    this.new_run();
-
-    var done = false;
-    var grind = "";
-    var end_game = false;
-    while (!done) {
-      var temp = this.tap_damage();
-      var tap = temp[0];
-      var tapping = temp[1];
-
-      // ohko things if we can
-      var ohko_stage = health_to_stage(tap);
-      if (ohko_stage > this.current_stage) {
-        this.current_gold += this.gold_between_stages(this.current_stage, ohko_stage + 1);
-        this.level_heroes();
-        this.time += 4.5 * (ohko_stage - this.current_stage);
-        this.current_stage = ohko_stage + 1;
-        continue;
-      }
-
-      // cannot ohko anymore, start tapping
-      var ohko_tapping_stage = health_to_stage(tapping);
-      if (ohko_tapping_stage > this.current_stage) {
-        this.current_gold += this.gold_between_stages(this.current_stage, ohko_tapping_stage + 1);
-        this.level_heroes();
-        // TODO: check this, tapping ohko slightly slower than sc ohko?
-        this.time += 4.75 * (ohko_tapping_stage - this.current_stage);
-        this.current_stage = ohko_tapping_stage + 1;
-        continue;
-      }
 
 
-      // cannot ohko anymore, 5 seconds of tapping per boss
-      var five_seconds = tapping * TAPS_PER_SECOND * 5;
-      var next_boss = next_boss_stage(this.current_stage);
-      if (five_seconds > stage_hp(next_boss) * 10) {
-        this.current_gold += this.gold_between_stages(this.current_stage, next_boss + 1);
-        this.level_heroes();
-        var dps = tapping * TAPS_PER_SECOND;
-        this.time += (next_boss - this.current_stage) * (4.5 + stage_hp(next_boss) * 12 / dps);
-        this.current_stage = next_boss + 1;
-        continue;
-      }
 
-      if (end_game) {
-        var oneohfive_seconds = tapping * TAPS_PER_SECOND * 105;
-        var next_boss = next_boss_stage(this.current_stage);
-        if (oneohfive_seconds > stage_hp(next_boss) * 10) {
-          this.current_gold += this.gold_between_stages(this.current_stage, next_boss + 1);
-          this.level_heroes();
-          var dps = tapping * TAPS_PER_SECOND;
-          // TODO: 12 is random approximation, do better
-          this.time += (next_boss - this.current_stage) * (4.5 + stage_hp(next_boss) * 12 / dps);
-          this.current_stage = next_boss + 1;
-          continue;
-        } else {
-          done = true;
-          continue;
-        }
-      }
 
-      // cannot kill boss in 5 seconds, see if we want to grind
-
-      var owned_heroes = this.heroes.filter(function(h) { return h != 0; });
-      var next_hero = owned_heroes.length;
-      var grind_target = 0;
-      if (next_hero == 33 && this.heroes[32] < 1001) {
-        grind_target = hero_info[32].evolve_cost;
-        grind = "evolve";
-      } else if (next_hero == 33) {
-        end_game = true;
-        continue;
-      } else {
-        grind_target = hero_info[next_hero].base_cost;
-        grind = "hero";
-      }
-
-      var gold_needed = grind_target - this.current_gold;
-      // check if we can already get whatever we were grinding for
-      if (gold_needed < 0) {
-        if (grind == "evolve") {
-          this.evolve_heroes();
-        }
-        if (grind == "hero") {
-          this.level_heroes();
-        }
-        continue;
-      }
-
-      // otherwise, how long do we want to grind for
-      // TODO: make grind a user variable
-      var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
-      if (gold_needed < 200 * mob_gold) {
-        var num_mobs = grind_target / mob_gold;
-        var mob_hp = stage_hp(this.current_stage);
-        this.current_gold += num_mobs * mob_gold;
-        this.time += (mob_hp / (tapping * TAPS_PER_SECOND) + 4.5/6.0) * num_mobs;
-      } else {
-        end_game = true;
-      }
-    } // end while
-    return [this.current_stage, this.time, this.total_relics() / this.time];
-  };
 }
+
+
+
+
+// var BASE_CRIT_CHANCE = 0.02;
+// var BASE_CHEST_CHANCE = 0.02;
+// var GameState = function(artifacts, weapons, levels, customizations, others) {
+//   this.artifacts = artifacts.slice();
+//   this.a_ad = 0.01 * all_damage(this.artifacts);
+//   this.l_amulet    = artifacts[0];
+//   this.l_axe       = artifacts[1];
+//   this.l_chest     = artifacts[3];
+//   this.l_elixir    = artifacts[4];
+//   this.l_egg       = artifacts[5];
+//   this.l_dseeker   = artifacts[7];
+//   this.l_chalice   = artifacts[8];
+//   this.l_hammer    = artifacts[9];
+//   this.l_fortune   = artifacts[10];
+//   this.l_hthrust   = artifacts[11];
+//   this.l_kshield   = artifacts[13];
+//   this.l_parchment = artifacts[18];
+//   this.l_charm     = artifacts[20];
+//   this.l_ua        = artifacts[25];
+//   this.l_world     = artifacts[28];
+//   this.l_brew      = artifacts[29];
+//   this.main_dmg = 600 * Math.pow(1.05, 600);
+
+//   this.weapons = weapons.slice();
+//   this.w_bh = getHeroWeaponBonuses(this.weapons);
+//   // this.w_bh = get_hero_weapon_bonuses(this.weapons);
+//   this.w_sb = set_bonus(this.weapons);
+
+//   this.customizations = customizations.slice();
+//   this.c_ad = customizations[0];
+//   this.c_cd = customizations[1];
+//   this.c_gd = customizations[2];
+//   this.c_cg = customizations[3];
+//   this.c_cc = customizations[4];
+//   this.c_td = customizations[5];
+
+//   this.others = others ? others : {};
+
+//   this.c_chance = Math.min(1, BASE_CHEST_CHANCE + 0.004 * this.l_egg);
+//   this.n_chance = 1 - this.c_chance;
+
+//   this.n_gold = 1 + 0.1 * this.l_amulet;
+//   this.d_chance = Math.min(1, 0.005 * this.l_chalice);
+//   this.d_multiplier = 1 - this.d_chance + 10 * this.d_chance;
+//   this.m_multiplier = this.n_chance * this.n_gold * this.d_multiplier;
+//   this.boss_gold = BOSS_CONSTANT * (1 + this.l_kshield);
+
+//   // this.other_total = (1 + this.c_gd) * (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
+//   this.other_total = (1 + 0.15 * this.l_elixir) * (1 / (1 - 0.02 * this.l_charm));
+
+//   this.heroes = levels.slice();
+//   this.hero_skills = newZeroes(hero_info.length);
+//   this.skill_bonuses = newZeroes(numSkillTypes);
+//   this.current_stage = 1;
+//   this.current_gold = 0;
+//   this.time = 0;
+
+//   this.new_run = function() {
+//     this.heroes = newZeroes(hero_info.length);
+//     this.hero_skills = newZeroes(hero_info.length);
+//     this.skill_bonuses = newZeroes(numSkillTypes);
+//     this.current_stage = 1;
+//     this.current_gold = 0;
+//     this.time = 0;
+//   };
+
+//   this.add_skill = function(h, s) {
+//     var skill = hero_info[h].skills[s];
+//     this.skill_bonuses[skill[1]] += skill[0];
+//   };
+
+//   this.get_all_skills = function() {
+//     for (var i = 0; i < this.heroes.length; i++) {
+//       var skills = level_to_skills(this.heroes[i]);
+//       for (var s = 0; s < skills; s++) {
+//         this.add_skill(i, s);
+//         this.hero_skills[i] = s;
+//       }
+//     }
+//   };
+
+//   this.total_relics = function() {
+//     if (this.current_stage < 90) {
+//       return 0;
+//     }
+//     var stage_relics = Math.pow(Math.floor(this.current_stage/15) - 5, 1.7);
+//     var hero_relics = Math.floor(sumArray(this.heroes) / 1000);
+//     var multiplier = 2 + 0.1 * this.l_ua;
+//     return Math.floor((stage_relics + hero_relics) * multiplier);
+//   };
+
+//   this.get_total_bonus = function(stype) {
+//     return this.skill_bonuses[stype];
+//   };
+
+//   this.gold_multiplier = function() {
+//     var mobs = 10 - this.l_world;
+
+//     var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
+//     var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
+
+//     var c_gold = 10 * (1 + 0.2 * this.l_chest) * (1 + this.c_cg) * (1 + h_cg);
+
+//     var m_gold = mobs * (this.c_chance * c_gold + this.m_multiplier);
+//     var multiplier_gold = (m_gold + this.boss_gold) / (mobs + 1);
+//     //var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
+//     var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd + this.c_gd) * this.other_total;
+
+//     return multiplier_gold * multiplier_total;
+//   };
+
+//   this.mob_multiplier = function() {
+//     var h_cg = this.get_total_bonus(STYPE_CHEST_GOLD);
+//     var h_gd = this.get_total_bonus(STYPE_GOLD_DROPPED);
+
+//     var c_gold = 10 * (1 + 0.2 * this.l_chest) * (1 + this.c_cg) * (1 + h_cg);
+//     var multiplier_mob = this.c_chance * c_gold + this.m_multiplier;
+//     var multiplier_total = Math.ceil(1 + 0.05 * this.l_fortune + h_gd) * this.other_total;
+//     return multiplier_mob * multiplier_total;
+//   };
+
+//   // TODO: take into account particular boss multiplier for stage
+//   this.gold_for_stage = function(stage) {
+//     var mobs = 10 - this.l_world + 1;
+//     var base = base_stage_gold(stage);
+//     var mult = this.gold_multiplier();
+//     return mobs * base * mult;
+//   };
+
+// //   public double GetStageBaseGold(int stage)
+// // {
+// //     double num2 = this.GetStageBaseHP(stage) * (ServerVarsModel.monsterGoldMultiplier + (ServerVarsModel.monsterGoldSlope * Math.Min((float) this.currentStage, ServerVarsModel.noMoreMonsterGoldSlope)));
+// //     return (num2 * Math.Ceiling((double) (1.0 + PlayerModel.instance.GetStatBonus(BonusType.GoldAll))));
+// // }
+
+
+
+
+//   // TODO: take into account particular boss multiplier for stage
+//   this.gold_between_stages = function(start_stage, end_stage) {
+//     var total = 0;
+//     for (var i = start_stage; i < end_stage; i++) {
+//       total += base_stage_gold(i);
+//     }
+//     var mobs = 10 - this.l_world + 1;
+//     var mult = this.gold_multiplier();
+//     return mobs * mult * total;
+//   };
+
+//   this.get_crit_multiplier = function() {
+//     var h_cd = this.get_total_bonus(STYPE_CRIT_DAMAGE);
+//     return (10 + h_cd) * (1 + 0.2 * this.l_hthrust) * (1 + this.c_cd);
+//   };
+
+//   this.get_crit_chance = function() {
+//     var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
+//     return Math.min(1, BASE_CRIT_CHANCE + 0.02 * this.l_dseeker + this.c_cc + h_cc);
+//   };
+
+//   this.get_hero_dps = function() {
+//     var dps = 0;
+//     var h_ad = this.get_total_bonus(STYPE_ALL_DAMAGE);
+//     for (var i in this.heroes) {
+//       var level = this.heroes[i];
+//       if (level == 0) {
+//         continue;
+//       }
+
+//       // console.log("memory: ", this.others.memory);
+//       var hero_dps = hero_info[i].get_base_damage(level);
+//       var m_hero = 1 + hero_info[i].get_bonuses(level, STYPE_HERO_DPS) + h_ad + this.others.memory;
+//       var m_artifact = 1 + this.a_ad;
+//       var m_customization = 1 + this.c_ad;
+//       var m_weapon = this.w_bh[i];
+//       var m_set = this.w_sb;
+
+//       hero_dps = hero_dps * m_hero * m_artifact * m_customization * m_weapon * m_set;
+//       dps += hero_dps;
+//     }
+//     return dps;
+//   };
+
+//   // (num * (1.0 + statBonus) + num4) * (1.0 + num3) * (1.0 + num5)
+
+//   // (((( * ) * ) * (1.0 + artifactDamageBonus)) * (1.0 + num7)) * (1.0 + num8);
+
+
+//   this.tap_damage = function() {
+//     var h_ad = this.get_total_bonus(STYPE_ALL_DAMAGE);
+//     var h_td = this.get_total_bonus(STYPE_TAP_DAMAGE);
+//     var h_pd = this.get_total_bonus(STYPE_PERCENT_DPS);
+//     var h_cd = this.get_total_bonus(STYPE_CRIT_DAMAGE);
+//     var h_cc = this.get_total_bonus(STYPE_CRIT_CHANCE);
+
+//     var hero_total_dps = this.get_hero_dps();
+//     // console.log("hero_total_dps: ", hero_total_dps);
+
+//     // from_main = MAIN_LEVEL * pow(1.05, MAIN_LEVEL) * (1 + h_ad)
+//     var from_main = this.main_dmg * (1 + h_ad);
+//     var from_hero = (h_pd * hero_total_dps);
+//     console.log(from_main);
+//     console.log(from_hero);
+//     var total = from_main + from_hero;
+//     var total_tap = total * (1 + h_td + this.c_td) * (1 + this.a_ad) * (1 + 0.02 * this.l_hammer + 0.02 * this.l_brew) * (1 + this.c_ad);
+//     // var total_tap = from_main + from_hero;
+
+//     var crit_multiplier = this.get_crit_multiplier();
+//     var crit_chance = this.get_crit_chance();
+
+//     var overall_crit_multiplier = ((1 - crit_chance) + (crit_chance * 0.65 * crit_multiplier));
+//     var total_tapping = total_tap * overall_crit_multiplier;
+
+//     var a_crit_uptime = this.l_parchment > 0 ? Math.min((30 + 3 * this.l_parchment) / 900, 1) : 0;
+//     var a_crit_bonus = this.others.cs > 0 ? Math.min((0.17 + (this.others.cs - 1) * 0.03), 1) : 0;
+
+//     // var a_crit_chance = Math.min(1, crit_chance + a_crit_uptime * a_crit_bonus);
+//     var a_crit_chance = Math.min(crit_chance * (1 - a_crit_uptime) + Math.min(1, crit_chance + a_crit_bonus) * a_crit_uptime, 1);
+//     var a_overall_crit_multiplier = ((1 - a_crit_chance) + (a_crit_chance * 0.65 * crit_multiplier));
+
+//     var a_tap_uptime = this.l_axe > 0 ? Math.min((30 + 3 * this.l_axe) / 1800, 1) : 0;
+//     var a_tap_bonus = this.others.br > 0 ? (0.70 + (this.others.br - 1) * 0.3) : 0;
+
+//     var a_total_tapping = total_tap * a_overall_crit_multiplier * (1 + a_tap_uptime * a_tap_bonus);
+
+//     return [total_tap, total_tapping, a_total_tapping];
+//   };
+
+//   this.get_dmg_equivalent = function(game_state) {
+//     var gold_multiplier = this.gold_multiplier();
+//     var dmg_multiplier = this.tap_damage()[1];
+//     var gold_dmg_equivalent = Math.pow(1.044685, Math.log(gold_multiplier) / Math.log(1.075));
+//     var dmg_equivalent = dmg_multiplier + gold_dmg_equivalent;
+//     return dmg_equivalent;
+//   };
+
+//   this.level_heroes = function() {
+//     // buy all the heroes that you can buy
+//     var heroes_after = this.heroes.slice();
+//     for (var i in heroes_after) {
+//       var level = heroes_after[i];
+//       if (level == 0 && hero_info[i].base_cost < this.current_gold) {
+//         heroes_after[i] += 1;
+//         this.current_gold -= hero_info[i].base_cost;
+//       }
+//     }
+
+//     // level your last hero as much as possible
+//     var owned = heroes_after.filter(function(h) { return h != 0; });
+//     var last_owned = owned.length - 1;
+//     var level_last = heroes_after[last_owned];
+
+//     // TODO: javascript is stupid
+//     if (last_owned != -1) {
+//       for (var i in [100, 10, 1]) {
+//         var k = Math.pow(10, (2 - i));
+//         var cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+//         while (cost < this.current_gold) {
+//           heroes_after[last_owned] += k;
+//           level_last = heroes_after[last_owned];
+//           this.current_gold -= cost;
+//           cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+//         }
+//       }
+//     }
+
+//     // buy all the skills that you can
+//     for (var i in heroes_after) {
+//       if (heroes_after[i] == 0) {
+//         continue;
+//       }
+//       var level = heroes_after[i];
+//       var temp = hero_info[i].get_cost_to_next_skill(level);
+//       var next_skill_level = temp[0];
+//       var cost = temp[1];
+//       cost += hero_info[i].cost_to_buy_skill(next_skill_level);
+//       while (cost < this.current_gold && level < 800) {
+//         heroes_after[i] = next_skill_level;
+//         // TODO: check this, hero_skills
+//         this.add_skill(i, this.hero_skills[i]);
+//         this.hero_skills[i] += 1;
+//         level = next_skill_level;
+//         this.current_gold -= cost;
+//         temp = hero_info[i].get_cost_to_next_skill(level);
+//         next_skill_level = temp[0];
+//         cost = temp[1];
+//         cost += hero_info[i].cost_to_buy_skill(next_skill_level);
+//       }
+//     }
+
+//     this.heroes = heroes_after;
+//   };
+
+//   this.evolve_heroes = function() {
+//     var heroes_after = this.heroes.slice();
+
+//     // level your last hero as much as possible
+//     var owned = heroes_after.filter(function(h) { return h != 0; });
+//     var last_owned = owned.length - 1;
+//     var level_last = heroes_after[last_owned];
+
+//     // TODO: javascript is stupid
+//     if (last_owned != -1) {
+//       for (var i in [100, 10, 1]) {
+//         var k = Math.pow(10, (2 - i));
+//         var cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+//         while (cost < this.current_gold) {
+//           heroes_after[last_owned] += k;
+//           level_last = heroes_after[last_owned];
+//           this.current_gold -= cost;
+//           cost = hero_info[last_owned].cost_to_level(level_last, level_last + k);
+//         }
+//       }
+//     }
+
+//     for (var i in heroes_after) {
+//       var level = heroes_after[i];
+//       if (level == 1000 && hero_info[i].evolve_cost < this.current_gold) {
+//         heroes_after[i] += 1;
+//         this.current_gold -= hero_info[i].evolve_cost;
+//       }
+//     }
+//     this.heroes = heroes_after;
+//   };
+
+//   // TODO: Use this to figure out when to prestige
+//   this.calculate_rps_per_stage = function() {
+//     var TAPS_PER_SECOND = 10;
+//     this.new_run();
+
+//     var done = false;
+//     var rps = {};
+//     var mobs = 10 - this.l_world;
+//     while (!done) {
+//       var temp = this.tap_damage();
+//       var tapping = temp[1];
+//       var dps = TAPS_PER_SECOND * tapping;
+
+//       var mobs_health = stage_hp(this.current_stage);
+//       var boss_health = boss_hp(this.current_stage);
+
+//       var base_time = 0.75; // 4.5/6
+//       var mobs_time = base_time + Math.ceil(mobs_health / tapping) / TAPS_PER_SECOND;
+//       var boss_time = base_time + Math.ceil(boss_health / tapping) / TAPS_PER_SECOND;
+//       var total_time = mobs * mobs_time + boss_time;
+
+//       if (boss_time > 5) {
+//         // cannot kill boss in 5 seconds, see if we want to grind
+//         var owned_heroes = this.heroes.filter(function(h) { return h != 0; });
+//         var next_hero = owned_heroes.length;
+//         var grind_target = 0;
+//         if (next_hero == 33 && this.heroes[32] < 1001) {
+
+//           grind_target = hero_info[32].evolve_cost;
+//           grind = "evolve";
+//         } else if (next_hero == 33) {
+//           end_game = true;
+//           continue;
+//         } else {
+//           grind_target = hero_info[next_hero].base_cost;
+//           grind = "hero";
+//         }
+
+//         var gold_needed = grind_target - this.current_gold;
+//         // check if we can already get whatever we were grinding for
+//         if (gold_needed < 0) {
+//           if (grind == "evolve") {
+//             this.evolve_heroes();
+//           }
+//           if (grind == "hero") {
+//             this.level_heroes();
+//           }
+//           continue;
+//         }
+
+//         var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
+//         if (gold_needed < 10000 * mob_gold) {
+//           this.current_gold += mob_gold;
+//           this.time += mobs_time;
+//         } else {
+//           done = true;
+//           continue;
+//         }
+//       } else {
+//         // Pass stage
+//         this.current_gold += this.gold_for_stage(this.current_stage);
+//         if (this.current_stage % 5 == 0) {
+//           this.level_heroes();
+//         }
+//         this.time += total_time;
+//         this.current_stage += 1;
+//         rps[this.current_stage] = [this.total_relics() / this.time, boss_time];
+//       }
+//     }
+//   }
+
+//   // TODO: make list of log so people can see what's going on
+//   this.relics_per_second = function() {
+//     var TAPS_PER_SECOND = 10; // TODO: make this user variable
+//     this.new_run();
+
+//     var done = false;
+//     var grind = "";
+//     var end_game = false;
+//     while (!done) {
+//       var temp = this.tap_damage();
+//       var tap = temp[0];
+//       var tapping = temp[1];
+
+//       // ohko things if we can
+//       var ohko_stage = health_to_stage(tap);
+//       if (ohko_stage > this.current_stage) {
+//         this.current_gold += this.gold_between_stages(this.current_stage, ohko_stage + 1);
+//         this.level_heroes();
+//         this.time += 4.5 * (ohko_stage - this.current_stage);
+//         this.current_stage = ohko_stage + 1;
+//         continue;
+//       }
+
+//       // cannot ohko anymore, start tapping
+//       var ohko_tapping_stage = health_to_stage(tapping);
+//       if (ohko_tapping_stage > this.current_stage) {
+//         this.current_gold += this.gold_between_stages(this.current_stage, ohko_tapping_stage + 1);
+//         this.level_heroes();
+//         // TODO: check this, tapping ohko slightly slower than sc ohko?
+//         this.time += 4.75 * (ohko_tapping_stage - this.current_stage);
+//         this.current_stage = ohko_tapping_stage + 1;
+//         continue;
+//       }
+
+
+//       // cannot ohko anymore, 5 seconds of tapping per boss
+//       var five_seconds = tapping * TAPS_PER_SECOND * 5;
+//       var next_boss = next_boss_stage(this.current_stage);
+//       if (five_seconds > stage_hp(next_boss) * 10) {
+//         this.current_gold += this.gold_between_stages(this.current_stage, next_boss + 1);
+//         this.level_heroes();
+//         var dps = tapping * TAPS_PER_SECOND;
+//         this.time += (next_boss - this.current_stage) * (4.5 + stage_hp(next_boss) * 12 / dps);
+//         this.current_stage = next_boss + 1;
+//         continue;
+//       }
+
+//       if (end_game) {
+//         var oneohfive_seconds = tapping * TAPS_PER_SECOND * 105;
+//         var next_boss = next_boss_stage(this.current_stage);
+//         if (oneohfive_seconds > stage_hp(next_boss) * 10) {
+//           this.current_gold += this.gold_between_stages(this.current_stage, next_boss + 1);
+//           this.level_heroes();
+//           var dps = tapping * TAPS_PER_SECOND;
+//           // TODO: 12 is random approximation, do better
+//           this.time += (next_boss - this.current_stage) * (4.5 + stage_hp(next_boss) * 12 / dps);
+//           this.current_stage = next_boss + 1;
+//           continue;
+//         } else {
+//           done = true;
+//           continue;
+//         }
+//       }
+
+//       // cannot kill boss in 5 seconds, see if we want to grind
+
+//       var owned_heroes = this.heroes.filter(function(h) { return h != 0; });
+//       var next_hero = owned_heroes.length;
+//       var grind_target = 0;
+//       if (next_hero == 33 && this.heroes[32] < 1001) {
+//         grind_target = hero_info[32].evolve_cost;
+//         grind = "evolve";
+//       } else if (next_hero == 33) {
+//         end_game = true;
+//         continue;
+//       } else {
+//         grind_target = hero_info[next_hero].base_cost;
+//         grind = "hero";
+//       }
+
+//       var gold_needed = grind_target - this.current_gold;
+//       // check if we can already get whatever we were grinding for
+//       if (gold_needed < 0) {
+//         if (grind == "evolve") {
+//           this.evolve_heroes();
+//         }
+//         if (grind == "hero") {
+//           this.level_heroes();
+//         }
+//         continue;
+//       }
+
+//       // otherwise, how long do we want to grind for
+//       // TODO: make grind a user variable
+//       var mob_gold = this.mob_multiplier() * base_stage_gold(this.current_stage);
+//       if (gold_needed < 200 * mob_gold) {
+//         var num_mobs = grind_target / mob_gold;
+//         var mob_hp = stage_hp(this.current_stage);
+//         this.current_gold += num_mobs * mob_gold;
+//         this.time += (mob_hp / (tapping * TAPS_PER_SECOND) + 4.5/6.0) * num_mobs;
+//       } else {
+//         end_game = true;
+//       }
+//     } // end while
+//     return [this.current_stage, this.time, this.total_relics() / this.time];
+//   };
+// }
 
 var METHOD_GOLD = 0;
 var METHOD_ALL_DAMAGE = 1;
