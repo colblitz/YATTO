@@ -6,7 +6,7 @@ var BonusTypes = {
   TAP_DAMAGE_ARTIFACTS:        4,
   TAP_DAMAGE_HEROSKILLS:       5,
   TAP_DAMAGE_CUSTOMIZATIONS:   6,
-  TAP_DAMAGE_DPS               7,
+  TAP_DAMAGE_DPS:              7,
   CRIT_CHANCE:                 8,
   CRIT_DAMAGE_ARTIFACTS:       9,
   CRIT_DAMAGE_HEROSKILLS:     10,
@@ -48,6 +48,15 @@ var BonusTypes = {
   WEAPON_SET:                 46,
 };
 
+// a is [[k1, v1], [k2, v2], etc.]
+var arrayToMap = function(a) {
+  var newMap = {}
+  a.forEach(function(a, i) {
+    newMap[a[0]] = a[1];
+  });
+  return newMap;
+};
+
 var Artifact = function(name, world, id, x, y, levelcap, effects, flavor) {
   this.name = name;
   this.world = world;
@@ -55,10 +64,10 @@ var Artifact = function(name, world, id, x, y, levelcap, effects, flavor) {
   this.x = x;
   this.y = y;
   this.levelcap = levelcap;
-  this.effects = effects;
+  this.effects = arrayToMap(effects);
   this.flavor = flavor;
 
-  this.adpl = effects[BonusTypes.ALL_DAMAGE_ARTIFACTS];
+  this.adpl = this.effects[BonusTypes.ALL_DAMAGE_ARTIFACTS];
 
   this.cost = function(level) {
     return x * Math.pow(level, y)
@@ -69,7 +78,7 @@ var Artifact = function(name, world, id, x, y, levelcap, effects, flavor) {
   };
 
   this.costToLevel = function(level) {
-    if (level == 0 || level >= this.levelcap) {
+    if (level == 0 || (this.levelcap != null && level >= this.levelcap)) {
       return Infinity;
     } else {
       return Math.ceil(this.cost(level + 1));
@@ -78,77 +87,77 @@ var Artifact = function(name, world, id, x, y, levelcap, effects, flavor) {
 };
 
 var artifactInfo = {
-  AOV:       new Artifact("Amulet of the Valrunes",  1,  2, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  25, BonusTypes.GOLD_MOBS:               10}, ""),
-  AXE:       new Artifact("Axe of Resolution",       1, 16, 0.5, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_TDMG:          10}, ""),
-  BM:        new Artifact("Barbarian's Mettle",      1, 10, 0.4, 1.5,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_CDR_TDMG:          -5}, ""),
-  BREW:      new Artifact("Brew of Absorption",      1, 30, 0.6, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.TAP_DAMAGE_ARTIFACTS:     2}, ""),
-  CHEST:     new Artifact("Chest of Contentment",    1, 19, 1.0, 1.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  20, BonusTypes.CHEST_ARTIFACTS:         20}, ""),
-  ELIXIR:    new Artifact("Crafter's Elixir",        1, 27, 0.5, 1.8, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  20, BonusTypes.GOLD_OVERALL:            15}, ""), // gold while playing
-  EGG:       new Artifact("Crown Egg",               1, 18, 1.0, 1.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  20, BonusTypes.CHEST_CHANCE:            20}, ""),
-  CLOAK:     new Artifact("Dark Cloak of Life",      1,  3, 0.5, 2.0,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.BOSS_HEALTH:             -2}, ""),
-  DS:        new Artifact("Death Seeker",            1,  4, 0.8, 2.5,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.CRIT_CHANCE:              2}, ""),
-  CHALICE:   new Artifact("Divine Chalice",          1, 21, 0.7, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.GOLD_10X_CHANCE:        0.5}, ""),
-  HAMMER:    new Artifact("Drunken Hammer",          1, 29, 0.6, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.TAP_DAMAGE_ARTIFACTS:     2}, ""),
-  FF:        new Artifact("Future's Fortune",        1, 20, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.GOLD_ARTIFACTS:           5}, ""),
-  HT:        new Artifact("Hero's Thrust",           1, 17, 0.7, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.CRIT_DAMAGE_ARTIFACTS:   20}, ""),
-  HO:        new Artifact("Hunter's Ointment",       1,  8, 0.4, 1.5,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  60, BonusTypes.SKILL_CDR_HERO:          -5}, ""),
-  KS:        new Artifact("Knight's Shield",         1,  1, 0.7, 1.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.GOLD_BOSS:              100}, ""),
-  LP:        new Artifact("Laborer's Pendant",       1,  9, 0.7, 1.5,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_CDR_GOLD:          -5}, ""),
-  GAUNTLET:  new Artifact("Ogre's Gauntlet",         1, 12, 0.5, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_AUTO:          10}, ""),
-  OA:        new Artifact("Otherworldly Armor",      1, 28, 1.0, 2.2,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.HERO_DEATH_CHANCE:       -5}, ""),
-  LOTION:    new Artifact("Overseer's Lotion",       1,  6, 0.4, 1.5,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_CDR_AUTO:          -5}, ""),
-  PARCHMENT: new Artifact("Parchment of Importance", 1, 13, 0.5, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_CRIT:          10}, ""),
-  ROO:       new Artifact("Ring of Opulence",        1, 15, 0.7, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_GOLD:          10}, ""),
-  ROWC:      new Artifact("Ring of Wondrous Charm",  1, 24, 0.5, 1.7,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.UPGRADE_COST:            -2}, ""),
-  SCROLL:    new Artifact("Sacred Scroll",           1,  7, 0.4, 1.5,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_CDR_CRIT:          -5}, ""),
-  SAINTLY:   new Artifact("Saintly Shield",          1, 11, 0.3, 1.5,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_CDR_OHKO:          -5}, ""),
-  SAVIOR:    new Artifact("Savior Shield",           1,  5, 0.5, 1.7,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.BOSS_TIME:               10}, ""),
-  TINCTURE:  new Artifact("Tincture of the Maker",   1, 26, 0.6, 2.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:   5, BonusTypes.ARTIFACT_DAMAGE_BOOST:    5}, ""),
-  UA:        new Artifact("Undead Aura",             1, 22, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.RELICS:                   5}, ""),
-  FISSURE:   new Artifact("Universal Fissure",       1, 14, 0.5, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  60, BonusTypes.SKILL_DRN_HERO:          10}, ""),
-  WR:        new Artifact("Warrior's Revival",       1, 23, 1.0, 2.2,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.HERO_REVIVE_TIME:        -5}, ""),
-  WI:        new Artifact("Worldly Illuminator",     1, 25, 0.6, 3.0,    5, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 150, BonusTypes.NUM_MOBS:              -100}, ""),
+  AOV:       new Artifact("Amulet of the Valrunes",  1,  2, 0.7, 2.0, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  25], [BonusTypes.GOLD_MOBS,               10]], ""),
+  AXE:       new Artifact("Axe of Resolution",       1, 16, 0.5, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_DRN_TDMG,          10]], ""),
+  BM:        new Artifact("Barbarian's Mettle",      1, 10, 0.4, 1.5,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_CDR_TDMG,          -5]], ""),
+  BREW:      new Artifact("Brew of Absorption",      1, 30, 0.6, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  30], [BonusTypes.TAP_DAMAGE_ARTIFACTS,     2]], ""),
+  CHEST:     new Artifact("Chest of Contentment",    1, 19, 1.0, 1.5, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  20], [BonusTypes.CHEST_ARTIFACTS,         20]], ""),
+  ELIXIR:    new Artifact("Crafter's Elixir",        1, 27, 0.5, 1.8, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  20], [BonusTypes.GOLD_OVERALL,            15]], ""), // gold while playing
+  EGG:       new Artifact("Crown Egg",               1, 18, 1.0, 1.5, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  20], [BonusTypes.CHEST_CHANCE,            20]], ""),
+  CLOAK:     new Artifact("Dark Cloak of Life",      1,  3, 0.5, 2.0,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.BOSS_HEALTH,             -2]], ""),
+  DS:        new Artifact("Death Seeker",            1,  4, 0.8, 2.5,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.CRIT_CHANCE,              2]], ""),
+  CHALICE:   new Artifact("Divine Chalice",          1, 21, 0.7, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.GOLD_10X_CHANCE,        0.5]], ""),
+  HAMMER:    new Artifact("Drunken Hammer",          1, 29, 0.6, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  30], [BonusTypes.TAP_DAMAGE_ARTIFACTS,     2]], ""),
+  FF:        new Artifact("Future's Fortune",        1, 20, 0.7, 2.0, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.GOLD_ARTIFACTS,           5]], ""),
+  HT:        new Artifact("Hero's Thrust",           1, 17, 0.7, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,   20]], ""),
+  HO:        new Artifact("Hunter's Ointment",       1,  8, 0.4, 1.5,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  60], [BonusTypes.SKILL_CDR_HERO,          -5]], ""),
+  KS:        new Artifact("Knight's Shield",         1,  1, 0.7, 1.5, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  30], [BonusTypes.GOLD_BOSS,              100]], ""),
+  LP:        new Artifact("Laborer's Pendant",       1,  9, 0.7, 1.5,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_CDR_GOLD,          -5]], ""),
+  GAUNTLET:  new Artifact("Ogre's Gauntlet",         1, 12, 0.5, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_DRN_AUTO,          10]], ""),
+  OA:        new Artifact("Otherworldly Armor",      1, 28, 1.0, 2.2,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.HERO_DEATH_CHANCE,       -5]], ""),
+  LOTION:    new Artifact("Overseer's Lotion",       1,  6, 0.4, 1.5,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_CDR_AUTO,          -5]], ""),
+  PARCHMENT: new Artifact("Parchment of Importance", 1, 13, 0.5, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_DRN_CRIT,          10]], ""),
+  ROO:       new Artifact("Ring of Opulence",        1, 15, 0.7, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_DRN_GOLD,          10]], ""),
+  ROWC:      new Artifact("Ring of Wondrous Charm",  1, 24, 0.5, 1.7,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.UPGRADE_COST,            -2]], ""),
+  SCROLL:    new Artifact("Sacred Scroll",           1,  7, 0.4, 1.5,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_CDR_CRIT,          -5]], ""),
+  SAINTLY:   new Artifact("Saintly Shield",          1, 11, 0.3, 1.5,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_CDR_OHKO,          -5]], ""),
+  SAVIOR:    new Artifact("Savior Shield",           1,  5, 0.5, 1.7,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.BOSS_TIME,               10]], ""),
+  TINCTURE:  new Artifact("Tincture of the Maker",   1, 26, 0.6, 2.5, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,   5], [BonusTypes.ARTIFACT_DAMAGE_BOOST,    5]], ""),
+  UA:        new Artifact("Undead Aura",             1, 22, 0.7, 2.0, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.RELICS,                   5]], ""),
+  FISSURE:   new Artifact("Universal Fissure",       1, 14, 0.5, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  60], [BonusTypes.SKILL_DRN_HERO,          10]], ""),
+  WR:        new Artifact("Warrior's Revival",       1, 23, 1.0, 2.2,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.HERO_REVIVE_TIME,        -5]], ""),
+  WI:        new Artifact("Worldly Illuminator",     1, 25, 0.6, 3.0,    5, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 150], [BonusTypes.NUM_MOBS,              -100]], ""),
 
-  AOS:       new Artifact("Amulet of Storms",        2, 55, 2.0, 6.0,    5, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 300, BonusTypes.NUM_MOBS:              -100}, ""),
-  ORB:       new Artifact("Annihilation Orb",        2, 49, 1.0, 1.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  20, BonusTypes.CHEST_ARTIFACTS:         10, BonusTypes.GOLD_ARTIFACTS:          2}, ""),
-  AO:        new Artifact("Anointment Ointment",     2, 54, 0.5, 2.8,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 150, BonusTypes.UPGRADE_COST:            -1, BonusTypes.GOLD_OVERALL:            5}, ""),
-  BATON:     new Artifact("Aphrodite's Baton",       2, 53, 1.0, 4.0,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.HERO_REVIVE_TIME:        -2, BonusTypes.GOLD_OVERALL:            5}, ""),
-  WAND:      new Artifact("Atomic Wand",             2, 52, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.RELICS:                   2, BonusTypes.GOLD_OVERALL:            5}, ""),
-  ADS:       new Artifact("Azure Dragon Statuette",  2, 57, 0.5, 1.8, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  20, BonusTypes.GOLD_OVERALL:             5, BonusTypes.SKILL_DRN_TDMG:          5}, ""),
-  BOOTS:     new Artifact("Boots of Wilting",        2, 41, 0.3, 2.8,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 200, BonusTypes.SKILL_CDR_OHKO:          -2, BonusTypes.CRIT_DAMAGE_ARTIFACTS:   5}, ""),
-  BOB:       new Artifact("Braid of Binding",        2, 48, 1.1, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.CHEST_CHANCE:             5, BonusTypes.GOLD_ARTIFACTS:          2}, ""),
-  CC:        new Artifact("Chilling Chalice",        2, 40, 0.4, 2.8,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 200, BonusTypes.SKILL_CDR_TDMG:          -2, BonusTypes.CRIT_DAMAGE_ARTIFACTS:   5}, ""),
-  CM:        new Artifact("Circe's Mirror",          2, 67, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.RELICS:                   2, BonusTypes.GOLD_BOSS:              30}, ""),
-  CRYSTAL:   new Artifact("Conjuror Crystal",        2, 58, 1.1, 4.0,   12, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 115, BonusTypes.HERO_DEATH_CHANCE:       -2, BonusTypes.CRIT_DAMAGE_ARTIFACTS:  10}, ""),
-  CANDLE:    new Artifact("Cosmic Candle",           2, 66, 0.6, 2.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:   5, BonusTypes.ARTIFACT_DAMAGE_BOOST:    2, BonusTypes.GOLD_BOSS:              30}, ""),
-  CROWN:     new Artifact("Crown of Cleopatra",      2, 32, 0.9, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  25, BonusTypes.GOLD_MOBS:                5, BonusTypes.SKILL_DRN_CRIT:          5}, ""),
-  HORNS:     new Artifact("Demon Horns",             2, 38, 0.4, 2.8,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 200, BonusTypes.SKILL_CDR_HERO:          -2, BonusTypes.CRIT_DAMAGE_ARTIFACTS:   5}, ""),
-  EOV:       new Artifact("Elixir of Verve",         2, 44, 0.5, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_HERO:           5, BonusTypes.GOLD_ARTIFACTS:          2}, ""),
-  HARP:      new Artifact("Harp of Medea",           2, 69, 0.5, 3.1,   50, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 140, BonusTypes.BOSS_HEALTH:           -0.5, BonusTypes.GOLD_MOBS:               5}, ""),
-  HOF:       new Artifact("Horseshoe of Fortune",    2, 61, 0.6, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.TAP_DAMAGE_ARTIFACTS:     1, BonusTypes.CRIT_DAMAGE_ARTIFACTS:  10}, ""),
-  STAFF:     new Artifact("Inebriated Staff",        2, 70, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.GOLD_10X_CHANCE:        0.2, BonusTypes.RELICS:                  2}, ""),
-  MANGLE:    new Artifact("Mage's Mantle",           2, 31, 0.7, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.GOLD_BOSS:               40, BonusTypes.SKILL_DRN_AUTO:          5}, ""),
-  MM:        new Artifact("Magic Mist",              2, 43, 0.5, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_CRIT:           5, BonusTypes.GOLD_ARTIFACTS:          2}, ""),
-  MARK:      new Artifact("Mark of Dominance",       2, 56, 0.6, 2.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:   5, BonusTypes.ARTIFACT_DAMAGE_BOOST:    2, BonusTypes.SKILL_DRN_GOLD:          5}, ""),
-  EARRING:   new Artifact("Mercury's Earring",       2, 47, 0.7, 2.3, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.CRIT_DAMAGE_ARTIFACTS:    5, BonusTypes.SKILL_DRN_HERO:          5}, ""),
-  GLOBE:     new Artifact("Merlin's Globe",          2, 36, 0.4, 2.8,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 200, BonusTypes.SKILL_CDR_AUTO:          -2, BonusTypes.CRIT_DAMAGE_ARTIFACTS:   5}, ""),
-  MOR:       new Artifact("Mirror of Refraction",    2, 60, 0.6, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.TAP_DAMAGE_ARTIFACTS:     1, BonusTypes.GOLD_10X_CHANCE:         1}, ""),
-  GOBLET:    new Artifact("Morgana's Goblet",        2, 68, 0.6, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  30, BonusTypes.GOLD_ARTIFACTS:           2, BonusTypes.GOLD_BOSS:              30}, ""),
-  NECKLACE:  new Artifact("Necklace of Nether",      2, 39, 0.7, 2.8,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 200, BonusTypes.SKILL_CDR_GOLD:          -2, BonusTypes.CRIT_DAMAGE_ARTIFACTS:   5}, ""),
-  PMB:       new Artifact("Pandora's Music Box",     2, 37, 0.4, 2.8,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 200, BonusTypes.SKILL_CDR_CRIT:          -2, BonusTypes.CRIT_DAMAGE_ARTIFACTS:   5}, ""),
-  PETALS:    new Artifact("Petals of Protection",    2, 59, 0.6, 4.0,   12, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 130, BonusTypes.TAP_DAMAGE_ARTIFACTS:     1, BonusTypes.HERO_DEATH_CHANCE:      -2}, ""),
-  PR:        new Artifact("Phoenix Renewed",         2, 42, 0.5, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_AUTO:           5, BonusTypes.GOLD_ARTIFACTS:          2}, ""),
-  RR:        new Artifact("Ra's Ring",               2, 51, 0.7, 1.7, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.GOLD_10X_CHANCE:       0.25, BonusTypes.GOLD_OVERALL:            5}, ""),
-  ROF:       new Artifact("Ring of Fire",            2, 50, 0.7, 2.3, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.GOLD_ARTIFACTS:           2, BonusTypes.CRIT_DAMAGE_ARTIFACTS:   2}, ""),
-  ROD:       new Artifact("Rod of Great Gales",      2, 62, 0.9, 4.0,   12, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 130, BonusTypes.HERO_DEATH_CHANCE:       -2, BonusTypes.HERO_REVIVE_TIME:      -10}, ""),
-  ROPE:      new Artifact("Rope of Lashes",          2, 63, 0.5, 3.3,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS: 125, BonusTypes.GOLD_MOBS:                5, BonusTypes.BOSS_TIME:               5}, ""),
-  SCARAB:    new Artifact("Scarab of Insanity",      2, 64, 0.7, 2.0, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.RELICS:                   2, BonusTypes.GOLD_MOBS:               5}, ""),
-  SOL:       new Artifact("Scroll of Lightning",     2, 34, 0.8, 3.4,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.CRIT_CHANCE:              1, BonusTypes.GOLD_MOBS:               5}, ""),
-  SG:        new Artifact("Shock Gauntlets",         2, 33, 0.5, 2.6,   50, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  85, BonusTypes.BOSS_HEALTH:           -0.5, BonusTypes.GOLD_ARTIFACTS:          2}, ""),
-  SOS:       new Artifact("Slippers of Sleep",       2, 65, 0.6, 2.5,   10, {BonusTypes.ALL_DAMAGE_ARTIFACTS:   5, BonusTypes.ARTIFACT_DAMAGE_BOOST:    2, BonusTypes.HERO_REVIVE_TIME:       -2}, ""),
-  SS:        new Artifact("Swift Swill",             2, 46, 0.5, 2.5, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:   5, BonusTypes.GOLD_BOSS:               30, BonusTypes.CHEST_ARTIFACTS:        10}, ""),
-  VIAL:      new Artifact("Vial of Frost",           2, 45, 0.7, 2.1, null, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  35, BonusTypes.SKILL_DRN_GOLD:           5, BonusTypes.GOLD_ARTIFACTS:          2}, ""),
-  WOW:       new Artifact("Wand of Wonder",          2, 35, 0.5, 3.4,   25, {BonusTypes.ALL_DAMAGE_ARTIFACTS:  15, BonusTypes.BOSS_TIME:                5, BonusTypes.CRIT_CHANCE:             1}, ""),
+  AOS:       new Artifact("Amulet of Storms",        2, 55, 2.0, 6.0,    5, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 300], [BonusTypes.NUM_MOBS,              -100]], ""),
+  ORB:       new Artifact("Annihilation Orb",        2, 49, 1.0, 1.5, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  20], [BonusTypes.CHEST_ARTIFACTS,         10], [BonusTypes.GOLD_ARTIFACTS,          2]], ""),
+  AO:        new Artifact("Anointment Ointment",     2, 54, 0.5, 2.8,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 150], [BonusTypes.UPGRADE_COST,            -1], [BonusTypes.GOLD_OVERALL,            5]], ""),
+  BATON:     new Artifact("Aphrodite's Baton",       2, 53, 1.0, 4.0,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.HERO_REVIVE_TIME,        -2], [BonusTypes.GOLD_OVERALL,            5]], ""),
+  WAND:      new Artifact("Atomic Wand",             2, 52, 0.7, 2.0, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.RELICS,                   2], [BonusTypes.GOLD_OVERALL,            5]], ""),
+  ADS:       new Artifact("Azure Dragon Statuette",  2, 57, 0.5, 1.8, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  20], [BonusTypes.GOLD_OVERALL,             5], [BonusTypes.SKILL_DRN_TDMG,          5]], ""),
+  BOOTS:     new Artifact("Boots of Wilting",        2, 41, 0.3, 2.8,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 200], [BonusTypes.SKILL_CDR_OHKO,          -2], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,   5]], ""),
+  BOB:       new Artifact("Braid of Binding",        2, 48, 1.1, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  30], [BonusTypes.CHEST_CHANCE,             5], [BonusTypes.GOLD_ARTIFACTS,          2]], ""),
+  CC:        new Artifact("Chilling Chalice",        2, 40, 0.4, 2.8,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 200], [BonusTypes.SKILL_CDR_TDMG,          -2], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,   5]], ""),
+  CM:        new Artifact("Circe's Mirror",          2, 67, 0.7, 2.0, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.RELICS,                   2], [BonusTypes.GOLD_BOSS,              30]], ""),
+  CRYSTAL:   new Artifact("Conjuror Crystal",        2, 58, 1.1, 4.0,   12, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 115], [BonusTypes.HERO_DEATH_CHANCE,       -2], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,  10]], ""),
+  CANDLE:    new Artifact("Cosmic Candle",           2, 66, 0.6, 2.5, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,   5], [BonusTypes.ARTIFACT_DAMAGE_BOOST,    2], [BonusTypes.GOLD_BOSS,              30]], ""),
+  CROWN:     new Artifact("Crown of Cleopatra",      2, 32, 0.9, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  25], [BonusTypes.GOLD_MOBS,                5], [BonusTypes.SKILL_DRN_CRIT,          5]], ""),
+  HORNS:     new Artifact("Demon Horns",             2, 38, 0.4, 2.8,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 200], [BonusTypes.SKILL_CDR_HERO,          -2], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,   5]], ""),
+  EOV:       new Artifact("Elixir of Verve",         2, 44, 0.5, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_DRN_HERO,           5], [BonusTypes.GOLD_ARTIFACTS,          2]], ""),
+  HARP:      new Artifact("Harp of Medea",           2, 69, 0.5, 3.1,   50, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 140], [BonusTypes.BOSS_HEALTH,           -0.5], [BonusTypes.GOLD_MOBS,               5]], ""),
+  HOF:       new Artifact("Horseshoe of Fortune",    2, 61, 0.6, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  30], [BonusTypes.TAP_DAMAGE_ARTIFACTS,     1], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,  10]], ""),
+  STAFF:     new Artifact("Inebriated Staff",        2, 70, 0.7, 2.0, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.GOLD_10X_CHANCE,        0.2], [BonusTypes.RELICS,                  2]], ""),
+  MANGLE:    new Artifact("Mage's Mantle",           2, 31, 0.7, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  30], [BonusTypes.GOLD_BOSS,               40], [BonusTypes.SKILL_DRN_AUTO,          5]], ""),
+  MM:        new Artifact("Magic Mist",              2, 43, 0.5, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_DRN_CRIT,           5], [BonusTypes.GOLD_ARTIFACTS,          2]], ""),
+  MARK:      new Artifact("Mark of Dominance",       2, 56, 0.6, 2.5, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,   5], [BonusTypes.ARTIFACT_DAMAGE_BOOST,    2], [BonusTypes.SKILL_DRN_GOLD,          5]], ""),
+  EARRING:   new Artifact("Mercury's Earring",       2, 47, 0.7, 2.3, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,    5], [BonusTypes.SKILL_DRN_HERO,          5]], ""),
+  GLOBE:     new Artifact("Merlin's Globe",          2, 36, 0.4, 2.8,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 200], [BonusTypes.SKILL_CDR_AUTO,          -2], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,   5]], ""),
+  MOR:       new Artifact("Mirror of Refraction",    2, 60, 0.6, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  30], [BonusTypes.TAP_DAMAGE_ARTIFACTS,     1], [BonusTypes.GOLD_10X_CHANCE,         1]], ""),
+  GOBLET:    new Artifact("Morgana's Goblet",        2, 68, 0.6, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  30], [BonusTypes.GOLD_ARTIFACTS,           2], [BonusTypes.GOLD_BOSS,              30]], ""),
+  NECKLACE:  new Artifact("Necklace of Nether",      2, 39, 0.7, 2.8,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 200], [BonusTypes.SKILL_CDR_GOLD,          -2], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,   5]], ""),
+  PMB:       new Artifact("Pandora's Music Box",     2, 37, 0.4, 2.8,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 200], [BonusTypes.SKILL_CDR_CRIT,          -2], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,   5]], ""),
+  PETALS:    new Artifact("Petals of Protection",    2, 59, 0.6, 4.0,   12, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 130], [BonusTypes.TAP_DAMAGE_ARTIFACTS,     1], [BonusTypes.HERO_DEATH_CHANCE,      -2]], ""),
+  PR:        new Artifact("Phoenix Renewed",         2, 42, 0.5, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_DRN_AUTO,           5], [BonusTypes.GOLD_ARTIFACTS,          2]], ""),
+  RR:        new Artifact("Ra's Ring",               2, 51, 0.7, 1.7, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.GOLD_10X_CHANCE,       0.25], [BonusTypes.GOLD_OVERALL,            5]], ""),
+  ROF:       new Artifact("Ring of Fire",            2, 50, 0.7, 2.3, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.GOLD_ARTIFACTS,           2], [BonusTypes.CRIT_DAMAGE_ARTIFACTS,   2]], ""),
+  ROD:       new Artifact("Rod of Great Gales",      2, 62, 0.9, 4.0,   12, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 130], [BonusTypes.HERO_DEATH_CHANCE,       -2], [BonusTypes.HERO_REVIVE_TIME,      -10]], ""),
+  ROPE:      new Artifact("Rope of Lashes",          2, 63, 0.5, 3.3,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS, 125], [BonusTypes.GOLD_MOBS,                5], [BonusTypes.BOSS_TIME,               5]], ""),
+  SCARAB:    new Artifact("Scarab of Insanity",      2, 64, 0.7, 2.0, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.RELICS,                   2], [BonusTypes.GOLD_MOBS,               5]], ""),
+  SOL:       new Artifact("Scroll of Lightning",     2, 34, 0.8, 3.4,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.CRIT_CHANCE,              1], [BonusTypes.GOLD_MOBS,               5]], ""),
+  SG:        new Artifact("Shock Gauntlets",         2, 33, 0.5, 2.6,   50, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  85], [BonusTypes.BOSS_HEALTH,           -0.5], [BonusTypes.GOLD_ARTIFACTS,          2]], ""),
+  SOS:       new Artifact("Slippers of Sleep",       2, 65, 0.6, 2.5,   10, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,   5], [BonusTypes.ARTIFACT_DAMAGE_BOOST,    2], [BonusTypes.HERO_REVIVE_TIME,       -2]], ""),
+  SS:        new Artifact("Swift Swill",             2, 46, 0.5, 2.5, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,   5], [BonusTypes.GOLD_BOSS,               30], [BonusTypes.CHEST_ARTIFACTS,        10]], ""),
+  VIAL:      new Artifact("Vial of Frost",           2, 45, 0.7, 2.1, null, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  35], [BonusTypes.SKILL_DRN_GOLD,           5], [BonusTypes.GOLD_ARTIFACTS,          2]], ""),
+  WOW:       new Artifact("Wand of Wonder",          2, 35, 0.5, 3.4,   25, [[BonusTypes.ALL_DAMAGE_ARTIFACTS,  15], [BonusTypes.BOSS_TIME,                5], [BonusTypes.CRIT_CHANCE,             1]], ""),
 };
 
 // generate id to enum
@@ -242,167 +251,167 @@ var Hero = function(name, id, baseCost, skills) {
 }
 
 var heroInfo = [
-  new Hero("Takeda the Blade Assassin", 1, {1: 50, 2: }, {
+  new Hero("Takeda the Blade Assassin", 1, {1: 50, 2: 36}, {
     1: [[50, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [100, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[100, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [50000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Contessa the Torch Wielder", 2, {1: 175, 2: }, {
+  new Hero("Contessa the Torch Wielder", 2, {1: 175, 2: 140}, {
     1: [[5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [100, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.4, BonusTypes.TAP_DAMAGE_DPS],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.GOLD_HEROSKILLS], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[6, BonusTypes.TAP_DAMAGE_HEROSKILLS], [200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.4, BonusTypes.TAP_DAMAGE_DPS],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [15, BonusTypes.GOLD_HEROSKILLS], [30000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Hornetta, Queen of the Valrunes", 3, {1: 674, 2: }, {
+  new Hero("Hornetta, Queen of the Valrunes", 3, {1: 674, 2: 1.12e3}, {
     1: [[150, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS],
         [20, BonusTypes.CHEST_HEROSKILLS], [1, BonusTypes.CRIT_CHANCE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[250, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS],
         [20, BonusTypes.CHEST_HEROSKILLS], [1, BonusTypes.CRIT_CHANCE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Mila the Hammer Stomper", 4, {1: 2.85e3, 2: }, {
+  new Hero("Mila the Hammer Stomper", 4, {1: 2.85e3, 2: 6.72e3}, {
     1: [[100, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [800, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [6, BonusTypes.GOLD_HEROSKILLS], [500, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS]],
     2: [[150, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [600, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [25, BonusTypes.CHEST_HEROSKILLS]]}),
-  new Hero("Terra the Land Scorcher", 5, {1: 13.30e3, 2: }, {
+  new Hero("Terra the Land Scorcher", 5, {1: 13.30e3, 2: 60.63e3}, {
     1: [[300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS], [15, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.CHEST_HEROSKILLS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS], [17, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.CHEST_HEROSKILLS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [88000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Inquisireaux the Terrible", 6, {1: 68.10e3, 2: }, {
+  new Hero("Inquisireaux the Terrible", 6, {1: 68.10e3, 2: 423e3}, {
     1: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [700, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS],
         [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[230, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [777, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS],
         [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [65000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Charlotte the Special", 7, {1: 384.00e3, 2: }, {
+  new Hero("Charlotte the Special", 7, {1: 384.00e3, 2: 5.08e6}, {
     1: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.BOSS_DAMAGE], [7, BonusTypes.BOSS_DAMAGE], [600, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[550, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.BOSS_DAMAGE], [7, BonusTypes.BOSS_DAMAGE], [1600, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Jordaan, Knight of Mini", 8, {1: 2.38e6, 2: }, {
+  new Hero("Jordaan, Knight of Mini", 8, {1: 2.38e6, 2: 20.29e6}, {
     1: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS], [15, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.CHEST_HEROSKILLS], [1900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[480, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS], [20, BonusTypes.GOLD_HEROSKILLS],
         [25, BonusTypes.CHEST_HEROSKILLS], [8500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Jukka, Master of Axes", 9, {1: 23.80e6, 2: }, {
+  new Hero("Jukka, Master of Axes", 9, {1: 23.80e6, 2: 102e6}, {
     1: [[150, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.BOSS_DAMAGE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [5000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[250, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.BOSS_DAMAGE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [9000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.ALL_DAMAGE_HEROSKILLS], [58000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Milo and Clonk-Clonk", 10, {1: 143.00e6, 2: }, {
+  new Hero("Milo and Clonk-Clonk", 10, {1: 143.00e6, 2: 610e6}, {
     1: [[150, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.CRIT_CHANCE], [5, BonusTypes.BOSS_DAMAGE], [15, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.CHEST_HEROSKILLS], [25, BonusTypes.CHEST_HEROSKILLS], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[220, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.CRIT_CHANCE], [5, BonusTypes.BOSS_DAMAGE], [15, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.CHEST_HEROSKILLS], [9900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Macelord the Ruthless", 11, {1: 943.00e6, 2: }, {
+  new Hero("Macelord the Ruthless", 11, {1: 943.00e6, 2: 6.09e9}, {
     1: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [850, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS],
         [15, BonusTypes.GOLD_HEROSKILLS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [3800, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1400, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS],
         [15, BonusTypes.GOLD_HEROSKILLS], [1, BonusTypes.CRIT_CHANCE], [67600, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Gertrude the Goat Rider", 12, {1: 6.84e9, 2: }, {
+  new Hero("Gertrude the Goat Rider", 12, {1: 6.84e9, 2: 18.29e9}, {
     1: [[250, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [7, BonusTypes.BOSS_DAMAGE], [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [0.4, BonusTypes.TAP_DAMAGE_DPS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [20, BonusTypes.GOLD_HEROSKILLS]],
     2: [[250, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [7, BonusTypes.BOSS_DAMAGE], [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [0.4, BonusTypes.TAP_DAMAGE_DPS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [20, BonusTypes.GOLD_HEROSKILLS]]}),
-  new Hero("Twitterella the Tweeter", 13, {1: 54.70e9, 2: }, {
+  new Hero("Twitterella the Tweeter", 13, {1: 54.70e9, 2: 73.2e9}, {
     1: [[150, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [850, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS],
         [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [12000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[280, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS],
         [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [7, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [55500, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Master Hawk, Lord of Luft", 14, {1: 8200e9, 2: }, {
+  new Hero("Master Hawk, Lord of Luft", 14, {1: 8200e9, 2: 1.1e12}, {
     1: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1100, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.4, BonusTypes.TAP_DAMAGE_DPS], [400, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.GOLD_HEROSKILLS]],
     2: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1100, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.4, BonusTypes.TAP_DAMAGE_DPS], [400, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.GOLD_HEROSKILLS]]}),
-  new Hero("Elpha, Wielder of Gems", 15, {1: 8.20e12, 2: }, {
+  new Hero("Elpha, Wielder of Gems", 15, {1: 8.20e12, 2: 11e12}, {
     1: [[300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [40, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE], [2, BonusTypes.CRIT_CHANCE],
         [15, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[800, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [40, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE], [2, BonusTypes.CRIT_CHANCE],
         [15, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS], [78000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Poppy, Daughter of Ceremony", 16, {1: 164.00e12, 2: }, {
+  new Hero("Poppy, Daughter of Ceremony", 16, {1: 164.00e12, 2: 274e12}, {
     1: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.CHEST_HEROSKILLS], [20, BonusTypes.GOLD_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE],
         [7, BonusTypes.BOSS_DAMAGE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.CHEST_HEROSKILLS], [20, BonusTypes.GOLD_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE],
         [7, BonusTypes.BOSS_DAMAGE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Skulptor, Protector of Bridges", 17, {1: 1.64e15, 2: }, {
+  new Hero("Skulptor, Protector of Bridges", 17, {1: 1.64e15, 2: 2.19e15}, {
     1: [[150, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.GOLD_HEROSKILLS],
         [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [10, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [25, BonusTypes.GOLD_HEROSKILLS]],
     2: [[270, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.GOLD_HEROSKILLS],
         [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [10, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [25, BonusTypes.GOLD_HEROSKILLS]]}),
-  new Hero("Sterling the Enchantor", 18, {1: 49.20e15, 2: }, {
+  new Hero("Sterling the Enchantor", 18, {1: 49.20e15, 2: 98.8e15}, {
     1: [[400, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.BOSS_DAMAGE], [450, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[400, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.BOSS_DAMAGE], [3500, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Orba the Foreseer", 19, {1: 2.46e18, 2: }, {
+  new Hero("Orba the Foreseer", 19, {1: 2.46e18, 2: 5.43e18}, {
     1: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.5, BonusTypes.TAP_DAMAGE_DPS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[400, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.5, BonusTypes.TAP_DAMAGE_DPS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.GOLD_HEROSKILLS], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Remus the Noble Archer", 20, {1: 73.80e18, 2: }, {
+  new Hero("Remus the Noble Archer", 20, {1: 73.80e18, 2: 81.49e18}, {
     1: [[250, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [600, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [450, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [0.4, BonusTypes.TAP_DAMAGE_DPS], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS], [10, BonusTypes.GOLD_HEROSKILLS]],
     2: [[250, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [2800, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [0.4, BonusTypes.TAP_DAMAGE_DPS], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS], [10, BonusTypes.GOLD_HEROSKILLS]]}),
-  new Hero("Mikey the Magician Apprentice", 21, {1: 2.44e21, 2: }, {
+  new Hero("Mikey the Magician Apprentice", 21, {1: 2.44e21, 2: 2.6e21}, {
     1: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS], [73000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Peter Pricker the Prickly Poker", 22, {1: 244.00e21, 2: }, {
+  new Hero("Peter Pricker the Prickly Poker", 22, {1: 244.00e21, 2: 289e21}, {
     1: [[250, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [750, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [500, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[250, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1050, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [4000, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Teeny Tom, Keeper of the Castle", 23, {1: 48.70e24, 2: }, {
+  new Hero("Teeny Tom, Keeper of the Castle", 23, {1: 48.70e24, 2: 64.2e24}, {
     1: [[300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [800, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.4, BonusTypes.TAP_DAMAGE_DPS], [20, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [10, BonusTypes.TAP_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [10000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [800, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.4, BonusTypes.TAP_DAMAGE_DPS], [20, BonusTypes.CRIT_DAMAGE_HEROSKILLS],
         [10, BonusTypes.TAP_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [75000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Deznis the Cleanser", 24, {1: 1950e27, 2: }, {
+  new Hero("Deznis the Cleanser", 24, {1: 1950e27, 2: 21.4e27}, {
     1: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [15, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.CHEST_HEROSKILLS], [9000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[200, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [8000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [15, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.CHEST_HEROSKILLS], [88000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Hamlette, Painter of Skulls", 25, {1: 21.40e30, 2: }, {
+  new Hero("Hamlette, Painter of Skulls", 25, {1: 21.40e30, 2: 23.49e30}, {
     1: [[5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS],
         [15, BonusTypes.GOLD_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [15000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]],
     2: [[5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [5, BonusTypes.TAP_DAMAGE_HEROSKILLS], [0.4, BonusTypes.TAP_DAMAGE_DPS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS],
         [15, BonusTypes.GOLD_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [15000, BonusTypes.INDIVIDUAL_HERO_DAMAGE]]}),
-  new Hero("Eistor the Banisher", 26, {1: 2.36e36, 2: }, {
+  new Hero("Eistor the Banisher", 26, {1: 2.36e36, 2: 2.81e36}, {
     1: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [650, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.4, BonusTypes.TAP_DAMAGE_DPS], [5, BonusTypes.BOSS_DAMAGE],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE], [12, BonusTypes.GOLD_HEROSKILLS]],
     2: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [999, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [0.4, BonusTypes.TAP_DAMAGE_DPS], [5, BonusTypes.BOSS_DAMAGE],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE], [12, BonusTypes.GOLD_HEROSKILLS]]}),
-  new Hero("Flavius and Oinksbjorn", 27, {1: 25.90e45, 2: }, {
+  new Hero("Flavius and Oinksbjorn", 27, {1: 25.90e45, 2: 36.69e45}, {
     1: [[300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [700, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE],
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS]],
     2: [[300, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [5, BonusTypes.BOSS_DAMAGE],
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [20, BonusTypes.CHEST_HEROSKILLS]]}),
-  new Hero("Chester the Beast Tamer", 28, {1: 2850e60, 2: }, {
+  new Hero("Chester the Beast Tamer", 28, {1: 2850e60, 2: 44.09e60}, {
     1: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.ALL_DAMAGE_HEROSKILLS], [400, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [600, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [20, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[350, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.ALL_DAMAGE_HEROSKILLS], [1500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [3200, BonusTypes.INDIVIDUAL_HERO_DAMAGE],
         [20, BonusTypes.CRIT_DAMAGE_HEROSKILLS], [2, BonusTypes.CRIT_CHANCE], [15, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Mohacas the Wind Warrior", 29, {1: 3.14e81, 2: }, {
+  new Hero("Mohacas the Wind Warrior", 29, {1: 3.14e81, 2: 4.84e81}, {
     1: [[330, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [550, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [20, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.GOLD_HEROSKILLS]],
     2: [[330, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [600, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [20, BonusTypes.GOLD_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.GOLD_HEROSKILLS]]}),
-  new Hero("Jaqulin the Unknown", 30, {1: 3.14e96, 2: }, {
+  new Hero("Jaqulin the Unknown", 30, {1: 3.14e96, 2: 5.83e106}, {
     1: [[1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS], [4, BonusTypes.TAP_DAMAGE_DPS], [20, BonusTypes.GOLD_HEROSKILLS],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[1000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [10, BonusTypes.TAP_DAMAGE_HEROSKILLS], [4, BonusTypes.TAP_DAMAGE_DPS], [20, BonusTypes.GOLD_HEROSKILLS],
         [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS]]}),
-  new Hero("Pixie the Rebel Fairy", 31, {1: 3.76e116, 2: }, {
+  new Hero("Pixie the Rebel Fairy", 31, {1: 3.76e116, 2: 7.43e136}, {
     1: [[900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.CRIT_CHANCE], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [25, BonusTypes.CHEST_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [15, BonusTypes.GOLD_HEROSKILLS]],
     2: [[900, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [5000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [1, BonusTypes.CRIT_CHANCE], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [25, BonusTypes.CHEST_HEROSKILLS], [10, BonusTypes.ALL_DAMAGE_HEROSKILLS], [15, BonusTypes.GOLD_HEROSKILLS]]}),
-  new Hero("Jackalope the Fireballer", 32, {1: 4.14e136, 2: }, {
+  new Hero("Jackalope the Fireballer", 32, {1: 4.14e136, 2: 9.07e176}, {
     1: [[40, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.GOLD_HEROSKILLS], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.BOSS_DAMAGE]],
     2: [[990, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.GOLD_HEROSKILLS], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.BOSS_DAMAGE]]}),
-  new Hero("Dark Lord, Punisher of All", 33, {1: 456e156, 2: }, {
+  new Hero("Dark Lord, Punisher of All", 33, {1: 456e156, 2: 9.99e226}, {
     1: [[2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.TAP_DAMAGE_HEROSKILLS], [1, BonusTypes.TAP_DAMAGE_DPS], [25, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [40, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[2500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.TAP_DAMAGE_HEROSKILLS], [1, BonusTypes.TAP_DAMAGE_DPS], [25, BonusTypes.GOLD_HEROSKILLS],
@@ -425,6 +434,15 @@ var cBonus = [
   BonusTypes.CHEST_CUSTOMIZATIONS,
   BonusTypes.CRIT_CHANCE,
   BonusTypes.TAP_DAMAGE_CUSTOMIZATIONS
+];
+
+var cNames = [
+  "All Damage",
+  "Critical Damage",
+  "Gold Dropped",
+  "Chest Gold",
+  "Critical Hit",
+  "Tap Damage"
 ];
 
 var CTYPE_D = 0;
@@ -634,7 +652,7 @@ EMPTY_BONUSES[BonusTypes.WEAPON_INDIVIDUAL] = heroInfo.map(function(h) { return 
 EMPTY_BONUSES[BonusTypes.INDIVIDUAL_HERO_DAMAGE] = heroInfo.map(function(h) { return 0; });
 
 var getEmptyBonuses = function() {
-  return EMPTY_BONUSES.slice();
+  return copyArray(EMPTY_BONUSES);
 };
 
 var addArtifacts = function(world, bonuses, artifacts) {
@@ -643,7 +661,7 @@ var addArtifacts = function(world, bonuses, artifacts) {
     var level = a[1];
     var artifact = artifactMapping[id];
 
-    if (level != 0) {
+    if (artifact.world == world && level != 0) {
       for (var bonusType in artifact.effects) {
         bonuses[bonusType] += artifact.effects[bonusType] * level;
         if (bonusType == BonusTypes.ALL_DAMAGE_ARTIFACTS) {
@@ -660,7 +678,7 @@ var addLevels = function(world, bonuses, levels) {
     var hero = heroInfo[i];
     var bonuses = hero.getAllBonuses(world, l);
     for (var bonusType in bonuses) {
-      if (bonusTypes == BonusTypes.INDIVIDUAL_HERO_DAMAGE) {
+      if (bonusType == BonusTypes.INDIVIDUAL_HERO_DAMAGE) {
         bonuses[bonusType][i] += bonuses[bonusType];
       } else {
         bonuses[bonusType] += bonuses[bonusType];
@@ -709,11 +727,14 @@ var GameState = function(params) {
 
   addArtifacts(this.world, this.bonuses, params.artifacts);
   addLevels(this.world, this.bonuses, params.levels);
-  addWeapons(this.world, this.bonuses, params.weapons);
-  addCustomizations(this.world, this.bonuses, params.customizations);
-  this.bonuses[BonusTypes.ALL_DAMAGE_MEMORY] = params.memory;
+  if (this.world == 1) {
+    addWeapons(this.world, this.bonuses, params.weapons);
+    addCustomizations(this.world, this.bonuses, params.customizations);
+    this.bonuses[BonusTypes.ALL_DAMAGE_MEMORY] = params.memory;
+  }
 
   this.getBonus = function(bonusType) {
+
     return this.bonuses[bonusType] / 100.0;
   };
 
@@ -772,8 +793,10 @@ var GameState = function(params) {
   this.getTotalHeroDPS = function() {
     // HeroInfo.GetDPSByLevel
     var dps = 0;
-    this.levels.forEach(function(level, i) {
-      if (level == 0) return;
+
+    for (var i in this.levels) {
+      var level = this.levels[i];
+      if (level == 0) continue;
 
       var heroDPS = heroInfo[i].getBaseDamage(this.world, level);
       var m1 = 1 + this.getHeroBonus(i)
@@ -781,19 +804,20 @@ var GameState = function(params) {
                  + this.getBonus(BonusTypes.ALL_DAMAGE_MEMORY);
       var m2 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_ARTIFACTS);
       var m3 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_CUSTOMIZATIONS);
-      var mw = getWeaponBonus(i);
-      var ms = getSetBonus();
+      var mw = this.getWeaponBonus(i);
+      var ms = this.getSetBonus();
 
       heroDPS = heroDPS * m1 * m2 * m3 * mw * ms;
       dps += heroDPS;
-    });
+    }
+
     return dps;
   };
 
   this.getTapDamage = function() {
     // PlayerInfo.GetAttackDamageByLevel
     var totalHeroDPS = this.getTotalHeroDPS();
-    var totalDPS = totalHeroDPS + MAIN_HERO_DPS;
+    var totalDPS = totalHeroDPS + MAIN_HERO_DAMAGE;
 
     var m1 = 1 + this.getBonus(BonusTypes.TAP_DAMAGE_HEROSKILLS) + this.getBonus(BonusTypes.TAP_DAMAGE_CUSTOMIZATIONS);
     var m2 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_ARTIFACTS);
@@ -804,7 +828,7 @@ var GameState = function(params) {
     var totalTapDamage = totalDPS * m1 * m2 * m3 * m4;
 
     var critMultiplier = (10 + this.getBonus(BonusTypes.CRIT_DAMAGE_HEROSKILLS))
-                       * (1 + this.getBonus(BonusTypes.CRIT_DAMAGE_ARTIFACTS)
+                       * (1 + this.getBonus(BonusTypes.CRIT_DAMAGE_ARTIFACTS))
                        * (1 + this.getBonus(BonusTypes.CRIT_DAMAGE_CUSTOMIZATIONS));
     var critChance = Math.min(1, BASE_CRIT_CHANCE + this.getBonus(BonusTypes.CRIT_CHANCE));
     var overallCritMultiplier = ((1 - critChance) + (critChance * 0.65 * critMultiplier));
@@ -881,7 +905,7 @@ var getMax = function(array, custom) {
 var copyParamsForGameState = function(params, newArtifacts) {
   return {
     world:          params.world,
-    artifacts:      newArtifacts,
+    artifacts:      copyArray(newArtifacts),
     levels:         params.levels,
     weapons:        params.weapons,
     memory:         params.memory,
@@ -889,6 +913,18 @@ var copyParamsForGameState = function(params, newArtifacts) {
     skillLevelCrit: params.skillLevelCrit,
     skillLevelTDMG: params.skillLevelTDMG,
   };
+};
+
+var printArtifacts = function(artifacts) {
+  artifacts.forEach(function(p, i) {
+    if (p[1] != 0) {
+      console.log(p);
+    }
+  });
+};
+
+var copyArray = function(array) {
+  return $.extend(true, [], array);
 };
 
 // params {
@@ -906,7 +942,7 @@ var copyParamsForGameState = function(params, newArtifacts) {
 // }
 var getBestSteps = function(params, method) {
   var relicsLeft = params.relics == 0 ? 1000000000 : params.relics;
-  var currentArtifacts = params.artifacts.slice();
+  var currentArtifacts = copyArray(params.artifacts);
   var steps = [];
   var cumulative = 0;
   var stepLimit = params.steps == 0 ? 300 : params.steps;
@@ -917,30 +953,29 @@ var getBestSteps = function(params, method) {
     var options = [];
 
     // get initial values
-    params.artifacts = currentArtifacts;
-    var baseState = new GameState(params);
+    var baseState = new GameState(copyParamsForGameState(params, currentArtifacts));
     var baseValue = getValue(baseState, method, params.actives);
 
-    currentArtifacts.forEach(function(ap, i) {
+    currentArtifacts.forEach(function(ap, indexInList) {
       var artifact = artifactMapping[ap[0]];
 
       var level = ap[1];
       if (level == 0 || level == artifact.levelcap) {
-        continue;
+        return;
       }
 
       // cost to level this artifact
       var relicCost = artifact.costToLevel(level);
 
       // get value if leveled
-      var newArtifacts = currentArtifacts.slice();
-      newArtifacts[i][1] += 1;
+      var newArtifacts = copyArray(currentArtifacts);
+      newArtifacts[indexInList][1] += 1;
 
       // TODO: make this better
       if (method == Methods.GOLD && artifact == artifactInfo.FF) {
         relicCost = 0;
         var levelTo = baseState.nextFFLevel(level);
-        newArtifacts[i][1] = levelTo;
+        newArtifacts[indexInList][1] = levelTo;
         while (levelTo > level) {
           levelTo -= 1;
           relicCost += artifactInfo.FF.costToLevel(levelTo);
@@ -951,41 +986,40 @@ var getBestSteps = function(params, method) {
       var dmgEFFLevels;
       if (method == Methods.DMG_EQUIVALENT && artifact == artifactInfo.FF) {
         var levelTo = baseState.nextFFLevel(level);
-        var ffArtifacts = newArtifacts.slice();
-        ffArtifacts[i][1] = levelTo;
-        dmgEFFLevels = levelTo - currentArtifacts[i][1];
-        params.artifacts = ffArtifacts;
-        var ffState = new GameState(params);
+        var ffArtifacts = copyArray(newArtifacts);
+        ffArtifacts[indexInList][1] = levelTo;
+        dmgEFFLevels = levelTo - currentArtifacts[indexInList][1];
+        var ffState = new GameState(copyParamsForGameState(params, ffArtifacts));
         dmgEFFGold = getValue(ffState, Methods.GOLD, params.actives);
       }
 
-      params.artifacts = newArtifacts;
-      var newGameState = new GameState(params);
+      var newGameState = new GameState(copyParamsForGameState(params, newArtifacts));
       var newValue = getValue(newGameState, method, params.actives);
 
       var efficiency;
       if (method == Methods.DMG_EQUIVALENT) {
-        var goldRatio = newValue[0] / baseValue[0];
-        var tdmgRatio = newValue[1] / baseValue[1];
+        var goldRatio = newValue.gold / baseValue.gold;
+        var tdmgRatio = newValue.tdmg / baseValue.tdmg;
 
         // TODO: Make this better
         if (artifact == artifactInfo.FF) {
-          goldRatio = 1 + ((dmgEFFGold - baseValue[0]) / dmgEFFLevels) / baseValue[0];
+          goldRatio = 1 + ((dmgEFFGold - baseValue.gold) / dmgEFFLevels) / baseValue.gold;
         }
 
         var goldDmgEquivalent = Math.pow(1.044685, Math.log(goldRatio) / Math.log(1.075));
         var tdmgEquivalentRatio = goldDmgEquivalent * tdmgRatio;
-        var tdmgEquivalent = baseValue[1] * tdmgEquivalentRatio;
+        var tdmgEquivalent = baseValue.tdmg * tdmgEquivalentRatio;
 
-        efficiency = (tdmgEquivalent - baseValue[1]) / relicCost;
+        efficiency = (tdmgEquivalent - baseValue.tdmg) / relicCost;
       } else {
         efficiency = (newValue - baseValue) / relicCost;
       }
 
       options.push({
-        index: i,
+        index: indexInList,
+        id: artifact.id,
         name: artifact.name,
-        level: newArtifacts[i][1],
+        level: newArtifacts[indexInList][1],
         cost: relicCost,
         efficiency: efficiency,
         cumulative: cumulative + relicCost,
@@ -1001,7 +1035,7 @@ var getBestSteps = function(params, method) {
 
     // TODO: use all relics options
     // if we don't have enough relics, break
-    if (bestOption.cost > relicsLeft && parms.steps == 0) {
+    if (bestOption.cost > relicsLeft && params.steps == 0) {
       break;
     }
 
@@ -1016,20 +1050,22 @@ var getBestSteps = function(params, method) {
 
 var getSteps = function(params) {
   var response = {};
+
   params.methods.forEach(function(m, i) {
+    console.log("method: ", m, "-------------------------------------------------------");
     var steps = getBestSteps(params, m);
     var summary = {};
     var costs = {};
     steps.forEach(function(s, index) {
-      var i = s.index;
-      summary[i] = Math.max(s.level, summary[i] ? summary[i] : 0);
-      costs[i] = (costs[i] ? costs[i] : 0) + s.cost;
+      var id = s.id;
+      summary[id] = Math.max(s.level, summary[id] ? summary[id] : 0);
+      costs[id] = (costs[id] ? costs[id] : 0) + s.cost;
     });
     var summarySteps = [];
     for (var k in summary) {
       var step = {
-        index: k,
-        name: artifactMapping[i].name,
+        id: k,
+        name: artifactMapping[k].name,
         level: summary[k],
         cost: costs[k],
       };
