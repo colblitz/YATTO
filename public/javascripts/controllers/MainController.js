@@ -132,6 +132,11 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     log($rootScope.state);
   };
 
+  $scope.switch = function() {
+    $rootScope.world = 3 - $rootScope.world;
+    $scope.$broadcast("worldUpdate");
+  };
+
   $scope.getSS = function(i) {
     return $rootScope.split("|")[i];
   };

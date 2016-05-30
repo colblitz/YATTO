@@ -338,6 +338,8 @@ yattoApp.controller('CalculatorController',
 
     $scope.updateStatsInfo = function() {
       // log("update stats info");
+      var weapons = getWeapons();
+      $scope.w_totalwp = weapons.reduce(function(a, b) { return a + b; });
       var g = getGameState();
       var tap = g.getTapDamage();
       $scope.all_damage = g.getAllDamage();
@@ -450,9 +452,6 @@ yattoApp.controller('CalculatorController',
     };
 
     $scope.customizationCheck = function(i, ai) {
-      console.log("asdf");
-      console.log($scope.customizations[i].value);
-      console.log(typeof($scope.customizations[i].value));
       if ($scope.customizations[i].value == null) {
         $scope.customizations[i].value = 0;
       }
@@ -659,7 +658,7 @@ yattoApp.controller('CalculatorController',
     var parseCustomizations = function(s) {
       var c = [0, 0, 0, 0, 0, 0];
       s.split("/").forEach(function(p, i, array) {
-        c[cMapping[p[0]]] += customizationValues[p];
+        c[cMapping[p[0]]] += customizationMapping[p].value;
       });
       return c.map(function(f) { return parseFloat(f.toPrecision(3)); });
     };
@@ -675,13 +674,23 @@ yattoApp.controller('CalculatorController',
       var j = JSON.parse(JSON.parse(s));
 
       // TODO: artifact_mapping {}
-      var artifactOrder = getOrderList();
+      // var artifactOrder = getOrderList();
       var artifactLevels = {};
       for (var a in j.artifactLevels) {
         var i = parseInt(a.substring(8));
         var l = j.artifactLevels[a];
-        var ai = artifactOrder[i-1];
-        artifactLevels[ai] = parseInt(l);
+        artifactLevels[i] = parseInt(l);
+        // TODO: save artifacts to state
+        // var artifact = artifactMapping[i];
+
+        // var ai = artifactOrder[i-1];
+        // artifactLevels[ai] = parseInt(l);
+      }
+      for (var w in $scope.artifacts) {
+        for (var i in $scope.artifacts[w]) {
+          var t = Number(artifactLevels[$scope.artifacts[w][i].id]);
+          $scope.artifacts[w][i].level = (isNaN(t) ? 0 : t);
+        }
       }
       // for (var a in $scope.artifacts) {
       //   var t = Number(artifactLevels[$scope.artifacts[a].index]);
@@ -695,7 +704,12 @@ yattoApp.controller('CalculatorController',
 
       var levels = j.heroSave.heroLevels;
       for (var l in levels) {
-        $scope.heroes[l-1].level = Math.max(parseInt(levels[l]), $scope.heroes[l-1].level);
+        $scope.heroes[l-1].level[1] = Math.max(parseInt(levels[l]), $scope.heroes[l-1].level[1]);
+      }
+
+      var levels2 = j.heroSave.heroLevelsGirl;
+      for (var l in levels2) {
+        $scope.heroes[l-1].level[2] = Math.max(parseInt(levels2[l]), $scope.heroes[l-1].level[2]);
       }
 
       var customizations = parseCustomizations(j.unlockedPlayerCustomizations);
@@ -810,8 +824,11 @@ yattoApp.controller('CalculatorController',
         if ($scope.r_undead == 0) { $scope.r_undead = undead; }
         if ($scope.r_levels == 0) { $scope.r_levels = getLevels().reduce(function(a, b) { return a + b; }); }
 
+        console.log("update things");
         $scope.updateThings();
       } catch (err) {
+        console.log("asdf");
+        console.log(err);
         localStorageService.remove('state');
         setDefaults();
       }
@@ -819,6 +836,12 @@ yattoApp.controller('CalculatorController',
 
     $scope.$on('stateUpdate', function() {
       $scope.updateFromState();
+    });
+
+    $scope.$on('worldUpdate', function() {
+      $scope.updateRelicInfo();
+      // $scope.updateWeaponInfo();
+      $scope.updateStatsInfo();
     });
 
     // initialize

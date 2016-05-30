@@ -860,12 +860,12 @@ var GameState = function(params) {
 
   this.nextFFLevel = function(ff) {
     var newLevel = ff;
-    var multiplier = function(l) {
+    var multiplier = function(l, g) {
         return Math.ceil(1 + (l * artifactInfo.FF.effects[BonusTypes.GOLD_ARTIFACTS] / 100)
-                           + this.getBonus(BonusTypes.GOLD_HEROSKILLS)
-                           + this.getBonus(BonusTypes.GOLD_CUSTOMIZATIONS));
+                           + g.getBonus(BonusTypes.GOLD_HEROSKILLS)
+                           + g.getBonus(BonusTypes.GOLD_CUSTOMIZATIONS));
     };
-    while (multiplier(newLevel) == multiplier(ff)) {
+    while (multiplier(newLevel, this) == multiplier(ff, this)) {
       newLevel += 1;
     }
     return newLevel;
