@@ -370,6 +370,13 @@ yattoApp.controller('CalculatorController',
         return;
       }
 
+      if (getLevels().reduce(function(a, b) { return a + b; }, 0) == 0) {
+        $scope.stepmessage = "Don't forget to fill in your hero levels - for an explanation of why they're needed check out the FAQ page.";
+        $scope.steps = [];
+        $scope.summary_steps = [];
+        return;
+      }
+
       // TODO: if no artifacts, buy new artifact (put in calculate.js?)
 
       if (!$scope.spinneractive) {
