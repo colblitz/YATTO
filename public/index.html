@@ -79,7 +79,7 @@
 						<span class="modal-message">{{message}}</span>
 					</div>
 					<div class="modal-footer login-modal-footer">
-						<button class="btn btn-primary" ng-click="login()">Login</button>
+						<button class="btn btn-primary" ng-click="login()">{{password != "" ? "Login" : "View"}}</button>
 						<button class="btn btn-primary" ng-click="register()">Register</button>
 						<button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 					</div>

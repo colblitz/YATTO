@@ -53,7 +53,7 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
         method: "POST",
         url: "state",
         data: {
-          "state": $rootScope.state
+          "state": $rootScope.stateString
         }
       }).success(function(data, status, headers, config) {
         $modalInstance.close({
@@ -85,6 +85,8 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       console.log("[MainController] " + s);
     }
   };
+
+  log("start of file");
 
   var setDefaults = function() {
     log("setting defaults");
@@ -128,6 +130,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       seedCalculate: 0,
       memory: 0,
     };
+    $rootScope.stateString = $scope.getStateString();
 
     $scope.loginText = "Login";
     $scope.isCollapsed = false;
@@ -166,7 +169,6 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     // ].join("|");
 
 
-    log($rootScope.state);
   };
 
   $scope.getStateString = function() {
@@ -176,13 +178,14 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 
 
   $scope.loadFromState = function(state) {
-    log("loadFromState with: ");
-    console.log(state);
+    log("loading from state");
+    // log("loadFromState with: ");
+    // console.log(state);
     // TODO: validation
     $.extend($rootScope.state, state);
-
-    log("rootScope state now: ");
-    console.log($rootScope.state);
+    $rootScope.stateString = $scope.getStateString();
+    // log("rootScope state now: ");
+    // console.log($rootScope.state);
 
     // $rootScope.state.version   = state.version;
     // $rootScope.state.world     = state.world;
@@ -207,6 +210,8 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     // $rootScope.state.memory = state.memory;
 
     $scope.$broadcast("stateUpdate");
+    // TODO: validation
+    return true;
   };
 
   $scope.switch = function() {
@@ -214,16 +219,17 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     $scope.$broadcast("worldUpdate");
   };
 
-  $scope.updateState = function(field, value) {
-    $rootScope[field] = value;
-  };
+  // $scope.updateState = function(field, value) {
+  //   $rootScope[field] = value;
+  // };
 
   $scope.loadStateFromCookies = function() {
+    console.log("loading state from cookies");
     var cookies = localStorageService.get('autoc');
     if (isNonNull(cookies)) { $rootScope.aCookies = cookies; }
     var state = localStorageService.get('state');
-    console.log("got from cookies: ");
-    console.log(state);
+    // console.log("got from cookies: ");
+    // console.log(state);
     if (isNonNull(state)) { $scope.loadFromState(state); }
   };
 
@@ -239,8 +245,8 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
   // };
 
   $scope.saveStateToCookies = function() {
-    console.log("storing to cookies: ");
-    console.log($rootScope.state);
+    console.log("save state to cookies: ");
+    // console.log($rootScope.state);
     localStorageService.set('state', $rootScope.state);
   }
 
@@ -300,14 +306,14 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     log("login called");
     if ($rootScope.loggedIn) {
       // if still logged in, go back to logged in user
-      if ($rootScope.amViewing) {
+      if ($rootScope.amViewer) {
         $scope.loginText = "Login";
         $scope.checkLoggedIn();
       } else {
         $scope.logout();
       }
     } else {
-      if ($rootScope.amViewing) {
+      if ($rootScope.amViewer) {
       // if ($scope.loginText.indexOf("viewing") > -1) {
         $scope.loginText = "Login";
         $rootScope.loggedIn = false;
@@ -363,7 +369,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       }
     }).success(function(data, status, headers, config) {
       var stateObject = JSON.parse(data.content);
-      $scope.loadFromState(stateObject);
+      return $scope.loadFromState(stateObject);
     }).error(function(data, status, headers, config) {
       log("get state failed with error: " + data.err);
     });
@@ -375,7 +381,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
         method: "POST",
         url: "state",
         data: {
-          "state": $scope.getStateString()
+          "state": $rootScope.stateString
         }
       }).success(function(data, status, headers, config) {
         $rootScope.stateSavedSuccessfully = true;
@@ -440,7 +446,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 
   if ("username" in $routeParams) {
     var username = $routeParams.username;
-    // $scope.getState(username);
+    $scope.getState(username);
 
     // force update in other controllers
     // $scope.$broadcast("stateUpdate");
@@ -453,15 +459,17 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       if (user != null) {
         $rootScope.loggedIn = true;
 
+        if (!$rootScope.amViewer) {
         // TODO: change this to $scope.amViewing or something
-        if ($scope.loginText.indexOf("viewing") < 0) {
+        // if ($scope.loginText.indexOf("viewing") < 0) {
           $scope.loginText = "Logout (" + user.username + ")";
           $rootScope.username = user.username;
 
           $scope.getState($rootScope.username);
         }
       } else {
-        log("not logged in");
+        log("not logged in, try getting from cookies");
+        $scope.loadStateFromCookies();
       }
 
       // force update in other controllers
@@ -470,4 +478,5 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       log("check failed with error: " + data.err);
     });
   }
+  log("end of main");
 });

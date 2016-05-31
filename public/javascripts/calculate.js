@@ -731,10 +731,11 @@ var GameState = function(params) {
     addWeapons(this.world, this.bonuses, params.weapons);
     addCustomizations(this.world, this.bonuses, params.customizations);
     this.bonuses[BonusTypes.ALL_DAMAGE_MEMORY] = params.memory;
+  } else {
+    addWeapons(this.world, this.bonuses, params.weapons.map(function(w) { return 0; }));
   }
 
   this.getBonus = function(bonusType) {
-
     return this.bonuses[bonusType] / 100.0;
   };
 

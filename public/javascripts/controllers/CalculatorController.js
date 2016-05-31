@@ -40,6 +40,7 @@ yattoApp.controller('CalculatorController',
     $scope.stepmessage = "Click calculate to get steps!";
 
     var setDefaults = function() {
+      log("set defaults");
       $scope.artifacts = {1: [], 2: []};
       $scope.artifactCaps = {};
 
@@ -52,9 +53,6 @@ yattoApp.controller('CalculatorController',
         });
         $scope.artifactCaps[a.id] = a.levelcap;
       }
-
-      log("artifact defaults: ", $scope.artifacts);
-      log("artifact caps: ", $scope.artifactCaps);
 
       $scope.heroes = [];
       heroInfo.forEach(function(h, i) {
@@ -69,7 +67,6 @@ yattoApp.controller('CalculatorController',
         });
       });
 
-      log("hero defaults: ", $scope.heroes);
 
 
       // $scope.artifact_caps = artifact_info.map(function(a) { return a.levelcap == Infinity ? null : a.levelcap; });
@@ -103,7 +100,6 @@ yattoApp.controller('CalculatorController',
         });
       });
 
-      log("customization defaults: ", $scope.customizations);
 
       // $scope.customizations = [
       //   {name: "All Damage",      index: 0, value: 0, step: 1,   max: 154},
@@ -267,13 +263,14 @@ yattoApp.controller('CalculatorController',
       // log("store to cookies");
       localStorageService.set('steps', $scope.steps);
       localStorageService.set('summs', $scope.summary_steps);
+      console.log("store to cookies");
       $scope.$parent.saveStateToCookies();
     };
 
     $scope.updateCookies = function() {
       // log("update cookies");
       if ($rootScope.aCookies == 'On') {
-        $scope.$parent.saveStateToCookies();
+        console.log("update cookies");
         $scope.storeToCookies();
       }
       localStorageService.set('autoc', $rootScope.aCookies);
@@ -345,6 +342,7 @@ yattoApp.controller('CalculatorController',
       $scope.w_totalwp = weapons.reduce(function(a, b) { return a + b; });
       var g = getGameState();
       var tap = g.getTapDamage();
+
       $scope.all_damage = g.getAllDamage();
       $scope.dps_damage = parseFloat(g.getTotalHeroDPS().toPrecision(4)).toExponential();
       $scope.tap_damage = parseFloat(tap[0].toPrecision(4)).toExponential();
@@ -352,11 +350,11 @@ yattoApp.controller('CalculatorController',
       $scope.twa_damage = parseFloat(tap[2].toPrecision(4)).toExponential();
     };
 
-    $scope.updateThings = function() {
+    $scope.updateThings = function(updateCookies) {
       log("update things");
       // $scope.url = "http://yatto.me/#/calculator?state=" + LZString.compressToEncodedURIComponent($rootScope.state);
 
-      $scope.updateCookies();
+      if (updateCookies) { $scope.updateCookies(); }
 
       // recalculate things
       $scope.updateRelicInfo();
@@ -393,6 +391,7 @@ yattoApp.controller('CalculatorController',
 
       console.log("newStateObject: ", newStateObject);
 
+      // this broadcasts a stateUpdate, which calls updateThings
       $scope.$parent.loadFromState(newStateObject);
 
       // var newValue = "";
@@ -420,7 +419,8 @@ yattoApp.controller('CalculatorController',
       // else if (i == 21) { newValue = $scope.memory; }
 
       // $scope.$parent.updateSS(i, newValue);
-      $scope.updateThings();
+      // console.log("state changed update things");
+      // $scope.updateThings(true);
     };
 
     var getGameState = function() {
@@ -794,7 +794,7 @@ yattoApp.controller('CalculatorController',
       $scope.$parent.saveState();
     };
 
-    $scope.updateFromState = function() {
+    $scope.updateFromState = function(updateCookies) {
       log("updateFromState");
       try {
         $scope.artifacts = {
@@ -918,7 +918,8 @@ yattoApp.controller('CalculatorController',
         // if ($scope.r_undead == 0) { $scope.r_undead = undead; }
         // if ($scope.r_levels == 0) { $scope.r_levels = getLevels().reduce(function(a, b) { return a + b; }); }
 
-        $scope.updateThings();
+        console.log("updateFromState update things");
+        $scope.updateThings(updateCookies);
       } catch (err) {
         log("update from state error: " + err);
         localStorageService.remove('state');
@@ -927,7 +928,8 @@ yattoApp.controller('CalculatorController',
     };
 
     $scope.$on('stateUpdate', function() {
-      $scope.updateFromState();
+      console.log("broadcasted state update");
+      $scope.updateFromState(true);
     });
 
     $scope.$on('worldUpdate', function() {
@@ -940,10 +942,10 @@ yattoApp.controller('CalculatorController',
     log("initializing things");
     setDefaults();
     // $scope.readFromCookies();
-    log("update from state");
-    $scope.updateFromState();
-    log("update things");
-    $scope.updateThings();
+    log("initial update from state");
+    $scope.updateFromState(false);
+    // log("initial update things");
+    // $scope.updateThings();
 
     if ("username" in $routeParams) {
       var username = $routeParams.username;
@@ -960,5 +962,6 @@ yattoApp.controller('CalculatorController',
     // // $scope.importFromString($rootScope.state, false);
 
     // }
+    log("end of calculator");
   }
 );
