@@ -168,6 +168,7 @@ yattoApp.controller('CalculatorController',
     }
 
     $scope.setActiveTab = function() {
+      // for initializing active tab
       if ($scope.steps.length > 0) {
         for (var m in $scope.methods) {
           var i = $scope.methods[m].index;
@@ -428,6 +429,25 @@ yattoApp.controller('CalculatorController',
       $scope.updateCookies();
     };
 
+    $scope.applySteps = function() {
+      var active = $scope.tabs.indexOf(true);
+      for (var i in $scope.summary_steps[active]) {
+        var sstep = $scope.summary_steps[active][i];
+        for (var a in $scope.artifacts[$rootScope.world]) {
+          var artifact = $scope.artifacts[$rootScope.world][a];
+          if (artifact.id == sstep.id) {
+            artifact.level = sstep.level;
+            $scope.relics -= sstep.cost;
+          }
+        }
+      }
+      // delete things
+      $scope.steps[active] = [];
+      $scope.summary_steps[active] = [];
+
+      $scope.stateChanged(1);
+    };
+
     $scope.step = function(summary, method, stepindex) {
       var step = summary ? $scope.summary_steps[method][stepindex] : $scope.steps[method][stepindex];
 
@@ -490,6 +510,7 @@ yattoApp.controller('CalculatorController',
         }
       }
 
+      // actually apply the step
       for (var a in $scope.artifacts[$rootScope.world]) {
         var artifact = $scope.artifacts[$rootScope.world][a];
         if (artifact.id == step.id) {
@@ -580,8 +601,8 @@ yattoApp.controller('CalculatorController',
       $scope.stateChanged();
 
       // TODO: check what field we want to save
-      $scope.$parent.saveStatefile(JSON.stringify({
-        artifacts: artifactLevels;
+      $scope.$parent.saveStateFile(JSON.stringify({
+        artifacts: artifactLevels,
         weapons: $scope.heroes.map(function(h) { return h.weapons; }),
         levels: {
           1: $scope.heroes.map(function(h) { return h.level[1]; }),
@@ -590,7 +611,7 @@ yattoApp.controller('CalculatorController',
         customizations: $scope.customizations.map(function(c) { return c.value; }),
         relics: $scope.relics,
         memory: $scope.memory,
-      });
+      }));
     };
 
     $scope.saveUserState = function() {
