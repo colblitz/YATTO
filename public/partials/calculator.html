@@ -7,35 +7,35 @@
 						<div id="options-subbox-1" class="options-block col-md-4">
 							<h3>Efficiency Calculator:</h3>
 							<div id="options-relics" class="small-form-item">
-								Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" ng-change="stateChanged(6)"/>
+								Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" ng-change="stateChanged()"/>
 							</div>
 							<div id="options-nsteps" class="small-form-item">
-								Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged(7)"/>
+								Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()"/>
 							</div>
 
 							<div id="options-memory" class="small-form-item">
-								Memory Damage Bonus: <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged(21)"/>
+								Memory Damage Bonus: <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()"/>
 							</div>
 							<label>
 								(If you have 2132%, enter 21.32, not 2132)
 							</label>
 
-							<label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged(13)"/> Incorporate actives for steps (Crit, BR)</label>
+							<label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged()"/> Incorporate actives for steps (Crit, BR)</label>
 
 							<div id="options-critical" class="small-form-item">
-								Critical Strike Level: <input type="number" class="form-control number-input right-input" ng-model="critss" min="0" ng-change="stateChanged(14)"/>
+								Critical Strike Level: <input type="number" class="form-control number-input right-input" ng-model="critss" min="0" ng-change="stateChanged()"/>
 							</div>
 							<div id="options-berserker" class="small-form-item">
-								Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged(15)"/>
+								Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged()"/>
 							</div>
 
-							<label id="allrelics-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="allrelics" ng-change="stateChanged(13)"/> Use as many relics as possible</label>
+							<label id="allrelics-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="allrelics" ng-change="stateChanged()"/> Use as many relics as possible</label>
 
-							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="buyartifact" ng-change="stateChanged(13)"/> Suggest when to buy an a new artifact</label>
+							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="buyartifact" ng-change="stateChanged()"/> Suggest when to buy an a new artifact</label>
 
-							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged(13)"/> Use average of random artifacts</label>
+							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged()"/> Use average of random artifacts</label>
 
-							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged(13)"/> Use your seed information</label>
+							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged()"/> Use your seed information</label>
 
 							<button class="btn btn-primary" id="calculate-button" ng-click="calculate()">Calculate</button>
 							<span us-spinner="{radius:4, width:3, length: 5}" spinner-key="spinner"></span>
@@ -47,21 +47,21 @@
 								<h3>Methods:</h3>
 								<div id="method-note">Hover over names (or tab names) to get descriptions</div>
 								<div ng-repeat="m in methods" class="method-options small-form-item" tooltip="{{m.tooltip}}" tooltip-popup-delay="1000">
-									<label><input type="checkbox" ng-model="methods[$index].value" ng-change="stateChanged(5)"/> {{m.name}}</label>
+									<label><input type="checkbox" ng-model="methods[$index].value" ng-change="stateChanged()"/> {{m.name}}</label>
 								</div>
 
 								<div id="stats-relic-box">
 									<div class="small-form-item">
 										<label>Stage:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_cstage" ng-change="stateChanged(10)"/>
+										<input type="number" class="form-control number-input right-input" ng-model="r_cstage" ng-change="stateChanged()"/>
 									</div>
 									<div class="small-form-item">
 										<label>UA Level:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_undead" ng-change="stateChanged(11)"/>
+										<input type="number" class="form-control number-input right-input" ng-model="r_undead" ng-change="stateChanged()"/>
 									</div>
 									<div class="small-form-item">
 										<label>Total hero levels:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_levels" ng-change="stateChanged(12)"/>
+										<input type="number" class="form-control number-input right-input" ng-model="r_levels" ng-change="stateChanged()"/>
 									</div>
 									<div class="small-form-item">
 										<label>Hero levels bonus:</label>
@@ -168,7 +168,7 @@
 								</div> -->
 								<!-- <div class="small-form-item">
 									<label>If I get this many weapons:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_getting" ng-change="stateChanged(9)"/>
+									<input type="number" class="form-control number-input right-input" ng-model="w_getting" ng-change="stateChanged()"/>
 								</div>
 								<div class="small-form-item">
 									<label>Probability to get next set:</label>

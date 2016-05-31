@@ -21,7 +21,7 @@ yattoApp.controller('CalculatorController',
       update: function(e, ui) {
         // TODO: a bit hacky, but seems like the update event is being fired before change to $artifacts is applied?
         $timeout(function() {
-          $scope.stateChanged(1);
+          $scope.stateChanged();
         }, 10);
       }
     };
@@ -261,7 +261,7 @@ yattoApp.controller('CalculatorController',
       $scope.updateStatsInfo();
     };
 
-    $scope.stateChanged = function(i) {
+    $scope.stateChanged = function() {
       log("state changed");
 
       var newStateObject = {
@@ -321,14 +321,14 @@ yattoApp.controller('CalculatorController',
       if (ai == artifactInfo.UA.id) {
         $scope.r_undead = a.level;
       }
-      $scope.stateChanged(1);
+      $scope.stateChanged();
     };
 
     $scope.weaponsCheck = function(i, ai) {
       if ($scope.heroes[i].weapons == null) {
         $scope.heroes[i].weapons = 0;
       }
-      $scope.stateChanged(2);
+      $scope.stateChanged();
     };
 
     $scope.levelsCheck = function(i, ai) {
@@ -336,14 +336,14 @@ yattoApp.controller('CalculatorController',
         $scope.heroes[i].level = 0;
       }
       $scope.r_levels = getLevels().reduce(function(a, b) { return a + b; });
-      $scope.stateChanged(3);
+      $scope.stateChanged();
     };
 
     $scope.customizationCheck = function(i, ai) {
       if ($scope.customizations[i].value == null) {
         $scope.customizations[i].value = 0;
       }
-      $scope.stateChanged(4);
+      $scope.stateChanged();
     };
 
     var sortByArtifactOrder = function(s) {
@@ -445,7 +445,7 @@ yattoApp.controller('CalculatorController',
       $scope.steps[active] = [];
       $scope.summary_steps[active] = [];
 
-      $scope.stateChanged(1);
+      $scope.stateChanged();
     };
 
     $scope.step = function(summary, method, stepindex) {
@@ -523,7 +523,7 @@ yattoApp.controller('CalculatorController',
       $scope.$parent.updateSS(6, $scope.relics);
       // TODO: impact on other methods (grey out?)
 
-      $scope.stateChanged(1);
+      $scope.stateChanged();
     };
 
     // TODO: this is a copy
