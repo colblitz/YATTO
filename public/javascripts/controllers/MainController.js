@@ -134,83 +134,19 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 
     $scope.loginText = "Login";
     $scope.isCollapsed = false;
-
-
-    // var defaultA = Object.keys(artifactInfo).map(function(a) { return artifactInfo[a].id + ".0"; }).join();
-    // var defaultW = Object.keys(heroInfo).map(function(w) { return "0"; }).join();
-    // var defaultL = Object.keys(heroInfo).map(function(l) { return "0"; }).join();
-    // var defaultC = "0,0,0,0,0,0";
-    // var defaultM = "1,1,1,1,0,0";
-    // var defaultP = Object.keys(artifactInfo).map(function(a) { return artifactInfo[a].id + ".0"; }).join();
-
-    // $rootScope.state = [
-    //   $rootScope.versionS, // 0 - version
-    //   defaultA, //  1 - artifacts
-    //   defaultW, //  2 - weapons
-    //   defaultL, //  3 - levels
-    //   defaultC, //  4 - customizations
-    //   defaultM, //  5 - methods
-    //   0,        //  6 - relics
-    //   0,        //  7 - nsteps
-    //   0,        //  8 - w_getting
-    //   0,        //  9 - r_cstage
-    //   0,        // 10 - r_undead
-    //   0,        // 12 - r_levels
-    //   0,        // 13 - active
-    //   0,        // 14 - critss
-    //   0,        // 15 - zerker
-
-    //   0,        // 16 - a_currentSeed
-    //   defaultP, // 17 - a_aPriorities
-    //   0,        // 18 - a_maxDiamonds
-    //   0,        // 19 - w_currentSeed
-    //   0,        // 20 - w_toCalculate
-    //   0,        // 21 - memory
-    // ].join("|");
-
-
   };
 
   $scope.getStateString = function() {
     return JSON.stringify($rootScope.state);
   };
 
-
-
   $scope.loadFromState = function(state) {
     log("loading from state");
-    // log("loadFromState with: ");
-    // console.log(state);
     // TODO: validation
     $.extend($rootScope.state, state);
     $rootScope.stateString = $scope.getStateString();
-    // log("rootScope state now: ");
-    // console.log($rootScope.state);
-
-    // $rootScope.state.version   = state.version;
-    // $rootScope.state.world     = state.world;
-    // $rootScope.state.artifacts = state.artifacts;
-    // $rootScope.state.weapons   = state.weapons;
-    // $rootScope.state.levels      = state.levels;
-    // $rootScope.state.customizations = state.customizations;
-    // $rootScope.state.methods = state.methods;
-    // $rootScope.state.priorities = state.priorities;
-    // $rootScope.state.relics = state.relics;
-    // $rootScope.state.nsteps = state.nsteps;
-    // $rootScope.state.relicCStage = state.relicCStage;
-    // $rootScope.state.relicUndead = state.relicUndead;
-    // $rootScope.state.relicLevels = state.relicLevels;
-    // $rootScope.state.useActives = state.useActives;
-    // $rootScope.state.levelCrit = state.levelCrit;
-    // $rootScope.state.levelTDMG = state.levelTDMG;
-    // $rootScope.state.seedArtifact = state.seedArtifact;
-    // $rootScope.state.seedDiamonds = state.seedDiamonds;
-    // $rootScope.state.seedWeapons = state.seedWeapons;
-    // $rootScope.state.seedCalculate = state.seedCalculate;
-    // $rootScope.state.memory = state.memory;
 
     $scope.$broadcast("stateUpdate");
-    // TODO: validation
     return true;
   };
 
@@ -219,40 +155,19 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     $scope.$broadcast("worldUpdate");
   };
 
-  // $scope.updateState = function(field, value) {
-  //   $rootScope[field] = value;
-  // };
-
   $scope.loadStateFromCookies = function() {
     console.log("loading state from cookies");
     var cookies = localStorageService.get('autoc');
     if (isNonNull(cookies)) { $rootScope.aCookies = cookies; }
     var state = localStorageService.get('state');
-    // console.log("got from cookies: ");
-    // console.log(state);
     if (isNonNull(state)) { $scope.loadFromState(state); }
   };
-
-  // $scope.getSS = function(i) {
-  //   return $rootScope.split("|")[i];
-  // };
-
-  // $scope.updateSS = function(i, value) {
-  //   log("updating SS");
-  //   var t = $rootScope.state.split("|");
-  //   t[i] = value;
-  //   $rootScope.state = t.join("|");
-  // };
 
   $scope.saveStateToCookies = function() {
     console.log("save state to cookies: ");
     // console.log($rootScope.state);
     localStorageService.set('state', $rootScope.state);
-  }
-
-  // $scope.saveS = function() {
-  //   localStorageService.set('state', $rootScope.state);
-  // };
+  };
 
   $scope.toggle = function() {
     $scope.isCollapsed = !$scope.isCollapsed;
@@ -285,8 +200,6 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       if (user != null) {
         $rootScope.loggedIn = true;
 
-        // $rootScope.amViewer = false ???
-
         if (!$rootScope.amViewer) {
           $scope.loginText = "Logout (" + user.username + ")";
           $rootScope.username = user.username;
@@ -314,7 +227,6 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       }
     } else {
       if ($rootScope.amViewer) {
-      // if ($scope.loginText.indexOf("viewing") > -1) {
         $scope.loginText = "Login";
         $rootScope.loggedIn = false;
         $rootScope.username = "";
@@ -424,32 +336,9 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
   var cookies = localStorageService.get('autoc');
   if (isNonNull(cookies)) { $rootScope.aCookies = cookies; }
 
-  // Check
-  // username param
-  // logged in
-  // cookies
-
-
-  // var state = localStorageService.get('state');
-  // if (isNonNull(state) && state[0] != "v") {
-  //   localStorageService.remove('state');
-  // } else {
-  //   if (isNonNull(state)) { $rootScope.state = state; }
-  // }
-
-
-
-  // if ("state" in $routeParams) {
-  //   $rootScope.state = LZString.decompressFromEncodedURIComponent($routeParams.state);
-  //   // $scope.importFromString($rootScope.state, false);
-  // }
-
   if ("username" in $routeParams) {
     var username = $routeParams.username;
     $scope.getState(username);
-
-    // force update in other controllers
-    // $scope.$broadcast("stateUpdate");
   } else {
     $http({
       method: "POST",
@@ -460,20 +349,14 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
         $rootScope.loggedIn = true;
 
         if (!$rootScope.amViewer) {
-        // TODO: change this to $scope.amViewing or something
-        // if ($scope.loginText.indexOf("viewing") < 0) {
           $scope.loginText = "Logout (" + user.username + ")";
           $rootScope.username = user.username;
-
           $scope.getState($rootScope.username);
         }
       } else {
         log("not logged in, try getting from cookies");
         $scope.loadStateFromCookies();
       }
-
-      // force update in other controllers
-      $scope.$broadcast("stateUpdate");
     }).error(function(data, status, headers, config) {
       log("check failed with error: " + data.err);
     });
