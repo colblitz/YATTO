@@ -113,10 +113,13 @@
 
 <!--
 							{{$root.loggedIn}} -->
-
 							<input class="file-input" type="file" fileread="savefile"/>
-							<button class="btn btn-primary thinbtn" ng-click="loadFromFile()">Load info from file</button>
-							<button class="btn btn-success thinbtn" id="savebutton" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">{{stateSavedSuccessfully ? "Successfully saved!" : "Save to account"}}</button>
+							<div tooltip="{{invalidFile() && 'Choose a file first' || ''}}" tooltip-popup-delay="1000">
+								<button class="btn btn-primary thinbtn" ng-click="loadFromFile()" ng-disabled="invalidFile()">Load info from file</button>
+							</div>
+							<div tooltip="{{!$root.loggedIn && 'Log in first' || ''}}" tooltip-popup-delay="1000">
+								<button class="btn btn-success thinbtn" id="savebutton" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">{{stateSavedSuccessfully ? "Successfully saved!" : "Save to account"}}</button>
+							</div>
 							<!-- {{savefile}} -->
 							<!-- <input ng-model="savefile" ng-change="file_changed(this)" type="file"/> -->
 							<!-- http://stackoverflow.com/questions/16631702/file-pick-with-angular-js -->
@@ -186,9 +189,9 @@
 					</div>
 
 					<div class="row" id="state-row">
-						<div class="col-md-12 url-block">
+						<div class="col-md-8 url-block">
 							<textarea display="none" type="text" rows="4" class="form-control text-input" id="state-input" ng-model="state"/>
-							<textarea type="text" rows="3" class="form-control text-input" id="url-input" ng-model="url" readonly/>
+							<textarea type="text" rows="1" class="form-control text-input" id="url-input" ng-model="url" readonly/>
 						</div>
 					</div>
 				</div> <!--options-box-->
