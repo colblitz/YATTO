@@ -174,8 +174,8 @@ yattoApp.controller('ReferenceController',
       // $scope.r_artifacts = [];
       // $scope.sum_cumulative = 0;
 
-      // for (var i in artifact_info) {
-      //   var a = artifact_info[i];
+      // for (var i in artifactInfoo) {
+      //   var a = artifactInfoo[i];
       //   var artifact = {
       //     name: a.name,
       //     index: i,
@@ -405,7 +405,7 @@ yattoApp.controller('ReferenceController',
       //   var aindex = parseOrZero(v[0], parseInt);
       //   var avalue = parseOrZero(v[1], parseInt);
       //   artifacts.push({
-      //     name: artifact_info[aindex].name,
+      //     name: artifactInfoo[aindex].name,
       //     index: aindex,
       //     value: avalue
       //   });

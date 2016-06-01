@@ -29,8 +29,8 @@ yattoApp.controller('SequencerController',
 
     var setDefaults = function() {
       $scope.s_artifacts = [];
-      for (var i in artifact_info) {
-        var a = artifact_info[i];
+      for (var i in artifactInfo) {
+        var a = artifactInfo[i];
         var artifact = {
           name: a.name,
           index: i,
@@ -113,7 +113,7 @@ yattoApp.controller('SequencerController',
           steps.push({
             n: keep ? num + "." : "",
             index: next,
-            name: artifact_info[next].name,
+            name: artifactInfo[next].name,
             salvage: !keep
           });
           if (keep) {
@@ -133,7 +133,7 @@ yattoApp.controller('SequencerController',
           steps.push({
             n: keep ? num + "." : "",
             index: next,
-            name: artifact_info[next].name,
+            name: artifactInfo[next].name,
             salvage: !keep
           });
           if (keep) {
@@ -455,7 +455,7 @@ yattoApp.controller('SequencerController',
         var aindex = parseOrZero(v[0], parseInt);
         var avalue = parseOrZero(v[1], parseInt);
         artifacts.push({
-          name: artifact_info[aindex].name,
+          name: artifactInfo[aindex].name,
           index: aindex,
           value: avalue
         });

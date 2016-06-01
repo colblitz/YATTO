@@ -3,8 +3,8 @@ yattoApp.controller('StatisticsController',
 
 		var setDefaults = function() {
 			$scope.p_artifacts = [];
-			for (var i in artifact_info) {
-				var a = artifact_info[i];
+			for (var i in artifactInfo) {
+				var a = artifactInfo[i];
 				var artifact = {
 					name: a.name,
 					index: i,
@@ -34,7 +34,7 @@ yattoApp.controller('StatisticsController',
 				var aindex = parseOrZero(v[0], parseInt);
 				var avalue = parseOrZero(v[1], parseInt);
 				artifacts.push({
-					name: artifact_info[aindex].name,
+					name: artifactInfo[aindex].name,
 					index: aindex,
 					value: avalue
 				});
