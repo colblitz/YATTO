@@ -7,7 +7,6 @@
 			<table id="ref-artifact-table">
 				<tr>
 					<th>Artifact</th>
-					<th>\(ad_0\)</th>
 					<th>\(ad_{pl}\)</th>
 					<th>Cap</th>
 					<th>x</th>
@@ -16,12 +15,14 @@
 					<th>Desired</th>
 					<th>Cost</th>
 					<th>Cumulative</th>
-					<!-- <th>Amount</th>
-					<th>Description</th> -->
+					<th>AD</th>
+					<th>(%)</th>
+					<th>Effect</th>
+					<th>(%)</th>
+					<th>Effect</th>
 				</tr>
-				<tr ng-repeat="a in refArtifacts">
+				<tr ng-repeat="a in refArtifacts[$root.world]">
 					<td class="r-artifacts-col00">{{a.name}}</td>
-					<td class="r-artifacts-col01">{{a.ad0}}</td>
 					<td class="r-artifacts-col02">{{a.adpl}}</td>
 					<td class="r-artifacts-col03">{{a.cap}}</td>
 					<td class="r-artifacts-col04">{{a.x}}</td>
@@ -34,10 +35,13 @@
 					</td>
 					<td class="r-artifacts-col08">{{a.cost}}</td>
 					<td class="r-artifacts-col09">{{a.cumulative}}</td>
-					<td ng-repeat-start="e in a.magnitudes">{{e.value}}</td>
-					<td ng-repeat-end>{{e.text}}</td>
-					<!-- <td class="r-artifacts-col10">{{a.magnitude}}</td>
-					<td class="r-artifacts-col11">{{a.text}}</td> -->
+					<!-- <td ng-repeat-start="e in a.magnitudes">{{e.value}}</td>
+					<td ng-repeat-end>{{e.text}}</td> -->
+					<td class="r-artifacts-col10">{{a.magnitudes[0].value}}</td>
+					<td class="r-artifacts-col10 {{a.magnitudes[1].class}}">{{a.magnitudes[1].value}}</td>
+					<td class="r-artifacts-col11 {{a.magnitudes[1].class}}">{{a.magnitudes[1].text}}</td>
+					<td class="r-artifacts-col10 {{a.magnitudes[2].class}}">{{a.magnitudes[2].value}}</td>
+					<td class="r-artifacts-col11 {{a.magnitudes[2].class}}">{{a.magnitudes[2].text}}</td>
 				</tr>
 				<tr>
 					<td></td>
@@ -47,11 +51,11 @@
 					<td></td>
 					<td></td>
 					<td></td>
-					<td></td>
 					<th>Total:</th>
 					<td class="r-artifacts-col09">{{sumCumulative}}</td>
-					<!-- <td></td>
-					<td></td> -->
+					<td></td>
+					<td></td>
+					<td></td>
 				</tr>
 			</table>
 

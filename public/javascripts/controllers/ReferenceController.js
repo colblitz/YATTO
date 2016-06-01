@@ -3,39 +3,94 @@ yattoApp.controller('ReferenceController',
     MathJax.Hub.Configured();
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
+
+    // dps increases AD of all artifacts
+    // 10x is normal only
+    // (additive with hero skills and customizations)
     var bonusTypeText = {};
     var asdf = [
-      [BonusTypes.ARTIFACT_DAMAGE_BOOST, "DPS (increases AD of all artifacts)"],
+      [BonusTypes.ARTIFACT_DAMAGE_BOOST, "DPS"],
       [BonusTypes.BOSS_HEALTH, "Boss Health"],
       [BonusTypes.BOSS_TIME, "Boss Time"],
       [BonusTypes.CHEST_ARTIFACTS, "Chesterson Gold"],
       [BonusTypes.CHEST_CHANCE, "Chesterson Chance"],
       [BonusTypes.CRIT_CHANCE, "Crit Chance"],
       [BonusTypes.CRIT_DAMAGE_ARTIFACTS, "Crit Damage"],
-      [BonusTypes.GOLD_10X_CHANCE, "Chance for 10x (normal mobs only)"],
-      [BonusTypes.GOLD_ARTIFACTS, "Overall Gold (additive with hero skills and customizations)"],
+      [BonusTypes.GOLD_10X_CHANCE, "Chance for 10x"],
+      [BonusTypes.GOLD_ARTIFACTS, "Overall Gold (*)"],
       [BonusTypes.GOLD_BOSS, "Boss Gold"],
-      [BonusTypes.GOLD_OVERALL, "Overall Gold (separate multiplier)"],
+      [BonusTypes.GOLD_MOBS, "Mob Gold"],
+      [BonusTypes.GOLD_OVERALL, "Overall Gold"],
       [BonusTypes.HERO_DEATH_CHANCE, "Hero Death Chance"],
       [BonusTypes.HERO_REVIVE_TIME, "Hero Revive Time"],
       [BonusTypes.NUM_MOBS, "Monsters each stage"],
       [BonusTypes.RELICS, "Relics from prestige"],
-      [BonusTypes.SKILL_CDR_AUTO, "Shadow Clone/Summon Golem cooldown"],
-      [BonusTypes.SKILL_CDR_CRIT, "Critical Strike/Poisonous Touch cooldown"],
-      [BonusTypes.SKILL_CDR_GOLD, "Hand of Midas/Chesterson Streak cooldown"],
-      [BonusTypes.SKILL_CDR_HERO, "War Cry/Inspiring Presence cooldown"],
-      [BonusTypes.SKILL_CDR_OHKO, "Heavenly Strike/Heroic Burst cooldown"],
-      [BonusTypes.SKILL_CDR_TDMG, "Berserker Rage/Arcane Channeling cooldown"],
-      [BonusTypes.SKILL_DRN_AUTO, "Shadow Clone/Summon Golem duration"],
-      [BonusTypes.SKILL_DRN_CRIT, "Critical Strike/Poisonous Touch duration"],
-      [BonusTypes.SKILL_DRN_GOLD, "Hand of Midas/Chesterson Streak duration"],
-      [BonusTypes.SKILL_DRN_HERO, "War Cry/Inspiring Presence duration"],
-      [BonusTypes.SKILL_DRN_TDMG, "Berserker Rage/Arcane Channeling duration"],
+      [BonusTypes.SKILL_CDR_AUTO, "Auto Skill cooldown"],
+      [BonusTypes.SKILL_CDR_CRIT, "Crit Skill cooldown"],
+      [BonusTypes.SKILL_CDR_GOLD, "Gold Skill cooldown"],
+      [BonusTypes.SKILL_CDR_HERO, "Hero Skill cooldown"],
+      [BonusTypes.SKILL_CDR_OHKO, "OHKO Skill cooldown"],
+      [BonusTypes.SKILL_CDR_TDMG, "TDmg Skill cooldown"],
+      [BonusTypes.SKILL_DRN_AUTO, "Auto Skill duration"],
+      [BonusTypes.SKILL_DRN_CRIT, "Crit Skill duration"],
+      [BonusTypes.SKILL_DRN_GOLD, "Gold Skill duration"],
+      [BonusTypes.SKILL_DRN_HERO, "Hero Skill duration"],
+      [BonusTypes.SKILL_DRN_TDMG, "TDmg Skill duration"],
+
+      // [BonusTypes.SKILL_CDR_AUTO, "Shadow Clone/Summon Golem cooldown"],
+      // [BonusTypes.SKILL_CDR_CRIT, "Critical Strike/Poisonous Touch cooldown"],
+      // [BonusTypes.SKILL_CDR_GOLD, "Hand of Midas/Chesterson Streak cooldown"],
+      // [BonusTypes.SKILL_CDR_HERO, "War Cry/Inspiring Presence cooldown"],
+      // [BonusTypes.SKILL_CDR_OHKO, "Heavenly Strike/Heroic Burst cooldown"],
+      // [BonusTypes.SKILL_CDR_TDMG, "Berserker Rage/Arcane Channeling cooldown"],
+      // [BonusTypes.SKILL_DRN_AUTO, "Shadow Clone/Summon Golem duration"],
+      // [BonusTypes.SKILL_DRN_CRIT, "Critical Strike/Poisonous Touch duration"],
+      // [BonusTypes.SKILL_DRN_GOLD, "Hand of Midas/Chesterson Streak duration"],
+      // [BonusTypes.SKILL_DRN_HERO, "War Cry/Inspiring Presence duration"],
+      // [BonusTypes.SKILL_DRN_TDMG, "Berserker Rage/Arcane Channeling duration"],
       [BonusTypes.TAP_DAMAGE_ARTIFACTS, "Tap Damage"],
       [BonusTypes.UPGRADE_COST, "Upgrade Cost"],
     ];
     asdf.forEach(function(p, i) { bonusTypeText[p[0]] = p[1]; });
 
+    var bTypeClasses = {
+      "bonusDmg":   [BonusTypes.ARTIFACT_DAMAGE_BOOST,
+                     BonusTypes.BOSS_HEALTH,
+                     BonusTypes.CRIT_CHANCE,
+                     BonusTypes.CRIT_DAMAGE_ARTIFACTS,
+                     BonusTypes.TAP_DAMAGE_ARTIFACTS],
+      "bonusGold":  [BonusTypes.CHEST_ARTIFACTS,
+                     BonusTypes.CHEST_CHANCE,
+                     BonusTypes.GOLD_10X_CHANCE,
+                     BonusTypes.GOLD_ARTIFACTS,
+                     BonusTypes.GOLD_BOSS,
+                     BonusTypes.GOLD_MOBS,
+                     BonusTypes.GOLD_OVERALL,
+                     BonusTypes.UPGRADE_COST],
+      "bonusSkill": [BonusTypes.SKILL_CDR_AUTO,
+                     BonusTypes.SKILL_CDR_CRIT,
+                     BonusTypes.SKILL_CDR_GOLD,
+                     BonusTypes.SKILL_CDR_HERO,
+                     BonusTypes.SKILL_CDR_OHKO,
+                     BonusTypes.SKILL_CDR_TDMG,
+                     BonusTypes.SKILL_DRN_AUTO,
+                     BonusTypes.SKILL_DRN_CRIT,
+                     BonusTypes.SKILL_DRN_GOLD,
+                     BonusTypes.SKILL_DRN_HERO,
+                     BonusTypes.SKILL_DRN_TDMG],
+      "bonusOther": [BonusTypes.BOSS_TIME,
+                     BonusTypes.HERO_DEATH_CHANCE,
+                     BonusTypes.HERO_REVIVE_TIME,
+                     BonusTypes.NUM_MOBS,
+                     BonusTypes.RELICS],
+    };
+
+    var bonusTypeClasses = {};
+    for (var bClass in bTypeClasses) {
+      bTypeClasses[bClass].forEach(function(b, i) {
+        bonusTypeClasses[b] = bClass;
+      });
+    }
 
     var bonusCooldowns = [
       BonusTypes.SKILL_CDR_AUTO,
@@ -70,6 +125,7 @@ yattoApp.controller('ReferenceController',
         var a = artifactInfo[i];
         $scope.refArtifacts[a.world].push({
           name: a.name,
+          id: a.id,
           index: i,
           ad0: a.ad0,
           adpl: a.adpl,
@@ -81,7 +137,7 @@ yattoApp.controller('ReferenceController',
           cost: 0,
           cumulative: 0,
           effects: a.effects,
-          magnitudes: mapMap(a.effects, function(e) { return { value: 0, text: ""}; }),
+          magnitudes: mapMap(a.effects, function(e) { return { value: 0, text: "", class: ""}; }),
           costFunction: a.cost,
           flavortext: a.flavor
         });
@@ -94,9 +150,6 @@ yattoApp.controller('ReferenceController',
           name: hero.name,
           cost: mapMap(hero.baseCost, function(c) { return c.toPrecision(4); }),
           skills: mapMap(hero.skills, function(l) { return l.map(function(s) {
-            console.log(s);
-            console.log(s[1]);
-            console.log(skillTypes[s[1]]);
             return {
               magnitude: s[0],
               type: skillTypes[s[1]].text,
@@ -105,8 +158,6 @@ yattoApp.controller('ReferenceController',
           }); }),
         });
       }
-
-      console.log($scope.refHeroes);
 
       $scope.sumCumulative = 0;
 
@@ -180,15 +231,26 @@ yattoApp.controller('ReferenceController',
     };
 
     var updateMagnitude = function(a) {
-      var l = Math.min(a.desired, a.cap ? Infinity : a.cap);
-      if (l == 0) { return ""; }
+      var l = Math.min(a.desired, a.cap == null ? Infinity : a.cap);
+      a.magnitudes = [];
+      if (l == 0) { return; }
 
-      a.magnitudes = mapMap(a.effects, function(e) {
-        return {
-          value: e[1] * l,
-          text: bonusTypeText[e[0]],
-        };
-      });
+      console.log("-----");
+      console.log(a.effects);
+      for (etype in a.effects) {
+        a.magnitudes.push({
+          value: a.effects[etype] * l,
+          text: bonusTypeText[etype],
+          class: bonusTypeClasses[etype],
+        });
+      }
+      console.log(a.magnitudes);
+      // a.magnitudes = mapMap(a.effects, function(etype) {
+      //   return {
+      //     value: a.effects[etype] * l,
+      //     text: bonusTypeText[etype],
+      //   };
+      // });
     };
 
     var updateText = function(a) {
@@ -201,6 +263,7 @@ yattoApp.controller('ReferenceController',
     };
 
     $scope.calcArtifact = function(a) {
+      console.log("calc for " + a.name);
       if (a.current != 0) {
         a.cost = Math.ceil(a.costFunction(a.current+1));
         a.cumulative = 0;
@@ -260,14 +323,12 @@ yattoApp.controller('ReferenceController',
     $scope.updateFromState = function() {
       var artifactLevels = {};
       for (var w in $rootScope.state.artifacts) {
-        console.log($rootScope.state.artifacts[w]);
         for (var i in $rootScope.state.artifacts[w]) {
           var artifact = $rootScope.state.artifacts[w][i];
           // id = level
           artifactLevels[artifact[0]] = artifact[1];
         }
       }
-      console.log(artifactLevels);
 
       for (var w in $scope.refArtifacts) {
         for (var i in $scope.refArtifacts[w]) {
