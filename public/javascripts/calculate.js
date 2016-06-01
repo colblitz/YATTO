@@ -212,6 +212,19 @@ var Hero = function(name, id, baseCost, skills) {
     return (level < 1000 ? this.baseCost[world] : this.baseCost10[world]) * Math.pow(HERO_UPGRADE_SCALING, level);
   };
 
+  this.costToLevel = function(world, startLevel, endLevel) {
+    if (endLevel == startLevel + 1) {
+      return this.getUpgradeCost(world, startLevel);
+    }
+    if (endLevel <= 1000) {
+      return this.baseCost[world] * (Math.pow(1.075, endLevel) - Math.pow(1.075, startLevel)) / 0.075;
+    }
+    if (startLevel >= 1000) {
+      return this.baseCost10[world] * (Math.pow(1.075, endLevel) - Math.pow(1.075, startLevel)) / 0.075;
+    }
+    return this.costToLevel(world, startLevel, 1000) + this.evolveCost[world] + this.costToLevel(world, 1000, endLevel);
+  };
+
   this.getBonuses = function(world, level, btype) {
     var bonus = 0;
     for (var i = 0; i < levelToSkills(world, level); i++) {
@@ -445,11 +458,11 @@ var cNames = [
   "Tap Damage"
 ];
 
-var CTYPE_D = 0;
-var CTYPE_P = 1;
-var CTYPE_T = 2;
-var CTYPE_S = 3;
-var CTYPE_N = 4;
+var CTYPE_D = 0; // diamonds
+var CTYPE_P = 1; // prestige
+var CTYPE_T = 2; // tourneyp
+var CTYPE_S = 3; // maxstage
+var CTYPE_N = 4; // default
 
 var Customization = function(name, value, cost, ctype, label) {
   this.name = name;
@@ -637,6 +650,48 @@ var BOSS_CONSTANT = (2 + 4*MONSTER_HP_BASE_2 + 6*Math.pow(MONSTER_HP_BASE_2, 2) 
                     (1 + MONSTER_HP_BASE_2 + Math.pow(MONSTER_HP_BASE_2, 2) + Math.pow(MONSTER_HP_BASE_2, 3) + Math.pow(MONSTER_HP_BASE_2, 4));
 
 var BOSS_GOLD_CONSTANT = 2 + 4 + 6 + 7 + 10 / 5.0;
+
+var stageHP = function(stage) {
+  if (stage <= 156) {
+    return 18.5 * Math.pow(1.57, stage);
+  }
+  return STAGE_CONSTANT * Math.pow(1.17, stage - 156);
+};
+
+// var boss_hp = function(stage) {
+//   switch (stage % 10) {
+//     case 1:
+//     case 6:
+//       return stage_hp(stage) * 2;
+//     case 2:
+//     case 7:
+//       return stage_hp(stage) * 4;
+//     case 3:
+//     case 8:
+//       return stage_hp(stage) * 6;
+//     case 4:
+//     case 9:
+//       return stage_hp(stage) * 7;
+//     case 5:
+//     case 0:
+//       return stage_hp(stage) * 10;
+//   }
+// }
+
+// var log117 = Math.log(1.17);
+// var log157 = Math.log(1.57);
+// var health_to_stage = function(health) {
+//   if (health > stage_constant) {
+//     return Math.round(Math.log(health / stage_constant) / log117 + 156);
+//   } else {
+//     return Math.round(Math.log(health / 18.5) / log157);
+//   }
+// };
+
+var baseStageGold = function(stage) {
+  console.log(stageHP(stage));
+  return stageHP(stage) * (0.02 + 0.00045 * Math.min(stage, 150));
+};
 
 // TODO: maybe redundant - main.js
 var newZeroes = function(length) {

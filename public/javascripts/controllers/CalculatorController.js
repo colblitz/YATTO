@@ -67,6 +67,7 @@ yattoApp.controller('CalculatorController',
         });
       });
 
+      $scope.ownedCustomizations = [];
       $scope.customizations = [];
       cBonus.forEach(function(c, i) {
         $scope.customizations.push({
@@ -276,6 +277,7 @@ yattoApp.controller('CalculatorController',
           2: $scope.heroes.map(function(h) { return h.level[2]; }),
         },
         customizations: $scope.customizations.map(function(c) { return c.value; }),
+        ownedCustomizations: $scope.ownedCustomizations,
         methods: $scope.methods.map(function(m) { return m.value ? 1 : 0; }),
         relics: $scope.relics,
         nsteps: $scope.nsteps,
@@ -592,6 +594,7 @@ yattoApp.controller('CalculatorController',
         $scope.heroes[l-1].level[2] = Math.max(parseInt(levels2[l]), $scope.heroes[l-1].level[2]);
       }
 
+      $scope.ownedCustomizations = j.unlockedPlayerCustomizations.split("/");
       var customizations = parseCustomizations(j.unlockedPlayerCustomizations);
       for (var c in customizations) {
         $scope.customizations[c].value = customizations[c];
@@ -679,13 +682,12 @@ yattoApp.controller('CalculatorController',
         $scope.updateThings(updateCookies);
       } catch (err) {
         log("update from state error: " + err);
-        localStorageService.remove('state');
         setDefaults();
       }
     };
 
     $scope.$on('stateUpdate', function() {
-      console.log("broadcasted state update");
+      log("broadcasted state update");
       $scope.updateFromState(true);
     });
 

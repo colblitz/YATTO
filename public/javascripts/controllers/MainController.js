@@ -111,6 +111,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
         2: Object.keys(heroInfo).map(function(l) { return 0; }),
       },
       customizations: cBonus.map(function(c) { return 0; }),
+      ownedCustomizations: [],
       methods: Object.keys(Methods).map(function(m) { return 1; }),
       priorities: {
         1: Object.keys(artifactInfo).filter(function(a) { return artifactInfo[a].world == 1; }).map(function(a) { return [artifactInfo[a].id, 0]}),

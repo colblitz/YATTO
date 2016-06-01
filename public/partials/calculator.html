@@ -1,296 +1,296 @@
 <div id="calculator-container">
-	<div class="row">
-		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
-			<div class="row">
-				<div id="options-box" class="panel col-md-12">
-					<div class="row">
-						<div id="options-subbox-1" class="options-block col-md-4">
-							<h3>Efficiency Calculator:</h3>
-							<div id="options-relics" class="small-form-item">
-								Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" ng-change="stateChanged()"/>
-							</div>
-							<div id="options-nsteps" class="small-form-item">
-								Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()"/>
-							</div>
+  <div class="row">
+    <div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
+      <div class="row">
+        <div id="options-box" class="panel col-md-12">
+          <div class="row">
+            <div id="options-subbox-1" class="options-block col-md-4">
+              <h3>Efficiency Calculator:</h3>
+              <div id="options-relics" class="small-form-item">
+                Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" ng-change="stateChanged()"/>
+              </div>
+              <div id="options-nsteps" class="small-form-item">
+                Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()"/>
+              </div>
 
-							<div id="options-memory" class="small-form-item">
-								Memory Damage Bonus: <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()"/>
-							</div>
-							<label>
-								(If you have 2132%, enter 21.32, not 2132)
-							</label>
+              <div id="options-memory" class="small-form-item">
+                Memory Damage Bonus: <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()"/>
+              </div>
+              <label>
+                (If you have 2132%, enter 21.32, not 2132)
+              </label>
 
-							<label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged()"/> Incorporate actives for steps (Crit, BR)</label>
+              <label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged()"/> Incorporate actives for steps (Crit, BR)</label>
 
-							<div id="options-critical" class="small-form-item">
-								Critical Strike Level: <input type="number" class="form-control number-input right-input" ng-model="critss" min="0" ng-change="stateChanged()"/>
-							</div>
-							<div id="options-berserker" class="small-form-item">
-								Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged()"/>
-							</div>
+              <div id="options-critical" class="small-form-item">
+                Critical Strike Level: <input type="number" class="form-control number-input right-input" ng-model="critss" min="0" ng-change="stateChanged()"/>
+              </div>
+              <div id="options-berserker" class="small-form-item">
+                Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged()"/>
+              </div>
 
-							<label id="allrelics-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="allrelics" ng-change="stateChanged()"/> Use as many relics as possible</label>
+              <label id="allrelics-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="allrelics" ng-change="stateChanged()"/> Use as many relics as possible</label>
 
-							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="buyartifact" ng-change="stateChanged()"/> Suggest when to buy an a new artifact</label>
+              <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="buyartifact" ng-change="stateChanged()"/> Suggest when to buy an a new artifact</label>
 
-							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged()"/> Use average of random artifacts</label>
+              <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged()"/> Use average of random artifacts</label>
 
-							<label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged()"/> Use your seed information</label>
+              <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged()"/> Use your seed information</label>
 
-							<button class="btn btn-primary" id="calculate-button" ng-click="calculate()">Calculate</button>
-							<span us-spinner="{radius:4, width:3, length: 5}" spinner-key="spinner"></span>
+              <button class="btn btn-primary" id="calculate-button" ng-click="calculate()">Calculate</button>
+              <span us-spinner="{radius:4, width:3, length: 5}" spinner-key="spinner"></span>
 
-						</div>
+            </div>
 
-						<div id="options-subbox-2" class="options-block col-md-4">
-							<div id="options-methods">
-								<h3>Methods:</h3>
-								<div id="method-note">Hover over names (or tab names) to get descriptions</div>
-								<div ng-repeat="m in methods" class="method-options small-form-item" tooltip="{{m.tooltip}}" tooltip-popup-delay="1000">
-									<label><input type="checkbox" ng-model="methods[$index].value" ng-change="stateChanged()"/> {{m.name}}</label>
-								</div>
+            <div id="options-subbox-2" class="options-block col-md-4">
+              <div id="options-methods">
+                <h3>Methods:</h3>
+                <div id="method-note">Hover over names (or tab names) to get descriptions</div>
+                <div ng-repeat="m in methods" class="method-options small-form-item" tooltip="{{m.tooltip}}" tooltip-popup-delay="1000">
+                  <label><input type="checkbox" ng-model="methods[$index].value" ng-change="stateChanged()"/> {{m.name}}</label>
+                </div>
 
-								<div id="stats-relic-box">
-									<div class="small-form-item">
-										<label>Stage:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_cstage" ng-change="stateChanged()"/>
-									</div>
-									<div class="small-form-item">
-										<label>UA Level:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_undead" ng-change="stateChanged()"/>
-									</div>
-									<div class="small-form-item">
-										<label>Total hero levels:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_levels" ng-change="stateChanged()"/>
-									</div>
-									<div class="small-form-item">
-										<label>Hero levels bonus:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_hbonus" readonly/>
-									</div>
-									<div class="small-form-item">
-										<label>Stage completion bonus:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_sbonus" readonly/>
-									</div>
-									<div class="small-form-item">
-										<label>Relics:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_reward" readonly/>
-									</div>
-									<div class="small-form-item">
-										<label>Next breakpoint:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_nextbp" readonly/>
-									</div>
-									<div class="small-form-item">
-										<label>Relics at next breakpoint:</label>
-										<input type="number" class="form-control number-input right-input" ng-model="r_atnext" readonly/>
-									</div>
-								</div>
+                <div id="stats-relic-box">
+                  <div class="small-form-item">
+                    <label>Stage:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_cstage" ng-change="stateChanged()"/>
+                  </div>
+                  <div class="small-form-item">
+                    <label>UA Level:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_undead" ng-change="stateChanged()"/>
+                  </div>
+                  <div class="small-form-item">
+                    <label>Total hero levels:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_levels" ng-change="stateChanged()"/>
+                  </div>
+                  <div class="small-form-item">
+                    <label>Hero levels bonus:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_hbonus" readonly/>
+                  </div>
+                  <div class="small-form-item">
+                    <label>Stage completion bonus:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_sbonus" readonly/>
+                  </div>
+                  <div class="small-form-item">
+                    <label>Relics:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_reward" readonly/>
+                  </div>
+                  <div class="small-form-item">
+                    <label>Next breakpoint:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_nextbp" readonly/>
+                  </div>
+                  <div class="small-form-item">
+                    <label>Relics at next breakpoint:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_atnext" readonly/>
+                  </div>
+                </div>
 
-							</div>
-						</div>
+              </div>
+            </div>
 
-						<div id="options-subbox-3" class="options-block col-md-4">
-							<h3>Cookie Management:</h3>
+            <div id="options-subbox-3" class="options-block col-md-4">
+              <h3>Cookie Management:</h3>
 
-							<div class="small-form-item">
-								<label>Auto save:</label>
-								<div class="btn-group right-input">
-									<label class="btn btn-primary cookiebtn" ng-model="$root.aCookies" btn-radio="'On'" ng-change="updateCookies()">On</label>
-									<label class="btn btn-primary cookiebtn" ng-model="$root.aCookies" btn-radio="'Off'" ng-change="updateCookies()">Off</label>
-								</div>
-							</div>
+              <div class="small-form-item">
+                <label>Auto save:</label>
+                <div class="btn-group right-input">
+                  <label class="btn btn-primary cookiebtn" ng-model="$root.aCookies" btn-radio="'On'" ng-change="updateCookies()">On</label>
+                  <label class="btn btn-primary cookiebtn" ng-model="$root.aCookies" btn-radio="'Off'" ng-change="updateCookies()">Off</label>
+                </div>
+              </div>
 
-							<div class="btn-group">
-								<label class="btn btn-danger cookiebtn" ng-click="clearAllCookies()">Clear</label>
-								<label class="btn btn-success cookiebtn" ng-click="storeToCookies()">Save</label>
-								<label class="btn btn-success cookiebtn" ng-click="readFromCookies()">Load</label>
-							</div>
+              <div class="btn-group">
+                <label class="btn btn-danger cookiebtn" ng-click="clearAllCookies()">Clear</label>
+                <label class="btn btn-success cookiebtn" ng-click="storeToCookies()">Save</label>
+                <label class="btn btn-success cookiebtn" ng-click="readFromCookies()">Load</label>
+              </div>
 
-							<!-- <button class="btn btn-success thinbtn" ng-click="storeToCookies()">Save cookies</button>
-							<button class="btn btn-success thinbtn" ng-click="readFromCookies()">Load from cookies</button>
-							<button class="btn btn-danger thinbtn" ng-click="clearAllCookies()">Clear cookies</button> -->
+              <!-- <button class="btn btn-success thinbtn" ng-click="storeToCookies()">Save cookies</button>
+              <button class="btn btn-success thinbtn" ng-click="readFromCookies()">Load from cookies</button>
+              <button class="btn btn-danger thinbtn" ng-click="clearAllCookies()">Clear cookies</button> -->
 
-							<h3>Other Stuff:</h3>
+              <h3>Other Stuff:</h3>
 
 <!--
-							{{$root.loggedIn}} -->
-							<input class="file-input" type="file" fileread="savefile"/>
-							<div tooltip="{{invalidFile() && 'Choose a file first' || ''}}" tooltip-popup-delay="1000">
-								<button class="btn btn-primary thinbtn" ng-click="loadFromFile()" ng-disabled="invalidFile()">Load info from file</button>
-							</div>
-							<div tooltip="{{!$root.loggedIn && 'Log in first' || ''}}" tooltip-popup-delay="1000">
-								<button class="btn btn-success thinbtn" id="savebutton" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">{{stateSavedSuccessfully ? "Successfully saved!" : "Save to account"}}</button>
-							</div>
-							<!-- {{savefile}} -->
-							<!-- <input ng-model="savefile" ng-change="file_changed(this)" type="file"/> -->
-							<!-- http://stackoverflow.com/questions/16631702/file-pick-with-angular-js -->
+              {{$root.loggedIn}} -->
+              <input class="file-input" type="file" fileread="savefile"/>
+              <div tooltip="{{invalidFile() && 'Choose a file first' || ''}}" tooltip-popup-delay="1000">
+                <button class="btn btn-primary thinbtn" ng-click="loadFromFile()" ng-disabled="invalidFile()">Load info from file</button>
+              </div>
+              <div tooltip="{{!$root.loggedIn && 'Log in first' || ''}}" tooltip-popup-delay="1000">
+                <button class="btn btn-success thinbtn" id="savebutton" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">{{stateSavedSuccessfully ? "Successfully saved!" : "Save to account"}}</button>
+              </div>
+              <!-- {{savefile}} -->
+              <!-- <input ng-model="savefile" ng-change="file_changed(this)" type="file"/> -->
+              <!-- http://stackoverflow.com/questions/16631702/file-pick-with-angular-js -->
 
 
-							<div id="stats-stats-box">
-								<div class="small-form-item">
-									<label>Current total weapons:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_totalwp" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>All damage:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="all_damage" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>Hero DPS:</label>
-									<input type="text" class="form-control number-input right-input" ng-model="dps_damage" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>Tap damage (TD):</label>
-									<input type="text" class="form-control number-input right-input" ng-model="tap_damage" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>Avg. TD with crits (TDC):</label>
-									<input type="text" class="form-control number-input right-input" ng-model="twc_damage" readonly/>
-								</div>
-								<div class="small-form-item">
-									<label>Avg. TDC with actives:</label>
-									<input type="text" class="form-control number-input right-input" ng-model="twa_damage" readonly/>
-								</div>
-							</div>
+              <div id="stats-stats-box">
+                <div class="small-form-item">
+                  <label>Current total weapons:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="w_totalwp" readonly/>
+                </div>
+                <div class="small-form-item">
+                  <label>All damage:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="all_damage" readonly/>
+                </div>
+                <div class="small-form-item">
+                  <label>Hero DPS:</label>
+                  <input type="text" class="form-control number-input right-input" ng-model="dps_damage" readonly/>
+                </div>
+                <div class="small-form-item">
+                  <label>Tap damage (TD):</label>
+                  <input type="text" class="form-control number-input right-input" ng-model="tap_damage" readonly/>
+                </div>
+                <div class="small-form-item">
+                  <label>Avg. TD with crits (TDC):</label>
+                  <input type="text" class="form-control number-input right-input" ng-model="twc_damage" readonly/>
+                </div>
+                <div class="small-form-item">
+                  <label>Avg. TDC with actives:</label>
+                  <input type="text" class="form-control number-input right-input" ng-model="twa_damage" readonly/>
+                </div>
+              </div>
 
 
-							<!-- <div id="stats-weapons-box"> -->
-								<!-- <div class="small-form-item">
-									<label id="chi">\(\chi^2\)</label>&nbsp;<label>Probability:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_chiprob" readonly/>
-								</div> -->
-								<!-- <div class="small-form-item">
-									<label>Current total weapons:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_totalwp" readonly/>
-								</div> -->
-								<!-- <div class="small-form-item">
-									<label>Weapons to next set:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_tonexts" readonly/>
-								</div> -->
-								<!-- <div class="small-form-item">
-									<label>If I get this many weapons:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_getting" ng-change="stateChanged()"/>
-								</div>
-								<div class="small-form-item">
-									<label>Probability to get next set:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="w_probset" readonly/>
-								</div>
-							</div> -->
+              <!-- <div id="stats-weapons-box"> -->
+                <!-- <div class="small-form-item">
+                  <label id="chi">\(\chi^2\)</label>&nbsp;<label>Probability:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="w_chiprob" readonly/>
+                </div> -->
+                <!-- <div class="small-form-item">
+                  <label>Current total weapons:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="w_totalwp" readonly/>
+                </div> -->
+                <!-- <div class="small-form-item">
+                  <label>Weapons to next set:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="w_tonexts" readonly/>
+                </div> -->
+                <!-- <div class="small-form-item">
+                  <label>If I get this many weapons:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="w_getting" ng-change="stateChanged()"/>
+                </div>
+                <div class="small-form-item">
+                  <label>Probability to get next set:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="w_probset" readonly/>
+                </div>
+              </div> -->
 
-						</div> <!-- options subbox 4 -->
-					</div> <!-- row -->
+            </div> <!-- options subbox 4 -->
+          </div> <!-- row -->
 
-					<div class="row" id="stats-row">
-						<div id="stats-subbox-1" class="options-block col-md-4">
-						</div>
-						<div id="stats-subbox-2" class="options-block col-md-4">
-						</div>
-						<div id="stats-subbox-3" class="options-block col-md-4">
-						</div>
-					</div>
+          <div class="row" id="stats-row">
+            <div id="stats-subbox-1" class="options-block col-md-4">
+            </div>
+            <div id="stats-subbox-2" class="options-block col-md-4">
+            </div>
+            <div id="stats-subbox-3" class="options-block col-md-4">
+            </div>
+          </div>
 
-					<div class="row" id="state-row">
-						<div class="col-md-8 url-block">
-							<textarea display="none" type="text" rows="4" class="form-control text-input" id="state-input" ng-model="state"/>
-							<textarea type="text" rows="1" class="form-control text-input" id="url-input" ng-model="url" readonly/>
-						</div>
-					</div>
-				</div> <!--options-box-->
-			</div> <!-- row -->
-			<div class="row">
-				<div class="col-md-7" id="artifact-weapon-col">
-					<div id="inputs-box" class="panel">
-						<div class="row">
-							<!-- <h2 class="title">Enter your info here:</h2> -->
-							<div id="artifacts-list" class="list col-md-5">
-								<h3>Artifact Levels:</h3>
-								<div ui-sortable="sortableOptions" ng-model="artifacts[$root.world]">
-									<div class="form-item transition" ng-repeat='a in artifacts[$root.world]'>
-										<span class="fa fa-arrows myHandle"></span>
-										<input type="number" class="form-control number-input left-input artifact-input" ng-model="a.level" min="0" max="{{artifact_caps[a.id]}}" ng-change="artifactCheck(a)" ng-class="{'at-cap': a.level==artifactCaps[a.id]}"/>
-										<div class="input-label">{{a.name}}</div>
-									</div>
-								</div>
-							</div>
-							<div id="weapons-list" class="list col-md-6">
-								<h3>Heroes (Levels / Weapons):</h3>
-								<div ng-repeat="h in heroes" class="form-item">
-									<input type="number" class="form-control number-input left-input level-input" ng-model="heroes[$index].level[$root.world]" min="0" ng-change="levelsCheck($index)"/>
-									<input type="number" class="form-control number-input left-input weapon-input" ng-model="heroes[$index].weapons" min="0" ng-change="weaponsCheck($index)" tabindex="{{$index+1}}" ng-disabled="$root.world != 1"/>
-									<div class="input-label">{{h.name}}</div>
-								</div>
-							</div>
-						 <!-- artifacts and weapons -->
-						</div>
-						<div class="row">
-							<div id="customizations-list" class="list col-md-12">
-								<h3>Bonuses from Customizations:</h3>
-								<p>(In decimal form - if you have 32%, enter 0.32, not 32)</p>
-								<div ng-repeat="c in customizations" class="form-item">
-									<input type="number" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-change="customizationCheck($index)" min="0" step="{{customizations[$index].step}}" ng-class="{'at-cap': c.value==customizations[$index].max}" ng-disabled="$root.world != 1"/>
-									<div class="input-label">{{c.name}}</div>
-								</div>
-							</div>
-						</div>
-					</div> <!-- inputs box -->
-				</div>
-				<div class="col-md-5" id="steps-col">
-					<div id="steps-box" class="panel">
-						<div id="steps-summary-container">
+          <div class="row" id="state-row">
+            <div class="col-md-8 url-block">
+              <textarea display="none" type="text" rows="4" class="form-control text-input" id="state-input" ng-model="state"/>
+              <textarea type="text" rows="1" class="form-control text-input" id="url-input" ng-model="url" readonly/>
+            </div>
+          </div>
+        </div> <!--options-box-->
+      </div> <!-- row -->
+      <div class="row">
+        <div class="col-md-7" id="artifact-weapon-col">
+          <div id="inputs-box" class="panel">
+            <div class="row">
+              <!-- <h2 class="title">Enter your info here:</h2> -->
+              <div id="artifacts-list" class="list col-md-5">
+                <h3>Artifact Levels:</h3>
+                <div ui-sortable="sortableOptions" ng-model="artifacts[$root.world]">
+                  <div class="form-item transition" ng-repeat='a in artifacts[$root.world]'>
+                    <span class="fa fa-arrows myHandle"></span>
+                    <input type="number" class="form-control number-input left-input artifact-input" ng-model="a.level" min="0" max="{{artifact_caps[a.id]}}" ng-change="artifactCheck(a)" ng-class="{'at-cap': a.level==artifactCaps[a.id]}"/>
+                    <div class="input-label">{{a.name}}</div>
+                  </div>
+                </div>
+              </div>
+              <div id="weapons-list" class="list col-md-6">
+                <h3>Heroes (Levels / Weapons):</h3>
+                <div ng-repeat="h in heroes" class="form-item">
+                  <input type="number" class="form-control number-input left-input level-input" ng-model="heroes[$index].level[$root.world]" min="0" ng-change="levelsCheck($index)"/>
+                  <input type="number" class="form-control number-input left-input weapon-input" ng-model="heroes[$index].weapons" min="0" ng-change="weaponsCheck($index)" tabindex="{{$index+1}}" ng-disabled="$root.world != 1"/>
+                  <div class="input-label">{{h.name}}</div>
+                </div>
+              </div>
+             <!-- artifacts and weapons -->
+            </div>
+            <div class="row">
+              <div id="customizations-list" class="list col-md-12">
+                <h3>Bonuses from Customizations:</h3>
+                <p>(In decimal form - if you have 32%, enter 0.32, not 32)</p>
+                <div ng-repeat="c in customizations" class="form-item">
+                  <input type="number" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-change="customizationCheck($index)" min="0" step="{{customizations[$index].step}}" ng-class="{'at-cap': c.value==customizations[$index].max}" ng-disabled="$root.world != 1"/>
+                  <div class="input-label">{{c.name}}</div>
+                </div>
+              </div>
+            </div>
+          </div> <!-- inputs box -->
+        </div>
+        <div class="col-md-5" id="steps-col">
+          <div id="steps-box" class="panel">
+            <div id="steps-summary-container">
 
-							<div class="btn-group step-button-group">
-								<label class="btn btn-primary step-button step-button-reset" ng-click="resetSteps()">Reset Steps</label>
-								<label class="btn btn-primary step-button step-button-apply" ng-click="applySteps()">Apply All Steps</label>
-							</div>
+              <div class="btn-group step-button-group">
+                <label class="btn btn-primary step-button step-button-reset" ng-click="resetSteps()">Reset Steps</label>
+                <label class="btn btn-primary step-button step-button-apply" ng-click="applySteps()">Apply All Steps</label>
+              </div>
 
-							<!-- <div>
-								<button id="reset-steps" class="btn btn-primary step-button" ng-click="resetSteps()">Reset steps</button>
-								<button id="apply-steps" class="btn btn-primary step-button" ng-click="applySteps()">Apply steps</button>
-							</div> -->
-							<tabset>
-								<tab ng-repeat="method in methods" heading="{{method.tabname}}" disable="!method.value" active="tabs[method.index]" tooltip="{{method.tooltip}}" tooltip-popup-delay="1000">
-									<h3 ng-if="steps[method.index] == null">{{stepmessage}}</h3>
-									<div id="summary-list" class="list">
-										<h3 ng-if="summary_steps[method.index].length > 0" class="animate-if">Summary:</h3>
-										<table ng-if="summary_steps[method.index].length > 0" class="animate-if">
-											<tr>
-												<th class="ssteps-colh0 colh"></th>
-												<th class="ssteps-colh1 colh">Artifact</th>
-												<th class="ssteps-colh2 colh">Level To</th>
-												<th class="ssteps-colh3 colh">Cost</th>
-											</tr>
-											<tr ng-repeat="ss in summary_steps[method.index] track by $index" class="step-row">
-												<td class="ssteps-col0"><span class="checkmark" ng-click="step(true, method.index, $index)"><i class="fa fa-check"></i></span></td>
-												<td class="ssteps-col1">{{ss.name}}</td>
-												<td class="ssteps-col2">{{ss.level}}</td>
-												<td class="ssteps-col3">{{ss.cost}}</td>
-											</tr>
-										</table>
-									</div>
-									<div id ="steps-list" class="list">
-										<h3 ng-if="steps[method.index].length > 0" class="animate-if">Steps:</h3>
-										<table ng-if="steps[method.index].length > 0" class="animate-if">
-											<tr>
-												<th class="steps-colh0 colh"></th>
-												<th class="steps-colh1 colh">Artifact</th>
-												<th class="steps-colh2 colh">Level</th>
-												<th class="steps-colh3 colh">Cost</th>
-												<th class="steps-colh4 colh">Total</th>
-											</tr>
-											<tr ng-repeat="s in steps[method.index] track by $index" class="step-row">
-												<td class="steps-col0"><span class="checkmark" ng-click="step(false, method.index, $index)"><i class="fa fa-check"></i></span></td>
-												<td class="steps-col1">{{s.name}}</td>
-												<td class="steps-col2">{{s.level}}</td>
-												<td class="steps-col3">{{s.cost}}</td>
-												<td class="steps-col4">{{s.cumulative}}</td>
-											</tr>
-										</table>
-									</div>
-								</tab>
-							</tabset>
-						</div>
-					</div> <!-- steps box -->
-				</div>
-			</div> <!-- row -->
-		</div> <!-- content -->
-	</div>
+              <!-- <div>
+                <button id="reset-steps" class="btn btn-primary step-button" ng-click="resetSteps()">Reset steps</button>
+                <button id="apply-steps" class="btn btn-primary step-button" ng-click="applySteps()">Apply steps</button>
+              </div> -->
+              <tabset>
+                <tab ng-repeat="method in methods" heading="{{method.tabname}}" disable="!method.value" active="tabs[method.index]" tooltip="{{method.tooltip}}" tooltip-popup-delay="1000">
+                  <h3 ng-if="steps[method.index] == null">{{stepmessage}}</h3>
+                  <div id="summary-list" class="list">
+                    <h3 ng-if="summary_steps[method.index].length > 0" class="animate-if">Summary:</h3>
+                    <table ng-if="summary_steps[method.index].length > 0" class="animate-if">
+                      <tr>
+                        <th class="ssteps-colh0 colh"></th>
+                        <th class="ssteps-colh1 colh">Artifact</th>
+                        <th class="ssteps-colh2 colh">Level To</th>
+                        <th class="ssteps-colh3 colh">Cost</th>
+                      </tr>
+                      <tr ng-repeat="ss in summary_steps[method.index] track by $index" class="step-row">
+                        <td class="ssteps-col0"><span class="checkmark" ng-click="step(true, method.index, $index)"><i class="fa fa-check"></i></span></td>
+                        <td class="ssteps-col1">{{ss.name}}</td>
+                        <td class="ssteps-col2">{{ss.level}}</td>
+                        <td class="ssteps-col3">{{ss.cost}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div id ="steps-list" class="list">
+                    <h3 ng-if="steps[method.index].length > 0" class="animate-if">Steps:</h3>
+                    <table ng-if="steps[method.index].length > 0" class="animate-if">
+                      <tr>
+                        <th class="steps-colh0 colh"></th>
+                        <th class="steps-colh1 colh">Artifact</th>
+                        <th class="steps-colh2 colh">Level</th>
+                        <th class="steps-colh3 colh">Cost</th>
+                        <th class="steps-colh4 colh">Total</th>
+                      </tr>
+                      <tr ng-repeat="s in steps[method.index] track by $index" class="step-row">
+                        <td class="steps-col0"><span class="checkmark" ng-click="step(false, method.index, $index)"><i class="fa fa-check"></i></span></td>
+                        <td class="steps-col1">{{s.name}}</td>
+                        <td class="steps-col2">{{s.level}}</td>
+                        <td class="steps-col3">{{s.cost}}</td>
+                        <td class="steps-col4">{{s.cumulative}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </tab>
+              </tabset>
+            </div>
+          </div> <!-- steps box -->
+        </div>
+      </div> <!-- row -->
+    </div> <!-- content -->
+  </div>
 </div>

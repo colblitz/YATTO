@@ -1,136 +1,152 @@
 <div id="othercalc-container">
-	<div class="row">
-		<div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
-			<div class="row">
-				<div class="col-md-8" id="customizations-col">
-					<div id="customizations-box" class="panel">
-						<b>THESE VALUES WILL NOT BE SAVED, OR GET FILLED IN BY UPLOADING YOUR ADAT FILE</b> - I'm still working on this stuff. The list order shouldn't change by too much, though, so you should be able to just do it once and save it somewhere...?
-						<div class="row">
-							<div class="col-md-7" id="customizations-owned">
-								<div id="customizations-list">
-									<h3>Customizations</h3>
-									<!-- {{oc_customization_totals}} -->
-									<div ng-repeat="cl in oc_customizations">
-										<div class="oc-category">
-											<h4>{{customizationLabels[$index]}}</h4>
-										</div>
-										<div ng-repeat="c in cl" class="oc-customizations">
-											<label><input type="checkbox" ng-model="c.owned" ng-change="recalculate()"/>{{c.name}}</label>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-5" id="customizations-list">
-								<h3>Best customizations</h3>
-								<div class="customization-list-description">This will list the unpurchased customizations in order of greatest gain in DmgE per diamonds to least</div>
-								<!-- <a href="http://a/%%300">this link</a> -->
-								<div class="small-form-item">
-									<label>Total Diamond Cost:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="diamonds" ng-change="" readonly/>
-								</div>
-								<table>
-									<tr>
-										<th class="ssteps-colh0 colh"></th>
-										<th class="ssteps-colh1 colh">Customization</th>
-										<th class="ssteps-colh2 colh">Cost</th>
-									</tr>
-									<tr ng-repeat="c in unowned_customizations" class="customization-row">
-										<td class="ssteps-col0"><span class="checkmark" ng-click=""><i class="fa fa-check"></i></span></td>
-										<td class="ssteps-col1">{{c.name}}</td>
-										<td class="ssteps-col2">{{c.cost}}</td>
-									</tr>
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4" id="herolevels-col">
-					<div id="herolevels-box" class="panel">
-						<div class="row">
-							<div id="herolevels-list">
-								<h3>Hero Levels</h3>
-								<!-- {{oc_customization_totals}} -->
-								Enter in the gold you have and your current hero levels (they get carried over from the main calculator page but don't write back to it), then hit recalculate to get the best distribution of hero levels. You can also include a target total levels and your stage to get how much gold you'd need along with how many monsters that'd be (I'm not 100% sure about the number of monsters yet, but it should be close)
+  <div class="row">
+    <div id="content" class="col-md-10 col-md-offset-1 col-xs-12">
+      <div class="row">
+        <div class="col-md-8" id="customizations-col">
+          <div id="customizations-box" class="panel">
+            <div class="row">
+              <div class="col-md-7" id="customizations-owned">
+                <div id="customizations-list">
+                  <h3>Total Bonuses:</h3>
+                  <div ng-repeat="c in customizations" class="form-item">
+                    <input type="number" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-class="{'at-cap': c.value==customizations[$index].max}" ng-disabled="true"/>
+                    <div class="input-label">{{c.name}}</div>
+                  </div>
+                </div>
 
-								<hr>
+                <div id="customizations-list">
+                  <h3>Customizations</h3>
+                  <!-- {{oc_customization_totals}} -->
+                  <div ng-repeat="cl in allCustomizations">
+                    <div class="oc-category">
+                      <h4>{{getCHeading($index)}}</h4>
+                    </div>
+                    <div ng-repeat="c in cl" class="oc-customizations">
+                      <label class="{{c.class}}"><input type="checkbox" ng-model="c.owned" ng-change="stateChanged()"/>{{c.name}}</label>
+                      <!-- <label><input type="checkbox" ng-model="c.owned" ng-change="recalculate()"/>{{c.name}}</label> -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5" id="customizations-list">
+                <h3>Best customizations</h3>
+                <div class="customization-list-description">This will list the unpurchased customizations in order of greatest gain in DmgE per diamonds to least</div>
+                <button class="btn btn-primary wbtn right-input" id="" ng-click="recalcCList()">Recalculate</button>
+                <!-- <a href="http://a/%%300">this link</a> -->
+                <div class="small-form-item">
+                  <label>Total Diamond Cost:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="diamonds" ng-change="" readonly/>
+                </div>
+                <table>
+                  <tr>
+                    <th class="ssteps-colh0 colh"></th>
+                    <th class="ssteps-colh1 colh">Type</th>
+                    <th class="ssteps-colh1 colh">Customization</th>
+                    <th class="ssteps-colh2 colh">Cost</th>
+                  </tr>
+                  <tr ng-repeat="c in customizationsToBuy" class="customization-row">
+                    <td class="ssteps-col0"><span class="checkmark" ng-click="buyCustomization(c, $index)"><i class="fa fa-check"></i></span></td>
+                    <td class="ssteps-col1">{{customizationLabels[c.type]}}</td>
+                    <td class="ssteps-col1">{{c.name}}</td>
+                    <td class="ssteps-col2">{{c.cost}}</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" id="herolevels-col">
+          <div id="herolevels-box" class="panel">
+            <div class="row">
+              <div id="herolevels-list">
+                <h3>Hero Levels</h3>
+                <!-- {{oc_customization_totals}} -->
+                Enter in the gold you have and your current hero levels (they get carried over from the main calculator page but don't write back to it), then hit recalculate to get the best distribution of hero levels. You can also include a target total levels and your stage to get how much gold you'd need along with how many monsters that'd be (I'm not 100% sure about the number of monsters yet, but it should be close)
 
-								<div>
-									<label>Gold:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="exponent" ng-change="" min="0" tabindex="2"/>
-									<label class="right-input">E+</label>
-									<input type="number" class="form-control number-input right-input" ng-model="mantissa" ng-change="" max="10" tabindex="1"/>
-								</div>
+                <hr>
 
-								<div>
-									<label>Total Levels:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="total_levels" ng-change="" readonly/>
-								</div>
+                <div>
+                  <label>Gold:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="exponent" ng-change="" min="0" tabindex="2"/>
+                  <label class="right-input">E+</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="mantissa" ng-change="" max="10" tabindex="1"/>
+                </div>
 
-								<div>
-									<label>Want to get to total levels:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="target_levels" ng-change="" tabindex="3"/>
-								</div>
+                <div>
+                  <label>Current Total Levels:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="totalCurrent" ng-change="" readonly/>
+                </div>
 
-								<div>
-									<label>On stage:</label>
-									<input type="number" class="form-control number-input right-input" ng-model="target_stage" ng-change="" tabindex="4"/>
-								</div>
+                <div>
+                  <label>Total Levels:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="totalLevels" ng-change="" readonly/>
+                </div>
 
-								<div>
-									<label>Gold required:</label>
-									<input type="text" class="form-control number-input right-input" ng-model="target_gold" ng-change="" readonly/>
-								</div>
+                <div>
+                  <label>Want to get to total levels:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="targetLevels" ng-change="" tabindex="3"/>
+                </div>
 
-								<div>
-									<label>Monsters:</label>
-									<input type="text" class="form-control number-input right-input" ng-model="target_monsters" ng-change="" readonly/>
-								</div>
+                <div>
+                  <label>On stage:</label>
+                  <input type="number" class="form-control number-input right-input" ng-model="targetStage" ng-change="" tabindex="4"/>
+                </div>
 
+                <div>
+                  <label>Gold required:</label>
+                  <input type="text" class="form-control number-input right-input" ng-model="targetGold" ng-change="" readonly/>
+                </div>
 
-								<div>
-									<button class="left-input" id="" ng-click="setAll()">Set all levels to:</button>
-									<input type="text" class="form-control number-input right-input" ng-model="setLevel" ng-change=""/>
-								</div>
-
-								<button class="btn btn-primary wbtn right-input" id="" ng-click="recalcBest()">Recalculate</button>
-
+                <div>
+                  <label>Monsters:</label>
+                  <input type="text" class="form-control number-input right-input" ng-model="targetMonsters" ng-change="" readonly/>
+                </div>
 
 
-								<table id="oc-hl-table">
-									<tr>
-										<th class="s-current-colh1 colh"></th>
-										<th class="s-current-colh2 colh">Current</th>
-										<th class="s-current-colh3 colh">Best</th>
-									</tr>
-									<tr ng-repeat="h in oc_heroes track by $index" class="step-row">
-										<td class="s-current-col1">{{h.name}}</td>
-										<td class="s-current-col2">
-											<input type="number" class="form-control number-input right-input level-input" ng-model="h.level" min="0" ng-change="" tabindex="{{8+$index+1}}" />
-										</td>
-										<td class="s-current-col2">
-											<input type="number" class="form-control number-input right-input level-input" ng-model="h.best" readonly/>
-										</td>
-									</tr>
-								</table>
+                <div>
+                  <button class="left-input" id="" ng-click="setAll()">Set all levels to:</button>
+                  <input type="text" class="form-control number-input right-input" ng-model="setLevel" ng-change=""/>
+                </div>
 
-<!-- 								<div ng-repeat="h in heroes" class="form-item">
-									<div class="input-label">{{h.name}}</div>
-								</div> -->
+                <button class="btn btn-primary wbtn right-input" id="" ng-click="recalcBest()">Recalculate</button>
+
+
+
+                <table id="oc-hl-table">
+                  <tr>
+                    <th class="s-current-colh1 colh"></th>
+                    <th class="s-current-colh2 colh">Current</th>
+                    <th class="s-current-colh3 colh">Best</th>
+                  </tr>
+                  <tr ng-repeat="h in heroes track by $index" class="step-row">
+                    <td class="s-current-col1">{{h.name}}</td>
+                    <td class="s-current-col2">
+                      <input type="number" class="form-control number-input right-input level-input" ng-model="h.level[$root.world]" min="0" ng-change="updateLevels()" tabindex="{{8+$index+1}}" />
+                    </td>
+                    <td class="s-current-col2">
+                      <input type="number" class="form-control number-input right-input level-input" ng-model="h.best[$root.world]" readonly/>
+                    </td>
+                  </tr>
+                </table>
+
+<!--                <div ng-repeat="h in heroes" class="form-item">
+                  <div class="input-label">{{h.name}}</div>
+                </div> -->
 
 <!--
-								<div ng-repeat="hl in ">
-									<div class="oc-category">
-										<h4>{{customizationLabels[$index]}}</h4>
-									</div>
-									<div ng-repeat="c in cl" class="oc-customizations">
-										<label><input type="checkbox" ng-model="c.owned" ng-change="recalculate()"/>{{c.name}}</label>
-									</div>
-								</div> -->
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                <div ng-repeat="hl in ">
+                  <div class="oc-category">
+                    <h4>{{customizationLabels[$index]}}</h4>
+                  </div>
+                  <div ng-repeat="c in cl" class="oc-customizations">
+                    <label><input type="checkbox" ng-model="c.owned" ng-change="recalculate()"/>{{c.name}}</label>
+                  </div>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
