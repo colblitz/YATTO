@@ -54,36 +54,46 @@ yattoApp.controller('ReferenceController',
     asdf.forEach(function(p, i) { bonusTypeText[p[0]] = p[1]; });
 
     var bTypeClasses = {
-      "bonusDmg":   [BonusTypes.ARTIFACT_DAMAGE_BOOST,
-                     BonusTypes.BOSS_HEALTH,
-                     BonusTypes.CRIT_CHANCE,
-                     BonusTypes.CRIT_DAMAGE_ARTIFACTS,
-                     BonusTypes.TAP_DAMAGE_ARTIFACTS],
-      "bonusGold":  [BonusTypes.CHEST_ARTIFACTS,
-                     BonusTypes.CHEST_CHANCE,
-                     BonusTypes.GOLD_10X_CHANCE,
-                     BonusTypes.GOLD_ARTIFACTS,
-                     BonusTypes.GOLD_BOSS,
-                     BonusTypes.GOLD_MOBS,
-                     BonusTypes.GOLD_OVERALL,
-                     BonusTypes.UPGRADE_COST],
-      "bonusSkill": [BonusTypes.SKILL_CDR_AUTO,
-                     BonusTypes.SKILL_CDR_CRIT,
-                     BonusTypes.SKILL_CDR_GOLD,
-                     BonusTypes.SKILL_CDR_HERO,
-                     BonusTypes.SKILL_CDR_OHKO,
-                     BonusTypes.SKILL_CDR_TDMG,
-                     BonusTypes.SKILL_DRN_AUTO,
-                     BonusTypes.SKILL_DRN_CRIT,
-                     BonusTypes.SKILL_DRN_GOLD,
-                     BonusTypes.SKILL_DRN_HERO,
-                     BonusTypes.SKILL_DRN_TDMG],
-      "bonusOther": [BonusTypes.BOSS_TIME,
-                     BonusTypes.HERO_DEATH_CHANCE,
-                     BonusTypes.HERO_REVIVE_TIME,
-                     BonusTypes.NUM_MOBS,
-                     BonusTypes.RELICS],
+      "bonus-pd": [BonusTypes.ARTIFACT_DAMAGE_BOOST],
+      "bonus-bd": [BonusTypes.BOSS_HEALTH,
+                   BonusTypes.GOLD_BOSS],
+      "bonus-cd": [BonusTypes.CRIT_DAMAGE_ARTIFACTS],
+      "bonus-cc": [BonusTypes.CRIT_CHANCE],
+      "bonus-td": [BonusTypes.TAP_DAMAGE_ARTIFACTS],
+      "bonus-cg": [BonusTypes.CHEST_ARTIFACTS,
+                   BonusTypes.CHEST_CHANCE],
+      "bonus-gd": [BonusTypes.GOLD_10X_CHANCE,
+                   BonusTypes.GOLD_ARTIFACTS,
+                   BonusTypes.GOLD_MOBS,
+                   BonusTypes.GOLD_OVERALL,
+                   BonusTypes.UPGRADE_COST],
+      "bonus-ad": [BonusTypes.SKILL_CDR_AUTO,
+                   BonusTypes.SKILL_CDR_CRIT,
+                   BonusTypes.SKILL_CDR_GOLD,
+                   BonusTypes.SKILL_CDR_HERO,
+                   BonusTypes.SKILL_CDR_OHKO,
+                   BonusTypes.SKILL_CDR_TDMG,
+                   BonusTypes.SKILL_DRN_AUTO,
+                   BonusTypes.SKILL_DRN_CRIT,
+                   BonusTypes.SKILL_DRN_GOLD,
+                   BonusTypes.SKILL_DRN_HERO,
+                   BonusTypes.SKILL_DRN_TDMG],
+      "bonus-o":  [BonusTypes.BOSS_TIME,
+                   BonusTypes.HERO_DEATH_CHANCE,
+                   BonusTypes.HERO_REVIVE_TIME,
+                   BonusTypes.NUM_MOBS,
+                   BonusTypes.RELICS],
     };
+
+//     .skill-dps, .bonus-o { background-color: #CFE2F3; }
+// .skill-ad, .bonus-ad { background-color: #D9D2E9; }
+// .skill-cd, .bonus-cd { background-color: #94DFD9; }
+// .skill-td, .bonus-td { background-color: #F4CCCC; }
+// .skill-pd, .bonus-pd { background-color: #EBACC8; }
+// .skill-cg, .bonus-cg { background-color: #EBD699; }
+// .skill-gd, .bonus-gd { background-color: #FFF2CC; }
+// .skill-bd, .bonus-bd { background-color: #F3CDB1; }
+// .skill-cc, .bonus-cc { background-color: #D9EAD3; }
 
     var bonusTypeClasses = {};
     for (var bClass in bTypeClasses) {
