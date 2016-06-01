@@ -16,10 +16,10 @@
 					<th>Desired</th>
 					<th>Cost</th>
 					<th>Cumulative</th>
-					<th>Amount</th>
-					<th>Description</th>
+					<!-- <th>Amount</th>
+					<th>Description</th> -->
 				</tr>
-				<tr ng-repeat="a in r_artifacts track by $index">
+				<tr ng-repeat="a in refArtifacts">
 					<td class="r-artifacts-col00">{{a.name}}</td>
 					<td class="r-artifacts-col01">{{a.ad0}}</td>
 					<td class="r-artifacts-col02">{{a.adpl}}</td>
@@ -27,15 +27,17 @@
 					<td class="r-artifacts-col04">{{a.x}}</td>
 					<td class="r-artifacts-col05">{{a.y}}</td>
 					<td class="r-artifacts-col06">
-						<input type="number" class="form-control number-input artifact-input" ng-model="a.current" min="0" max="{{a.cap}}" ng-change="calcArtifacts($index)" ng-class="{'at-cap': a.current==a.cap}"/>
+						<input type="number" class="form-control number-input artifact-input" ng-model="a.current" min="0" max="{{a.cap}}" ng-change="calcArtifact(a)" ng-class="{'at-cap': a.current==a.cap}"/>
 					</td>
 					<td class="r-artifacts-col07">
-						<input type="number" class="form-control number-input artifact-input" ng-model="a.desired" min="0" max="{{a.cap}}" ng-change="calcArtifacts($index)" ng-class="{'at-cap': a.desired==a.cap}"/>
+						<input type="number" class="form-control number-input artifact-input" ng-model="a.desired" min="0" max="{{a.cap}}" ng-change="calcArtifact(a)" ng-class="{'at-cap': a.desired==a.cap}"/>
 					</td>
 					<td class="r-artifacts-col08">{{a.cost}}</td>
 					<td class="r-artifacts-col09">{{a.cumulative}}</td>
-					<td class="r-artifacts-col10">{{a.magnitude}}</td>
-					<td class="r-artifacts-col11">{{a.text}}</td>
+					<td ng-repeat-start="e in a.magnitudes">{{e.value}}</td>
+					<td ng-repeat-end>{{e.text}}</td>
+					<!-- <td class="r-artifacts-col10">{{a.magnitude}}</td>
+					<td class="r-artifacts-col11">{{a.text}}</td> -->
 				</tr>
 				<tr>
 					<td></td>
@@ -47,9 +49,9 @@
 					<td></td>
 					<td></td>
 					<th>Total:</th>
-					<td class="r-artifacts-col09">{{sum_cumulative}}</td>
-					<td></td>
-					<td></td>
+					<td class="r-artifacts-col09">{{sumCumulative}}</td>
+					<!-- <td></td>
+					<td></td> -->
 				</tr>
 			</table>
 
@@ -59,31 +61,31 @@
 				<tr>
 					<th>Hero</th>
 					<th>Cost</th>
-					<th colspan="2">(%) Lv 10 Skill</th>
-					<th colspan="2">(%) Lv 25 Skill</th>
-					<th colspan="2">(%) Lv 50 Skill</th>
-					<th colspan="2">(%) Lv 100 Skill</th>
-					<th colspan="2">(%) Lv 200 Skill</th>
-					<th colspan="2">(%) Lv 400 Skill</th>
-					<th colspan="2">(%) Lv 800 Skill</th>
+					<th colspan="2">(%) Lv {{getSkillLevel(1)}} Skill</th>
+					<th colspan="2">(%) Lv {{getSkillLevel(2)}} Skill</th>
+					<th colspan="2">(%) Lv {{getSkillLevel(3)}} Skill</th>
+					<th colspan="2">(%) Lv {{getSkillLevel(4)}} Skill</th>
+					<th colspan="2">(%) Lv {{getSkillLevel(5)}} Skill</th>
+					<th colspan="2">(%) Lv {{getSkillLevel(6)}} Skill</th>
+					<th colspan="2">(%) Lv {{getSkillLevel(7)}} Skill</th>
 				</tr>
-				<tr ng-repeat="h in r_heroes track by $index">
+				<tr ng-repeat="h in refHeroes track by $index">
 					<td class="r-heroes-col00"><b>{{h.name}}</b></td>
-					<td class="r-heroes-col01">{{h.cost}}</td>
-					<td class="r-heroes-col02 {{h.skills[0].typeclass}}">{{h.skills[0].magnitude}}</td>
-					<td class="r-heroes-col03 {{h.skills[0].typeclass}}">{{h.skills[0].type}}</td>
-					<td class="r-heroes-col04 {{h.skills[1].typeclass}}">{{h.skills[1].magnitude}}</td>
-					<td class="r-heroes-col05 {{h.skills[1].typeclass}}">{{h.skills[1].type}}</td>
-					<td class="r-heroes-col06 {{h.skills[2].typeclass}}">{{h.skills[2].magnitude}}</td>
-					<td class="r-heroes-col07 {{h.skills[2].typeclass}}">{{h.skills[2].type}}</td>
-					<td class="r-heroes-col08 {{h.skills[3].typeclass}}">{{h.skills[3].magnitude}}</td>
-					<td class="r-heroes-col09 {{h.skills[3].typeclass}}">{{h.skills[3].type}}</td>
-					<td class="r-heroes-col10 {{h.skills[4].typeclass}}">{{h.skills[4].magnitude}}</td>
-					<td class="r-heroes-col11 {{h.skills[4].typeclass}}">{{h.skills[4].type}}</td>
-					<td class="r-heroes-col12 {{h.skills[5].typeclass}}">{{h.skills[5].magnitude}}</td>
-					<td class="r-heroes-col13 {{h.skills[5].typeclass}}">{{h.skills[5].type}}</td>
-					<td class="r-heroes-col14 {{h.skills[6].typeclass}}">{{h.skills[6].magnitude}}</td>
-					<td class="r-heroes-col15 {{h.skills[6].typeclass}}">{{h.skills[6].type}}</td>
+					<td class="r-heroes-col01">{{h.cost[$root.world]}}</td>
+					<td class="r-heroes-col02 {{h.skills[$root.world][0].typeclass}}">{{h.skills[$root.world][0].magnitude}}</td>
+					<td class="r-heroes-col03 {{h.skills[$root.world][0].typeclass}}">{{h.skills[$root.world][0].type}}</td>
+					<td class="r-heroes-col04 {{h.skills[$root.world][1].typeclass}}">{{h.skills[$root.world][1].magnitude}}</td>
+					<td class="r-heroes-col05 {{h.skills[$root.world][1].typeclass}}">{{h.skills[$root.world][1].type}}</td>
+					<td class="r-heroes-col06 {{h.skills[$root.world][2].typeclass}}">{{h.skills[$root.world][2].magnitude}}</td>
+					<td class="r-heroes-col07 {{h.skills[$root.world][2].typeclass}}">{{h.skills[$root.world][2].type}}</td>
+					<td class="r-heroes-col08 {{h.skills[$root.world][3].typeclass}}">{{h.skills[$root.world][3].magnitude}}</td>
+					<td class="r-heroes-col09 {{h.skills[$root.world][3].typeclass}}">{{h.skills[$root.world][3].type}}</td>
+					<td class="r-heroes-col10 {{h.skills[$root.world][4].typeclass}}">{{h.skills[$root.world][4].magnitude}}</td>
+					<td class="r-heroes-col11 {{h.skills[$root.world][4].typeclass}}">{{h.skills[$root.world][4].type}}</td>
+					<td class="r-heroes-col12 {{h.skills[$root.world][5].typeclass}}">{{h.skills[$root.world][5].magnitude}}</td>
+					<td class="r-heroes-col13 {{h.skills[$root.world][5].typeclass}}">{{h.skills[$root.world][5].type}}</td>
+					<td class="r-heroes-col14 {{h.skills[$root.world][6].typeclass}}">{{h.skills[$root.world][6].magnitude}}</td>
+					<td class="r-heroes-col15 {{h.skills[$root.world][6].typeclass}}">{{h.skills[$root.world][6].type}}</td>
 				</tr>
 			</table>
 		</div>

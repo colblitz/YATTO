@@ -871,6 +871,8 @@ var GameState = function(params) {
   };
 
   this.getTapDamage = function() {
+  	// TODO: factor in boss health and boss damage?
+
     // PlayerInfo.GetAttackDamageByLevel
     var totalHeroDPS = this.getTotalHeroDPS();
     var totalDPS = totalHeroDPS + MAIN_HERO_DAMAGE;
