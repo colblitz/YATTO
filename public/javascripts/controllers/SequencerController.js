@@ -29,15 +29,17 @@ yattoApp.controller('SequencerController',
 
     var setDefaults = function() {
       $scope.s_artifacts = [];
-      for (var i in artifactInfo) {
-        var a = artifactInfo[i];
-        var artifact = {
-          name: a.name,
-          index: i,
-          owned: false,
-          priority: 0
-        };
-        $scope.s_artifacts.push(artifact);
+      for (var i in artifactMapping) {
+        var a = artifactMapping[i];
+        if (a.world == 2) { // HACK
+          var artifact = {
+            name: a.name,
+            index: i,
+            owned: false,
+            priority: 0
+          };
+          $scope.s_artifacts.push(artifact);
+        }
       }
       $scope.salvageint = 0;
       $scope.a_currentSeed = 0;
@@ -79,11 +81,10 @@ yattoApp.controller('SequencerController',
       return cost;
     };
 
-
     var getOwned = function() {
       // TODO: artifact_mapping {}
-      return getOrderList().filter(function(x) {
-        return $scope.s_artifacts[x].owned;
+      return $scope.s_artifacts.filter(function(a) {
+        return a.owned;
       }).length;
     };
 
@@ -92,8 +93,8 @@ yattoApp.controller('SequencerController',
       var steps = [];
       var currentSeed = $scope.a_currentSeed;
       // TODO: artifact_mapping {}
-      var list = getOrderList().filter(function(x) {
-        return !$scope.s_artifacts[x].owned;
+      var list = $scope.s_artifacts.filter(function(a) {
+        return !a.owned;
       });
 
       var salvages = [];
@@ -107,13 +108,13 @@ yattoApp.controller('SequencerController',
       var num = getOwned() + 1;
       while (list.length > 0) {
         if (list.length == 1) {
-          var next = list[0];
+          var next = list[0].index;
           var keep = !salvages[steps.length];
 
           steps.push({
             n: keep ? num + "." : "",
             index: next,
-            name: artifactInfo[next].name,
+            name: artifactMapping[next].name,
             salvage: !keep
           });
           if (keep) {
@@ -122,9 +123,10 @@ yattoApp.controller('SequencerController',
           }
           currentSeed = unityRandom[currentSeed].nextSeed;
         } else {
-          var numOwned = 30 - list.length;
+          var totalArtifacts = $scope.s_artifacts.length;
+          var numOwned = totalArtifacts - list.length;
           var index = unityRandom[currentSeed].values[numOwned];
-          var next = list[index];
+          var next = list[index].index;
           var keep = !salvages[steps.length];
 
           if (keep) {
@@ -133,7 +135,7 @@ yattoApp.controller('SequencerController',
           steps.push({
             n: keep ? num + "." : "",
             index: next,
-            name: artifactInfo[next].name,
+            name: artifactMapping[next].name,
             salvage: !keep
           });
           if (keep) {
@@ -150,7 +152,8 @@ yattoApp.controller('SequencerController',
       var score = 0;
       var p = l.length;
       for (var a in l) {
-        var ap = $scope.s_artifacts[l[a]].priority;
+        var artifact = $scope.s_artifacts.find(function(sa) { return sa.index === l[a] });
+        var ap = artifact.priority;
         score += ap * p;
         // score += Math.pow(ap/10, p);
         // score += $scope.s_artifacts[l[a].index].priority * p * p;
@@ -447,6 +450,8 @@ yattoApp.controller('SequencerController',
 
 
     $scope.updateFromState = function() {
+      return;
+      
       var t = $rootScope.state.split("|");
 
       var artifacts = [];
@@ -493,6 +498,8 @@ yattoApp.controller('SequencerController',
     };
 
     $scope.updateRootScope = function() {
+      return;
+      
       $scope.$parent.updateSS(2, $scope.current_weapons.map(function(w) { return w.n; }).join());
       $scope.$parent.updateSS(16, $scope.a_currentSeed);
       $scope.$parent.updateSS(17, $scope.a_aPriorities);
