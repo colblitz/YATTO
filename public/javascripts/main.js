@@ -18,10 +18,6 @@ yattoApp.config(['$routeProvider', '$locationProvider',
         templateUrl: 'partials/othercalc.html',
         controller: 'OtherCalcController'
       }).
-      when('/statistics', {
-        templateUrl: 'partials/statistics.html',
-        controller: 'StatisticsController'
-      }).
       when('/faq', {
         templateUrl: 'partials/faq.html',
         controller: 'FaqController'
@@ -37,10 +33,6 @@ yattoApp.config(['$routeProvider', '$locationProvider',
       when('/sequencer', {
         templateUrl: 'partials/sequencer.html',
         controller: 'SequencerController'
-      }).
-      when('/prestiger', {
-        templateUrl: 'partials/prestiger.html',
-        controller: 'PrestigerController'
       }).
       otherwise({
         templateUrl: 'partials/calculator.html',
