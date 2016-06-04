@@ -14,10 +14,10 @@
               </div>
 
               <div id="options-memory" class="small-form-item">
-                Memory Damage Bonus: <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()"/>
+                Memory Damage (%): <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()"/>
               </div>
               <label>
-                (If you have 2132%, enter 21.32, not 2132)
+                (If you have 2132%, enter 2132)
               </label>
 
               <label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged()"/> Incorporate actives for steps (Crit, BR)</label>
@@ -223,8 +223,8 @@
             </div>
             <div class="row">
               <div id="customizations-list" class="list col-md-12">
-                <h3>Bonuses from Customizations:</h3>
-                <p>(In decimal form - if you have 32%, enter 0.32, not 32)</p>
+                <h3>Bonuses (%) from Customizations:</h3>
+                <p>(In percent - if you have 32%, enter 32)</p>
                 <div ng-repeat="c in customizations" class="form-item">
                   <input type="number" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-change="customizationCheck($index)" min="0" step="{{customizations[$index].step}}" ng-class="{'at-cap': c.value==customizations[$index].max}" ng-disabled="$root.world != 1"/>
                   <div class="input-label">{{c.name}}</div>

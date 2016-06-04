@@ -606,7 +606,7 @@ yattoApp.controller('CalculatorController',
       $scope.w_currentSeed = parseInt(j.heroSave.heroWeaponSeed);
 
       $scope.maxStageSPM = j.trophyProgressGirl.ReachStage.progress;
-      $scope.memory = 2 * $scope.maxStageSPM / 100.00;
+      $scope.memory = 2 * $scope.maxStageSPM;
 
       $scope.stateChanged();
 
