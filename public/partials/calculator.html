@@ -7,14 +7,14 @@
             <div id="options-subbox-1" class="options-block col-md-4">
               <h3>Efficiency Calculator:</h3>
               <div id="options-relics" class="small-form-item">
-                Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics" min="0" ng-change="stateChanged()"/>
+                Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics[$root.world]" min="0" ng-change="stateChanged()"/>
               </div>
               <div id="options-nsteps" class="small-form-item">
                 Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()"/>
               </div>
 
               <div id="options-memory" class="small-form-item">
-                Memory Damage (%): <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()"/>
+                Memory Damage (%): <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()" ng-disabled="$root.world != 1"/>
               </div>
               <label>
                 (If you have 2132%, enter 2132)

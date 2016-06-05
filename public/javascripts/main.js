@@ -93,11 +93,22 @@ yattoApp.controller('FormulasController', function($scope) {
 // ----- Stuff for Random ---------------------------------------------------------------------------------------
 // --------------------------------------------------------------------------------------------------------------
 
-var unityRandom = [];
+// TODO: refactor
+var unityRandomW1 = [];
+var unityRandomW2 = [];
 
 var processData = function(data) {
   for (var i in data) {
-    unityRandom.push({
+    unityRandomW1.push({
+      nextSeed: parseInt(data[i][1]),
+      values: data[i].slice(2).map(Number)
+    });
+  }
+};
+
+var processDataW2 = function(data) {
+  for (var i in data) {
+    unityRandomW2.push({
       nextSeed: parseInt(data[i][1]),
       values: data[i].slice(2).map(Number)
     });
@@ -105,11 +116,20 @@ var processData = function(data) {
 };
 
 $.ajax({
-  url: "../artifact_order_public - Random40.csv",
+  url: "../saved_data - Copy.csv",
   async: false,
   dataType: "text",
   success: function(data) {
     processData($.csv2Array(data));
+  }
+});
+
+$.ajax({
+  url: "../artifact_order_public - Random40.csv",
+  async: false,
+  dataType: "text",
+  success: function(data) {
+    processDataW2($.csv2Array(data));
   }
 });
 
@@ -169,6 +189,10 @@ var Random = function(s) {
 
 var isNonNull = function(thing) {
   return typeof thing !== "undefined" && thing != null;
+};
+
+var getOrDefault = function(thing, dValue) {
+  return isNonNull(thing) ? thing : dValue;
 };
 
 /** Function count the occurrences of substring in a string;

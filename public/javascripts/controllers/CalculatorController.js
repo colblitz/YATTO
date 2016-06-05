@@ -104,7 +104,7 @@ yattoApp.controller('CalculatorController',
       ];
       $scope.activetab = 0;
 
-      $scope.relics = 0;
+      $scope.relics = {1: 0, 2: 0};
       $scope.nsteps = 0;
       $scope.greedy = 1;
       $scope.active = false;
@@ -288,6 +288,8 @@ yattoApp.controller('CalculatorController',
         levelCrit: $scope.critss,
         levelTDMG: $scope.zerker,
         memory: $scope.memory,
+        artifactCurrentSeed: $scope.artifactCurrentSeed,
+        weaponCurrentSeed: $scope.weaponCurrentSeed,
       };
 
       console.log("newStateObject: ", newStateObject);
@@ -365,7 +367,7 @@ yattoApp.controller('CalculatorController',
     };
 
     $scope.calculate = function() {
-      if ($scope.relics == 0 && $scope.nsteps == 0) {
+      if ($scope.relics[$rootScope.world] == 0 && $scope.nsteps == 0) {
         $scope.stepmessage = "Get some relics or enter a number of steps!";
         $scope.steps = [];
         $scope.summary_steps = [];
@@ -403,7 +405,7 @@ yattoApp.controller('CalculatorController',
           skillLevelCrit: $scope.critss,
           skillLevelTDMG: $scope.zerker,
           memory: $scope.memory,
-          relics: $scope.relics,
+          relics: $scope.relics[$rootScope.world],
           steps: $scope.nsteps,
           useActives: $scope.active,
           methods: methods,
@@ -446,7 +448,7 @@ yattoApp.controller('CalculatorController',
           var artifact = $scope.artifacts[$rootScope.world][a];
           if (artifact.id == sstep.id) {
             artifact.level = sstep.level;
-            $scope.relics -= sstep.cost;
+            $scope.relics[$rootScope.world] -= sstep.cost;
           }
         }
       }
@@ -524,12 +526,12 @@ yattoApp.controller('CalculatorController',
         var artifact = $scope.artifacts[$rootScope.world][a];
         if (artifact.id == step.id) {
           artifact.level = step.level;
-          $scope.relics -= cost;
+          $scope.relics[$rootScope.world] -= cost;
           break;
         }
       }
-      $scope.relics = Math.max($scope.relics, 0);
-      $scope.$parent.updateSS(6, $scope.relics);
+      $scope.relics[$rootScope.world] = Math.max($scope.relics[$rootScope.world], 0);
+      // $scope.$parent.updateSS(6, $scope.relics);
       // TODO: impact on other methods (grey out?)
 
       $scope.stateChanged();
@@ -601,9 +603,19 @@ yattoApp.controller('CalculatorController',
       }
 
       // TODO: set other variables
-      $scope.relics = Math.round(parseFloat(j.playerRelics));
-      $scope.a_currentSeed = parseInt(j.nextArtifactSeed);
-      $scope.w_currentSeed = parseInt(j.heroSave.heroWeaponSeed);
+      $scope.relics = {
+        1: Math.round(parseFloat(j.playerRelics)),
+        2: Math.round(parseFloat(j.playerRelicsGirl)),
+      };
+
+      $scope.artifactCurrentSeed = {
+        1: parseInt(j.nextArtifactSeed),
+        2: parseInt(j.nextArtifactSeedGirl),
+      };
+      $scope.weaponCurrentSeed = {
+        1: parseInt(j.heroSave.heroWeaponSeed),
+        2: parseInt(j.heroSave.heroWeaponSeedGirl),
+      };
 
       $scope.maxStageSPM = j.trophyProgressGirl.ReachStage.progress;
       $scope.memory = 2 * $scope.maxStageSPM;
@@ -665,15 +677,15 @@ yattoApp.controller('CalculatorController',
           $scope.methods[i].value = (m == 1 ? true : false);
         });
 
-        $scope.relics   = $rootScope.state.relics;
-        $scope.nsteps   = $rootScope.state.nsteps;
-        $scope.r_cstage = $rootScope.state.relicCStage;
-        $scope.r_undead = $rootScope.state.relicUndead;
-        $scope.r_levels = $rootScope.state.relicLevels;
-        $scope.active   = $rootScope.state.useActives;
-        $scope.critss   = $rootScope.state.levelCrit;
-        $scope.zerker   = $rootScope.state.levelTDMG;
-        $scope.memory   = $rootScope.state.memory;
+        $scope.relics   = getOrDefault($rootScope.state.relics, 0);
+        $scope.nsteps   = getOrDefault($rootScope.state.nsteps, 0);
+        $scope.r_cstage = getOrDefault($rootScope.state.relicCStage, 0);
+        $scope.r_undead = getOrDefault($rootScope.state.relicUndead, 0);
+        $scope.r_levels = getOrDefault($rootScope.state.relicLevels, 0);
+        $scope.active   = getOrDefault($rootScope.state.useActives, 0);
+        $scope.critss   = getOrDefault($rootScope.state.levelCrit, 0);
+        $scope.zerker   = getOrDefault($rootScope.state.levelTDMG, 0);
+        $scope.memory   = getOrDefault($rootScope.state.memory, 0);
 
         // if ($scope.r_undead == 0) { $scope.r_undead = undead; }
         // if ($scope.r_levels == 0) { $scope.r_levels = getLevels().reduce(function(a, b) { return a + b; }); }
