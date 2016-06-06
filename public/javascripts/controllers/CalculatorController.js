@@ -244,6 +244,7 @@ yattoApp.controller('CalculatorController',
     };
 
     $scope.updateStatsInfo = function() {
+      log("updateStatsInfo");
       var weapons = getWeapons();
       $scope.w_totalwp = weapons.reduce(function(a, b) { return a + b; });
       var g = getGameState();
@@ -297,6 +298,8 @@ yattoApp.controller('CalculatorController',
       };
 
       console.log("newStateObject: ", newStateObject);
+
+      $scope.updateThings();
 
       // this broadcasts a stateUpdate, which calls updateThings
       $scope.$parent.loadFromState(newStateObject, controller);

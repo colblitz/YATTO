@@ -145,6 +145,10 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     log("loading from state");
     // TODO: validation
     $.extend($rootScope.state, state);
+    // console.log($rootScope.state.world);
+    if ($rootScope.state.world) {
+      $rootScope.world = $rootScope.state.world;
+    }
     $rootScope.stateString = $scope.getStateString();
 
     $scope.$broadcast("stateUpdate", { controller: source });
@@ -153,6 +157,9 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 
   $scope.switch = function() {
     $rootScope.world = 3 - $rootScope.world;
+    $rootScope.state.world = $rootScope.world;
+    $rootScope.stateString = $scope.getStateString();
+    $scope.saveState();
     $scope.$broadcast("worldUpdate");
   };
 

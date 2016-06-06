@@ -198,9 +198,10 @@ var Hero = function(name, id, baseCost, skills) {
   var m = HERO_UPGRADE_SCALING;
   for (var i = 1; i < PRECOMPUTE_UPGRADE_COST; i++) {
     for (var w in baseCost) {
+      // this.upgradeCosts[w].push((i < 1000 ? this.baseCost[w] : this.baseCost10[w]) * Math.pow(HERO_UPGRADE_SCALING, i));
       this.upgradeCosts[w].push((i < 1000 ? this.baseCost[w] : this.baseCost10[w]) * m);
-      m *= HERO_UPGRADE_SCALING;
     }
+    m *= HERO_UPGRADE_SCALING;
   }
 
   this.evolveCost = mapMap(this.upgradeCosts, function(l) { return 10.75 * l[999]; });
@@ -236,9 +237,11 @@ var Hero = function(name, id, baseCost, skills) {
   };
 
   this.getAllBonuses = function(world, level) {
+    // console.log(this.name, " level: ", level);
     var bonuses = {};
     for (var i = 0; i < levelToSkills(world, level); i++) {
       var skillType = skills[world][i][1];
+      // console.log(skillType, "value: ", skills[world][i][0]);
       // TODO: ternary if (bonuses[skillType] ? bonuses[skillType] : 0) + blah
       if (!(skillType in bonuses)) {
         bonuses[skillType] = 0;
@@ -249,10 +252,13 @@ var Hero = function(name, id, baseCost, skills) {
   };
 
   this.getBaseDamage = function(world, level) {
+    // TODO: handle large levels, breaks at around 9k (c > e308)
     // HeroInfo.GetDPSByLevel (without all the multipliers)
     var n, m;
     var c = this.getUpgradeCost(world, level - 1);
+    // console.log("c: ", c);
     if (level >= 1001) {
+      // console.log(Math.pow(0.904, level - 1001));
       n = Math.max(Math.pow(0.904, level - 1001) * Math.pow(0.715, this.id + 33), 1e-308);
       m = Math.pow(1.075, level - 1000) - 1;
     } else {
@@ -730,15 +736,18 @@ var addArtifacts = function(world, bonuses, artifacts) {
 var addLevels = function(world, bonuses, levels) {
   levels.forEach(function(l, i) {
     var hero = heroInfo[i];
-    var bonuses = hero.getAllBonuses(world, l);
-    for (var bonusType in bonuses) {
+    var heroBonuses = hero.getAllBonuses(world, l);
+    // console.log(hero.name, heroBonuses);
+    for (var bonusType in heroBonuses) {
       if (bonusType == BonusTypes.INDIVIDUAL_HERO_DAMAGE) {
-        bonuses[bonusType][i] += bonuses[bonusType];
+        bonuses[bonusType][i] += heroBonuses[bonusType];
       } else {
-        bonuses[bonusType] += bonuses[bonusType];
+        bonuses[bonusType] += heroBonuses[bonusType];
       }
     }
   });
+  // console.log(bonuses[BonusTypes.INDIVIDUAL_HERO_DAMAGE]);
+  // console.log(bonuses[BonusTypes.ALL_DAMAGE_HEROSKILLS]);
 };
 
 var addWeapons = function(world, bonuses, weapons) {
@@ -806,7 +815,7 @@ var GameState = function(params) {
   };
 
   this.getAllDamage = function() {
-    return this.bonuses[BonusTypes.ALL_DAMAGE_ARTIFACTS] * (1 + this.getBonus(BonusTypes.ARTIFACT_DAMAGE_BOOST));
+    return Math.round(this.bonuses[BonusTypes.ALL_DAMAGE_ARTIFACTS] * (1 + this.getBonus(BonusTypes.ARTIFACT_DAMAGE_BOOST)));
   };
 
   // Returns the average multiplier across all mobs and bosses and stages for
@@ -857,30 +866,62 @@ var GameState = function(params) {
       var m1 = 1 + this.getHeroBonus(i)
                  + this.getBonus(BonusTypes.ALL_DAMAGE_HEROSKILLS)
                  + this.getBonus(BonusTypes.ALL_DAMAGE_MEMORY);
+
       // todo: refactor this maybe
       var m2 = 1 + (this.getAllDamage() / 100.0);
       var m3 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_CUSTOMIZATIONS);
       var mw = this.getWeaponBonus(i);
       var ms = this.getSetBonus();
 
+      // console.log("---");
+      // console.log(this.getHeroBonus(i));
+      // console.log(this.getBonus(BonusTypes.ALL_DAMAGE_HEROSKILLS));
+      // console.log(this.getBonus(BonusTypes.ALL_DAMAGE_MEMORY));
+      // console.log(heroDPS);
+      // console.log("heroDPS before: ", heroDPS);
       heroDPS = heroDPS * m1 * m2 * m3 * mw * ms;
+      // console.log("heroDPS: ", heroDPS);
       dps += heroDPS;
+      // console.log("hero ad", m1);
+      // console.log("ad", m2);
+      // console.log("c ad", m3);
+      // console.log("weapon", mw);
+      // console.log("set", ms);
+      // console.log(heroToName[(parseInt(i)+1)] + " " + heroDPS.toString());
     }
 
     return dps;
   };
 
   this.getTapDamage = function() {
-  	// TODO: factor in boss health and boss damage?
+    // TODO: factor in boss health and boss damage?
 
     // PlayerInfo.GetAttackDamageByLevel
-    var totalHeroDPS = this.getTotalHeroDPS();
+    var totalHeroDPS = this.getTotalHeroDPS() * this.getBonus(BonusTypes.TAP_DAMAGE_DPS);
     var totalDPS = totalHeroDPS + MAIN_HERO_DAMAGE;
+
+    // this.getBonus(BonusTypes.)
+
+    // console.log("-----");
+    // console.log(totalHeroDPS);
+    // console.log(MAIN_HERO_DAMAGE);
+    // console.log(totalDPS);
 
     var m1 = 1 + this.getBonus(BonusTypes.TAP_DAMAGE_HEROSKILLS) + this.getBonus(BonusTypes.TAP_DAMAGE_CUSTOMIZATIONS);
     var m2 = 1 + (this.getAllDamage() / 100.0);
     var m3 = 1 + this.getBonus(BonusTypes.TAP_DAMAGE_ARTIFACTS);
     var m4 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_CUSTOMIZATIONS);
+
+
+    // var from_hero = (h_pd * hero_total_dps) *
+    // (1 + h_td + this.c_td) *
+    // (1 + this.a_ad) *
+    // (1 + 0.02 * this.l_hammer + 0.02 * this.l_brew) *
+    // (1 + this.c_ad);
+    // console.log("m1 ", m1);
+    // console.log("m2 ", m2);
+    // console.log("m3 ", m3);
+    // console.log("m4 ", m4);
 
     // Should match the displayed Tap Damage
     var totalTapDamage = totalDPS * m1 * m2 * m3 * m4;
