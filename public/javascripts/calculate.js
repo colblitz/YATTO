@@ -858,7 +858,8 @@ var GameState = function(params) {
       var m1 = 1 + this.getHeroBonus(i)
                  + this.getBonus(BonusTypes.ALL_DAMAGE_HEROSKILLS)
                  + this.getBonus(BonusTypes.ALL_DAMAGE_MEMORY);
-      var m2 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_ARTIFACTS);
+      // todo: refactor this maybe
+      var m2 = 1 + (this.getAllDamage() / 100.0);
       var m3 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_CUSTOMIZATIONS);
       var mw = this.getWeaponBonus(i);
       var ms = this.getSetBonus();
@@ -878,7 +879,7 @@ var GameState = function(params) {
     var totalDPS = totalHeroDPS + MAIN_HERO_DAMAGE;
 
     var m1 = 1 + this.getBonus(BonusTypes.TAP_DAMAGE_HEROSKILLS) + this.getBonus(BonusTypes.TAP_DAMAGE_CUSTOMIZATIONS);
-    var m2 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_ARTIFACTS);
+    var m2 = 1 + (this.getAllDamage() / 100.0);
     var m3 = 1 + this.getBonus(BonusTypes.TAP_DAMAGE_ARTIFACTS);
     var m4 = 1 + this.getBonus(BonusTypes.ALL_DAMAGE_CUSTOMIZATIONS);
 
