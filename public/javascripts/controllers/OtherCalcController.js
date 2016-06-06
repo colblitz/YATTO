@@ -1,11 +1,14 @@
 yattoApp.controller('OtherCalcController',
   function($scope, $rootScope) {
+    var controller = "OtherCalcController";
     var verbose = true;
     var log = function(s) {
       if (verbose) {
         console.log("[MainController] " + s);
       }
     };
+
+
 
     log("start of file");
 
@@ -345,7 +348,7 @@ yattoApp.controller('OtherCalcController',
 
       console.log("newStateObject: ", newStateObject);
       // this broadcasts a stateUpdate, which calls updateThings
-      $scope.$parent.loadFromState(newStateObject);
+      $scope.$parent.loadFromState(newStateObject, controller);
     };
 
     $scope.updateFromState = function(updateCookies) {
@@ -409,9 +412,11 @@ yattoApp.controller('OtherCalcController',
       }
     };
 
-    $scope.$on('stateUpdate', function() {
-      log("broadcasted state update");
-      $scope.updateFromState(true);
+    $scope.$on('stateUpdate', function(event, args) {
+      if (args.controller != controller) {
+        log("broadcasted state update");
+        $scope.updateFromState(true);
+      }
     });
 
     $scope.$on('worldUpdate', function() {

@@ -3,7 +3,7 @@ yattoApp.controller('ReferenceController',
     MathJax.Hub.Configured();
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
-
+    var controller = "CalculatorController";
     // dps increases AD of all artifacts
     // 10x is normal only
     // (additive with hero skills and customizations)

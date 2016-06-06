@@ -141,13 +141,13 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     return JSON.stringify($rootScope.state);
   };
 
-  $scope.loadFromState = function(state) {
+  $scope.loadFromState = function(state, source) {
     log("loading from state");
     // TODO: validation
     $.extend($rootScope.state, state);
     $rootScope.stateString = $scope.getStateString();
 
-    $scope.$broadcast("stateUpdate");
+    $scope.$broadcast("stateUpdate", { controller: source });
     return true;
   };
 

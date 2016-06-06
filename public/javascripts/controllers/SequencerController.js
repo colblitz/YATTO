@@ -12,6 +12,7 @@ yattoApp.controller('WeaponModalController', function ($scope, $modalInstance) {
 
 yattoApp.controller('SequencerController',
   function($scope, $rootScope, $modal, localStorageService) {
+    var controller = "SequencerController";
     var verbose = true;
     var log = function(s) {
       if (verbose) {
@@ -630,7 +631,7 @@ yattoApp.controller('SequencerController',
           artifactPriorities: priorities,
         };
         // TODO: redo this
-        $scope.$parent.loadFromState(newStateObject);
+        $scope.$parent.loadFromState(newStateObject, controller);
         $scope.$parent.saveState();
         if ($rootScope.aCookies) {
           $scope.$parent.saveStateToCookies();
@@ -647,7 +648,7 @@ yattoApp.controller('SequencerController',
         weaponToCalculate: $scope.weaponToCalculate,
       };
       // TODO: redo this
-      $scope.$parent.loadFromState(newStateObject);
+      $scope.$parent.loadFromState(newStateObject, controller);
       $scope.$parent.saveState();
       if ($rootScope.aCookies) {
         $scope.$parent.saveStateToCookies();
@@ -659,8 +660,10 @@ yattoApp.controller('SequencerController',
     };
 
     $scope.$on('stateUpdate', function() {
-      console.log("from broadcast");
-      $scope.updateFromState();
+      if (args.controller != controller) {
+        log("broadcasted state update");
+        $scope.updateFromState();
+      }
     });
 
     $scope.$on('worldUpdate', function() {

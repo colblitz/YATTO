@@ -3,6 +3,8 @@ yattoApp.controller('CalculatorController',
     MathJax.Hub.Configured();
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
+    var controller = "CalculatorController";
+
     var verbose = true;
     var log = function(s) {
       if (verbose) {
@@ -297,7 +299,7 @@ yattoApp.controller('CalculatorController',
       console.log("newStateObject: ", newStateObject);
 
       // this broadcasts a stateUpdate, which calls updateThings
-      $scope.$parent.loadFromState(newStateObject);
+      $scope.$parent.loadFromState(newStateObject, controller);
     };
 
     var getGameState = function() {
@@ -705,9 +707,11 @@ yattoApp.controller('CalculatorController',
       }
     };
 
-    $scope.$on('stateUpdate', function() {
-      log("broadcasted state update");
-      $scope.updateFromState(true);
+    $scope.$on('stateUpdate', function(event, args) {
+      if (args.controller != controller) {
+        log("broadcasted state update");
+        $scope.updateFromState(true);
+      }
     });
 
     $scope.$on('worldUpdate', function() {
