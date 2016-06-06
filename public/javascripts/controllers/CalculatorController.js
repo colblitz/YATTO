@@ -608,8 +608,8 @@ yattoApp.controller('CalculatorController',
 
       // TODO: set other variables
       $scope.relics = {
-        1: Math.round(parseFloat(j.playerRelics)),
-        2: Math.round(parseFloat(j.playerRelicsGirl)),
+        1: Math.round(parseFloat(j.playerRelics.replace("+", ""))),
+        2: Math.round(parseFloat(j.playerRelicsGirl.replace("+", ""))),
       };
 
       $scope.artifactCurrentSeed = {
