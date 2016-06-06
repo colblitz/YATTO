@@ -807,7 +807,7 @@ var GameState = function(params) {
   };
 
   this.getAllDamage = function() {
-    return this.bonuses[BonusTypes.ALL_DAMAGE_ARTIFACTS];
+    return this.bonuses[BonusTypes.ALL_DAMAGE_ARTIFACTS] * (1 + this.getBonus(BonusTypes.ARTIFACT_DAMAGE_BOOST));
   };
 
   // Returns the average multiplier across all mobs and bosses and stages for
