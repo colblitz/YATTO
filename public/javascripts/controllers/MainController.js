@@ -166,7 +166,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 
   $scope.saveStateToCookies = function() {
     console.log("save state to cookies: ");
-    // console.log($rootScope.state);
+    console.log($rootScope.state);
     localStorageService.set('state', $rootScope.state);
   };
 
@@ -289,6 +289,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
   };
 
   $scope.saveState = function() {
+    log("saving state");
     if ($rootScope.loggedIn) {
       $http({
         method: "POST",

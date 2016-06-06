@@ -544,32 +544,38 @@ yattoApp.controller('SequencerController',
         });
       }
 
-      for (var w in $scope.artifacts) {
-        $scope.artifacts[w].forEach(function(a, i) {
-          a.owned = (a.id in ownedArtifacts);
-        });
-      }
-
-      $scope.artifactSteps = $scope.getList(null);
-      console.log("pull from root");
-      console.log(getOwned());
-      console.log($scope.artifactSteps.map(function(s) { return s.salvage; }));
-      $scope.artifactCostManual = getCostOfSalvages(getOwned(), $scope.artifactSteps.map(function(s) { return s.salvage; }));
-      console.log($scope.artifactCostManual);
-    };
-
-
-    $scope.updateFromState = function() {
-      log("update from state");
-
-      console.log($rootScope.state.artifactPriorities);
       var priorities = {};
       for (var w in $rootScope.state.artifactPriorities) {
         $rootScope.state.artifactPriorities[w].forEach(function(p, i) {
           priorities[p[0]] = p[1];
         });
       }
-      console.log(priorities);
+
+      for (var w in $scope.artifacts) {
+        $scope.artifacts[w].forEach(function(a, i) {
+          a.owned = (a.id in ownedArtifacts);
+          a.priority = getOrDefault(priorities[a.id], 0);
+        });
+      }
+
+      $scope.artifactSteps = $scope.getList(null);
+      $scope.artifactCostManual = getCostOfSalvages(getOwned(), $scope.artifactSteps.map(function(s) { return s.salvage; }));
+      $scope.artifactCurrentSeed = getOrDefault($rootScope.state.artifactCurrentSeed, {1: 0, 2: 0});
+      $scope.weaponCurrentSeed = getOrDefault($rootScope.state.weaponCurrentSeed, {1: 0, 2: 0});
+    };
+
+
+    $scope.updateFromState = function() {
+      log("update from state");
+
+      console.log($rootScope.state);
+
+      var priorities = {};
+      if ($rootScope.state.artifactPriorities) {
+        $rootScope.state.artifactPriorities.forEach(function(p, i) {
+          priorities[p[0]] = p[1];
+        });
+      }
 
       for (var w in $scope.artifacts) {
         $scope.artifacts[w].forEach(function(a, i) {
@@ -591,7 +597,6 @@ yattoApp.controller('SequencerController',
 
       $scope.weaponMinCurrent = Math.min.apply(null, $scope.weapons.map(function(x) { return x.current; }));
       $scope.weaponMinAfter = Math.min.apply(null, $scope.weapons.map(function(x) { return x.after; }));
-
 
       $scope.weaponCurrentSeed = getOrDefault($rootScope.state.weaponCurrentSeed, {1: 0, 2: 0});
       $scope.weaponToCalculate = getOrDefault($rootScope.state.weaponToCalculate, 100);
@@ -620,30 +625,33 @@ yattoApp.controller('SequencerController',
 
         // update root state
         var newStateObject = {
-
           artifactCurrentSeed: $scope.artifactCurrentSeed,
           artifactMaxDiamonds: $scope.artifactMaxDiamonds,
           artifactPriorities: priorities,
-
-          // {
-          //   1: $scope.artifacts[1].map(function(a) { return a.priority; }),
-          //   2: $scope.artifacts[2].map(function(a) { return a.priority; }),
-          // },
-
         };
-        console.log("yah");
-        console.log(newStateObject);
+        // TODO: redo this
         $scope.$parent.loadFromState(newStateObject);
+        $scope.$parent.saveState();
+        if ($rootScope.aCookies) {
+          $scope.$parent.saveStateToCookies();
+        }
       }
     };
 
 
 
     $scope.weaponStateChanged = function() {
-      // weapons: $scope.weapons.map(function(x) { return x.current; }),
-      //   weaponCurrentSeed: $scope.weaponCurrentSeed,
-      //   weaponToCalculate: $scope.weaponToCalculate,
-      $scope.updateRootScope();
+      var newStateObject = {
+        weapons: $scope.weapons.map(function(x) { return x.current; }),
+        weaponCurrentSeed: $scope.weaponCurrentSeed,
+        weaponToCalculate: $scope.weaponToCalculate,
+      };
+      // TODO: redo this
+      $scope.$parent.loadFromState(newStateObject);
+      $scope.$parent.saveState();
+      if ($rootScope.aCookies) {
+        $scope.$parent.saveStateToCookies();
+      }
     };
 
     $scope.saveUserState = function() {
@@ -652,7 +660,7 @@ yattoApp.controller('SequencerController',
 
     $scope.$on('stateUpdate', function() {
       console.log("from broadcast");
-      // $scope.updateFromState();
+      $scope.updateFromState();
     });
 
     $scope.$on('worldUpdate', function() {
