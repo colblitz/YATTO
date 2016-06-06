@@ -689,7 +689,6 @@ var stageHP = function(stage) {
 // };
 
 var baseStageGold = function(stage) {
-  console.log(stageHP(stage));
   return stageHP(stage) * (0.02 + 0.00045 * Math.min(stage, 150));
 };
 
