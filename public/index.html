@@ -149,7 +149,14 @@
 					<!-- <b>Update(5/18/2016):</b> New update (TT v. 4.1.1) seems to out for everyone now, and again, yes I do plan on adding to YATTO for the new content, but I'll be out of town this weekend so no promises on when. <h3>The sequencer should be working again, to include Brew of Absorption, and the optimizer works, sort of - it doesn't yet take into account Brew's dps increase, so calculations are as if it only has All Damage.</h3>
 					Let me know if the sequencer is wrong (/u/colblitz on Reddit) - it would be very useful to include screenshots of before/after, or even better have before/after versions of your savefile
 					<b>Update(5/19/2016):</b> Known issues - Brew will disappear from list -->
-					<b>Update(5/26/2016):</b> Calculator should now also be updated for Brew (formulas page has not been updated), let me know if things seem weird or if the disappearing Brew thing is still happening. Still working on the Spellmaster/W2 stuff.
+					<!-- <b>Update(5/26/2016):</b> Calculator should now also be updated for Brew (formulas page has not been updated), let me know if things seem weird or if the disappearing Brew thing is still happening. Still working on the Spellmaster/W2 stuff. -->
+					<b>Update(6/6/2016):</b> This is it, YATTO updated for W2. (<a href="">reddit post</a>) A few things to keep in mind:
+					<ul>
+						<li>This is a big update, so expect some bugs (especially in cookie storing/account saving). If you find a bug, message me on Reddit or poke me in the Discord group or open an issue on Github or something. I decided that it would be better to get this out and have lots of people finding bugs that I can gradually fix rather than spending a bunch of time trying to find all the edge cases myself.</li>
+						<li>You'll have to enter in your information again if you had an account or had it stored in your cookies (I would actually recommend clearing all your cookies first), because I pretty much completely changed how I'm storing information. Additionally I'm going to backup the current db and then clear it out to start fresh instead of trying to convert all the old stuff to the new format.</li>
+						<li>Along that note, customizations are now stored as the raw percentages, and NOT DECIMALS.</li>
+						<li>A few things have been temporarily removed such as the temp url sharing and the relics/s and stage/s methods - I'll be adding them back, eventually</li>
+					</ul>
 				</div>
 				<div id="expander" class="col-md-10 col-md-offset-1 col-xs-12" ng-click="toggle()">
 					<i class="expandicon fa fa-angle-double-down" ng-show="isCollapsed"></i>
@@ -159,7 +166,7 @@
 			<div ng-view></div>
 			<div class="row">
 				<div id="footer" class="col-md-10 col-md-offset-1 col-xs-12">
-				&copy; 2015 Yatto 3.0.0 (All rights reserved and all that)
+				&copy; 2015-2016 Yatto for Tap Titans v4.1.1 (All rights reserved and all that?)
 				</div>
 			</div>
 		</div>
