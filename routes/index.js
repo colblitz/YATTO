@@ -59,7 +59,8 @@ module.exports = function(passport) {
 						sendSuccess(res, { username: user.username, state: state });
 					} else {
 						console.log("blah");
-						sendErrResponse(res, "No state found for user");
+						sendSuccess(res, { username: user.username });
+						// sendErrResponse(res, "No state found for user");
 					}
 				}).sort({'date':-1}).limit(1);
 			});
