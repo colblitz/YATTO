@@ -218,7 +218,9 @@ yattoApp.controller('CalculatorController',
     };
 
     $scope.updateRelicInfo = function() {
-      var uaMultiplier = 1 + 0.05 * $scope.r_undead;
+      var uaPercent = ($rootScope.world == 1 ? 0.05 : 0.02);
+      var uaMultiplier = 1 + uaPercent * $scope.r_undead;
+
       var heroRelics = $scope.r_levels / 1000;
       var stageRelics = Math.pow(Math.floor($scope.r_cstage/15) - 5, 1.7);
 
@@ -633,6 +635,11 @@ yattoApp.controller('CalculatorController',
         customizations: $scope.customizations.map(function(c) { return c.value; }),
         relics: $scope.relics,
         memory: $scope.memory,
+        diamonds: j.playerDiamonds,
+        maxStage: { 1: j.trophyProgress.ReachStage.progress, 2: j.trophyProgressGirl.ReachStage.progress },
+        cheater: j.cheater,
+        cheaterReason: j.cheaterReason,
+        tournamentPoints: j.tournament.tournamentPoints,
       }));
     };
 

@@ -117,7 +117,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
         1: Object.keys(artifactInfo).filter(function(a) { return artifactInfo[a].world == 1; }).map(function(a) { return [artifactInfo[a].id, 0]}),
         2: Object.keys(artifactInfo).filter(function(a) { return artifactInfo[a].world == 2; }).map(function(a) { return [artifactInfo[a].id, 0]}),
       },
-      relics: 0,
+      relics: {1: 0, 2: 0},
       nsteps: 0,
       relicCStage: 0,
       relicUndead: 0,

@@ -84,6 +84,16 @@ module.exports = function(passport) {
 			newState.state = req.body.state;
 			newState.user = userId;
 
+			State.remove({'user':userId}, function(err) {
+				if (!err) {
+					console.log("deleted for user " + userId);
+				} else {
+					console.log("error deleting: " + err);
+				}
+			});
+
+			// State.find({'user':userId}).
+
 			// State.find({'user':userId}).count(function(error, n) {
    //  		console.log("callback");
    //  		console.log(n);
