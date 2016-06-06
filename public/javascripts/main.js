@@ -55,8 +55,10 @@ yattoApp.directive("fileread", [function () {
           });
         }
         console.log("lakjsldkjflakjsldf");
-        if (changeEvent.target.files[0].name.split(".").pop() == "adat") {
-          reader.readAsText(changeEvent.target.files[0]);
+        var file = changeEvent.target.files[0];
+        var extension = file.name.split(".").pop();
+        if (extension == "adat" || extension == "bin") {
+          reader.readAsText(file);
         } else {
           // TODO: display error
         }
