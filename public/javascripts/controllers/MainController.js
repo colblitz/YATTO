@@ -97,6 +97,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
     $rootScope.aCookies = 'On';
     $rootScope.world = 2;
 
+    // TODO: why do i have multiple defaults
     $rootScope.state = {
       version: $rootScope.versionS,
       world: $rootScope.world,
@@ -119,16 +120,16 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       },
       relics: {1: 0, 2: 0},
       nsteps: 0,
-      relicCStage: 0,
-      relicUndead: 0,
-      relicLevels: 0,
+      relicCStage: {1: 0, 2: 0},
+      relicUndead: {1: 0, 2: 0},
+      relicLevels: {1: 0, 2: 0},
       useActives: 0,
       levelCrit: 0,
       levelTDMG: 0,
-      seedArtifact: 0,
-      seedDiamonds: 0,
-      seedWeapons: 0,
-      seedCalculate: 0,
+      artifactCurrentSeed: {1: 0, 2: 0},
+      artifactMaxDiamonds: 0,
+      weaponCurrentSeed: {1: 0, 2: 0},
+      weaponToCalculate: 100,
       memory: 0,
     };
     $rootScope.stateString = $scope.getStateString();

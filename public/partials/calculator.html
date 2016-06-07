@@ -50,15 +50,15 @@
                 <div id="stats-relic-box">
                   <div class="small-form-item">
                     <label>Stage:</label>
-                    <input type="number" class="form-control number-input right-input" ng-model="r_cstage" ng-change="stateChanged()"/>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_cstage[$root.world]" ng-change="stateChanged()"/>
                   </div>
                   <div class="small-form-item">
                     <label>{{$root.world == 1 ? "UA Level" : "Combined mini-UA levels"}}:</label>
-                    <input type="number" class="form-control number-input right-input" ng-model="r_undead" ng-change="stateChanged()"/>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_undead[$root.world]" ng-change="stateChanged()"/>
                   </div>
                   <div class="small-form-item">
                     <label>Total hero levels:</label>
-                    <input type="number" class="form-control number-input right-input" ng-model="r_levels" ng-change="stateChanged()"/>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_levels[$root.world]" ng-change="stateChanged()"/>
                   </div>
                   <div class="small-form-item">
                     <label>Hero levels bonus:</label>

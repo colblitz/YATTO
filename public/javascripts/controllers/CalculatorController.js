@@ -122,9 +122,9 @@ yattoApp.controller('CalculatorController',
       $scope.w_getting = 0;
       $scope.w_probset = 0;
 
-      $scope.r_cstage = 0;
-      $scope.r_undead = 0;
-      $scope.r_levels = 0;
+      $scope.r_cstage = {1: 0, 2: 0};
+      $scope.r_undead = {1: 0, 2: 0};
+      $scope.r_levels = {1: 0, 2: 0};
       $scope.r_hbonus = 0;
       $scope.r_sbonus = 0;
       $scope.r_reward = 0;
@@ -135,6 +135,7 @@ yattoApp.controller('CalculatorController',
       $scope.dps_damage = 0;
       $scope.tap_damage = 0;
       $scope.twc_damage = 0;
+      console.log($scope.r_levels);
     };
 
     var transformScopeArray = function(scopeArray) {
@@ -221,10 +222,10 @@ yattoApp.controller('CalculatorController',
 
     $scope.updateRelicInfo = function() {
       var uaPercent = ($rootScope.world == 1 ? 0.05 : 0.02);
-      var uaMultiplier = 1 + uaPercent * $scope.r_undead;
+      var uaMultiplier = 1 + uaPercent * $scope.r_undead[$rootScope.world];
 
-      var heroRelics = $scope.r_levels / 1000;
-      var stageRelics = Math.pow(Math.floor($scope.r_cstage/15) - 5, 1.7);
+      var heroRelics = $scope.r_levels[$rootScope.world] / 1000;
+      var stageRelics = Math.pow(Math.floor($scope.r_cstage[$rootScope.world]/15) - 5, 1.7);
 
       heroRelics = Math.round(heroRelics * uaMultiplier);
 
@@ -234,7 +235,7 @@ yattoApp.controller('CalculatorController',
       $scope.r_hbonus = heroRelics;
       $scope.r_sbonus = stageRelics;
 
-      $scope.r_nextbp = (Math.floor($scope.r_cstage / 15) + 1) * 15;
+      $scope.r_nextbp = (Math.floor($scope.r_cstage[$rootScope.world] / 15) + 1) * 15;
       $scope.r_reward = Math.round(2 * (stageRelics + heroRelics));
 
       stageRelics = Math.pow(Math.floor($scope.r_nextbp/15) - 5, 1.7);
@@ -329,9 +330,9 @@ yattoApp.controller('CalculatorController',
       if (a.level == null) {
         a.level = 0;
       }
-      if (ai == artifactInfo.UA.id) {
-        $scope.r_undead = a.level;
-      }
+      // if (ai == artifactInfo.UA.id) {
+      //   $scope.r_undead[$rootScope.world] = a.level;
+      // }
       $scope.stateChanged();
     };
 
@@ -346,7 +347,9 @@ yattoApp.controller('CalculatorController',
       if ($scope.heroes[i].level == null) {
         $scope.heroes[i].level = 0;
       }
-      $scope.r_levels = getLevels().reduce(function(a, b) { return a + b; });
+      console.log("levelsCheck");
+      $scope.r_levels[$rootScope.world] = getLevels().reduce(function(a, b) { return a + b; });
+      console.log($scope.r_levels);
       $scope.stateChanged();
     };
 
@@ -689,15 +692,16 @@ yattoApp.controller('CalculatorController',
           $scope.methods[i].value = (m == 1 ? true : false);
         });
 
-        $scope.relics   = getOrDefault($rootScope.state.relics, 0);
+        $scope.relics   = getOrDefault($rootScope.state.relics, {1: 0, 2: 0});
         $scope.nsteps   = getOrDefault($rootScope.state.nsteps, 0);
-        $scope.r_cstage = getOrDefault($rootScope.state.relicCStage, 0);
-        $scope.r_undead = getOrDefault($rootScope.state.relicUndead, 0);
-        $scope.r_levels = getOrDefault($rootScope.state.relicLevels, 0);
+        $scope.r_cstage = getOrDefault($rootScope.state.relicCStage, {1: 0, 2: 0});
+        $scope.r_undead = getOrDefault($rootScope.state.relicUndead, {1: 0, 2: 0});
+        $scope.r_levels = getOrDefault($rootScope.state.relicLevels, {1: 0, 2: 0});
         $scope.active   = getOrDefault($rootScope.state.useActives, 0);
         $scope.critss   = getOrDefault($rootScope.state.levelCrit, 0);
         $scope.zerker   = getOrDefault($rootScope.state.levelTDMG, 0);
         $scope.memory   = getOrDefault($rootScope.state.memory, 0);
+        console.log($scope.r_levels);
 
         // if ($scope.r_undead == 0) { $scope.r_undead = undead; }
         // if ($scope.r_levels == 0) { $scope.r_levels = getLevels().reduce(function(a, b) { return a + b; }); }
