@@ -69,8 +69,12 @@ yattoApp.controller('ModalController', function ($scope, $rootScope, $http, $mod
     });
   }
 
-  $scope.cancel = function () {
+  $scope.cancel = function() {
     $modalInstance.dismiss('cancel');
+  };
+
+  $scope.reset = function() {
+    $modalInstance.close({ reset: true });
   };
 });
 
@@ -88,17 +92,8 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
 
   log("start of file");
 
-  var setDefaults = function() {
-    log("setting defaults");
-    $rootScope.loggedIn = false;
-    $rootScope.amViewer = false;
-    $rootScope.username = "";
-    $rootScope.versionS = "v4.1.1";
-    $rootScope.aCookies = 'On';
-    $rootScope.world = 2;
-
-    // TODO: why do i have multiple defaults
-    $rootScope.state = {
+  var getDefaultState = function() {
+    return {
       version: $rootScope.versionS,
       world: $rootScope.world,
       // 1: [[id, level], [id, level]]
@@ -114,10 +109,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       customizations: cBonus.map(function(c) { return 0; }),
       ownedCustomizations: [],
       methods: Object.keys(Methods).map(function(m) { return 1; }),
-      priorities: {
-        1: Object.keys(artifactInfo).filter(function(a) { return artifactInfo[a].world == 1; }).map(function(a) { return [artifactInfo[a].id, 0]}),
-        2: Object.keys(artifactInfo).filter(function(a) { return artifactInfo[a].world == 2; }).map(function(a) { return [artifactInfo[a].id, 0]}),
-      },
+      artifactPriorities: [],
       relics: {1: 0, 2: 0},
       nsteps: 0,
       relicCStage: {1: 0, 2: 0},
@@ -132,6 +124,19 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       weaponToCalculate: 100,
       memory: 0,
     };
+  };
+
+  var setDefaults = function() {
+    log("setting defaults");
+    $rootScope.loggedIn = false;
+    $rootScope.amViewer = false;
+    $rootScope.username = "";
+    $rootScope.versionS = "v4.1.1";
+    $rootScope.aCookies = 'On';
+    $rootScope.world = 1;
+
+    // TODO: why do i have multiple defaults
+    $rootScope.state = getDefaultState();
     $rootScope.stateString = $scope.getStateString();
 
     $scope.loginText = "Login";
@@ -314,6 +319,50 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
         }, 1000);
       }).error(function(data, status, headers, config) {
         log("save state failed with error: " + data.err);
+      });
+    }
+  };
+
+  $scope.resetUserState = function() {
+    log("resetting user state");
+    if ($rootScope.loggedIn) {
+
+      var modalInstance = $modal.open({
+        templateUrl: 'resetWarning.html',
+        controller: 'ModalController',
+        size: 'sm',
+        resolve: {}
+      });
+
+      modalInstance.result.then(function (info) {
+        if (info.reset) {
+          console.log("yeah reset");
+          $rootScope.world = 1;
+          $rootScope.state = getDefaultState();
+          $rootScope.stateString = $scope.getStateString();
+
+          $http({
+            method: "POST",
+            url: "state",
+            data: {
+              "state": $rootScope.stateString
+            }
+          }).success(function(data, status, headers, config) {
+            $rootScope.stateResetSuccessfully = true;
+            $scope.$broadcast("stateUpdate");
+            setTimeout(function() {
+              $rootScope.$apply(function() {
+                $rootScope.stateResetSuccessfully = false
+              });
+            }, 1000);
+          }).error(function(data, status, headers, config) {
+            log("save state failed with error: " + data.err);
+          });
+        } else {
+          console.log("no reset");
+        }
+      }, function () {
+        console.log("bluh");
       });
     }
   };

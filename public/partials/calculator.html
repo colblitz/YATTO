@@ -7,14 +7,14 @@
             <div id="options-subbox-1" class="options-block col-md-4">
               <h3>Efficiency Calculator:</h3>
               <div id="options-relics" class="small-form-item">
-                Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics[$root.world]" min="0" ng-change="stateChanged()"/>
+                Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics[world]" min="0" ng-change="stateChanged()"/>
               </div>
               <div id="options-nsteps" class="small-form-item">
                 Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()"/>
               </div>
 
               <div id="options-memory" class="small-form-item" tooltip="If you have 2132%, enter 2132" tooltip-popup-delay="1000">
-                Memory Damage (%): <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()" ng-disabled="$root.world != 1"/>
+                Memory Damage (%): <input type="number" class="form-control number-input right-input" ng-model="memory" min="0" ng-change="stateChanged()" ng-disabled="world != 1"/>
               </div>
 
               <label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged()"/> Incorporate actives for steps (Crit, BR)</label>
@@ -50,15 +50,15 @@
                 <div id="stats-relic-box">
                   <div class="small-form-item">
                     <label>Stage:</label>
-                    <input type="number" class="form-control number-input right-input" ng-model="r_cstage[$root.world]" ng-change="stateChanged()"/>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_cstage[world]" ng-change="stateChanged()"/>
                   </div>
                   <div class="small-form-item">
-                    <label>{{$root.world == 1 ? "UA Level" : "Combined mini-UA levels"}}:</label>
-                    <input type="number" class="form-control number-input right-input" ng-model="r_undead[$root.world]" ng-change="stateChanged()"/>
+                    <label>{{world == 1 ? "UA Level" : "Combined mini-UA levels"}}:</label>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_undead[world]" ng-change="stateChanged()"/>
                   </div>
                   <div class="small-form-item">
                     <label>Total hero levels:</label>
-                    <input type="number" class="form-control number-input right-input" ng-model="r_levels[$root.world]" ng-change="stateChanged()"/>
+                    <input type="number" class="form-control number-input right-input" ng-model="r_levels[world]" ng-change="stateChanged()"/>
                   </div>
                   <div class="small-form-item">
                     <label>Hero levels bonus:</label>
@@ -91,8 +91,8 @@
               <div class="small-form-item">
                 <label>Auto save:</label>
                 <div class="btn-group right-input">
-                  <label class="btn btn-primary cookiebtn" ng-model="$root.aCookies" btn-radio="'On'" ng-change="updateCookies()">On</label>
-                  <label class="btn btn-primary cookiebtn" ng-model="$root.aCookies" btn-radio="'Off'" ng-change="updateCookies()">Off</label>
+                  <label class="btn btn-primary cookiebtn" ng-model="aCookies" btn-radio="'On'" ng-change="updateCookies()">On</label>
+                  <label class="btn btn-primary cookiebtn" ng-model="aCookies" btn-radio="'Off'" ng-change="updateCookies()">Off</label>
                 </div>
               </div>
 
@@ -109,13 +109,16 @@
               <h3>Other Stuff:</h3>
 
 <!--
-              {{$root.loggedIn}} -->
+              {{loggedIn}} -->
               <input class="file-input" type="file" fileread="savefile"/>
               <div tooltip="{{invalidFile() && 'Choose a file first' || ''}}" tooltip-popup-delay="1000">
                 <button class="btn btn-primary thinbtn" ng-click="loadFromFile()" ng-disabled="invalidFile()">Load info from file</button>
               </div>
-              <div tooltip="{{!$root.loggedIn && 'Log in first' || ''}}" tooltip-popup-delay="1000">
-                <button class="btn btn-success thinbtn" id="savebutton" ng-click="saveUserState()" ng-disabled="!$root.loggedIn">{{stateSavedSuccessfully ? "Successfully saved!" : "Save to account"}}</button>
+              <div tooltip="{{!loggedIn && 'Log in first' || ''}}" tooltip-popup-delay="1000">
+                <button class="btn btn-success thinbtn" id="savebutton" ng-click="saveUserState()" ng-disabled="!loggedIn">{{stateSavedSuccessfully ? "Successfully saved!" : "Save to account"}}</button>
+              </div>
+              <div tooltip="{{!loggedIn && 'Log in first' || ''}}" tooltip-popup-delay="1000">
+                <button class="btn btn-danger thinbtn" id="clearbutton" ng-click="resetUserState()" ng-disabled="!loggedIn">{{stateResetSuccessfully ? "Successfully reset!" : "Reset account"}}</button>
               </div>
               <!-- {{savefile}} -->
               <!-- <input ng-model="savefile" ng-change="file_changed(this)" type="file"/> -->
@@ -200,8 +203,8 @@
               <!-- <h2 class="title">Enter your info here:</h2> -->
               <div id="artifacts-list" class="list col-md-5">
                 <h3>Artifact Levels:</h3>
-                <div ui-sortable="sortableOptions" ng-model="artifacts[$root.world]">
-                  <div class="form-item transition" ng-repeat='a in artifacts[$root.world]'>
+                <div ui-sortable="sortableOptions" ng-model="artifacts[world]">
+                  <div class="form-item transition" ng-repeat='a in artifacts[world]'>
                     <span class="fa fa-arrows myHandle"></span>
                     <input type="number" class="form-control number-input left-input artifact-input" ng-model="a.level" min="0" max="{{artifact_caps[a.id]}}" ng-change="artifactCheck(a)" ng-class="{'at-cap': a.level==artifactCaps[a.id]}"/>
                     <div class="input-label">{{a.name}}</div>
@@ -211,8 +214,8 @@
               <div id="weapons-list" class="list col-md-6">
                 <h3>Heroes (Levels / Weapons):</h3>
                 <div ng-repeat="h in heroes" class="form-item">
-                  <input type="number" class="form-control number-input left-input level-input" ng-model="heroes[$index].level[$root.world]" min="0" ng-change="levelsCheck($index)"/>
-                  <input type="number" class="form-control number-input left-input weapon-input" ng-model="heroes[$index].weapons" min="0" ng-change="weaponsCheck($index)" tabindex="{{$index+1}}" ng-disabled="$root.world != 1"/>
+                  <input type="number" class="form-control number-input left-input level-input" ng-model="heroes[$index].level[world]" min="0" ng-change="levelsCheck($index)"/>
+                  <input type="number" class="form-control number-input left-input weapon-input" ng-model="heroes[$index].weapons" min="0" ng-change="weaponsCheck($index)" tabindex="{{$index+1}}" ng-disabled="world != 1"/>
                   <div class="input-label">{{h.name}}</div>
                 </div>
               </div>
@@ -223,7 +226,7 @@
                 <h3>Bonuses (%) from Customizations:</h3>
                 <p>(In percent - if you have 32%, enter 32)</p>
                 <div ng-repeat="c in customizations" class="form-item">
-                  <input type="number" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-change="customizationCheck($index)" min="0" step="{{customizations[$index].step}}" ng-class="{'at-cap': c.value==customizations[$index].max}" ng-disabled="$root.world != 1"/>
+                  <input type="number" class="form-control number-input left-input" ng-model="customizations[$index].value" ng-change="customizationCheck($index)" min="0" step="{{customizations[$index].step}}" ng-class="{'at-cap': c.value==customizations[$index].max}" ng-disabled="world != 1"/>
                   <div class="input-label">{{c.name}}</div>
                 </div>
               </div>

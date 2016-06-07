@@ -655,6 +655,10 @@ yattoApp.controller('CalculatorController',
       $scope.$parent.saveState();
     };
 
+    $scope.resetUserState = function() {
+      $scope.$parent.resetUserState();
+    };
+
     $scope.updateFromState = function(updateCookies) {
       log("updateFromState");
       try {

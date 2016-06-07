@@ -91,6 +91,16 @@
 				<button class="btn btn-warning" ng-click="close()">Ok</button>
 			</script> -->
 
+			<script type="text/ng-template" id="resetWarning.html">
+				<div class="modal-body">
+					<h3>Are you sure you want to reset your account info?</h3>
+				</div>
+				<div class="modal-footer login-modal-footer">
+					<button class="btn btn-danger" ng-click="reset()">Yes</button>
+					<button class="btn btn-success" ng-click="cancel()">Cancel</button>
+				</div>
+			</script>
+
 			<div class="row" id="navrow">
 				<span class="col-md-1 col-md-offset-1 navlink"><a href="#calculator"><i class="fa"></i>Calculator</a></span>
 				<span class="col-md-1 navlink" ><a href="#othercalc"><i class="fa"></i>Cust/Levels</a></span>
@@ -150,13 +160,24 @@
 					Let me know if the sequencer is wrong (/u/colblitz on Reddit) - it would be very useful to include screenshots of before/after, or even better have before/after versions of your savefile
 					<b>Update(5/19/2016):</b> Known issues - Brew will disappear from list -->
 					<!-- <b>Update(5/26/2016):</b> Calculator should now also be updated for Brew (formulas page has not been updated), let me know if things seem weird or if the disappearing Brew thing is still happening. Still working on the Spellmaster/W2 stuff. -->
-					<b>Update(6/6/2016):</b> This is it, YATTO updated for W2. (<a href="https://redd.it/4mrka2">reddit post</a>) A few things to keep in mind:
+					<!-- <b>Update(6/6/2016):</b> This is it, YATTO updated for W2. (<a href="https://redd.it/4mrka2">reddit post</a>) A few things to keep in mind:
 					<ul>
 						<li>This is a big update, so expect some bugs (especially in cookie storing/account saving). If you find a bug, message me on Reddit or poke me in the Discord group or open an issue on Github or something. I decided that it would be better to get this out and have lots of people finding bugs that I can gradually fix rather than spending a bunch of time trying to find all the edge cases myself.</li>
 						<li>You'll have to enter in your information again if you had an account or had it stored in your cookies (I would actually recommend clearing all your cookies first), because I pretty much completely changed how I'm storing information. Additionally I'm going to backup the current db and then clear it out to start fresh instead of trying to convert all the old stuff to the new format.</li>
 						<li>Along that note, customizations are now stored as the raw percentages, and NOT DECIMALS.</li>
 						<li>A few things have been temporarily removed such as the temp url sharing and the relics/s and stage/s methods - I'll be adding them back, eventually</li>
+					</ul> -->
+					<!-- </br><b>Update(6/6/2016):</b> Reverted back for now
+					</br><h3>Seems like my revert fucked up the old version as well (go me!), so I'd recommend not using YATTO for a bit as I fix things. If not having YATTO there to guide you in leveling gives you the heebie jeebies, just remember - when in doubt, level UA :P</h3> -->
+					<b>Update(6/7/2016):</b> Alright, take two.
+					<ul>
+						<li>There was a bug in my all damage and hero dps calculations, which affected the tap damage stats, which affected the DmgE calculations. So, hopefully things are displaying nice and correctly, and the DmgE leveling seems more normal.</li>
+						<li>I think this time I'll just leave the updated version up as people find bugs (sorry for switching back and forth), though expect a number of state resets if I need to fix things concerning that</li>
+						<li>It looks like Firefox is not happy with the update, but I'm not really sure what I can do about it, since tentatively it seems like it's some Firefox bug that crashes when you use number input fields (see <a href="https://crash-stats.mozilla.com/report/index/dbd5dc40-edf4-4304-ab00-6f0ad2160606">crash report</a> and <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1210595">bug report</a>. (...use Chrome? >>)</li>
+						<li>Thanks to <reddit user="malohkan"/>, you can now upload from .bin files, which I take is helpful for Mac users?</li>
+						<li>Loading the sequencer directly/refreshing on it is a bit weird (whether you own artifacts doesn't show up), but clicking "get info" will pull that info</li>
 					</ul>
+
 				</div>
 				<div id="expander" class="col-md-10 col-md-offset-1 col-xs-12" ng-click="toggle()">
 					<i class="expandicon fa fa-angle-double-down" ng-show="isCollapsed"></i>

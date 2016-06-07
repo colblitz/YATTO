@@ -546,14 +546,18 @@ yattoApp.controller('SequencerController',
       }
 
       var priorities = {};
-      for (var w in $rootScope.state.artifactPriorities) {
-        $rootScope.state.artifactPriorities[w].forEach(function(p, i) {
-          priorities[p[0]] = p[1];
-        });
-      }
+      console.log("pull from root");
+      console.log($rootScope.state.artifactPriorities.map(function(p) { return p[0]; }));
+      console.log($rootScope.state.artifactPriorities.map(function(p) { return p[1]; }));
+
+      $rootScope.state.artifactPriorities.forEach(function(p, i) {
+        priorities[p[0]] = p[1];
+      });
+      console.log(priorities);
 
       for (var w in $scope.artifacts) {
         $scope.artifacts[w].forEach(function(a, i) {
+          console.log(a.id);
           a.owned = (a.id in ownedArtifacts);
           a.priority = getOrDefault(priorities[a.id], 0);
         });
@@ -632,6 +636,7 @@ yattoApp.controller('SequencerController',
         };
         // TODO: redo this
         $scope.$parent.loadFromState(newStateObject, controller);
+        // $scope.paren
         $scope.$parent.saveState();
         if ($rootScope.aCookies) {
           $scope.$parent.saveStateToCookies();
@@ -659,7 +664,7 @@ yattoApp.controller('SequencerController',
       $scope.$parent.saveState();
     };
 
-    $scope.$on('stateUpdate', function() {
+    $scope.$on('stateUpdate', function(event, args) {
       if (args.controller != controller) {
         log("broadcasted state update");
         $scope.updateFromState();
