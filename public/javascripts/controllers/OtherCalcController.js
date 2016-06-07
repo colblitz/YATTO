@@ -349,6 +349,7 @@ yattoApp.controller('OtherCalcController',
       console.log("newStateObject: ", newStateObject);
       // this broadcasts a stateUpdate, which calls updateThings
       $scope.$parent.loadFromState(newStateObject, controller);
+      $scope.$parent.saveState();
     };
 
     $scope.updateFromState = function(updateCookies) {

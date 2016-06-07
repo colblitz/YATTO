@@ -223,7 +223,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
       }
 
       // force update in other controllers
-      $scope.$broadcast("stateUpdate");
+      $scope.$broadcast("stateUpdate", { controller: "" });
     }).error(function(data, status, headers, config) {
       log("check failed with error: " + data.err);
     });
@@ -349,7 +349,7 @@ yattoApp.controller('MainController', function($scope, $rootScope, $http, $modal
             }
           }).success(function(data, status, headers, config) {
             $rootScope.stateResetSuccessfully = true;
-            $scope.$broadcast("stateUpdate");
+            $scope.$broadcast("stateUpdate", { controller: "" });
             setTimeout(function() {
               $rootScope.$apply(function() {
                 $rootScope.stateResetSuccessfully = false

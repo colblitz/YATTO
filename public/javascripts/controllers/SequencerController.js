@@ -625,7 +625,8 @@ yattoApp.controller('SequencerController',
       if (updateRoot) {
         var priorities = [].concat(
           $scope.artifacts[1].map(function(a) { return [a.id, a.priority]; }),
-          $scope.artifacts[2].map(function(a) { return [a.id, a.priority]; }));
+          $scope.artifacts[2].map(function(a) { return [a.id, a.priority]; }))
+          .filter(function(p) { return p[1] != 0; });
         console.log(priorities);
 
         // update root state
