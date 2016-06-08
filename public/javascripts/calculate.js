@@ -1026,6 +1026,14 @@ var copyArray = function(array) {
   return $.extend(true, [], array);
 };
 
+var getCostScaling = function(w) {
+  return (w == 1 ? 1.35 : 1.25);
+};
+
+var nextArtifactCost = function(owned, w) {
+  return Math.floor((owned + 1) * Math.pow(getCostScaling(w), owned + 1));
+};
+
 // params {
 //  world: 1 or 2
 //  artifacts: array of [artifact id, level]
@@ -1125,12 +1133,68 @@ var getBestSteps = function(params, method) {
       });
     });
 
-    // TODO: add new artifact option
-
     // pick best option
     var bestOption = getMax(options, function(o1, o2) {
       return o1.efficiency > o2.efficiency;
     });
+
+    // // compare to buying next artifact
+    // var artifactsOwned = currentArtifacts.filter(function(a) { return a[1] != 0; }).length;
+    // var numNotOwned = currentArtifacts.filter(function(a) { return a[1] == 0; }).length;
+    // var nArtifactCost = nextArtifactCost(artifactsOwned, params.world);
+    // if (params.useSeed) {
+    //   //
+    // } else {
+    //   var efficiencies = [];
+    //   currentArtifacts.forEach(function(ap, indexInList) {
+    //     var artifact = artifactMapping[ap[0]];
+    //     var level = ap[1];
+    //     if (level != 0) {
+    //       return;
+    //     }
+
+    //     // while efficiency > best efficiency, level
+    //     // get overall efficiency of buying + initial levels
+
+    //     while (efficiency > best)
+
+    //     // // get value if leveled
+    //     // var newArtifacts = copyArray(currentArtifacts);
+    //     // newArtifacts[indexInList][1] += 1; // should eq 1
+
+    //     // var newGameState = new GameState(copyParamsForGameState(params, newArtifacts));
+    //     // var newValue = getValue(newGameState, method, params.actives);
+
+    //     // var efficiency;
+    //     // if (method == Methods.DMG_EQUIVALENT) {
+    //     //   var goldRatio = newValue.gold / baseValue.gold;
+    //     //   var tdmgRatio = newValue.tdmg / baseValue.tdmg;
+
+    //     //   // TODO: Make this better
+    //     //   if (artifact == artifactInfo.FF) {
+    //     //     goldRatio = 1 + ((dmgEFFGold - baseValue.gold) / dmgEFFLevels) / baseValue.gold;
+    //     //   }
+
+    //     //   var goldDmgEquivalent = Math.pow(1.044685, Math.log(goldRatio) / Math.log(1.075));
+    //     //   var tdmgEquivalentRatio = goldDmgEquivalent * tdmgRatio;
+    //     //   var tdmgEquivalent = baseValue.tdmg * tdmgEquivalentRatio;
+
+    //     //   efficiency = (tdmgEquivalent - baseValue.tdmg) / nArtifactCost;
+    //     // } else {
+    //     //   efficiency = (newValue - baseValue) / nArtifactCost;
+    //     // }
+    //     // efficiencies.push(efficiency);
+    //   });
+    //   var efficiencyEV = efficiencies.reduce(function(a, b) { return a + b; }, 0) / numNotOwned;
+    //   options.push({
+    //     stop: true,
+    //     isBuy: true,
+    //     name: "Buy New Artifact!",
+    //     cost: nArtifactCost,
+    //     efficiency: efficiencyEV,
+    //     cumulative: cumulative + nArtifactCost,
+    //   });
+    // }
 
     // TODO: use all relics options
     // if we don't have enough relics, break
@@ -1141,8 +1205,13 @@ var getBestSteps = function(params, method) {
     // update
     relicsLeft -= bestOption.cost;
     cumulative += bestOption.cost;
-    currentArtifacts[bestOption.index][1] = bestOption.level;
     steps.push(bestOption);
+
+    if (bestOption.stop) {
+      break;
+    }
+
+    currentArtifacts[bestOption.index][1] = bestOption.level;
   }
   return steps;
 };
@@ -1156,9 +1225,11 @@ var getSteps = function(params) {
     var summary = {};
     var costs = {};
     steps.forEach(function(s, index) {
-      var id = s.id;
-      summary[id] = Math.max(s.level, summary[id] ? summary[id] : 0);
-      costs[id] = (costs[id] ? costs[id] : 0) + s.cost;
+      if (s.id) {
+        var id = s.id;
+        summary[id] = Math.max(s.level, summary[id] ? summary[id] : 0);
+        costs[id] = (costs[id] ? costs[id] : 0) + s.cost;
+      }
     });
     var summarySteps = [];
     for (var k in summary) {

@@ -575,6 +575,9 @@ yattoApp.controller('CalculatorController',
       var b = $scope.savefile.indexOf("playerInfoSaveString");
       var e = $scope.savefile.indexOf("lastUsedTexture");
       var s = $scope.savefile.substring(b + 22, e-2);
+
+      console.log(s);
+
       // http://pastebin.com/Fz0pz0BV
       var j = JSON.parse(JSON.parse(s));
 

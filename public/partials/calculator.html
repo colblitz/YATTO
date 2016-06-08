@@ -278,10 +278,10 @@
                       </tr>
                       <tr ng-repeat="s in steps[method.index] track by $index" class="step-row">
                         <td class="steps-col0"><span class="checkmark" ng-click="step(false, method.index, $index)"><i class="fa fa-check"></i></span></td>
-                        <td class="steps-col1">{{s.name}}</td>
-                        <td class="steps-col2">{{s.level}}</td>
-                        <td class="steps-col3">{{s.cost}}</td>
-                        <td class="steps-col4">{{s.cumulative}}</td>
+                        <td class="steps-col1" ng-class="{'step-buy': s.isBuy}">{{s.name}}</td>
+                        <td class="steps-col2" ng-class="{'step-buy': s.isBuy}">{{s.level}}</td>
+                        <td class="steps-col3" ng-class="{'step-buy': s.isBuy}">{{s.cost}}</td>
+                        <td class="steps-col4" ng-class="{'step-buy': s.isBuy}">{{s.cumulative}}</td>
                       </tr>
                     </table>
                   </div>
