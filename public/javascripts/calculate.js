@@ -655,7 +655,7 @@ var STAGE_CONSTANT = MONSTER_HP_MULTIPLIER * Math.pow(MONSTER_HP_BASE_1, MONSTER
 var BOSS_CONSTANT = (2 + 4*MONSTER_HP_BASE_2 + 6*Math.pow(MONSTER_HP_BASE_2, 2) + 7*Math.pow(MONSTER_HP_BASE_2, 3) + 10*Math.pow(MONSTER_HP_BASE_2, 4)) /
                     (1 + MONSTER_HP_BASE_2 + Math.pow(MONSTER_HP_BASE_2, 2) + Math.pow(MONSTER_HP_BASE_2, 3) + Math.pow(MONSTER_HP_BASE_2, 4));
 
-var BOSS_GOLD_CONSTANT = 2 + 4 + 6 + 7 + 10 / 5.0;
+var BOSS_GOLD_CONSTANT = (2 + 4 + 6 + 7 + 10) / 5.0;
 
 var stageHP = function(stage) {
   if (stage <= 156) {
