@@ -7,10 +7,15 @@
             <div id="options-subbox-1" class="options-block col-md-4">
               <h3>Efficiency Calculator:</h3>
               <div id="options-relics" class="small-form-item">
-                Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics[world]" min="0" ng-change="stateChanged()"/>
+                <input type="radio" ng-model="useRelics" ng-value="true"/> Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics[world]" min="0" ng-change="stateChanged()" ng-disabled="!useRelics"/>
               </div>
+
+              <div class="small-form-item tabbed-option">
+                <label><input type="checkbox" ng-model="useAllRelics" ng-disabled="!useRelics"/> Use up as many relics as possible</label>
+              </div>
+
               <div id="options-nsteps" class="small-form-item">
-                Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()"/>
+                <input type="radio" ng-model="useRelics" ng-value="false"/> Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()" ng-disabled="useRelics"/>
               </div>
 
               <div id="options-memory" class="small-form-item" tooltip="If you have 2132%, enter 2132" tooltip-popup-delay="1000">
@@ -20,19 +25,23 @@
               <label id="actives-label" tooltip="Assumes that you always use skill immediately after cooldown. You'll likely get told to only level Parchment/Axe for a while if this is set to true." tooltip-popup-delay="1000"><input type="checkbox" ng-model="active" ng-change="stateChanged()"/> Incorporate actives for steps (Crit, BR)</label>
 
               <div id="options-critical" class="small-form-item">
-                Critical Strike Level: <input type="number" class="form-control number-input right-input" ng-model="critss" min="0" ng-change="stateChanged()"/>
+                Critical Strike Level: <input type="number" class="form-control number-input right-input" ng-model="critss" min="0" ng-change="stateChanged()" ng-disabled="!active"/>
               </div>
               <div id="options-berserker" class="small-form-item">
-                Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged()"/>
+                Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged()" ng-disabled="!active"/>
               </div>
 
-              <!-- <label id="allrelics-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="allrelics" ng-change="stateChanged()"/> Use as many relics as possible</label>
+              <div id="options-new-artifact">
+                <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="buyArtifact" ng-change="stateChanged()"/> Suggest when to buy an a new artifact</label>
+              </div>
 
-              <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="buyartifact" ng-change="stateChanged()"/> Suggest when to buy an a new artifact</label>
+              <div class="small-form-item tabbed-option">
+                <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="newArtifactUseSeed" ng-value="false" ng-change="stateChanged()" ng-disabled="!buyArtifact"/> Use average of random artifacts</label>
+              </div>
 
-              <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged()"/> Use average of random artifacts</label>
-
-              <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="artifactsuggest" ng-change="stateChanged()"/> Use your seed information</label> -->
+              <div class="small-form-item tabbed-option">
+                <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="newArtifactUseSeed" ng-value="true" ng-change="stateChanged()" ng-disabled="!buyArtifact"/> Use your seed information</label>
+              </div>
 
               <button class="btn btn-primary" id="calculate-button" ng-click="calculate()">Calculate</button>
               <span us-spinner="{radius:4, width:3, length: 5}" spinner-key="spinner"></span>

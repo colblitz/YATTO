@@ -136,6 +136,11 @@ yattoApp.controller('CalculatorController',
       $scope.tap_damage = 0;
       $scope.twc_damage = 0;
       console.log($scope.r_levels);
+
+      $scope.useRelics = true;
+      $scope.useAllRelics = false;
+      $scope.buyArtifact = true;
+      $scope.newArtifactUseSeed = true;
     };
 
     var transformScopeArray = function(scopeArray) {
