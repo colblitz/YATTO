@@ -430,7 +430,7 @@ var heroInfo = [
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.BOSS_DAMAGE]],
     2: [[990, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [25, BonusTypes.GOLD_HEROSKILLS], [60, BonusTypes.TAP_DAMAGE_HEROSKILLS],
         [2, BonusTypes.CRIT_CHANCE], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [10, BonusTypes.BOSS_DAMAGE]]}),
-  new Hero("Dark Lord, Punisher of All", 33, {1: 456e156, 2: 9.99e226}, {
+  new Hero("Dark Lord, Punisher of All", 33, {1: 4.56e156, 2: 9.99e226}, {
     1: [[2000, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.TAP_DAMAGE_HEROSKILLS], [1, BonusTypes.TAP_DAMAGE_DPS], [25, BonusTypes.GOLD_HEROSKILLS],
         [20, BonusTypes.ALL_DAMAGE_HEROSKILLS], [30, BonusTypes.ALL_DAMAGE_HEROSKILLS], [40, BonusTypes.ALL_DAMAGE_HEROSKILLS]],
     2: [[2500, BonusTypes.INDIVIDUAL_HERO_DAMAGE], [20, BonusTypes.TAP_DAMAGE_HEROSKILLS], [1, BonusTypes.TAP_DAMAGE_DPS], [25, BonusTypes.GOLD_HEROSKILLS],
