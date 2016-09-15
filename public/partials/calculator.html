@@ -10,9 +10,9 @@
                 <input type="radio" ng-model="useRelics" ng-value="true"/> Relics to spend: <input type="number" class="form-control number-input right-input" ng-model="relics[world]" min="0" ng-change="stateChanged()" ng-disabled="!useRelics"/>
               </div>
 
-              <div class="small-form-item tabbed-option">
+              <!-- <div class="small-form-item tabbed-option">
                 <label><input type="checkbox" ng-model="useAllRelics" ng-disabled="!useRelics"/> Use up as many relics as possible</label>
-              </div>
+              </div> -->
 
               <div id="options-nsteps" class="small-form-item">
                 <input type="radio" ng-model="useRelics" ng-value="false"/> Steps to calculate: <input type="number" class="form-control number-input right-input" ng-model="nsteps" min="0" ng-change="stateChanged()" ng-disabled="useRelics"/>
@@ -31,7 +31,7 @@
                 Berserker Rage Level: <input type="number" class="form-control number-input right-input" ng-model="zerker" min="0" ng-change="stateChanged()" ng-disabled="!active"/>
               </div>
 
-              <div id="options-new-artifact">
+              <!-- <div id="options-new-artifact">
                 <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="checkbox" ng-model="buyArtifact" ng-change="stateChanged()"/> Suggest when to buy an a new artifact</label>
               </div>
 
@@ -41,7 +41,7 @@
 
               <div class="small-form-item tabbed-option">
                 <label id="buyartifact-label" tooltip="blah blah lbha lbh alhb lahb lahbl ah blha bab" tooltip-popup-delay="1000"><input type="radio" ng-model="newArtifactUseSeed" ng-value="true" ng-change="stateChanged()" ng-disabled="!buyArtifact"/> Use your seed information</label>
-              </div>
+              </div> -->
 
               <button class="btn btn-primary" id="calculate-button" ng-click="calculate()">Calculate</button>
               <span us-spinner="{radius:4, width:3, length: 5}" spinner-key="spinner"></span>
